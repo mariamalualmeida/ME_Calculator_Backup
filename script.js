@@ -73,6 +73,12 @@ class SimuladorEmprestimos {
             this.formatarMoeda(e.target);
             this.limparResultado();
         });
+        
+        this.valorEmprestimoField.addEventListener('focus', (e) => {
+            if (e.target.value === '' || e.target.value === '0,00') {
+                e.target.value = '';
+            }
+        });
 
         this.taxaJurosField.addEventListener('input', (e) => {
             this.formatarPercentual(e.target);
@@ -82,6 +88,20 @@ class SimuladorEmprestimos {
         this.dataInicialField.addEventListener('input', (e) => {
             this.formatarData(e.target);
             this.limparResultado();
+        });
+        
+        this.dataInicialField.addEventListener('keydown', (e) => {
+            // Permitir apagar com backspace e delete
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                e.preventDefault();
+                const valor = e.target.value;
+                if (e.key === 'Backspace' && valor.length > 0) {
+                    e.target.value = valor.slice(0, -1);
+                } else if (e.key === 'Delete') {
+                    e.target.value = '';
+                }
+                this.formatarData(e.target);
+            }
         });
 
         this.numeroParcelasField.addEventListener('input', () => {
@@ -344,11 +364,14 @@ class SimuladorEmprestimos {
 
     rolarParaResultado() {
         setTimeout(() => {
-            document.querySelector('.result-section').scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }, 100);
+            const resultSection = document.querySelector('.result-section');
+            if (resultSection) {
+                resultSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }, 300);
     }
 
     abrirConfiguracoes() {
@@ -448,49 +471,77 @@ class SimuladorEmprestimos {
     }
 
     gerarPdfSimples(valor, nParcelas, juros, prestacao) {
-        // Simulação simples de exportação PDF
-        const dataSimulacao = new Date().toLocaleDateString('pt-BR');
-        const nomeUsuario = this.configuracoes.nomeUsuario || 'Cliente';
-        
-        let conteudo = `ME EMPREENDIMENTOS\n`;
-        conteudo += `Relatório de Simulação de Empréstimo\n\n`;
-        conteudo += `Cliente: ${nomeUsuario}\n`;
-        conteudo += `Data da simulação: ${dataSimulacao}\n\n`;
-        conteudo += `Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}\n`;
-        conteudo += `Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%\n`;
-        conteudo += `Número de parcelas: ${nParcelas}\n`;
-        conteudo += `Valor da prestação: R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}\n\n`;
-        
-        conteudo += `TABELA DE PARCELAS:\n`;
-        
-        // Calcular datas de vencimento - começar 30 dias após simulação ou usar data preenchida
-        let dataBase;
-        if (this.dataInicialField.value) {
-            dataBase = this.parseData(this.dataInicialField.value);
-        } else {
-            dataBase = new Date();
-            dataBase.setDate(dataBase.getDate() + 30); // 30 dias após simulação
-        }
-        
-        for (let i = 1; i <= nParcelas; i++) {
-            const dataVencimento = new Date(dataBase);
-            dataVencimento.setMonth(dataVencimento.getMonth() + i - 1);
+        try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
             
-            conteudo += `${i.toString().padStart(2, '0')}  ${dataVencimento.toLocaleDateString('pt-BR')}  R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}\n`;
+            const dataSimulacao = new Date().toLocaleDateString('pt-BR');
+            const nomeUsuario = this.configuracoes.nomeUsuario || 'Cliente';
+            
+            // Configurar fonte
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.text('ME EMPREENDIMENTOS', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(14);
+            doc.text('Relatório de Simulação de Empréstimo', 105, 30, { align: 'center' });
+            
+            // Dados do cliente
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(12);
+            doc.text(`Cliente: ${nomeUsuario}`, 20, 50);
+            doc.text(`Data da simulação: ${dataSimulacao}`, 20, 60);
+            
+            // Dados da simulação
+            doc.text(`Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 20, 80);
+            doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, 90);
+            doc.text(`Número de parcelas: ${nParcelas}`, 20, 100);
+            doc.text(`Valor da prestação: R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 20, 110);
+            
+            // Tabela de parcelas
+            doc.setFont('helvetica', 'bold');
+            doc.text('TABELA DE PARCELAS:', 20, 130);
+            
+            doc.setFont('helvetica', 'normal');
+            doc.text('Parc.', 20, 145);
+            doc.text('Vencimento', 50, 145);
+            doc.text('Valor', 120, 145);
+            
+            // Calcular datas de vencimento
+            let dataBase;
+            if (this.dataInicialField.value) {
+                dataBase = this.parseData(this.dataInicialField.value);
+            } else {
+                dataBase = new Date();
+                dataBase.setDate(dataBase.getDate() + 30);
+            }
+            
+            let yPos = 155;
+            for (let i = 1; i <= nParcelas; i++) {
+                const dataVencimento = new Date(dataBase);
+                dataVencimento.setMonth(dataVencimento.getMonth() + i - 1);
+                
+                doc.text(i.toString().padStart(2, '0'), 20, yPos);
+                doc.text(dataVencimento.toLocaleDateString('pt-BR'), 50, yPos);
+                doc.text(`R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 120, yPos);
+                
+                yPos += 10;
+                
+                // Nova página se necessário
+                if (yPos > 270) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+            }
+            
+            // Salvar PDF
+            doc.save(`simulacao_emprestimo_${Date.now()}.pdf`);
+            alert('PDF exportado com sucesso!');
+            
+        } catch (error) {
+            console.error('Erro ao gerar PDF:', error);
+            alert('Erro ao gerar PDF. Tente novamente.');
         }
-        
-        // Criar e baixar arquivo
-        const blob = new Blob([conteudo], { type: 'text/plain;charset=utf-8' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `simulacao_emprestimo_${Date.now()}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-        
-        alert('Relatório exportado para Downloads!');
     }
 
     aplicarTema(theme) {
