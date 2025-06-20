@@ -105,7 +105,9 @@ SimuladorEmprestimos/
 - June 20, 2025: Initial web application setup
 - June 20, 2025: Complete migration to Android native application with Kotlin and Jetpack Compose
 - June 20, 2025: Added comprehensive test suite and README documentation
+- June 20, 2025: Updated app branding to "ME EMPREENDIMENTOS" with company name prominently displayed above "Simulador de Empréstimos"
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language in Portuguese (PTBR).
+App branding: Company name "ME EMPREENDIMENTOS" should be prominently displayed above application titles.

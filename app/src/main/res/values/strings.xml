@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Simulador de Empréstimos</string>
+    <string name="app_name">ME EMPREENDIMENTOS</string>
+    <string name="empresa_nome">ME EMPREENDIMENTOS</string>
+    <string name="simulador_titulo">Simulador de Empréstimos</string>
     <string name="valor_emprestimo">Valor do empréstimo</string>
     <string name="numero_parcelas">Número de parcelas</string>
     <string name="taxa_juros">Taxa de juros (%)</string>
