@@ -1,0 +1,124 @@
+**PROMPT PARA GERAR O APP ANDROID**
+
+---
+
+### Objetivo geral
+
+Desenvolver um aplicativo **Android** (Kotlin *Jetpack Compose* **OU** Flutter – escolha o que entregar mais rápido) intitulado **“ME Empreendimentos – Simulador de Empréstimos”** que replique integralmente a lógica abaixo, sem acrescentar nenhum recurso não mencionado.
+
+---
+
+## 1. Tela principal (Material 3, tema claro)
+
+| Campo                                        | Tipo / Máscara                                                     | Teclado                         |
+| -------------------------------------------- | ------------------------------------------------------------------ | ------------------------------- |
+| **Valor do empréstimo**                      | moeda (R\$ #,##0.00)                                               | numérico‐decimal                |
+| **Número de parcelas**                       | inteiro 1-15                                                       | numérico                        |
+| **Taxa de juros (%)**                        | 2 casas decimais                                                   | numérico‐decimal                |
+| **Data inicial de vencimento**<br>(opcional) | máscara `DD/MM/AAAA` (barras automáticas) **OU** DatePicker nativo | numérico‐decimal (se TextField) |
+
+*Botão* **CALCULAR**
+→ após o cálculo, a página deve **rolar automaticamente até o final** (use `animateScrollToItem` ou equivalente).
+
+*Card resultado* mostra **Prestação** (somente leitura).
+
+---
+
+## 2. Regras de cálculo
+
+1. **Se o campo Data inicial estiver vazio**, use a **data da simulação**
+   (agora() no dispositivo).
+2. **Se a data informada > data da simulação**
+
+   * Dias ≜ diferença de calendário.
+   * Juros pró-rata = Valor × Taxa diária × Dias.
+   * Acrescente esse valor ao **montante total** e divida igualmente entre as parcelas.
+3. **Se a data informada < data da simulação**
+
+   * Dias ≜ diferença (negativa).
+   * Calcula juros pró-rata **negativos** (desconto) e **subtrai** do montante total, dividindo igualmente entre as parcelas.
+4. **Prestação base** (antes do pró-rata):
+
+   ```
+   P = Valor × (1 + JurosMensal)^N ÷ N
+   ```
+5. **JurosMensal** pode ser acrescido do **índice IGPM** (item 4).
+6. Se qualquer campo ficar vazio, limpar o resultado.
+
+---
+
+## 3. Validação contra tabela de limites
+
+| Parc. | Mín % |  Máx % |
+| ----: | ----: | -----: |
+|     1 | 15,00 | 100,00 |
+|     2 | 15,00 | 100,00 |
+|     3 | 15,00 |  30,00 |
+|     4 | 15,00 |  24,00 |
+|     5 | 15,00 |  22,00 |
+|     6 | 15,00 |  20,00 |
+|     7 | 14,75 |  18,00 |
+|     8 | 14,36 |  17,00 |
+|     9 | 13,92 |  16,00 |
+|    10 | 13,47 |  15,00 |
+|    11 | 13,03 |  14,00 |
+|    12 | 12,60 |  13,00 |
+|    13 | 12,19 |  12,60 |
+|    14 | 11,80 |  12,19 |
+|    15 | 11,43 |  11,80 |
+
+**Mensagens (caixa alta, singular ou plural):**
+
+* Parc.<1 → “NÚMERO DE PARCELAS INFERIOR AO MÍNIMO PERMITIDO.”
+* Parc.>15 → “VOCÊ NÃO TEM PERMISSÃO PARA SIMULAÇÕES ACIMA DE 15 PARCELAS. PARA SIMULAÇÕES SUPERIORES A 15 PARCELAS, CONSULTE MIGUEIS.”
+* Juros < mín →
+
+  * 1 parcela: “CÁLCULO DE 1 PARCELA, A PORCENTAGEM MÍNIMA PERMITIDA É DE X,XX %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.”
+  * N parcelas: “CÁLCULOS DE N PARCELAS, A PORCENTAGEM MÍNIMA PERMITIDA É DE X,XX %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.”
+* Juros > máx → mesma estrutura, trocando MÍNIMA → MÁXIMA.
+
+---
+
+## 4. Configurações
+
+* **Nome do usuário** — texto livre; salvo em SharedPreferences; exibido no PDF.
+* **Dia fixo de vencimento** — inteiro 1-31 ou “usar data preenchida”.
+* **Índice IGPM anual (%)** — divide-se por 12; soma à Taxa de Juros mensal.
+* **Editar tabela de mínimos/máximos** — **somente administrador**
+
+  * Login: usuário **Migueis**, senha **Laila\@10042009**.
+
+---
+
+## 5. Exportar PDF
+
+* Botão **EXPORTAR PDF** visível após cálculo válido.
+* Conteúdo:
+
+  * Cabeçalho “ME Empreendimentos” + nome do usuário.
+  * Valor do empréstimo, taxa efetiva usada, data da simulação.
+  * Tabela: nº parcela | data de vencimento | valor (com pró-rata e IGPM).
+* Salva em **Downloads** e oferece compartilhar.
+
+---
+
+## 6. Testes obrigatórios
+
+* Unit test da função `calcularParcela(valor, juros, n, diasExtra, igpmMensal)`.
+* Instrumented test: login admin, alteração de limites, geração de PDF.
+
+---
+
+## 7. Formato da resposta
+
+1. **Visão geral** (≤ 150 palavras)
+2. **Estrutura de pastas** do projeto
+3. **Principais trechos de código** (Kotlin ou Dart)
+4. **README resumido**: como buildar APK, permissões para PDF, passos de teste
+5. **Sugestões de testes futuros** (opcional)
+
+---
+
+### **Prompt negativo**
+
+> **Não implemente** autenticação extra, bancos de dados complexos, gráficos, propaganda, dark-mode ou qualquer recurso não descrito acima.

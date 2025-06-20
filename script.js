@@ -5,39 +5,59 @@
 
 class SimuladorEmprestimos {
     constructor() {
-        // Tabela de limites de juros por número de parcelas
+        // Nova tabela de limites de juros conforme prompt
         this.limitesJuros = {
-            1: { min: 15.00, max: 30.00 },
-            2: { min: 15.00, max: 30.00 },
+            1: { min: 15.00, max: 100.00 },
+            2: { min: 15.00, max: 100.00 },
             3: { min: 15.00, max: 30.00 },
             4: { min: 15.00, max: 24.00 },
-            5: { min: 15.00, max: 24.00 },
-            6: { min: 15.00, max: 24.00 },
-            7: { min: 15.00, max: 24.00 },
-            8: { min: 15.00, max: 24.00 },
-            9: { min: 15.00, max: 24.00 },
-            10: { min: 15.00, max: 24.00 },
-            11: { min: 15.00, max: 24.00 },
-            12: { min: 15.00, max: 24.00 },
-            13: { min: 15.00, max: 24.00 },
-            14: { min: 15.00, max: 24.00 },
-            15: { min: 15.00, max: 24.00 }
+            5: { min: 15.00, max: 22.00 },
+            6: { min: 15.00, max: 20.00 },
+            7: { min: 14.75, max: 18.00 },
+            8: { min: 14.36, max: 17.00 },
+            9: { min: 13.92, max: 16.00 },
+            10: { min: 13.47, max: 15.00 },
+            11: { min: 13.03, max: 14.00 },
+            12: { min: 12.60, max: 13.00 },
+            13: { min: 12.19, max: 12.60 },
+            14: { min: 11.80, max: 12.19 },
+            15: { min: 11.43, max: 11.80 }
         };
 
+        // Configurações padrão (localStorage)
+        this.configuracoes = this.carregarConfiguracoes();
+        
         this.initializeElements();
         this.setupEventListeners();
         this.focusInitialField();
+    }
+
+    carregarConfiguracoes() {
+        const config = localStorage.getItem('simulador_config');
+        return config ? JSON.parse(config) : {
+            nomeUsuario: '',
+            diaFixoVencimento: null,
+            igpmAnual: 0.0,
+            isAdmin: false
+        };
+    }
+
+    salvarConfiguracoes() {
+        localStorage.setItem('simulador_config', JSON.stringify(this.configuracoes));
     }
 
     initializeElements() {
         this.valorEmprestimoField = document.getElementById('valorEmprestimo');
         this.numeroParcelasField = document.getElementById('numeroParcelas');
         this.taxaJurosField = document.getElementById('taxaJuros');
+        this.dataInicialField = document.getElementById('dataInicial');
         this.calcularBtn = document.getElementById('calcularBtn');
         this.resultCard = document.getElementById('resultCard');
         this.resultValue = document.getElementById('resultValue');
         this.errorSection = document.getElementById('errorSection');
         this.errorMessage = document.getElementById('errorMessage');
+        this.exportPdfBtn = document.getElementById('exportPdfBtn');
+        this.configBtn = document.getElementById('configBtn');
     }
 
     setupEventListeners() {
