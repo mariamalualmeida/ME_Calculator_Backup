@@ -130,6 +130,8 @@ SimuladorEmprestimos/
 - June 20, 2025: Fixed admin free mode validation - red borders now respect disabled rules configuration
 - June 20, 2025: Unified PDF export button styling to match main calculate button for visual consistency
 - June 20, 2025: Corrected calculation logic - method "distribuir" now only applies to multiple parcels, avoiding compound interest on single parcels
+- June 20, 2025: Final system optimization - removed date icon, fixed admin mode red borders, cleaned CSS, updated icons with modern R$ design
+- June 20, 2025: Comprehensive bug fixes - method toggle logic, PDF button styling, manifest cache update, removed duplicate files
 
 ## User Preferences
 
