@@ -627,6 +627,9 @@ class SimuladorEmprestimos {
         const panel = document.getElementById('adminPanel');
         const table = document.getElementById('limitsTable');
         
+        // Carregar configuração de desabilitar regras
+        document.getElementById('desabilitarRegras').checked = this.configuracoes.desabilitarRegras || false;
+        
         let html = '<div class="limits-table">';
         for (let parcelas = 1; parcelas <= 15; parcelas++) {
             const limite = this.configuracoes.limitesPersonalizados?.[parcelas] || this.limitesJuros[parcelas];
@@ -638,7 +641,7 @@ class SimuladorEmprestimos {
                 </div>
             `;
         }
-        html += '<button onclick="simulator.salvarLimitesAdmin()" style="margin-top: 16px; padding: 8px 16px; background: #6750a4; color: white; border: none; border-radius: 4px; cursor: pointer;">Salvar Limites</button>';
+        html += '<button onclick="simulador.salvarLimitesAdmin()" style="margin-top: 16px; padding: 8px 16px; background: #6750a4; color: white; border: none; border-radius: 4px; cursor: pointer;">Salvar Limites</button>';
         html += '</div>';
         
         table.innerHTML = html;

@@ -110,6 +110,9 @@ SimuladorEmprestimos/
 - June 20, 2025: Updated PDF generation to use exactly 2 decimal places formatting (R$ 1.234,56)
 - June 20, 2025: Created new golden dollar sign ($) icon replacing lion design for clearer financial representation
 - June 20, 2025: Applied same enhancements to Android version with name/CPF fields and CPF auto-formatting
+- June 20, 2025: Implemented administrative rule disabling system - admin can disable all validation limits via checkbox
+- June 20, 2025: Standardized input field styling for name/CPF fields to match other form elements consistently
+- June 20, 2025: Added "modo livre" functionality allowing unlimited parcels and interest rates for authenticated administrators
 
 ## User Preferences
 

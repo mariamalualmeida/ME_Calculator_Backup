@@ -107,7 +107,9 @@ body {
     align-items: center;
 }
 
-.input-field {
+.input-field,
+#nomeCliente,
+#cpfCliente {
     width: 100%;
     padding: 16px;
     border: 2px solid #79747e;
@@ -116,9 +118,13 @@ body {
     background: #fef7ff;
     transition: all 0.2s ease;
     outline: none;
+    min-height: 24px;
+    box-sizing: border-box;
 }
 
-.input-field:focus {
+.input-field:focus,
+#nomeCliente:focus,
+#cpfCliente:focus {
     border-color: var(--primary-color);
     background: white;
 }
