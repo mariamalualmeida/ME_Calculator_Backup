@@ -114,6 +114,10 @@ class SimuladorEmprestimos {
             this.fazerLoginAdmin();
         });
 
+        document.getElementById('saveCredentialsBtn').addEventListener('click', () => {
+            this.salvarCredenciaisAdmin();
+        });
+
         // Enter para calcular
         [this.valorEmprestimoField, this.numeroParcelasField, this.taxaJurosField, this.dataInicialField].forEach(field => {
             field.addEventListener('keypress', (e) => {
@@ -350,7 +354,7 @@ class SimuladorEmprestimos {
     abrirConfiguracoes() {
         // Carregar valores atuais
         document.getElementById('nomeUsuario').value = this.configuracoes.nomeUsuario || '';
-        document.getElementById('diaVencimento').value = this.configuracoes.diaFixoVencimento || '';
+        document.getElementById('themeMode').value = this.configuracoes.themeMode || 'light';
         document.getElementById('igpmAnual').value = this.configuracoes.igpmAnual || '';
         
         // Mostrar modal
@@ -370,9 +374,10 @@ class SimuladorEmprestimos {
 
     salvarConfiguracoesModal() {
         this.configuracoes.nomeUsuario = document.getElementById('nomeUsuario').value;
-        this.configuracoes.diaFixoVencimento = document.getElementById('diaVencimento').value || null;
+        this.configuracoes.themeMode = document.getElementById('themeMode').value;
         this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
         
+        this.aplicarTema(this.configuracoes.themeMode);
         this.salvarConfiguracoes();
         this.fecharModal();
         alert('Configurações salvas com sucesso!');
@@ -382,7 +387,7 @@ class SimuladorEmprestimos {
         const usuario = document.getElementById('adminUser').value;
         const senha = document.getElementById('adminPass').value;
         
-        if (usuario === 'Migueis' && senha === 'Laila@10042009') {
+        if (usuario === this.configuracoes.adminUser && senha === this.configuracoes.adminPassword) {
             this.configuracoes.isAdmin = true;
             this.mostrarPainelAdmin();
             document.getElementById('adminUser').value = '';
@@ -458,14 +463,18 @@ class SimuladorEmprestimos {
         
         conteudo += `TABELA DE PARCELAS:\n`;
         
-        // Calcular datas de vencimento
-        const dataBase = this.parseData(this.dataInicialField.value) || new Date();
-        const diaVencimento = this.configuracoes.diaFixoVencimento || dataBase.getDate();
+        // Calcular datas de vencimento - começar 30 dias após simulação ou usar data preenchida
+        let dataBase;
+        if (this.dataInicialField.value) {
+            dataBase = this.parseData(this.dataInicialField.value);
+        } else {
+            dataBase = new Date();
+            dataBase.setDate(dataBase.getDate() + 30); // 30 dias após simulação
+        }
         
         for (let i = 1; i <= nParcelas; i++) {
             const dataVencimento = new Date(dataBase);
-            dataVencimento.setMonth(dataVencimento.getMonth() + i);
-            dataVencimento.setDate(diaVencimento);
+            dataVencimento.setMonth(dataVencimento.getMonth() + i - 1);
             
             conteudo += `${i.toString().padStart(2, '0')}  ${dataVencimento.toLocaleDateString('pt-BR')}  R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}\n`;
         }
@@ -482,6 +491,29 @@ class SimuladorEmprestimos {
         window.URL.revokeObjectURL(url);
         
         alert('Relatório exportado para Downloads!');
+    }
+
+    aplicarTema(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+    }
+
+    salvarCredenciaisAdmin() {
+        const novoUsuario = document.getElementById('newAdminUser').value;
+        const novaSenha = document.getElementById('newAdminPass').value;
+        
+        if (!novoUsuario || !novaSenha) {
+            alert('Por favor, preencha todos os campos');
+            return;
+        }
+        
+        this.configuracoes.adminUser = novoUsuario;
+        this.configuracoes.adminPassword = novaSenha;
+        this.salvarConfiguracoes();
+        
+        document.getElementById('newAdminUser').value = '';
+        document.getElementById('newAdminPass').value = '';
+        
+        alert('Credenciais alteradas com sucesso!');
     }
 }
 
