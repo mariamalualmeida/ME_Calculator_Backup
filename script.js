@@ -859,18 +859,42 @@ class SimuladorEmprestimos {
             
             // Mostrar informações das parcelas conforme o tipo de cálculo
             if (resultadoCalculo.diasExtra > 0) {
-                doc.text(`1ª parcela: R$ ${resultadoCalculo.primeiraParcela.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
-                yInicial += 12;
-                doc.text(`Demais ${nParcelas - 1} parcelas: R$ ${resultadoCalculo.parcelaNormal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
-                yInicial += 12;
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(12);
-                doc.text(`(Dias extras: ${resultadoCalculo.diasExtra} | Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
-                yInicial += 12;
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(14);
+                const metodo = this.obterMetodoDiasExtras();
+                
+                if (metodo === 'distribuir') {
+                    // Método distribuir - todas as parcelas iguais
+                    const textoParcel = nParcelas === 1 ? 'parcela' : 'parcelas';
+                    doc.text(`${nParcelas} ${textoParcel} de: R$ ${resultadoCalculo.parcelaNormal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
+                    yInicial += 12;
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(12);
+                    doc.text(`(Juros de dias extras distribuídos)`, 20, yInicial);
+                    yInicial += 8;
+                    doc.text(`(Dias extras: ${resultadoCalculo.diasExtra} | Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
+                    yInicial += 12;
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
+                } else {
+                    // Método primeira parcela maior
+                    if (nParcelas === 1) {
+                        doc.text(`Valor da parcela: R$ ${resultadoCalculo.primeiraParcela.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
+                        yInicial += 12;
+                    } else {
+                        doc.text(`1ª parcela: R$ ${resultadoCalculo.primeiraParcela.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
+                        yInicial += 12;
+                        doc.text(`Demais ${nParcelas - 1} parcelas: R$ ${resultadoCalculo.parcelaNormal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
+                        yInicial += 12;
+                    }
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(12);
+                    doc.text(`(Dias extras: ${resultadoCalculo.diasExtra} | Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
+                    yInicial += 12;
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
+                }
             } else {
-                doc.text(`Valor da prestação: R$ ${resultadoCalculo.parcelaNormal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
+                const textoParcel = nParcelas === 1 ? 'parcela' : 'parcelas';
+                doc.text(`${nParcelas} ${textoParcel} de: R$ ${resultadoCalculo.parcelaNormal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
                 yInicial += 12;
             }
             yInicial += 8;
@@ -906,10 +930,21 @@ class SimuladorEmprestimos {
                 const dataVencimento = new Date(dataBase);
                 dataVencimento.setMonth(dataVencimento.getMonth() + i - 1);
                 
-                // Definir valor da parcela (primeira maior ou normal)
+                // Definir valor da parcela conforme método escolhido
                 let valorParcela;
-                if (i === 1 && resultadoCalculo.diasExtra > 0) {
-                    valorParcela = resultadoCalculo.primeiraParcela;
+                if (resultadoCalculo.diasExtra > 0) {
+                    const metodo = this.obterMetodoDiasExtras();
+                    if (metodo === 'distribuir') {
+                        // Método distribuir - todas as parcelas iguais
+                        valorParcela = resultadoCalculo.parcelaNormal;
+                    } else {
+                        // Método primeira parcela maior
+                        if (i === 1) {
+                            valorParcela = resultadoCalculo.primeiraParcela;
+                        } else {
+                            valorParcela = resultadoCalculo.parcelaNormal;
+                        }
+                    }
                 } else {
                     valorParcela = resultadoCalculo.parcelaNormal;
                 }
