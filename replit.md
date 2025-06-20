@@ -113,6 +113,10 @@ SimuladorEmprestimos/
 - June 20, 2025: Implemented administrative rule disabling system - admin can disable all validation limits via checkbox
 - June 20, 2025: Standardized input field styling for name/CPF fields to match other form elements consistently
 - June 20, 2025: Added "modo livre" functionality allowing unlimited parcels and interest rates for authenticated administrators
+- June 20, 2025: Implemented "primeira parcela maior" method - pro-rata interest only affects first installment instead of being distributed across all installments
+- June 20, 2025: Updated calculation logic in both web and Android versions to show first installment amount separately when extra days apply
+- June 20, 2025: Enhanced PDF reports to display first installment value separately and include extra days/interest information when applicable
+- June 20, 2025: Modified result display to clearly show "1ª parcela: R$ X,XX" and "Demais N parcelas: R$ Y,YY" when pro-rata applies
 
 ## User Preferences
 
