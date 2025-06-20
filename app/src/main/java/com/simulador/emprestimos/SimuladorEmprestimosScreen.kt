@@ -255,7 +255,6 @@ fun SimuladorEmprestimosScreen(
                         },
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("DD/MM/AAAA") },
-                        trailingIcon = { Text("📅") },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Done
