@@ -380,28 +380,7 @@ body {
     border-color: var(--border-color) !important;
 }
 
-/* Export PDF Button */
-.export-pdf-btn {
-    background: #ff9800;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 16px;
-    transition: all 0.2s ease;
-    justify-content: center;
-}
-
-.export-pdf-btn:hover {
-    background: #f57c00;
-    transform: translateY(-1px);
-}
+/* Export PDF Button - removido pois agora usa calculate-button */
 
 /* Modal Styles */
 .modal {

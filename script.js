@@ -473,8 +473,21 @@ class SimuladorEmprestimos {
         const validacao = this.validarCampos(valor, nParcelas, juros);
         if (!validacao.sucesso) {
             this.mostrarErro(validacao.mensagem);
+            // Aplicar borda vermelha apenas se não estiver em modo livre
+            if (!(this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin)) {
+                if (validacao.mensagem.includes('PARCELAS')) {
+                    this.numeroParcelasField.style.borderColor = '#f44336';
+                }
+                if (validacao.mensagem.includes('PORCENTAGEM')) {
+                    this.taxaJurosField.style.borderColor = '#f44336';
+                }
+            }
             return;
         }
+        
+        // Limpar bordas vermelhas se validação passou
+        this.numeroParcelasField.style.borderColor = '';
+        this.taxaJurosField.style.borderColor = '';
 
         // Cálculo com data e pró-rata
         const dataSimulacao = new Date();
