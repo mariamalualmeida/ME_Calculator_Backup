@@ -125,6 +125,11 @@ SimuladorEmprestimos/
 - June 20, 2025: Implemented user choice toggle for extra days calculation - "primeira parcela maior" vs "distribuir em todas as parcelas"
 - June 20, 2025: Added dynamic UI elements that appear only when a date is entered, allowing method selection
 - June 20, 2025: Updated both web and Android versions with consistent calculation logic and display corrections
+- June 20, 2025: Implemented all UX improvements - method toggle only for 2+ parcels, auto-hide on field changes, fixed singular/plural text
+- June 20, 2025: Redesigned app icon with modern R$ symbol in blue gradient, updated PWA manifest for proper installation
+- June 20, 2025: Fixed admin free mode validation - red borders now respect disabled rules configuration
+- June 20, 2025: Unified PDF export button styling to match main calculate button for visual consistency
+- June 20, 2025: Corrected calculation logic - method "distribuir" now only applies to multiple parcels, avoiding compound interest on single parcels
 
 ## User Preferences
 

@@ -21,8 +21,8 @@
       "purpose": "any"
     },
     {
-      "src": "lion_icon.svg",
-      "sizes": "any",
+      "src": "icon-512.svg",
+      "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "maskable"
     }
