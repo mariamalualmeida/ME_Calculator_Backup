@@ -61,6 +61,8 @@ class SimuladorEmprestimos {
         this.numeroParcelasField = document.getElementById('numeroParcelas');
         this.taxaJurosField = document.getElementById('taxaJuros');
         this.dataInicialField = document.getElementById('dataInicial');
+        this.nomeClienteField = document.getElementById('nomeCliente');
+        this.cpfClienteField = document.getElementById('cpfCliente');
         this.calcularBtn = document.getElementById('calcularBtn');
         this.resultCard = document.getElementById('resultCard');
         this.resultValue = document.getElementById('resultValue');
@@ -149,6 +151,11 @@ class SimuladorEmprestimos {
 
         this.numeroParcelasField.addEventListener('input', () => {
             this.limparResultado();
+        });
+
+        // Formatação de CPF
+        this.cpfClienteField.addEventListener('input', (e) => {
+            this.formatarCpf(e.target);
         });
 
         // Botões
@@ -359,6 +366,28 @@ class SimuladorEmprestimos {
         input.title = '';
     }
 
+    formatarCpf(input) {
+        let valor = input.value.replace(/\D/g, '');
+        
+        // Limitar a 11 dígitos
+        valor = valor.substring(0, 11);
+        
+        if (valor.length === 0) {
+            input.value = '';
+            return;
+        }
+        
+        if (valor.length <= 3) {
+            input.value = valor;
+        } else if (valor.length <= 6) {
+            input.value = valor.substring(0, 3) + '.' + valor.substring(3);
+        } else if (valor.length <= 9) {
+            input.value = valor.substring(0, 3) + '.' + valor.substring(3, 6) + '.' + valor.substring(6);
+        } else {
+            input.value = valor.substring(0, 3) + '.' + valor.substring(3, 6) + '.' + valor.substring(6, 9) + '-' + valor.substring(9);
+        }
+    }
+
     obterValorNumerico(valorFormatado) {
         if (!valorFormatado) return 0;
         return parseFloat(valorFormatado.replace(/\./g, '').replace(',', '.')) || 0;
@@ -525,6 +554,7 @@ class SimuladorEmprestimos {
         document.getElementById('themeMode').value = this.configuracoes.themeMode || 'light';
         document.getElementById('colorTheme').value = this.configuracoes.colorTheme || 'default';
         document.getElementById('igpmAnual').value = this.configuracoes.igpmAnual || '';
+        document.getElementById('mostrarJurosRelatorio').checked = this.configuracoes.mostrarJurosRelatorio || false;
         
         // Mostrar modal
         document.getElementById('configModal').style.display = 'flex';
@@ -546,6 +576,7 @@ class SimuladorEmprestimos {
         this.configuracoes.themeMode = document.getElementById('themeMode').value;
         this.configuracoes.colorTheme = document.getElementById('colorTheme').value;
         this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
+        this.configuracoes.mostrarJurosRelatorio = document.getElementById('mostrarJurosRelatorio').checked;
         
         this.aplicarTema(this.configuracoes.themeMode);
         this.aplicarPaletaCores(this.configuracoes.colorTheme);
