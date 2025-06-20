@@ -1,0 +1,32 @@
+=== ME EMPREENDIMENTOS - Simulador de Empréstimos ===
+
+📱 Arquivo APK: app-debug.apk
+📅 Data de build: Fri Jun 20 05:23:29 PM UTC 2025
+🏢 Empresa: ME EMPREENDIMENTOS
+📋 Versão: 1.0.0
+🎯 Plataforma: Android 7.0+ (API 24+)
+📐 Arquitetura: Universal (arm64-v8a, armeabi-v7a, x86, x86_64)
+
+🔧 Funcionalidades incluídas:
+✅ Simulador de empréstimos completo
+✅ 8 paletas de cores personalizáveis
+✅ Tema claro/escuro dinâmico
+✅ Validações em português
+✅ Área administrativa
+✅ Exportação de PDF
+✅ Configurações avançadas
+✅ Interface Material Design 3
+
+📋 Instruções de instalação:
+1. Baixe o arquivo app-debug.apk
+2. No Android, vá em Configurações > Segurança
+3. Ative "Fontes desconhecidas" ou "Instalar apps desconhecidos"
+4. Abra o arquivo APK baixado
+5. Toque em "Instalar"
+
+⚠️ Nota: Este é um APK de debug para testes.
+Para produção, use um APK assinado com certificado oficial.
+
+🌐 Alternativa PWA:
+Acesse pelo navegador e adicione à tela inicial para
+experiência similar a app nativo.
