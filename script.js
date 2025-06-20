@@ -586,6 +586,15 @@ class SimuladorEmprestimos {
     aplicarTema(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         document.body.setAttribute('data-theme', theme);
+        
+        // Salvar a preferência
+        localStorage.setItem('app-theme', theme);
+        
+        // Atualizar o select se necessário
+        const themeSelect = document.getElementById('themeMode');
+        if (themeSelect && themeSelect.value !== theme) {
+            themeSelect.value = theme;
+        }
     }
 
     salvarCredenciaisAdmin() {
