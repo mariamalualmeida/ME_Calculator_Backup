@@ -75,10 +75,9 @@ class SimuladorEmprestimos {
         });
         
         this.valorEmprestimoField.addEventListener('focus', (e) => {
-            if (e.target.value === '' || e.target.value === '0,00' || e.target.placeholder === e.target.value) {
-                e.target.value = '';
-                e.target.placeholder = '';
-            }
+            // Limpar completamente o campo ao focar
+            e.target.value = '';
+            e.target.placeholder = '';
         });
         
         this.valorEmprestimoField.addEventListener('blur', (e) => {
@@ -184,12 +183,15 @@ class SimuladorEmprestimos {
 
     formatarMoeda(input) {
         let valor = input.value.replace(/\D/g, '');
-        if (valor === '') {
+        if (valor === '' || valor === '0') {
             input.value = '';
             return;
         }
 
-        // Não adicionar zeros à esquerda desnecessários
+        // Remover zeros à esquerda desnecessários, mas manter pelo menos um dígito
+        valor = valor.replace(/^0+/, '') || '0';
+
+        // Formatação baseada no comprimento
         if (valor.length === 1) {
             input.value = `0,0${valor}`;
             return;
