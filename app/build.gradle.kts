@@ -72,6 +72,12 @@ dependencies {
     // Icons
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
     
+    // PDF generation
+    implementation("com.itextpdf:itext7-core:7.2.5")
+    
+    // Preferences
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:4.11.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

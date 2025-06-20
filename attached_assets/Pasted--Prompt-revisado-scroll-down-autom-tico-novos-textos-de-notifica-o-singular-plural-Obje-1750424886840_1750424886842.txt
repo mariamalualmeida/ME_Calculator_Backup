@@ -1,0 +1,88 @@
+### Prompt revisado (scroll-down automático, novos textos de notificação, singular/plural)
+
+> **Objetivo**
+> Desenvolva um aplicativo **Android nativo (Kotlin ou Flutter — escolha o mais produtivo)** com cabeçalho **“ME Empreendimentos”** que execute o simulador de empréstimos descrito abaixo.
+>
+> ---
+>
+> #### 1. Entradas, cálculo e rolagem automática
+>
+> * **Valor do empréstimo** (moeda)
+> * **Número de parcelas** — inteiro **1 a 15**
+> * **Taxa de juros (%)** — decimal, 2 casas
+> * Botão **CALCULAR**
+>
+>   * Executa `Prestação = Valor × (1 + Juros)ᴺ ÷ N`.
+>   * **Após calcular, a tela deve rolar automaticamente até o final** (ex.: `scrollController.animateTo(scrollController.position.maxScrollExtent, …)`).
+> * Campo **Prestação** é somente-leitura; limpa se qualquer entrada ficar vazia.
+>
+> #### 2. Validação contra tabela de limites
+>
+> | Parc. | Mín % |  Máx % |
+> | ----: | ----: | -----: |
+> |     1 | 15,00 | 100,00 |
+> |     2 | 15,00 | 100,00 |
+> |     3 | 15,00 |  30,00 |
+> |     4 | 15,00 |  24,00 |
+> |     5 | 15,00 |  22,00 |
+> |     6 | 15,00 |  20,00 |
+> |     7 | 14,75 |  18,00 |
+> |     8 | 14,36 |  17,00 |
+> |     9 | 13,92 |  16,00 |
+> |    10 | 13,47 |  15,00 |
+> |    11 | 13,03 |  14,00 |
+> |    12 | 12,60 |  13,00 |
+> |    13 | 12,19 |  12,60 |
+> |    14 | 11,80 |  12,19 |
+> |    15 | 11,43 |  11,80 |
+>
+> **Mensagens (caixa alta)**
+>
+> * Parc.<1 → “NÚMERO DE PARCELAS INFERIOR AO MÍNIMO PERMITIDO.”
+> * Parc.>15 → “VOCÊ NÃO TEM PERMISSÃO PARA SIMULAÇÕES ACIMA DE 15 PARCELAS. PARA SIMULAÇÕES SUPERIORES A 15 PARCELAS, CONSULTE MIGUEIS.”
+> * Juros < mín → **Singular:**
+>
+>   * “CÁLCULO DE 1 PARCELA, A PORCENTAGEM MÍNIMA PERMITIDA É DE X,XX %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.”
+>     **Plural:**
+>   * “CÁLCULOS DE N PARCELAS, A PORCENTAGEM MÍNIMA PERMITIDA É DE X,XX %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.”
+> * Juros > máx → idêntico ao modelo acima, trocando **MÍNIMA** por **MÁXIMA**.
+>
+> #### 3. Relatório PDF
+>
+> * Botão **EXPORTAR PDF** gera arquivo contendo:
+>
+>   * Cabeçalho “ME Empreendimentos” + **Nome do usuário** (item 4)
+>   * Valor do empréstimo
+>   * Tabela: nº de parcela | data de vencimento (dia 5 de cada mês) | valor da parcela.
+> * Salva em Downloads e oferece compartilhar.
+>
+> #### 4. Configurações
+>
+> * **Nome do usuário** — salvo em SharedPreferences, exibido no PDF.
+> * **Editar tabela de limites** — somente administrador
+>
+>   * Login: usuário **Migueis**, senha **Laila\@10042009**
+>   * Tela CRUD simples para as 15 faixas (validação de %).
+>
+> #### 5. UX
+>
+> * Material 3, tema claro; 3 TextFields, botão, card resultado.
+> * Teclado numérico adequado; foco inicial no Valor.
+> * Mensagens via Snackbar/Toast.
+>
+> #### 6. Testes
+>
+> * Unit test `calcularParcela(valor, juros, n)`
+> * Instrumented test para login admin e alteração de limites.
+>
+> ---
+>
+> **Formato de resposta**
+>
+> 1. Visão geral (≤ 150 palavras)
+> 2. Estrutura de pastas
+> 3. Principais trechos de código (Kotlin ou Dart)
+> 4. README resumido: build APK, geração de PDF
+> 5. Sugestões de testes futuros (opcional)
+>
+> **Não acrescente explicações extras** além do solicitado.

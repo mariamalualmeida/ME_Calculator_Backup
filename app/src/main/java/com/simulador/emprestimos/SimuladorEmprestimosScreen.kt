@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,42 +32,69 @@ fun SimuladorEmprestimosScreen(
     val uiState by viewModel.uiState.collectAsState()
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+    }
+
+    // Scroll automático após cálculo
+    LaunchedEffect(uiState.shouldScrollToBottom) {
+        if (uiState.shouldScrollToBottom) {
+            coroutineScope.launch {
+                scrollState.animateScrollTo(scrollState.maxValue)
+                viewModel.onScrollCompleted()
+            }
+        }
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
+        // Header with Settings button
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
         ) {
-            Text(
-                text = stringResource(R.string.empresa_nome),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Spacer(modifier = Modifier.width(48.dp)) // Balance for icon
             
-            Spacer(modifier = Modifier.height(4.dp))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = stringResource(R.string.empresa_nome),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                Text(
+                    text = stringResource(R.string.simulador_titulo),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
             
-            Text(
-                text = stringResource(R.string.simulador_titulo),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onBackground
-            )
+            IconButton(
+                onClick = { /* TODO: Navigate to settings */ }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Configurações"
+                )
+            }
         }
 
         // Card com inputs
