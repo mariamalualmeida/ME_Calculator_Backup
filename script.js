@@ -92,6 +92,26 @@ class SimuladorEmprestimos {
             this.formatarPercentual(e.target);
             this.limparResultado();
         });
+        
+        this.taxaJurosField.addEventListener('keydown', (e) => {
+            // Permitir navegação, seleção e funcionalidades básicas
+            if (['ArrowLeft', 'ArrowRight', 'Home', 'End', 'Tab', 'Shift', 'Ctrl', 'Alt'].includes(e.key)) {
+                return;
+            }
+            
+            // Permitir Backspace e Delete
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                return;
+            }
+            
+            // Permitir números e vírgula
+            if (/[\d,]/.test(e.key)) {
+                return;
+            }
+            
+            // Bloquear tudo o resto
+            e.preventDefault();
+        });
 
         this.dataInicialField.addEventListener('input', (e) => {
             this.formatarData(e.target);
@@ -231,6 +251,12 @@ class SimuladorEmprestimos {
     formatarPercentual(input) {
         let valor = input.value.replace(/[^\d,]/g, '');
         
+        // Se valor está vazio, deixar vazio
+        if (valor === '') {
+            input.value = '';
+            return;
+        }
+        
         // Permitir apenas uma vírgula
         const virgulas = valor.split(',');
         if (virgulas.length > 2) {
@@ -242,7 +268,7 @@ class SimuladorEmprestimos {
             valor = virgulas[0] + ',' + virgulas[1].substring(0, 2);
         }
         
-        input.value = valor + '%';
+        input.value = valor;
     }
 
     formatarData(input) {
@@ -272,7 +298,8 @@ class SimuladorEmprestimos {
 
     obterPercentualNumerico(percentualFormatado) {
         if (!percentualFormatado) return 0;
-        return parseFloat(percentualFormatado.replace(',', '.')) || 0;
+        const valor = percentualFormatado.replace(/[^\d,]/g, '').replace(',', '.');
+        return parseFloat(valor) || 0;
     }
 
     parseData(dataStr) {

@@ -144,7 +144,8 @@ class SimuladorViewModel : ViewModel() {
     }
     
     private fun parsePercentual(percentual: String): Double {
-        return percentual.replace(",", ".").replace("[^0-9.]".toRegex(), "").toDoubleOrNull() ?: 0.0
+        val valor = percentual.replace(Regex("[^\\d,]"), "").replace(",", ".")
+        return valor.toDoubleOrNull() ?: 0.0
     }
     
     private fun validarCampos(valor: Double, nParcelas: Int, juros: Double): Pair<Boolean, String?> {

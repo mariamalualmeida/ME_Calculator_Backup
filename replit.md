@@ -99,6 +99,9 @@ SimuladorEmprestimos/
 - June 20, 2025: Added Progressive Web App (PWA) support with manifest.json for Android installation capability
 - June 20, 2025: Created complete Android project structure with Jetpack Compose for future native development
 - June 20, 2025: Implemented PWA installation process as primary method for mobile deployment
+- June 20, 2025: Fixed percentage field input issues - now supports comma input, deletion, and proper formatting across all versions
+- June 20, 2025: Enhanced PDF reports - removed "Cliente:" label when empty, fixed zero values, increased font sizes, centralized table text
+- June 20, 2025: Updated app icon to golden lion design with transparent background for professional appearance
 
 ## User Preferences
 

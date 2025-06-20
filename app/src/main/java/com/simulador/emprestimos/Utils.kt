@@ -23,6 +23,9 @@ fun formatarMoeda(input: String): String {
 fun formatarPercentual(input: String): String {
     val valor = input.replace(Regex("[^\\d,]"), "")
     
+    // Se valor está vazio, retornar vazio
+    if (valor.isEmpty()) return ""
+    
     // Permitir apenas uma vírgula
     val virgulas = valor.split(",")
     val valorFinal = if (virgulas.size > 2) {

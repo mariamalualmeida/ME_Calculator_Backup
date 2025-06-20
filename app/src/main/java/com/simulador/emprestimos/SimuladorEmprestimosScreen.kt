@@ -217,7 +217,8 @@ fun SimuladorEmprestimosScreen(
                     OutlinedTextField(
                         value = uiState.taxaJuros,
                         onValueChange = { value ->
-                            viewModel.updateTaxaJuros(formatarPercentual(value))
+                            val valorFormatado = formatarPercentual(value)
+                            viewModel.updateTaxaJuros(valorFormatado)
                         },
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("0,00") },
