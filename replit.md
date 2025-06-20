@@ -106,6 +106,8 @@ SimuladorEmprestimos/
 - June 20, 2025: Complete migration to Android native application with Kotlin and Jetpack Compose
 - June 20, 2025: Added comprehensive test suite and README documentation
 - June 20, 2025: Updated app branding to "ME EMPREENDIMENTOS" with company name prominently displayed above "Simulador de Empréstimos"
+- June 20, 2025: Implemented prompt revisado completo - nova tabela de limites dinâmicos, scroll automático, exportação PDF com tabela de vencimentos, configurações de usuário e área administrativa
+- June 20, 2025: Corrigido tipo de teclado para campos monetários (Decimal) e ajustado datas PDF para começar 30 dias após simulação
 
 ## User Preferences
 

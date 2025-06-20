@@ -1,7 +1,8 @@
-modules = ["nodejs-20", "python-3.11", "java"]
+modules = ["nodejs-20", "python-3.11", "java", "java-17"]
 
 [nix]
 channel = "stable-24_05"
+packages = ["openjdk17"]
 
 [workflows]
 runButton = "Project"
