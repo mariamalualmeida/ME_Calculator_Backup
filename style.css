@@ -640,9 +640,9 @@ body {
 }
 
 .config-btn:hover {
-    background: rgba(255, 255, 255, 1) !important;
+    background: rgba(255, 255, 255, 1);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.2) !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
 }
 
 .config-btn:hover svg {
@@ -650,30 +650,30 @@ body {
 }
 
 [data-theme="dark"] .config-btn {
-    background: rgba(30, 30, 30, 0.95) !important;
-    color: #d0bcff !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+    background: rgba(30, 30, 30, 0.95);
+    color: #d0bcff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 [data-theme="dark"] .config-btn:hover {
-    background: rgba(30, 30, 30, 1) !important;
+    background: rgba(30, 30, 30, 1);
 }
 
 /* Garantir visibilidade da opção de tema */
 #themeMode {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    height: auto !important;
-    width: 100% !important;
-    background: #fef7ff !important;
-    border: 2px solid #6750a4 !important;
-    color: #1c1b1f !important;
-    font-weight: 500 !important;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    height: auto;
+    width: 100%;
+    background: #fef7ff;
+    border: 2px solid #6750a4;
+    color: #1c1b1f;
+    font-weight: 500;
 }
 
 [data-theme="dark"] #themeMode {
-    background: var(--input-bg) !important;
-    color: var(--text-primary) !important;
-    border-color: #d0bcff !important;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    border-color: #d0bcff;
 }

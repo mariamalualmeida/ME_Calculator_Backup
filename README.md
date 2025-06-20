@@ -1,8 +1,6 @@
-# Simulador de Empréstimos
+# ME EMPREENDIMENTOS - Simulador de Empréstimos
 
-## Visão Geral
-
-Aplicativo Android nativo em Kotlin da **ME EMPREENDIMENTOS** que simula cálculos de empréstimos com validação de limites dinâmicos de juros. Implementa scroll automático após cálculo, exportação PDF com tabela de vencimentos, configurações de usuário e área administrativa para edição de limites. Interface Material Design 3 com mensagens contextuais singular/plural.
+Aplicação web completa para simulação de empréstimos com funcionalidades avançadas de cálculo, gerenciamento de configurações e área administrativa.
 
 ## Funcionalidades
 
@@ -22,201 +20,152 @@ Aplicativo Android nativo em Kotlin da **ME EMPREENDIMENTOS** que simula cálcul
 ### Exportação PDF
 - **Relatório completo**: Cabeçalho ME EMPREENDIMENTOS + nome do usuário
 - **Tabela de parcelas**: Nº, data vencimento (dia 5), valor
-- **Salvar em Downloads**: Compartilhamento automático disponível
+- **Download automático**: Arquivo salvo diretamente
 
-### Configurações
-- **Nome do usuário**: Salvo em DataStore Preferences
-- **Login administrativo**: Usuário "Migueis", senha "Laila@10042009"
-- **Edição de limites**: CRUD para as 15 faixas de juros (admin apenas)
+### Configurações Avançadas
+- **Nome do usuário**: Personalização dos relatórios
+- **Tema**: Alternância entre modo claro e escuro
+- **IGPM Anual**: Índice para cálculos de correção
+- **Área Admin**: Acesso para configuração de limites (credenciais: Migueis/Laila@10042009)
+
+## Tecnologias
+
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Design**: Material Design 3 com tema claro/escuro
+- **PDF**: jsPDF para geração de relatórios
+- **Persistência**: LocalStorage para configurações
+
+## Como Usar
+
+1. Acesse `index.html` no navegador
+2. Preencha os campos de valor, parcelas e juros
+3. Opcionalmente defina uma data inicial de vencimento
+4. Clique em "CALCULAR" para obter o resultado
+5. Use "EXPORTAR PDF" para gerar relatório completo
 
 ## Estrutura do Projeto
 
 ```
 SimuladorEmprestimos/
-├── app/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/simulador/emprestimos/
-│   │   │   │   ├── MainActivity.kt
-│   │   │   │   ├── SimuladorEmprestimosScreen.kt
-│   │   │   │   ├── SimuladorViewModel.kt
-│   │   │   │   └── ui/theme/
-│   │   │   │       ├── Color.kt
-│   │   │   │       ├── Theme.kt
-│   │   │   │       └── Type.kt
-│   │   │   ├── res/
-│   │   │   │   ├── values/
-│   │   │   │   │   ├── strings.xml
-│   │   │   │   │   ├── colors.xml
-│   │   │   │   │   └── themes.xml
-│   │   │   │   └── xml/
-│   │   │   └── AndroidManifest.xml
-│   │   └── test/
-│   │       └── java/com/simulador/emprestimos/
-│   │           └── SimuladorViewModelTest.kt
-│   └── build.gradle.kts
-├── build.gradle.kts
-├── settings.gradle.kts
-├── gradle.properties
-└── README.md
+├── index.html          # Página principal da aplicação
+├── style.css           # Estilos Material Design 3
+├── script.js           # Lógica de negócio e interface
+├── test.html           # Suíte de testes automatizados
+└── README.md           # Documentação do projeto
 ```
 
-## Principais Trechos de Código
+## Principais Funcionalidades
 
-### 1. Função de Cálculo (SimuladorViewModel.kt)
-
-```kotlin
-/**
- * Calcula o valor da parcela usando a fórmula: parcela = Valor × (1 + Juros)^N / N
- * @param valor Valor do empréstimo
- * @param juros Taxa de juros (em percentual)
- * @param nParcelas Número de parcelas
- * @return Valor da parcela
- */
-fun calcularParcela(valor: Double, juros: Double, nParcelas: Int): Double {
-    val jurosDecimal = juros / 100.0
-    return (valor * (1 + jurosDecimal).pow(nParcelas)) / nParcelas
+### 1. Cálculo de Empréstimos
+```javascript
+calcularParcela(valor, juros, nParcelas, diasExtra = 0, igpmMensal = 0) {
+    const jurosDecimal = juros / 100;
+    let valorCorrigido = valor;
+    
+    // Aplicar pró-rata se houver dias extras
+    if (diasExtra > 0) {
+        const jurosProRata = (jurosDecimal / 30) * diasExtra;
+        valorCorrigido *= (1 + jurosProRata);
+    }
+    
+    // Aplicar IGPM se configurado
+    if (igpmMensal > 0) {
+        const fatorIGPM = Math.pow(1 + (igpmMensal / 100), nParcelas);
+        valorCorrigido *= fatorIGPM;
+    }
+    
+    return (valorCorrigido * Math.pow(1 + jurosDecimal, nParcelas)) / nParcelas;
 }
 ```
 
-### 2. Nova Tabela de Limites de Juros
-
-```kotlin
-private val limitesJuros = mapOf(
-    1 to Pair(15.00, 100.00),
-    2 to Pair(15.00, 100.00),
-    3 to Pair(15.00, 30.00),
-    4 to Pair(15.00, 24.00),
-    5 to Pair(15.00, 22.00),
-    6 to Pair(15.00, 20.00),
-    7 to Pair(14.75, 18.00),
-    8 to Pair(14.36, 17.00),
-    9 to Pair(13.92, 16.00),
-    10 to Pair(13.47, 15.00),
-    11 to Pair(13.03, 14.00),
-    12 to Pair(12.60, 13.00),
-    13 to Pair(12.19, 12.60),
-    14 to Pair(11.80, 12.19),
-    15 to Pair(11.43, 11.80)
-)
+### 2. Tabela de Limites Dinâmicos
+```javascript
+const limitesJuros = {
+    1: { min: 15.00, max: 100.00 },
+    2: { min: 15.00, max: 100.00 },
+    3: { min: 15.00, max: 30.00 },
+    4: { min: 15.00, max: 24.00 },
+    5: { min: 15.00, max: 22.00 },
+    6: { min: 15.00, max: 20.00 },
+    7: { min: 14.75, max: 18.00 },
+    8: { min: 14.36, max: 17.00 },
+    9: { min: 13.92, max: 16.00 },
+    10: { min: 13.47, max: 15.00 },
+    11: { min: 13.03, max: 14.00 },
+    12: { min: 12.60, max: 13.00 },
+    13: { min: 12.19, max: 12.60 },
+    14: { min: 11.80, max: 12.19 },
+    15: { min: 11.43, max: 11.80 }
+};
 ```
 
-### 3. Validações com Mensagens Específicas
-
-```kotlin
-private fun validarCampos(valor: Double, nParcelas: Int, juros: Double): Pair<Boolean, String?> {
-    if (nParcelas < 1) {
-        return Pair(false, "NÚMERO DE PARCELAS INFERIOR AO MÍNIMO PERMITIDO.")
+### 3. Geração de PDF Completa
+```javascript
+gerarPdfSimples(valor, nParcelas, juros, prestacao) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Cabeçalho da empresa
+    doc.setFontSize(20);
+    doc.setFont(undefined, 'bold');
+    doc.text('ME EMPREENDIMENTOS', 105, 30, { align: 'center' });
+    
+    // Dados da simulação
+    doc.setFontSize(12);
+    doc.text(`Valor do Empréstimo: ${this.formatarValorMonetario(valor)}`, 20, 60);
+    doc.text(`Número de Parcelas: ${nParcelas}`, 20, 70);
+    doc.text(`Taxa de Juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, 80);
+    
+    // Tabela de vencimentos
+    const dataInicial = this.obterDataInicialVencimento();
+    for (let i = 1; i <= nParcelas; i++) {
+        const dataVencimento = new Date(dataInicial);
+        dataVencimento.setMonth(dataVencimento.getMonth() + i - 1);
+        const dataFormatada = dataVencimento.toLocaleDateString('pt-BR');
+        
+        doc.text(`${i}ª Parcela - ${dataFormatada} - ${this.formatarValorMonetario(prestacao)}`, 20, 110 + (i * 10));
     }
     
-    if (nParcelas > 15) {
-        return Pair(false, "VOCÊ NÃO TEM PERMISSÃO PARA SIMULAÇÕES ACIMA DE 15 PARCELAS. PARA SIMULAÇÕES SUPERIORES A 15 PARCELAS, CONSULTE MIGUEIS.")
-    }
-    
-    val limites = limitesJuros[nParcelas] ?: return Pair(false, "NÚMERO DE PARCELAS INVÁLIDO.")
-    
-    if (juros < limites.first) {
-        return Pair(false, "[$nParcelas] PARCELA(S), A PORCENTAGEM MÍNIMA PERMITIDA É DE ${String.format("%.2f", limites.first).replace('.', ',')} %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.")
-    }
-    
-    if (juros > limites.second) {
-        return Pair(false, "[$nParcelas] PARCELA(S), A PORCENTAGEM MÁXIMA PERMITIDA É DE ${String.format("%.2f", limites.second).replace('.', ',')} %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.")
-    }
-    
-    return Pair(true, null)
+    doc.save('simulacao-emprestimo.pdf');
 }
 ```
 
-### 4. Interface com Jetpack Compose
+## Testes
 
-```kotlin
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SimuladorEmprestimosScreen(viewModel: SimuladorViewModel = viewModel()) {
-    val uiState by viewModel.uiState.collectAsState()
-    val focusRequester = remember { FocusRequester() }
+Execute `test.html` para validar as funcionalidades principais:
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus() // Foco automático no valor do empréstimo
-    }
+- **Cálculo básico**: R$ 1000, 15%, 1 parcela → R$ 1.150,00
+- **Juros compostos**: R$ 5000, 20%, 5 parcelas → R$ 2.985,98
+- **Validações de limite**: Testa todos os cenários de erro
+- **Formatação de moeda**: Validação de entrada e saída
+- **Pró-rata e IGPM**: Cálculos avançados
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // Campos de entrada em Card Material 3
-        // Botão de cálculo
-        // Cards de resultado e erro
-    }
-}
-```
+## Área Administrativa
 
-## Como Gerar o APK
+Acesse através do botão de configurações com credenciais:
+- **Usuário**: Migueis
+- **Senha**: Laila@10042009
 
-### Pré-requisitos
-- Android Studio instalado
-- JDK 8 ou superior
-- Android SDK (API 24 ou superior)
-
-### Passos para Build
-
-1. **Clonar o projeto**:
-```bash
-git clone <repository-url>
-cd SimuladorEmprestimos
-```
-
-2. **Build via linha de comando**:
-```bash
-# Debug APK
-./gradlew assembleDebug
-
-# Release APK (assinado)
-./gradlew assembleRelease
-```
-
-3. **Build via Android Studio**:
-- Abra o projeto no Android Studio
-- Menu: Build → Build Bundle(s) / APK(s) → Build APK(s)
-- Menu: Build → Generate Signed Bundle / APK (para release)
-
-### Localização dos APKs
-
-- **Debug**: `app/build/outputs/apk/debug/app-debug.apk`
-- **Release**: `app/build/outputs/apk/release/app-release.apk`
-
-## Testes Unitários
-
-Execute os testes da função `calcularParcela`:
-
-```bash
-./gradlew test
-```
-
-### Testes Implementados
-
-- Cálculo básico (R$ 1000, 15%, 1 parcela → R$ 1.150,00)
-- Juros compostos (R$ 5000, 20%, 5 parcelas → R$ 2.985,98)
-- Valores altos (R$ 2000, 24%, 10 parcelas → R$ 1.870,61)
-- Máximo de parcelas (R$ 10000, 15%, 15 parcelas → R$ 5.420,45)
-- Precisão decimal e casos extremos
+Funcionalidades administrativas:
+- Edição dos limites de juros para cada faixa de parcelas
+- Alteração das credenciais de acesso
+- Configuração de parâmetros globais do sistema
 
 ## Instalação
 
-1. Ative "Fontes desconhecidas" nas configurações do Android
-2. Transfira o APK para o dispositivo
-3. Toque no arquivo APK para instalar
-4. Abra o app "Simulador de Empréstimos"
+1. Faça download dos arquivos do projeto
+2. Abra `index.html` em qualquer navegador moderno
+3. Para testes, abra `test.html` em uma nova aba
 
 ## Especificações Técnicas
 
-- **Plataforma**: Android nativo
-- **Linguagem**: Kotlin
-- **UI Framework**: Jetpack Compose
-- **Design**: Material Design 3
-- **Versão mínima**: Android 7.0 (API 24)
-- **Versão alvo**: Android 14 (API 34)
+- **Compatibilidade**: Chrome, Firefox, Safari, Edge (versões recentes)
+- **Responsividade**: Funciona em dispositivos móveis e desktop
+- **Persistência**: Configurações salvas no LocalStorage do navegador
+- **Segurança**: Validação client-side com sanitização de entrada
+- **Performance**: Cálculos instantâneos sem dependências externas
 
+---
+
+**Desenvolvido para ME EMPREENDIMENTOS**  
+Versão Web - Dezembro 2024
