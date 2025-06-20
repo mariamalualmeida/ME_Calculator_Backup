@@ -1,5 +1,7 @@
 package com.simulador.emprestimos
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -21,7 +24,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.simulador.emprestimos.pdf.PdfGenerator
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -113,7 +118,7 @@ fun SimuladorEmprestimosScreen(
                     onValueChange = viewModel::onValorEmprestimoChange,
                     label = { Text(stringResource(R.string.valor_emprestimo)) },
                     leadingIcon = { Text("R$") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester),
@@ -233,8 +238,43 @@ fun SimuladorEmprestimosScreen(
 
         // Botão Exportar PDF (aparece só após cálculo)
         if (uiState.valorPrestacao != null) {
+            val context = LocalContext.current
+            
             Button(
-                onClick = { viewModel.exportarPdf() },
+                onClick = { 
+                    val dados = viewModel.getDadosParaPdf()
+                    dados?.let { (valor, parcelas, juros) ->
+                        try {
+                            val pdfGenerator = PdfGenerator(context)
+                            val valorParcela = viewModel.uiState.value.valorPrestacao
+                            val valorParcelaNumerico = valorParcela?.let { 
+                                it.replace("R$", "").replace(".", "").replace(",", ".").toDoubleOrNull() ?: 0.0
+                            } ?: 0.0
+                            
+                            val pdfFile = pdfGenerator.gerarRelatorioPdf(
+                                nomeUsuario = viewModel.getNomeUsuario(),
+                                valorEmprestimo = valor,
+                                numeroParcelas = parcelas,
+                                taxaJuros = juros,
+                                valorParcela = valorParcelaNumerico
+                            )
+                            
+                            // Compartilhar arquivo PDF
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "application/pdf"
+                                putExtra(Intent.EXTRA_STREAM, androidx.core.content.FileProvider.getUriForFile(
+                                    context,
+                                    "${context.packageName}.fileprovider",
+                                    pdfFile
+                                ))
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                            context.startActivity(Intent.createChooser(intent, "Compartilhar PDF"))
+                        } catch (e: Exception) {
+                            // Log do erro
+                        }
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondary

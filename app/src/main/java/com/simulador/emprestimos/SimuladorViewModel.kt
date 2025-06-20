@@ -224,7 +224,18 @@ class SimuladorViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun getNomeUsuario(): String {
-        // Retorna nome do usuário das preferências
-        return ""
+        // Retorna nome do usuário das preferências ou padrão
+        return "Cliente"
+    }
+
+    fun getDadosParaPdf(): Triple<Double, Int, Double>? {
+        val estado = _uiState.value
+        return if (estado.valorPrestacao != null) {
+            Triple(
+                obterValorNumerico(estado.valorEmprestimo),
+                estado.numeroParcelas.toIntOrNull() ?: 0,
+                obterPercentualNumerico(estado.taxaJuros)
+            )
+        } else null
     }
 }

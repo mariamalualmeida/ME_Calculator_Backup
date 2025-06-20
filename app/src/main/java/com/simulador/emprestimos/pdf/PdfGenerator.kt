@@ -86,8 +86,7 @@ class PdfGenerator(private val context: Context) {
         table.addHeaderCell("Valor")
         
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.DAY_OF_MONTH, 5) // Dia 5 de cada mês
-        calendar.add(Calendar.MONTH, 1) // Primeira parcela no próximo mês
+        calendar.add(Calendar.DAY_OF_MONTH, 30) // Primeira parcela 30 dias após simulação
         
         for (i in 1..numeroParcelas) {
             table.addCell(i.toString())
