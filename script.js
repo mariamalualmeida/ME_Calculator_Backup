@@ -420,15 +420,26 @@ class SimuladorEmprestimos {
         // Prestação base: P = Valor × (1 + JurosMensal)^N ÷ N
         const prestacaoBase = (valor * Math.pow(1 + taxaEfetiva, nParcelas)) / nParcelas;
         
-        // Cálculo pró-rata se houver diferença de dias
+        // Método da primeira parcela maior - juros dos dias extras apenas na primeira parcela
         if (diasExtra !== 0) {
             const taxaDiaria = taxaEfetiva / 30; // Taxa mensal dividida por 30 dias
             const jurosProrrata = valor * taxaDiaria * diasExtra;
-            const valorAjustado = valor + jurosProrrata;
-            return (valorAjustado * Math.pow(1 + taxaEfetiva, nParcelas)) / nParcelas;
+            const primeiraParcela = prestacaoBase + jurosProrrata;
+            
+            return {
+                parcelaNormal: prestacaoBase,
+                primeiraParcela: primeiraParcela,
+                jurosDiasExtras: jurosProrrata,
+                diasExtra: diasExtra
+            };
         }
         
-        return prestacaoBase;
+        return {
+            parcelaNormal: prestacaoBase,
+            primeiraParcela: prestacaoBase,
+            jurosDiasExtras: 0,
+            diasExtra: 0
+        };
     }
 
     calcular() {
@@ -463,10 +474,10 @@ class SimuladorEmprestimos {
         const igpmMensal = this.configuracoes.igpmAnual / 12;
 
         // Calcular prestação
-        const valorPrestacao = this.calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal);
+        const resultadoCalculo = this.calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal);
         
         // Mostrar resultado
-        this.mostrarResultado(valorPrestacao);
+        this.mostrarResultado(resultadoCalculo, valor, nParcelas, juros);
         this.rolarParaResultado();
     }
 
@@ -526,13 +537,46 @@ class SimuladorEmprestimos {
         return { sucesso: true };
     }
 
-    mostrarResultado(valor) {
-        const valorFormatado = new Intl.NumberFormat('pt-BR', {
+    mostrarResultado(resultadoCalculo, valorEmprestimo, nParcelas, juros) {
+        // Formatar valores monetários
+        const formatarMoeda = (valor) => new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL'
         }).format(valor);
 
-        this.resultValue.textContent = valorFormatado;
+        // Verificar se há diferença entre primeira parcela e demais
+        if (resultadoCalculo.diasExtra > 0) {
+            // Primeira parcela maior
+            const primeiraParcela = formatarMoeda(resultadoCalculo.primeiraParcela);
+            const demaisParcelas = formatarMoeda(resultadoCalculo.parcelaNormal);
+            const diasExtras = resultadoCalculo.diasExtra;
+            const jurosExtras = formatarMoeda(resultadoCalculo.jurosDiasExtras);
+            
+            this.resultValue.innerHTML = `
+                <div style="margin-bottom: 12px;">
+                    <strong>1ª parcela:</strong> ${primeiraParcela}
+                    <br><strong>Demais ${nParcelas - 1} parcelas:</strong> ${demaisParcelas}
+                </div>
+                <div style="font-size: 14px; color: #666; margin-top: 8px;">
+                    Dias extras: ${diasExtras} | Juros extras: ${jurosExtras}
+                </div>
+            `;
+        } else {
+            // Parcelas iguais
+            const valorFormatado = formatarMoeda(resultadoCalculo.parcelaNormal);
+            this.resultValue.innerHTML = `
+                <strong>${nParcelas} parcelas de:</strong> ${valorFormatado}
+            `;
+        }
+
+        // Salvar dados para o PDF
+        this.ultimoCalculo = {
+            valorEmprestimo,
+            nParcelas,
+            juros,
+            resultadoCalculo
+        };
+
         this.resultCard.style.display = 'block';
         this.exportPdfBtn.style.display = 'flex';
         this.esconderErro();
@@ -666,21 +710,17 @@ class SimuladorEmprestimos {
     }
 
     exportarPdf() {
-        if (this.resultCard.style.display === 'none') return;
+        if (this.resultCard.style.display === 'none' || !this.ultimoCalculo) return;
         
-        const valor = this.obterValorNumerico(this.valorEmprestimoField.value);
-        const nParcelas = parseInt(this.numeroParcelasField.value);
-        const juros = this.obterPercentualNumerico(this.taxaJurosField.value);
-        
-        // Recalcular prestação para garantir valor correto
-        const diasExtra = 0;
-        const igpmMensal = this.configuracoes.igpmAnual / 12.0;
-        const prestacao = this.calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal);
-        
-        this.gerarPdfSimples(valor, nParcelas, juros, prestacao);
+        this.gerarPdfSimples(
+            this.ultimoCalculo.valorEmprestimo,
+            this.ultimoCalculo.nParcelas,
+            this.ultimoCalculo.juros,
+            this.ultimoCalculo.resultadoCalculo
+        );
     }
 
-    gerarPdfSimples(valor, nParcelas, juros, prestacao) {
+    gerarPdfSimples(valor, nParcelas, juros, resultadoCalculo) {
         try {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -741,8 +781,24 @@ class SimuladorEmprestimos {
             
             doc.text(`Número de parcelas: ${nParcelas}`, 20, yInicial);
             yInicial += 12;
-            doc.text(`Valor da prestação: R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
-            yInicial += 20;
+            
+            // Mostrar informações das parcelas conforme o tipo de cálculo
+            if (resultadoCalculo.diasExtra > 0) {
+                doc.text(`1ª parcela: R$ ${resultadoCalculo.primeiraParcela.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
+                yInicial += 12;
+                doc.text(`Demais ${nParcelas - 1} parcelas: R$ ${resultadoCalculo.parcelaNormal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
+                yInicial += 12;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(12);
+                doc.text(`(Dias extras: ${resultadoCalculo.diasExtra} | Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
+                yInicial += 12;
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(14);
+            } else {
+                doc.text(`Valor da prestação: R$ ${resultadoCalculo.parcelaNormal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
+                yInicial += 12;
+            }
+            yInicial += 8;
             
             // Tabela de parcelas - Título centralizado
             doc.setFont('helvetica', 'bold');
