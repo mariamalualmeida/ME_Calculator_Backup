@@ -1,24 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="85" fill="url(#gradient)"/>
+  <circle cx="256" cy="256" r="192" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="6"/>
+  
+  <!-- Símbolo de Real Brasileiro estilizado -->
+  <g transform="translate(256,256)">
+    <!-- R principal -->
+    <path d="M-64 -85 L-64 85 M-64 -85 L-11 -85 C21 -85 43 -64 43 -32 C43 0 21 21 -11 21 L-64 21 M-11 21 L43 85" 
+          stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- Cifrão estilizado -->
+    <circle cx="64" cy="-32" r="43" stroke="white" stroke-width="11" fill="none"/>
+    <path d="M43 -32 L85 -32 M64 -64 L64 0" stroke="white" stroke-width="11" stroke-linecap="round"/>
+    
+    <!-- Detalhes decorativos -->
+    <circle cx="-96" cy="0" r="8" fill="rgba(255,255,255,0.8)"/>
+    <circle cx="107" cy="21" r="8" fill="rgba(255,255,255,0.8)"/>
+    <circle cx="0" cy="-107" r="5" fill="rgba(255,255,255,0.6)"/>
+    <circle cx="0" cy="107" r="5" fill="rgba(255,255,255,0.6)"/>
+  </g>
+  
   <defs>
-    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFD700"/>
-      <stop offset="50%" style="stop-color:#FFA500"/>
-      <stop offset="100%" style="stop-color:#FF8C00"/>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1976d2;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1565c0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d47a1;stop-opacity:1" />
     </linearGradient>
   </defs>
-  
-  <!-- Círculo de fundo -->
-  <circle cx="256" cy="256" r="213" fill="url(#gold)" stroke="none"/>
-  
-  <!-- Símbolo $ -->
-  <!-- Linha vertical -->
-  <line x1="256" y1="107" x2="256" y2="405" stroke="#FFFFFF" stroke-width="21" stroke-linecap="round"/>
-  
-  <!-- Curva superior do S -->
-  <path d="M203 160 Q203 133 224 133 L283 133 Q309 133 309 160 Q309 187 283 187 L229 227 Q203 240 203 267" 
-        fill="none" stroke="#FFFFFF" stroke-width="21" stroke-linecap="round"/>
-  
-  <!-- Curva inferior do S -->
-  <path d="M203 267 Q203 293 229 293 L283 293 Q309 293 309 320 Q309 347 283 347 L224 347 Q203 347 203 320" 
-        fill="none" stroke="#FFFFFF" stroke-width="21" stroke-linecap="round"/>
 </svg>

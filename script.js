@@ -153,6 +153,7 @@ class SimuladorEmprestimos {
 
         this.numeroParcelasField.addEventListener('input', () => {
             this.limparResultado();
+            this.toggleMetodoDiasExtras();
         });
 
         // Formatação de CPF
@@ -624,8 +625,9 @@ class SimuladorEmprestimos {
         } else {
             // Parcelas iguais
             const valorFormatado = formatarMoeda(resultadoCalculo.parcelaNormal);
+            const textoParcel = nParcelas === 1 ? 'parcela de:' : 'parcelas de:';
             this.resultValue.innerHTML = `
-                <strong>${nParcelas} parcelas de:</strong> ${valorFormatado}
+                <strong>${nParcelas} ${textoParcel}</strong> ${valorFormatado}
             `;
         }
 
@@ -986,8 +988,9 @@ class SimuladorEmprestimos {
     toggleMetodoDiasExtras() {
         const metodoDiasExtras = document.getElementById('metodoDiasExtras');
         const dataValue = this.dataInicialField.value.trim();
+        const nParcelas = parseInt(this.parcelasField.value) || 1;
         
-        if (dataValue && dataValue.length >= 8) {
+        if (dataValue && dataValue.length >= 8 && nParcelas > 1) {
             metodoDiasExtras.style.display = 'block';
         } else {
             metodoDiasExtras.style.display = 'none';
