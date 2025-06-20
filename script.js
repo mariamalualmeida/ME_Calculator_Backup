@@ -493,8 +493,11 @@ class SimuladorEmprestimos {
         // IGPM mensal (anual dividido por 12)
         const igpmMensal = this.configuracoes.igpmAnual / 12;
 
+        // Obter método de cálculo dos dias extras
+        const metodo = this.obterMetodoDiasExtras();
+
         // Calcular prestação
-        const resultadoCalculo = this.calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal);
+        const resultadoCalculo = this.calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal, metodo);
         
         // Mostrar resultado
         this.mostrarResultado(resultadoCalculo, valor, nParcelas, juros);
@@ -574,33 +577,49 @@ class SimuladorEmprestimos {
 
         // Verificar se há diferença entre primeira parcela e demais
         if (resultadoCalculo.diasExtra > 0) {
-            // Primeira parcela maior
-            const primeiraParcela = formatarMoeda(resultadoCalculo.primeiraParcela);
+            const metodo = this.obterMetodoDiasExtras();
             const diasExtras = resultadoCalculo.diasExtra;
             const jurosExtras = formatarMoeda(resultadoCalculo.jurosDiasExtras);
             
-            if (nParcelas === 1) {
-                // Apenas 1 parcela - mostrar só o valor total com explicação
+            if (metodo === 'distribuir') {
+                // Método distribuir - todas as parcelas iguais
+                const valorParcela = formatarMoeda(resultadoCalculo.parcelaNormal);
                 this.resultValue.innerHTML = `
                     <div style="margin-bottom: 12px;">
-                        <strong>Valor da parcela:</strong> ${primeiraParcela}
+                        <strong>${nParcelas} parcelas de:</strong> ${valorParcela}
+                        <br><small style="color: #666;">(Juros de dias extras distribuídos)</small>
                     </div>
                     <div style="font-size: 14px; color: #666; margin-top: 8px;">
                         Dias extras: ${diasExtras} | Juros extras: ${jurosExtras}
                     </div>
                 `;
             } else {
-                // Múltiplas parcelas - mostrar primeira e demais
-                const demaisParcelas = formatarMoeda(resultadoCalculo.parcelaNormal);
-                this.resultValue.innerHTML = `
-                    <div style="margin-bottom: 12px;">
-                        <strong>1ª parcela:</strong> ${primeiraParcela}
-                        <br><strong>Demais ${nParcelas - 1} parcelas:</strong> ${demaisParcelas}
-                    </div>
-                    <div style="font-size: 14px; color: #666; margin-top: 8px;">
-                        Dias extras: ${diasExtras} | Juros extras: ${jurosExtras}
-                    </div>
-                `;
+                // Método primeira parcela maior
+                const primeiraParcela = formatarMoeda(resultadoCalculo.primeiraParcela);
+                
+                if (nParcelas === 1) {
+                    // Apenas 1 parcela - mostrar só o valor total com explicação
+                    this.resultValue.innerHTML = `
+                        <div style="margin-bottom: 12px;">
+                            <strong>Valor da parcela:</strong> ${primeiraParcela}
+                        </div>
+                        <div style="font-size: 14px; color: #666; margin-top: 8px;">
+                            Dias extras: ${diasExtras} | Juros extras: ${jurosExtras}
+                        </div>
+                    `;
+                } else {
+                    // Múltiplas parcelas - mostrar primeira e demais
+                    const demaisParcelas = formatarMoeda(resultadoCalculo.parcelaNormal);
+                    this.resultValue.innerHTML = `
+                        <div style="margin-bottom: 12px;">
+                            <strong>1ª parcela:</strong> ${primeiraParcela}
+                            <br><strong>Demais ${nParcelas - 1} parcelas:</strong> ${demaisParcelas}
+                        </div>
+                        <div style="font-size: 14px; color: #666; margin-top: 8px;">
+                            Dias extras: ${diasExtras} | Juros extras: ${jurosExtras}
+                        </div>
+                    `;
+                }
             }
         } else {
             // Parcelas iguais

@@ -138,8 +138,8 @@ class SimuladorViewModel : ViewModel() {
                 return
             }
             
-            // Calcular prestação
-            val diasExtra = 0 // Por simplicidade, não implementando pró-rata no Android inicialmente
+            // Calcular prestação com pró-rata se houver data
+            val diasExtra = calcularDiasExtras(_uiState.value.dataInicial)
             val igpmMensal = _configuracoes.value.igpmAnual / 12.0
             val resultadoCalculo = calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal)
             
@@ -242,6 +242,36 @@ class SimuladorViewModel : ViewModel() {
         }
     }
     
+    private fun calcularDiasExtras(dataStr: String): Int {
+        if (dataStr.isEmpty() || dataStr.length < 10) return 0
+        
+        try {
+            val partes = dataStr.split("/")
+            if (partes.size != 3) return 0
+            
+            val dia = partes[0].toInt()
+            val mes = partes[1].toInt() - 1 // Calendar usa 0-indexed
+            val ano = partes[2].toInt()
+            
+            val hoje = java.util.Calendar.getInstance()
+            val dataInformada = java.util.Calendar.getInstance().apply {
+                set(ano, mes, dia)
+            }
+            
+            // Data normal da primeira parcela seria 30 dias após hoje
+            val dataNormalPrimeiraParcela = java.util.Calendar.getInstance().apply {
+                timeInMillis = hoje.timeInMillis
+                add(java.util.Calendar.DAY_OF_YEAR, 30)
+            }
+            
+            // Calcular diferença entre data informada e data normal
+            val diffInMillis = dataInformada.timeInMillis - dataNormalPrimeiraParcela.timeInMillis
+            return (diffInMillis / (1000 * 60 * 60 * 24)).toInt()
+        } catch (e: Exception) {
+            return 0
+        }
+    }
+
     fun formatarValorMonetario(valor: Double): String {
         return "R$ ${String.format("%,.2f", valor).replace('.', ',').replace(',', 'X').replace(',', '.').replace('X', ',')}"
     }

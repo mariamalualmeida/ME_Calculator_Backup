@@ -120,6 +120,11 @@ SimuladorEmprestimos/
 - June 20, 2025: Fixed visual validation (red border) to respect admin free mode - no red borders when rules are disabled
 - June 20, 2025: Corrected PDF report order - "Simulado por" now appears before client data (name/CPF) as requested
 - June 20, 2025: Applied validation fixes to both web and Android versions for consistency across platforms
+- June 20, 2025: Fixed calculation logic - extra days now calculated correctly from loan date vs requested first payment date (not absolute difference)
+- June 20, 2025: Fixed display bug showing "Demais 0 parcelas" when there's only 1 installment with extra days
+- June 20, 2025: Implemented user choice toggle for extra days calculation - "primeira parcela maior" vs "distribuir em todas as parcelas"
+- June 20, 2025: Added dynamic UI elements that appear only when a date is entered, allowing method selection
+- June 20, 2025: Updated both web and Android versions with consistent calculation logic and display corrections
 
 ## User Preferences
 
