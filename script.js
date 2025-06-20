@@ -39,6 +39,7 @@ class SimuladorEmprestimos {
             limitesPersonalizados: null,
             themeMode: 'light',
             mostrarJurosRelatorio: false,
+            desabilitarRegras: false,
             colorTheme: 'default',
             adminUser: 'Migueis',
             adminPassword: 'Laila@10042009'
@@ -470,7 +471,25 @@ class SimuladorEmprestimos {
     }
 
     validarCampos(valor, nParcelas, juros) {
-        // Validar número de parcelas
+        // Verificar se regras estão desabilitadas para admin
+        if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
+            // Modo livre - apenas validações básicas
+            if (nParcelas < 1) {
+                return {
+                    sucesso: false,
+                    mensagem: "NÚMERO DE PARCELAS DEVE SER MAIOR QUE ZERO."
+                };
+            }
+            if (juros < 0) {
+                return {
+                    sucesso: false,
+                    mensagem: "TAXA DE JUROS DEVE SER MAIOR OU IGUAL A ZERO."
+                };
+            }
+            return { sucesso: true };
+        }
+
+        // Validações normais
         if (nParcelas < 1) {
             return {
                 sucesso: false,
@@ -577,6 +596,11 @@ class SimuladorEmprestimos {
         this.configuracoes.colorTheme = document.getElementById('colorTheme').value;
         this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
         this.configuracoes.mostrarJurosRelatorio = document.getElementById('mostrarJurosRelatorio').checked;
+        
+        // Salvar configuração de desabilitar regras apenas se admin estiver logado
+        if (this.configuracoes.isAdmin) {
+            this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').checked;
+        }
         
         this.aplicarTema(this.configuracoes.themeMode);
         this.aplicarPaletaCores(this.configuracoes.colorTheme);
