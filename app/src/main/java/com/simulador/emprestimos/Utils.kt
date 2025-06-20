@@ -1,0 +1,198 @@
+package com.simulador.emprestimos
+
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.ui.graphics.Color
+
+// Formatação de moeda
+fun formatarMoeda(input: String): String {
+    val digitos = input.replace(Regex("[^0-9]"), "")
+    if (digitos.isEmpty() || digitos == "0") return ""
+    
+    val valor = digitos.toLongOrNull() ?: return ""
+    val valorDecimal = valor / 100.0
+    
+    return String.format("%,.2f", valorDecimal)
+        .replace('.', 'X')
+        .replace(',', '.')
+        .replace('X', ',')
+}
+
+// Formatação de percentual
+fun formatarPercentual(input: String): String {
+    val caracteresPermitidos = input.replace(Regex("[^0-9,.]"), "")
+    
+    // Limitar a 2 casas decimais
+    val partes = caracteresPermitidos.split(',', '.')
+    if (partes.size > 2) return input.dropLast(1)
+    
+    if (partes.size == 2 && partes[1].length > 2) {
+        return "${partes[0]},${partes[1].take(2)}"
+    }
+    
+    return caracteresPermitidos.replace('.', ',')
+}
+
+// Formatação de data
+fun formatarData(input: String): String {
+    val digitos = input.replace(Regex("[^0-9]"), "")
+    
+    return when {
+        digitos.length <= 2 -> digitos
+        digitos.length <= 4 -> "${digitos.substring(0, 2)}/${digitos.substring(2)}"
+        digitos.length <= 8 -> "${digitos.substring(0, 2)}/${digitos.substring(2, 4)}/${digitos.substring(4)}"
+        else -> "${digitos.substring(0, 2)}/${digitos.substring(2, 4)}/${digitos.substring(4, 8)}"
+    }
+}
+
+// Paletas de cores para diferentes temas
+fun getColorSchemeForTheme(colorTheme: String, isDark: Boolean): ColorScheme {
+    val colors = when (colorTheme) {
+        "blue" -> if (isDark) {
+            darkColorScheme(
+                primary = Color(0xFF90CAF9),
+                secondary = Color(0xFF2196F3),
+                tertiary = Color(0xFF1E88E5),
+                background = Color(0xFF121212),
+                surface = Color(0xFF1E1E1E)
+            )
+        } else {
+            lightColorScheme(
+                primary = Color(0xFF1976D2),
+                secondary = Color(0xFF2196F3),
+                tertiary = Color(0xFF1E88E5),
+                background = Color(0xFFF5F5F5),
+                surface = Color(0xFFFFFFFF)
+            )
+        }
+        
+        "green" -> if (isDark) {
+            darkColorScheme(
+                primary = Color(0xFFA5D6A7),
+                secondary = Color(0xFF4CAF50),
+                tertiary = Color(0xFF43A047),
+                background = Color(0xFF121212),
+                surface = Color(0xFF1E1E1E)
+            )
+        } else {
+            lightColorScheme(
+                primary = Color(0xFF388E3C),
+                secondary = Color(0xFF4CAF50),
+                tertiary = Color(0xFF43A047),
+                background = Color(0xFFF5F5F5),
+                surface = Color(0xFFFFFFFF)
+            )
+        }
+        
+        "orange" -> if (isDark) {
+            darkColorScheme(
+                primary = Color(0xFFFFCC02),
+                secondary = Color(0xFFFF9800),
+                tertiary = Color(0xFFFB8C00),
+                background = Color(0xFF121212),
+                surface = Color(0xFF1E1E1E)
+            )
+        } else {
+            lightColorScheme(
+                primary = Color(0xFFF57C00),
+                secondary = Color(0xFFFF9800),
+                tertiary = Color(0xFFFB8C00),
+                background = Color(0xFFF5F5F5),
+                surface = Color(0xFFFFFFFF)
+            )
+        }
+        
+        "yellow" -> if (isDark) {
+            darkColorScheme(
+                primary = Color(0xFFFFF59D),
+                secondary = Color(0xFFFFC107),
+                tertiary = Color(0xFFFFB300),
+                background = Color(0xFF121212),
+                surface = Color(0xFF1E1E1E)
+            )
+        } else {
+            lightColorScheme(
+                primary = Color(0xFFF9A825),
+                secondary = Color(0xFFFFC107),
+                tertiary = Color(0xFFFFB300),
+                background = Color(0xFFF5F5F5),
+                surface = Color(0xFFFFFFFF)
+            )
+        }
+        
+        "red" -> if (isDark) {
+            darkColorScheme(
+                primary = Color(0xFFEF9A9A),
+                secondary = Color(0xFFF44336),
+                tertiary = Color(0xFFE53935),
+                background = Color(0xFF121212),
+                surface = Color(0xFF1E1E1E)
+            )
+        } else {
+            lightColorScheme(
+                primary = Color(0xFFD32F2F),
+                secondary = Color(0xFFF44336),
+                tertiary = Color(0xFFE53935),
+                background = Color(0xFFF5F5F5),
+                surface = Color(0xFFFFFFFF)
+            )
+        }
+        
+        "teal" -> if (isDark) {
+            darkColorScheme(
+                primary = Color(0xFF80CBC4),
+                secondary = Color(0xFF009688),
+                tertiary = Color(0xFF00897B),
+                background = Color(0xFF121212),
+                surface = Color(0xFF1E1E1E)
+            )
+        } else {
+            lightColorScheme(
+                primary = Color(0xFF00796B),
+                secondary = Color(0xFF009688),
+                tertiary = Color(0xFF00897B),
+                background = Color(0xFFF5F5F5),
+                surface = Color(0xFFFFFFFF)
+            )
+        }
+        
+        "pink" -> if (isDark) {
+            darkColorScheme(
+                primary = Color(0xFFF8BBD9),
+                secondary = Color(0xFFE91E63),
+                tertiary = Color(0xFFD81B60),
+                background = Color(0xFF121212),
+                surface = Color(0xFF1E1E1E)
+            )
+        } else {
+            lightColorScheme(
+                primary = Color(0xFFC2185B),
+                secondary = Color(0xFFE91E63),
+                tertiary = Color(0xFFD81B60),
+                background = Color(0xFFF5F5F5),
+                surface = Color(0xFFFFFFFF)
+            )
+        }
+        
+        else -> if (isDark) { // default purple
+            darkColorScheme(
+                primary = Color(0xFFD0BCFF),
+                secondary = Color(0xFF7C4DFF),
+                tertiary = Color(0xFF7C4DFF),
+                background = Color(0xFF121212),
+                surface = Color(0xFF1E1E1E)
+            )
+        } else {
+            lightColorScheme(
+                primary = Color(0xFF6750A4),
+                secondary = Color(0xFF7C4DFF),
+                tertiary = Color(0xFF7C4DFF),
+                background = Color(0xFFF5F5F5),
+                surface = Color(0xFFFFFFFF)
+            )
+        }
+    }
+    
+    return colors
+}
