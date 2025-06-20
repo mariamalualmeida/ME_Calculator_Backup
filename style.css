@@ -151,6 +151,20 @@ body {
     padding-left: 40px;
 }
 
+/* Estilo para ícone de data */
+.input-wrapper span:not(.currency-symbol):not(.percent-symbol) {
+    position: absolute;
+    right: 12px;
+    color: #6750a4;
+    font-size: 18px;
+    pointer-events: none;
+    user-select: none;
+}
+
+[data-theme="dark"] .input-wrapper span:not(.currency-symbol):not(.percent-symbol) {
+    color: #d0bcff;
+}
+
 .calculate-button {
     background: #6750a4;
     color: white;
@@ -553,9 +567,23 @@ body {
 }
 
 [data-theme="dark"] .input-field {
-    background: var(--input-bg);
-    color: var(--text-primary);
-    border-color: var(--border-color);
+    background: var(--input-bg) !important;
+    color: #ffffff !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .input-field::placeholder {
+    color: #999999 !important;
+}
+
+[data-theme="dark"] input {
+    background: var(--input-bg) !important;
+    color: #ffffff !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] input::placeholder {
+    color: #999999 !important;
 }
 
 [data-theme="dark"] .input-field:focus {
@@ -661,19 +689,34 @@ body {
 
 /* Garantir visibilidade da opção de tema */
 #themeMode {
-    display: block;
-    visibility: visible;
-    opacity: 1;
-    height: auto;
-    width: 100%;
-    background: #fef7ff;
-    border: 2px solid #6750a4;
-    color: #1c1b1f;
-    font-weight: 500;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    width: 100% !important;
+    background: #fef7ff !important;
+    border: 2px solid #6750a4 !important;
+    color: #1c1b1f !important;
+    font-weight: 500 !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
 }
 
 [data-theme="dark"] #themeMode {
-    background: var(--input-bg);
-    color: var(--text-primary);
-    border-color: #d0bcff;
+    background: var(--input-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: #d0bcff !important;
+}
+
+/* Corrigir estilos dos selects em modo escuro */
+[data-theme="dark"] select {
+    background: var(--input-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] option {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
 }
