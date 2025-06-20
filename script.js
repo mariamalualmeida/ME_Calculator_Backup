@@ -1000,8 +1000,10 @@ class SimuladorEmprestimos {
 
     toggleMetodoDiasExtras() {
         const metodoDiasExtras = document.getElementById('metodoDiasExtras');
+        if (!metodoDiasExtras || !this.dataInicialField || !this.numeroParcelasField) return;
+        
         const dataValue = this.dataInicialField.value.trim();
-        const nParcelas = parseInt(this.parcelasField.value) || 1;
+        const nParcelas = parseInt(this.numeroParcelasField.value) || 1;
         
         if (dataValue && dataValue.length >= 8 && nParcelas > 1) {
             metodoDiasExtras.style.display = 'block';
