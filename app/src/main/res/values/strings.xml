@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Simulador de Empréstimos</string>
+    <string name="valor_emprestimo">Valor do empréstimo</string>
+    <string name="numero_parcelas">Número de parcelas</string>
+    <string name="taxa_juros">Taxa de juros (%)</string>
+    <string name="calcular">CALCULAR</string>
+    <string name="valor_prestacao">Valor da Prestação</string>
+    <string name="currency_symbol">R$</string>
+    <string name="percent_symbol">%</string>
+    
+    <!-- Mensagens de erro -->
+    <string name="erro_parcelas_minimo">NÚMERO DE PARCELAS INFERIOR AO MÍNIMO PERMITIDO.</string>
+    <string name="erro_parcelas_maximo">VOCÊ NÃO TEM PERMISSÃO PARA SIMULAÇÕES ACIMA DE 15 PARCELAS. PARA SIMULAÇÕES SUPERIORES A 15 PARCELAS, CONSULTE MIGUEIS.</string>
+    <string name="erro_juros_minimo">[%1$d] PARCELA(S), A PORCENTAGEM MÍNIMA PERMITIDA É DE %2$.2f %%. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.</string>
+    <string name="erro_juros_maximo">[%1$d] PARCELA(S), A PORCENTAGEM MÁXIMA PERMITIDA É DE %2$.2f %%. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.</string>
+    <string name="erro_calculo">ERRO NO CÁLCULO. VERIFIQUE OS VALORES INFORMADOS.</string>
+</resources>
