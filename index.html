@@ -31,6 +31,7 @@
                             id="valorEmprestimo" 
                             class="input-field" 
                             placeholder="0,00"
+                            inputmode="numeric"
                             autocomplete="off"
                         >
                     </div>
@@ -59,6 +60,7 @@
                             id="taxaJuros" 
                             class="input-field" 
                             placeholder="0,00"
+                            inputmode="decimal"
                             autocomplete="off"
                         >
                         <span class="percent-symbol">%</span>
@@ -73,6 +75,7 @@
                             id="dataInicial" 
                             class="input-field" 
                             placeholder="DD/MM/AAAA"
+                            inputmode="numeric"
                             autocomplete="off"
                         >
                         <span class="material-icons">event</span>
@@ -128,16 +131,10 @@
                     </div>
                     
                     <div class="config-group">
-                        <label for="diaVencimento">Dia fixo de vencimento</label>
-                        <select id="diaVencimento">
-                            <option value="">Usar data preenchida</option>
-                            <option value="1">1</option>
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                            <option value="20">20</option>
-                            <option value="25">25</option>
-                            <option value="30">30</option>
+                        <label for="themeMode">Tema do aplicativo</label>
+                        <select id="themeMode">
+                            <option value="light">Claro</option>
+                            <option value="dark">Escuro</option>
                         </select>
                     </div>
                     
@@ -154,6 +151,19 @@
                             <button id="adminLoginBtn">LOGIN</button>
                         </div>
                         <div id="adminPanel" style="display: none;">
+                            <h5>Editar Credenciais de Acesso</h5>
+                            <div class="admin-credentials">
+                                <div class="config-group">
+                                    <label for="newAdminUser">Novo usuário</label>
+                                    <input type="text" id="newAdminUser" placeholder="Nome do usuário">
+                                </div>
+                                <div class="config-group">
+                                    <label for="newAdminPass">Nova senha</label>
+                                    <input type="password" id="newAdminPass" placeholder="Nova senha">
+                                </div>
+                                <button id="saveCredentialsBtn" class="admin-btn">Salvar Credenciais</button>
+                            </div>
+                            
                             <h5>Editar Limites de Juros</h5>
                             <div id="limitsTable"></div>
                         </div>

@@ -34,12 +34,19 @@ class SimuladorEmprestimos {
         const config = localStorage.getItem('simulador_config');
         const defaultConfig = {
             nomeUsuario: '',
-            diaFixoVencimento: null,
             igpmAnual: 0.0,
             isAdmin: false,
-            limitesPersonalizados: null
+            limitesPersonalizados: null,
+            themeMode: 'light',
+            adminUser: 'Migueis',
+            adminPassword: 'Laila@10042009'
         };
-        return config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
+        const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
+        
+        // Aplicar tema na inicialização
+        this.aplicarTema(loadedConfig.themeMode);
+        
+        return loadedConfig;
     }
 
     salvarConfiguracoes() {
@@ -137,7 +144,16 @@ class SimuladorEmprestimos {
             return;
         }
 
-        valor = valor.padStart(3, '0');
+        // Não adicionar zeros à esquerda desnecessários
+        if (valor.length === 1) {
+            input.value = `0,0${valor}`;
+            return;
+        }
+        if (valor.length === 2) {
+            input.value = `0,${valor}`;
+            return;
+        }
+
         const reais = valor.slice(0, -2);
         const centavos = valor.slice(-2);
         

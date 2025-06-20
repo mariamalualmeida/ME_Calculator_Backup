@@ -52,18 +52,25 @@ body {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
-    padding: 12px;
+    padding: 8px;
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
 }
 
 .config-btn:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: scale(1.05);
+}
+
+.config-btn .material-icons {
+    font-size: 20px;
 }
 
 .main-content {
@@ -467,4 +474,108 @@ body {
     .admin-login {
         flex-direction: column;
     }
+}
+
+/* Dark Theme Variables */
+:root {
+    --background: #f5f5f5;
+    --card-bg: #ffffff;
+    --text-primary: #1c1b1f;
+    --text-secondary: #49454f;
+    --border-color: #79747e;
+    --input-bg: #fef7ff;
+}
+
+[data-theme="dark"] {
+    --background: #121212;
+    --card-bg: #1e1e1e;
+    --text-primary: #e6e1e5;
+    --text-secondary: #cac4d0;
+    --border-color: #938f99;
+    --input-bg: #2b2930;
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] body {
+    background: var(--background);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .container {
+    background: var(--background);
+}
+
+[data-theme="dark"] .input-section,
+[data-theme="dark"] .result-card,
+[data-theme="dark"] .modal-content {
+    background: var(--card-bg);
+}
+
+[data-theme="dark"] .app-header {
+    background: linear-gradient(135deg, #332d41, #1e1a2e);
+}
+
+[data-theme="dark"] .input-field {
+    background: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .input-field:focus {
+    background: var(--input-bg);
+    border-color: #d0bcff;
+}
+
+[data-theme="dark"] .input-label,
+[data-theme="dark"] .config-group label {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .error-card {
+    background: #362f2a;
+    border-color: #633b48;
+}
+
+[data-theme="dark"] .modal-header h3,
+[data-theme="dark"] .admin-section h4,
+[data-theme="dark"] .admin-section h5 {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .config-group input,
+[data-theme="dark"] .config-group select {
+    background: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+/* Admin Panel Styles */
+.admin-credentials {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-btn {
+    background: #6750a4;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: 8px;
+}
+
+.admin-btn:hover {
+    background: #4f378a;
+}
+
+[data-theme="dark"] .admin-btn {
+    background: #d0bcff;
+    color: #1c1b1f;
+}
+
+[data-theme="dark"] .admin-btn:hover {
+    background: #bea9e8;
 }
