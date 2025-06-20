@@ -38,13 +38,15 @@ class SimuladorEmprestimos {
             isAdmin: false,
             limitesPersonalizados: null,
             themeMode: 'light',
+            colorTheme: 'default',
             adminUser: 'Migueis',
             adminPassword: 'Laila@10042009'
         };
         const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
         
-        // Aplicar tema na inicialização
+        // Aplicar tema e paleta na inicialização
         this.aplicarTema(loadedConfig.themeMode);
+        this.aplicarPaletaCores(loadedConfig.colorTheme);
         
         return loadedConfig;
     }
@@ -165,6 +167,15 @@ class SimuladorEmprestimos {
                 this.aplicarTema(e.target.value);
             });
             themeSelect.setAttribute('data-listener-added', 'true');
+        }
+
+        // Event listener para mudança de paleta de cores
+        const colorSelect = document.getElementById('colorTheme');
+        if (colorSelect && !colorSelect.hasAttribute('data-listener-added')) {
+            colorSelect.addEventListener('change', (e) => {
+                this.aplicarPaletaCores(e.target.value);
+            });
+            colorSelect.setAttribute('data-listener-added', 'true');
         }
 
         // Enter para calcular
@@ -417,6 +428,7 @@ class SimuladorEmprestimos {
         // Carregar valores atuais
         document.getElementById('nomeUsuario').value = this.configuracoes.nomeUsuario || '';
         document.getElementById('themeMode').value = this.configuracoes.themeMode || 'light';
+        document.getElementById('colorTheme').value = this.configuracoes.colorTheme || 'default';
         document.getElementById('igpmAnual').value = this.configuracoes.igpmAnual || '';
         
         // Mostrar modal
@@ -437,9 +449,11 @@ class SimuladorEmprestimos {
     salvarConfiguracoesModal() {
         this.configuracoes.nomeUsuario = document.getElementById('nomeUsuario').value;
         this.configuracoes.themeMode = document.getElementById('themeMode').value;
+        this.configuracoes.colorTheme = document.getElementById('colorTheme').value;
         this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
         
         this.aplicarTema(this.configuracoes.themeMode);
+        this.aplicarPaletaCores(this.configuracoes.colorTheme);
         this.salvarConfiguracoes();
         this.fecharModal();
         alert('Configurações salvas com sucesso!');
@@ -594,6 +608,20 @@ class SimuladorEmprestimos {
         const themeSelect = document.getElementById('themeMode');
         if (themeSelect && themeSelect.value !== theme) {
             themeSelect.value = theme;
+        }
+    }
+
+    aplicarPaletaCores(colorTheme) {
+        document.documentElement.setAttribute('data-color-theme', colorTheme);
+        document.body.setAttribute('data-color-theme', colorTheme);
+        
+        // Salvar a preferência
+        localStorage.setItem('app-color-theme', colorTheme);
+        
+        // Atualizar o select se necessário
+        const colorSelect = document.getElementById('colorTheme');
+        if (colorSelect && colorSelect.value !== colorTheme) {
+            colorSelect.value = colorTheme;
         }
     }
 
