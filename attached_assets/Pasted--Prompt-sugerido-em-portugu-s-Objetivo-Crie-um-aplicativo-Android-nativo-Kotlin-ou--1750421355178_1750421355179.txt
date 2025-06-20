@@ -1,0 +1,43 @@
+### Prompt sugerido (em português)
+
+> **Objetivo**
+> Crie um aplicativo **Android nativo (Kotlin ou Flutter — escolha o que for mais produtivo)** chamado **“Simulador de Empréstimos”** que reproduza a lógica atualmente implementada na minha planilha Excel:
+>
+> * Campo “Valor do empréstimo” (B4) – numérico, moeda
+> * Campo “Número de parcelas” (C4) – inteiro **1 a 15**
+> * Campo “Taxa de juros” (D4) – percentual com 2 casas
+> * Botão **CALCULAR** que devolve o valor da parcela (E4)
+>   Fórmula: **parcela = Valor × (1 + Juros)ᴺ / N**
+> * Tabela interna de limites de juros (mínimo × máximo) por quantidade de parcelas:
+>
+> ```
+> parcelas : 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+> mín.(%)  :15 15 15 15 15 15 15 15 15 15 15 15 15 15 15
+> máx.(%)  :30 30 30 24 24 24 24 24 24 24 24 24 24 24 24
+> ```
+>
+> * Mensagens (em **caixa alta**, português)
+>   ❌ Nº parcelas < 1 ➜ “NÚMERO DE PARCELAS INFERIOR AO MÍNIMO PERMITIDO.”
+>   ❌ Nº parcelas > 15 ➜ “VOCÊ NÃO TEM PERMISSÃO PARA SIMULAÇÕES ACIMA DE 15 PARCELAS. PARA SIMULAÇÕES SUPERIORES A 15 PARCELAS, CONSULTE MIGUEIS.”
+>   ❌ Juros < mín. ➜ “\[N] PARCELA(S), A PORCENTAGEM MÍNIMA PERMITIDA É DE X,XX %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.”
+>   ❌ Juros > máx. ➜ “\[N] PARCELA(S), A PORCENTAGEM MÁXIMA PERMITIDA É DE X,XX %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.”
+> * Se qualquer campo ficar vazio, limpe o resultado.
+> * Bloqueie edição do campo “Prestação”; ele é sempre calculado.
+> * Interface simples (Material 3): 3 TextFields + botão + Card de resultado.
+> * Ao abrir o app, o teclado deve focar no valor do empréstimo.
+> * Teste de unidade para função `calcularParcela(valor, juros, nParcelas)`.
+> * Explique no README como gerar o APK (Gradle ou Flutter build).
+> * Entrega:
+>   • Código-fonte completo
+>   • README.md em português
+>   • Arquivo `.apk` pronto para instalar
+
+> **Formato de resposta**
+>
+> 1. Breve visão geral (≤ 150 palavras)
+> 2. Estrutura de pastas do projeto
+> 3. Principais trechos de código (em blocos)
+> 4. README resumido com instruções de build
+> 5. (Opcional) Sugestão de testes futuros
+
+> **Não inclua explicações extras** além do solicitado.
