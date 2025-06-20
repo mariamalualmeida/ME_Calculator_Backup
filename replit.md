@@ -102,6 +102,9 @@ SimuladorEmprestimos/
 - June 20, 2025: Fixed percentage field input issues - now supports comma input, deletion, and proper formatting across all versions
 - June 20, 2025: Enhanced PDF reports - removed "Cliente:" label when empty, fixed zero values, increased font sizes, centralized table text
 - June 20, 2025: Updated app icon to golden lion design with transparent background for professional appearance
+- June 20, 2025: Fixed PWA icon compatibility - created dedicated SVG icons (192x192 and 512x512) with proper manifest configuration
+- June 20, 2025: Implemented comprehensive date validation system rejecting impossible dates (32/13/2025, 55/55/2030) with leap year support
+- June 20, 2025: Enhanced Android validation functions with proper date formatting and business rule validation
 
 ## User Preferences
 
