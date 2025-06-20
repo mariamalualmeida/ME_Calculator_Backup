@@ -158,10 +158,14 @@ class SimuladorEmprestimos {
             this.salvarCredenciaisAdmin();
         });
 
-        // Event listener para mudança de tema
-        document.getElementById('themeMode').addEventListener('change', (e) => {
-            this.aplicarTema(e.target.value);
-        });
+        // Event listener para mudança de tema (evitar duplicação)
+        const themeSelect = document.getElementById('themeMode');
+        if (themeSelect && !themeSelect.hasAttribute('data-listener-added')) {
+            themeSelect.addEventListener('change', (e) => {
+                this.aplicarTema(e.target.value);
+            });
+            themeSelect.setAttribute('data-listener-added', 'true');
+        }
 
         // Enter para calcular
         [this.valorEmprestimoField, this.numeroParcelasField, this.taxaJurosField, this.dataInicialField].forEach(field => {
@@ -601,6 +605,13 @@ class SimuladorEmprestimos {
         document.getElementById('newAdminPass').value = '';
         
         alert('Credenciais alteradas com sucesso!');
+    }
+
+    formatarValorMonetario(valor) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(valor);
     }
 }
 
