@@ -119,6 +119,7 @@ class SimuladorEmprestimos {
 
         this.dataInicialField.addEventListener('input', (e) => {
             this.formatarData(e.target);
+            this.toggleMetodoDiasExtras();
             this.limparResultado();
         });
         
@@ -413,25 +414,39 @@ class SimuladorEmprestimos {
         return new Date(ano, mes, dia);
     }
 
-    calcularParcela(valor, juros, nParcelas, diasExtra = 0, igpmMensal = 0) {
+    calcularParcela(valor, juros, nParcelas, diasExtra = 0, igpmMensal = 0, metodo = 'primeira') {
         // Taxa efetiva (juros + IGPM)
         const taxaEfetiva = (juros + igpmMensal) / 100;
         
         // Prestação base: P = Valor × (1 + JurosMensal)^N ÷ N
         const prestacaoBase = (valor * Math.pow(1 + taxaEfetiva, nParcelas)) / nParcelas;
         
-        // Método da primeira parcela maior - juros dos dias extras apenas na primeira parcela
         if (diasExtra !== 0) {
             const taxaDiaria = taxaEfetiva / 30; // Taxa mensal dividida por 30 dias
             const jurosProrrata = valor * taxaDiaria * diasExtra;
-            const primeiraParcela = prestacaoBase + jurosProrrata;
             
-            return {
-                parcelaNormal: prestacaoBase,
-                primeiraParcela: primeiraParcela,
-                jurosDiasExtras: jurosProrrata,
-                diasExtra: diasExtra
-            };
+            if (metodo === 'distribuir') {
+                // Método distribuir - aplicar pró-rata ao valor principal e dividir por todas as parcelas
+                const valorCorrigido = valor * (1 + (taxaDiaria * diasExtra));
+                const prestacaoDistribuida = (valorCorrigido * Math.pow(1 + taxaEfetiva, nParcelas)) / nParcelas;
+                
+                return {
+                    parcelaNormal: prestacaoDistribuida,
+                    primeiraParcela: prestacaoDistribuida,
+                    jurosDiasExtras: jurosProrrata,
+                    diasExtra: diasExtra
+                };
+            } else {
+                // Método primeira parcela maior - juros dos dias extras apenas na primeira parcela
+                const primeiraParcela = prestacaoBase + jurosProrrata;
+                
+                return {
+                    parcelaNormal: prestacaoBase,
+                    primeiraParcela: primeiraParcela,
+                    jurosDiasExtras: jurosProrrata,
+                    diasExtra: diasExtra
+                };
+            }
         }
         
         return {
@@ -466,7 +481,12 @@ class SimuladorEmprestimos {
         let diasExtra = 0;
 
         if (dataInicial) {
-            const diffTime = dataInicial.getTime() - dataSimulacao.getTime();
+            // Data normal da primeira parcela seria 30 dias após o empréstimo
+            const dataNormalPrimeiraParcela = new Date(dataSimulacao);
+            dataNormalPrimeiraParcela.setDate(dataNormalPrimeiraParcela.getDate() + 30);
+            
+            // Calcular diferença entre data solicitada e data normal
+            const diffTime = dataInicial.getTime() - dataNormalPrimeiraParcela.getTime();
             diasExtra = Math.floor(diffTime / (1000 * 60 * 60 * 24));
         }
 
@@ -556,19 +576,32 @@ class SimuladorEmprestimos {
         if (resultadoCalculo.diasExtra > 0) {
             // Primeira parcela maior
             const primeiraParcela = formatarMoeda(resultadoCalculo.primeiraParcela);
-            const demaisParcelas = formatarMoeda(resultadoCalculo.parcelaNormal);
             const diasExtras = resultadoCalculo.diasExtra;
             const jurosExtras = formatarMoeda(resultadoCalculo.jurosDiasExtras);
             
-            this.resultValue.innerHTML = `
-                <div style="margin-bottom: 12px;">
-                    <strong>1ª parcela:</strong> ${primeiraParcela}
-                    <br><strong>Demais ${nParcelas - 1} parcelas:</strong> ${demaisParcelas}
-                </div>
-                <div style="font-size: 14px; color: #666; margin-top: 8px;">
-                    Dias extras: ${diasExtras} | Juros extras: ${jurosExtras}
-                </div>
-            `;
+            if (nParcelas === 1) {
+                // Apenas 1 parcela - mostrar só o valor total com explicação
+                this.resultValue.innerHTML = `
+                    <div style="margin-bottom: 12px;">
+                        <strong>Valor da parcela:</strong> ${primeiraParcela}
+                    </div>
+                    <div style="font-size: 14px; color: #666; margin-top: 8px;">
+                        Dias extras: ${diasExtras} | Juros extras: ${jurosExtras}
+                    </div>
+                `;
+            } else {
+                // Múltiplas parcelas - mostrar primeira e demais
+                const demaisParcelas = formatarMoeda(resultadoCalculo.parcelaNormal);
+                this.resultValue.innerHTML = `
+                    <div style="margin-bottom: 12px;">
+                        <strong>1ª parcela:</strong> ${primeiraParcela}
+                        <br><strong>Demais ${nParcelas - 1} parcelas:</strong> ${demaisParcelas}
+                    </div>
+                    <div style="font-size: 14px; color: #666; margin-top: 8px;">
+                        Dias extras: ${diasExtras} | Juros extras: ${jurosExtras}
+                    </div>
+                `;
+            }
         } else {
             // Parcelas iguais
             const valorFormatado = formatarMoeda(resultadoCalculo.parcelaNormal);
@@ -929,6 +962,22 @@ class SimuladorEmprestimos {
             style: 'currency',
             currency: 'BRL'
         }).format(valor);
+    }
+
+    toggleMetodoDiasExtras() {
+        const metodoDiasExtras = document.getElementById('metodoDiasExtras');
+        const dataValue = this.dataInicialField.value.trim();
+        
+        if (dataValue && dataValue.length >= 8) {
+            metodoDiasExtras.style.display = 'block';
+        } else {
+            metodoDiasExtras.style.display = 'none';
+        }
+    }
+
+    obterMetodoDiasExtras() {
+        const metodoSelecionado = document.querySelector('input[name="metodoDias"]:checked');
+        return metodoSelecionado ? metodoSelecionado.value : 'primeira';
     }
 }
 

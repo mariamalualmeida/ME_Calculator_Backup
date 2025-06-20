@@ -307,6 +307,57 @@ body {
     background: #9e9e9e;
 }
 
+/* Método de dias extras */
+.metodo-dias-extras {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.radio-option:hover {
+    background: rgba(103, 80, 164, 0.1);
+}
+
+.radio-option input[type="radio"] {
+    margin: 0;
+    accent-color: var(--primary-color);
+}
+
+.radio-option span {
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+[data-theme="dark"] .metodo-dias-extras {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .radio-option span {
+    color: var(--text-primary);
+}
+
 /* Animações */
 .result-card,
 .error-card {
