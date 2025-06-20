@@ -229,5 +229,28 @@ fun SimuladorEmprestimosScreen(
                 }
             }
         }
+
+        // Botão Exportar PDF (aparece só após cálculo)
+        if (uiState.showPdfOptions) {
+            Button(
+                onClick = { viewModel.exportarPdf() },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PictureAsPdf,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "EXPORTAR PDF",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
     }
 }
