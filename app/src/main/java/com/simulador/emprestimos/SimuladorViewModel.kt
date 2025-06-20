@@ -36,7 +36,8 @@ data class Configuracoes(
     val isAdmin: Boolean = false,
     val adminUser: String = "Migueis",
     val adminPassword: String = "Laila@10042009",
-    val limitesPersonalizados: Map<Int, LimiteJuros>? = null
+    val limitesPersonalizados: Map<Int, LimiteJuros>? = null,
+    val desabilitarRegras: Boolean = false
 )
 
 data class LimiteJuros(
@@ -167,6 +168,22 @@ class SimuladorViewModel : ViewModel() {
     }
     
     private fun validarCampos(valor: Double, nParcelas: Int, juros: Double): Pair<Boolean, String?> {
+        // Verificar se regras estão desabilitadas para admin
+        if (_configuracoes.value.desabilitarRegras == true && _configuracoes.value.isAdmin) {
+            // Modo livre - apenas validações básicas
+            if (valor <= 0) {
+                return Pair(false, "Valor do empréstimo deve ser maior que zero.")
+            }
+            if (nParcelas < 1) {
+                return Pair(false, "NÚMERO DE PARCELAS DEVE SER MAIOR QUE ZERO.")
+            }
+            if (juros < 0) {
+                return Pair(false, "TAXA DE JUROS DEVE SER MAIOR OU IGUAL A ZERO.")
+            }
+            return Pair(true, null)
+        }
+        
+        // Validações normais
         if (valor <= 0) {
             return Pair(false, "Valor do empréstimo deve ser maior que zero.")
         }

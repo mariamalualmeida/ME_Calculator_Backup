@@ -484,6 +484,10 @@ class SimuladorEmprestimos {
     validarCampos(valor, nParcelas, juros) {
         // Verificar se regras estão desabilitadas para admin
         if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
+            // Aplicar classe para desabilitar borda vermelha no modo livre
+            this.numeroParcelasField.classList.add('admin-free-mode');
+            this.taxaJurosField.classList.add('admin-free-mode');
+            
             // Modo livre - apenas validações básicas
             if (nParcelas < 1) {
                 return {
@@ -499,6 +503,10 @@ class SimuladorEmprestimos {
             }
             return { sucesso: true };
         }
+        
+        // Modo normal - remover classe para permitir borda vermelha
+        this.numeroParcelasField.classList.remove('admin-free-mode');
+        this.taxaJurosField.classList.remove('admin-free-mode');
 
         // Validações normais
         if (nParcelas < 1) {
@@ -738,8 +746,16 @@ class SimuladorEmprestimos {
             doc.setFontSize(16);
             doc.text('Relatório de Simulação de Empréstimo', 105, 32, { align: 'center' });
             
-            // Dados do cliente (somente se preenchidos)
+            // Dados do usuário primeiro (somente se tiver nome)
             let yInicial = 50;
+            if (nomeUsuario && nomeUsuario.trim() !== '') {
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(14);
+                doc.text(`Simulado por: ${nomeUsuario}`, 20, yInicial);
+                yInicial += 12;
+            }
+            
+            // Dados do cliente depois (somente se preenchidos)
             if (nomeCliente) {
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(14);
@@ -751,14 +767,6 @@ class SimuladorEmprestimos {
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(14);
                 doc.text(`CPF: ${cpfCliente}`, 20, yInicial);
-                yInicial += 12;
-            }
-            
-            // Dados do usuário (somente se tiver nome)
-            if (nomeUsuario && nomeUsuario.trim() !== '') {
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(14);
-                doc.text(`Simulado por: ${nomeUsuario}`, 20, yInicial);
                 yInicial += 12;
             }
             

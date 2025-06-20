@@ -117,6 +117,9 @@ SimuladorEmprestimos/
 - June 20, 2025: Updated calculation logic in both web and Android versions to show first installment amount separately when extra days apply
 - June 20, 2025: Enhanced PDF reports to display first installment value separately and include extra days/interest information when applicable
 - June 20, 2025: Modified result display to clearly show "1ª parcela: R$ X,XX" and "Demais N parcelas: R$ Y,YY" when pro-rata applies
+- June 20, 2025: Fixed visual validation (red border) to respect admin free mode - no red borders when rules are disabled
+- June 20, 2025: Corrected PDF report order - "Simulado por" now appears before client data (name/CPF) as requested
+- June 20, 2025: Applied validation fixes to both web and Android versions for consistency across platforms
 
 ## User Preferences
 
