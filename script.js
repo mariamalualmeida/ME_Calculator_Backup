@@ -158,6 +158,11 @@ class SimuladorEmprestimos {
             this.salvarCredenciaisAdmin();
         });
 
+        // Event listener para mudança de tema
+        document.getElementById('themeMode').addEventListener('change', (e) => {
+            this.aplicarTema(e.target.value);
+        });
+
         // Enter para calcular
         [this.valorEmprestimoField, this.numeroParcelasField, this.taxaJurosField, this.dataInicialField].forEach(field => {
             field.addEventListener('keypress', (e) => {
@@ -576,6 +581,7 @@ class SimuladorEmprestimos {
 
     aplicarTema(theme) {
         document.documentElement.setAttribute('data-theme', theme);
+        document.body.setAttribute('data-theme', theme);
     }
 
     salvarCredenciaisAdmin() {
