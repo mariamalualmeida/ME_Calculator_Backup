@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Simulador de Empréstimos</string>
+    <string name="company_name">ME EMPREENDIMENTOS</string>
+    <string name="loan_amount">Valor do empréstimo</string>
+    <string name="installments">Número de parcelas</string>
+    <string name="interest_rate">Taxa de juros (%)</string>
+    <string name="initial_date">Data inicial de vencimento (opcional)</string>
+    <string name="calculate">CALCULAR</string>
+    <string name="export_pdf">EXPORTAR PDF</string>
+    <string name="result">Resultado</string>
+    <string name="installment_value">Valor da Prestação</string>
+    <string name="settings">Configurações</string>
+    <string name="user_name">Nome do usuário</string>
+    <string name="app_theme">Tema do aplicativo</string>
+    <string name="color_palette">Paleta de cores</string>
+    <string name="igpm_annual">Índice IGPM anual (%)</string>
+    <string name="admin_area">Área Administrativa</string>
+    <string name="save">Salvar</string>
+    <string name="close">Fechar</string>
+    <string name="login">Login</string>
+    
+    <!-- Theme options -->
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    
+    <!-- Color palette options -->
+    <string name="color_default">Padrão (Roxo)</string>
+    <string name="color_blue">Azul</string>
+    <string name="color_green">Verde</string>
+    <string name="color_orange">Laranja</string>
+    <string name="color_yellow">Amarelo</string>
+    <string name="color_red">Vermelho</string>
+    <string name="color_teal">Verde-água</string>
+    <string name="color_pink">Rosa</string>
+    
+    <!-- Error messages -->
+    <string name="error_min_installments">NÚMERO DE PARCELAS INFERIOR AO MÍNIMO PERMITIDO.</string>
+    <string name="error_max_installments">VOCÊ NÃO TEM PERMISSÃO PARA SIMULAÇÕES ACIMA DE 15 PARCELAS. PARA SIMULAÇÕES SUPERIORES A 15 PARCELAS, CONSULTE MIGUEIS.</string>
+    <string name="error_interest_out_of_bounds">%1$d PARCELA(S), A PORCENTAGEM MÍNIMA/MÁXIMA PERMITIDA É DE %2$s %%. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.</string>
+</resources>
