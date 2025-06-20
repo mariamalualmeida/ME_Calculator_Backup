@@ -367,7 +367,7 @@ fun ConfiguracoesModal(
                                 nomeUsuario = nomeUsuario,
                                 themeMode = themeMode,
                                 colorTheme = colorTheme,
-                                igmpAnual = igpmAnual.replace(',', '.').toDoubleOrNull() ?: 0.0,
+                                igpmAnual = igpmAnual.replace(',', '.').toDoubleOrNull() ?: 0.0,
                                 isAdmin = isAdmin,
                                 adminUser = if (newAdminUser.isNotEmpty()) newAdminUser else configuracoes.adminUser,
                                 adminPassword = if (newAdminPassword.isNotEmpty()) newAdminPassword else configuracoes.adminPassword
