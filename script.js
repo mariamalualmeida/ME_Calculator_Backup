@@ -38,6 +38,7 @@ class SimuladorEmprestimos {
             isAdmin: false,
             limitesPersonalizados: null,
             themeMode: 'light',
+            mostrarJurosRelatorio: false,
             colorTheme: 'default',
             adminUser: 'Migueis',
             adminPassword: 'Laila@10042009'

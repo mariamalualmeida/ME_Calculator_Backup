@@ -7,68 +7,18 @@
     </linearGradient>
   </defs>
   
-  <!-- Círculo dourado -->
-  <circle cx="256" cy="256" r="235" fill="none" stroke="url(#gold)" stroke-width="10"/>
+  <!-- Círculo de fundo -->
+  <circle cx="256" cy="256" r="213" fill="url(#gold)" stroke="none"/>
   
-  <!-- Pontos decorativos -->
-  <circle cx="256" cy="21" r="8" fill="url(#gold)"/>
-  <circle cx="320" cy="32" r="8" fill="url(#gold)"/>
-  <circle cx="379" cy="59" r="8" fill="url(#gold)"/>
-  <circle cx="427" cy="101" r="8" fill="url(#gold)"/>
-  <circle cx="464" cy="155" r="8" fill="url(#gold)"/>
-  <circle cx="491" cy="213" r="8" fill="url(#gold)"/>
-  <circle cx="501" cy="277" r="8" fill="url(#gold)"/>
-  <circle cx="491" cy="341" r="8" fill="url(#gold)"/>
-  <circle cx="464" cy="400" r="8" fill="url(#gold)"/>
-  <circle cx="427" cy="453" r="8" fill="url(#gold)"/>
-  <circle cx="379" cy="496" r="8" fill="url(#gold)"/>
-  <circle cx="320" cy="501" r="8" fill="url(#gold)"/>
-  <circle cx="256" cy="491" r="8" fill="url(#gold)"/>
-  <circle cx="192" cy="501" r="8" fill="url(#gold)"/>
-  <circle cx="133" cy="496" r="8" fill="url(#gold)"/>
-  <circle cx="85" cy="453" r="8" fill="url(#gold)"/>
-  <circle cx="48" cy="400" r="8" fill="url(#gold)"/>
-  <circle cx="21" cy="341" r="8" fill="url(#gold)"/>
-  <circle cx="11" cy="277" r="8" fill="url(#gold)"/>
-  <circle cx="21" cy="213" r="8" fill="url(#gold)"/>
-  <circle cx="48" cy="155" r="8" fill="url(#gold)"/>
-  <circle cx="85" cy="101" r="8" fill="url(#gold)"/>
-  <circle cx="133" cy="59" r="8" fill="url(#gold)"/>
-  <circle cx="192" cy="32" r="8" fill="url(#gold)"/>
+  <!-- Símbolo $ -->
+  <!-- Linha vertical -->
+  <line x1="256" y1="107" x2="256" y2="405" stroke="#FFFFFF" stroke-width="21" stroke-linecap="round"/>
   
-  <!-- Cabeça do leão -->
-  <ellipse cx="256" cy="267" rx="120" ry="107" fill="url(#gold)"/>
+  <!-- Curva superior do S -->
+  <path d="M203 160 Q203 133 224 133 L283 133 Q309 133 309 160 Q309 187 283 187 L229 227 Q203 240 203 267" 
+        fill="none" stroke="#FFFFFF" stroke-width="21" stroke-linecap="round"/>
   
-  <!-- Juba superior -->
-  <path d="M160 187 Q133 133 120 173 Q107 213 133 227 Q160 213 173 200 Z" fill="url(#gold)"/>
-  <path d="M187 160 Q160 107 147 147 Q133 187 160 200 Q187 187 200 173 Z" fill="url(#gold)"/>
-  <path d="M213 147 Q187 93 173 133 Q160 173 187 187 Q213 173 227 160 Z" fill="url(#gold)"/>
-  <path d="M240 133 Q213 80 200 120 Q187 160 213 173 Q240 160 253 147 Z" fill="url(#gold)"/>
-  <path d="M272 133 Q299 80 312 120 Q325 160 299 173 Q272 160 259 147 Z" fill="url(#gold)"/>
-  <path d="M299 147 Q325 93 339 133 Q352 173 325 187 Q299 173 285 160 Z" fill="url(#gold)"/>
-  <path d="M325 160 Q352 107 365 147 Q379 187 352 200 Q325 187 312 173 Z" fill="url(#gold)"/>
-  <path d="M352 187 Q379 133 392 173 Q405 213 379 227 Q352 213 339 200 Z" fill="url(#gold)"/>
-  
-  <!-- Juba lateral -->
-  <path d="M120 227 Q67 213 53 253 Q40 293 67 307 Q93 293 107 280 Z" fill="url(#gold)"/>
-  <path d="M392 227 Q445 213 459 253 Q472 293 445 307 Q419 293 405 280 Z" fill="url(#gold)"/>
-  
-  <!-- Juba inferior -->
-  <path d="M160 360 Q133 413 120 373 Q107 333 133 320 Q160 333 173 347 Z" fill="url(#gold)"/>
-  <path d="M352 360 Q379 413 392 373 Q405 333 379 320 Q352 333 339 347 Z" fill="url(#gold)"/>
-  
-  <!-- Focinho -->
-  <ellipse cx="256" cy="280" rx="67" ry="53" fill="url(#gold)"/>
-  
-  <!-- Olhos -->
-  <ellipse cx="227" cy="240" rx="21" ry="16" fill="#000"/>
-  <ellipse cx="285" cy="240" rx="21" ry="16" fill="#000"/>
-  <ellipse cx="232" cy="235" rx="5" ry="5" fill="#FFF"/>
-  <ellipse cx="291" cy="235" rx="5" ry="5" fill="#FFF"/>
-  
-  <!-- Nariz -->
-  <path d="M256 253 Q240 240 227 253 Q240 267 256 253 Q272 267 285 253 Q272 240 256 253 Z" fill="#000"/>
-  
-  <!-- Boca -->
-  <path d="M256 267 Q227 280 213 293 Q227 307 256 293 Q285 307 299 293 Q285 280 256 267 Z" fill="#000"/>
+  <!-- Curva inferior do S -->
+  <path d="M203 267 Q203 293 229 293 L283 293 Q309 293 309 320 Q309 347 283 347 L224 347 Q203 347 203 320" 
+        fill="none" stroke="#FFFFFF" stroke-width="21" stroke-linecap="round"/>
 </svg>
