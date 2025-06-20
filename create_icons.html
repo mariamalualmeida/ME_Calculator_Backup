@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gerador de Ícones</title>
+</head>
+<body>
+    <canvas id="canvas192" width="192" height="192"></canvas>
+    <canvas id="canvas512" width="512" height="512"></canvas>
+    
+    <script>
+        function criarIcone(canvas, tamanho) {
+            const ctx = canvas.getContext('2d');
+            const scale = tamanho / 192;
+            
+            // Fundo transparente
+            ctx.clearRect(0, 0, tamanho, tamanho);
+            
+            // Círculo dourado
+            ctx.strokeStyle = '#FFD700';
+            ctx.lineWidth = 4 * scale;
+            ctx.beginPath();
+            ctx.arc(tamanho/2, tamanho/2, 88 * scale, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            // Pontos ao redor
+            ctx.fillStyle = '#FFD700';
+            const pontos = [
+                [96, 8], [120, 12], [142, 22], [160, 38], [174, 58],
+                [184, 80], [188, 104], [184, 128], [174, 150], [160, 170],
+                [142, 186], [120, 188], [96, 184], [72, 188], [50, 186],
+                [32, 170], [18, 150], [8, 128], [4, 104], [8, 80],
+                [18, 58], [32, 38], [50, 22], [72, 12]
+            ];
+            
+            pontos.forEach(ponto => {
+                ctx.beginPath();
+                ctx.arc(ponto[0] * scale, ponto[1] * scale, 3 * scale, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+            
+            // Cabeça do leão
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.ellipse(96 * scale, 100 * scale, 45 * scale, 40 * scale, 0, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Juba
+            const juba = [
+                [[60, 70], [50, 50], [45, 65], [40, 80], [50, 85], [60, 80], [65, 75]],
+                [[70, 60], [60, 40], [55, 55], [50, 70], [60, 75], [70, 70], [75, 65]],
+                [[132, 70], [142, 50], [147, 65], [152, 80], [142, 85], [132, 80], [127, 75]],
+                [[122, 60], [132, 40], [137, 55], [142, 70], [132, 75], [122, 70], [117, 65]]
+            ];
+            
+            juba.forEach(forma => {
+                ctx.beginPath();
+                ctx.moveTo(forma[0][0] * scale, forma[0][1] * scale);
+                for (let i = 1; i < forma.length; i++) {
+                    ctx.lineTo(forma[i][0] * scale, forma[i][1] * scale);
+                }
+                ctx.closePath();
+                ctx.fill();
+            });
+            
+            // Olhos
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.ellipse(85 * scale, 90 * scale, 8 * scale, 6 * scale, 0, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.ellipse(107 * scale, 90 * scale, 8 * scale, 6 * scale, 0, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Nariz
+            ctx.beginPath();
+            ctx.moveTo(96 * scale, 95 * scale);
+            ctx.quadraticCurveTo(90 * scale, 90 * scale, 85 * scale, 95 * scale);
+            ctx.quadraticCurveTo(90 * scale, 100 * scale, 96 * scale, 95 * scale);
+            ctx.quadraticCurveTo(102 * scale, 100 * scale, 107 * scale, 95 * scale);
+            ctx.quadraticCurveTo(102 * scale, 90 * scale, 96 * scale, 95 * scale);
+            ctx.fill();
+            
+            return canvas.toDataURL('image/png');
+        }
+        
+        // Gerar ícones
+        const canvas192 = document.getElementById('canvas192');
+        const canvas512 = document.getElementById('canvas512');
+        
+        const icon192 = criarIcone(canvas192, 192);
+        const icon512 = criarIcone(canvas512, 512);
+        
+        // Criar links para download
+        const link192 = document.createElement('a');
+        link192.download = 'icon-192.png';
+        link192.href = icon192;
+        link192.textContent = 'Baixar ícone 192x192';
+        document.body.appendChild(link192);
+        
+        const link512 = document.createElement('a');
+        link512.download = 'icon-512.png';
+        link512.href = icon512;
+        link512.textContent = 'Baixar ícone 512x512';
+        document.body.appendChild(link512);
+        
+        console.log('Ícones criados');
+    </script>
+</body>
+</html>

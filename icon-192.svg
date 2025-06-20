@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="50%" style="stop-color:#FFA500"/>
+      <stop offset="100%" style="stop-color:#FF8C00"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Círculo dourado -->
+  <circle cx="96" cy="96" r="88" fill="none" stroke="url(#gold)" stroke-width="4"/>
+  
+  <!-- Pontos decorativos -->
+  <circle cx="96" cy="8" r="3" fill="url(#gold)"/>
+  <circle cx="120" cy="12" r="3" fill="url(#gold)"/>
+  <circle cx="142" cy="22" r="3" fill="url(#gold)"/>
+  <circle cx="160" cy="38" r="3" fill="url(#gold)"/>
+  <circle cx="174" cy="58" r="3" fill="url(#gold)"/>
+  <circle cx="184" cy="80" r="3" fill="url(#gold)"/>
+  <circle cx="188" cy="104" r="3" fill="url(#gold)"/>
+  <circle cx="184" cy="128" r="3" fill="url(#gold)"/>
+  <circle cx="174" cy="150" r="3" fill="url(#gold)"/>
+  <circle cx="160" cy="170" r="3" fill="url(#gold)"/>
+  <circle cx="142" cy="186" r="3" fill="url(#gold)"/>
+  <circle cx="120" cy="188" r="3" fill="url(#gold)"/>
+  <circle cx="96" cy="184" r="3" fill="url(#gold)"/>
+  <circle cx="72" cy="188" r="3" fill="url(#gold)"/>
+  <circle cx="50" cy="186" r="3" fill="url(#gold)"/>
+  <circle cx="32" cy="170" r="3" fill="url(#gold)"/>
+  <circle cx="18" cy="150" r="3" fill="url(#gold)"/>
+  <circle cx="8" cy="128" r="3" fill="url(#gold)"/>
+  <circle cx="4" cy="104" r="3" fill="url(#gold)"/>
+  <circle cx="8" cy="80" r="3" fill="url(#gold)"/>
+  <circle cx="18" cy="58" r="3" fill="url(#gold)"/>
+  <circle cx="32" cy="38" r="3" fill="url(#gold)"/>
+  <circle cx="50" cy="22" r="3" fill="url(#gold)"/>
+  <circle cx="72" cy="12" r="3" fill="url(#gold)"/>
+  
+  <!-- Cabeça do leão -->
+  <ellipse cx="96" cy="100" rx="45" ry="40" fill="url(#gold)"/>
+  
+  <!-- Juba superior -->
+  <path d="M60 70 Q50 50 45 65 Q40 80 50 85 Q60 80 65 75 Z" fill="url(#gold)"/>
+  <path d="M70 60 Q60 40 55 55 Q50 70 60 75 Q70 70 75 65 Z" fill="url(#gold)"/>
+  <path d="M80 55 Q70 35 65 50 Q60 65 70 70 Q80 65 85 60 Z" fill="url(#gold)"/>
+  <path d="M90 50 Q80 30 75 45 Q70 60 80 65 Q90 60 95 55 Z" fill="url(#gold)"/>
+  <path d="M102 50 Q112 30 117 45 Q122 60 112 65 Q102 60 97 55 Z" fill="url(#gold)"/>
+  <path d="M112 55 Q122 35 127 50 Q132 65 122 70 Q112 65 107 60 Z" fill="url(#gold)"/>
+  <path d="M122 60 Q132 40 137 55 Q142 70 132 75 Q122 70 117 65 Z" fill="url(#gold)"/>
+  <path d="M132 70 Q142 50 147 65 Q152 80 142 85 Q132 80 127 75 Z" fill="url(#gold)"/>
+  
+  <!-- Juba lateral -->
+  <path d="M45 85 Q25 80 20 95 Q15 110 25 115 Q35 110 40 105 Z" fill="url(#gold)"/>
+  <path d="M147 85 Q167 80 172 95 Q177 110 167 115 Q157 110 152 105 Z" fill="url(#gold)"/>
+  
+  <!-- Juba inferior -->
+  <path d="M60 135 Q50 155 45 140 Q40 125 50 120 Q60 125 65 130 Z" fill="url(#gold)"/>
+  <path d="M132 135 Q142 155 147 140 Q152 125 142 120 Q132 125 127 130 Z" fill="url(#gold)"/>
+  
+  <!-- Focinho -->
+  <ellipse cx="96" cy="105" rx="25" ry="20" fill="url(#gold)"/>
+  
+  <!-- Olhos -->
+  <ellipse cx="85" cy="90" rx="8" ry="6" fill="#000"/>
+  <ellipse cx="107" cy="90" rx="8" ry="6" fill="#000"/>
+  <ellipse cx="87" cy="88" rx="2" ry="2" fill="#FFF"/>
+  <ellipse cx="109" cy="88" rx="2" ry="2" fill="#FFF"/>
+  
+  <!-- Nariz -->
+  <path d="M96 95 Q90 90 85 95 Q90 100 96 95 Q102 100 107 95 Q102 90 96 95 Z" fill="#000"/>
+  
+  <!-- Boca -->
+  <path d="M96 100 Q85 105 80 110 Q85 115 96 110 Q107 115 112 110 Q107 105 96 100 Z" fill="#000"/>
+</svg>
