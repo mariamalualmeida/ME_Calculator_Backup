@@ -2,17 +2,32 @@
 
 ## Visão Geral
 
-Aplicativo Android nativo em Kotlin que simula cálculos de empréstimos com validação de limites de juros por número de parcelas. Implementa a fórmula `parcela = Valor × (1 + Juros)^N / N` com interface Material Design 3, validações específicas e mensagens de erro em português em caixa alta.
+Aplicativo Android nativo em Kotlin da **ME EMPREENDIMENTOS** que simula cálculos de empréstimos com validação de limites dinâmicos de juros. Implementa scroll automático após cálculo, exportação PDF com tabela de vencimentos, configurações de usuário e área administrativa para edição de limites. Interface Material Design 3 com mensagens contextuais singular/plural.
 
 ## Funcionalidades
 
-- **Campos de entrada**: Valor do empréstimo (moeda), número de parcelas (1-15), taxa de juros (percentual com 2 casas)
-- **Cálculo automático**: Botão CALCULAR que aplica a fórmula matemática
-- **Validações**: Limites de juros por parcelas (15-30% para 1-3 parcelas, 15-24% para 4-15 parcelas)
-- **Mensagens de erro**: Textos específicos em português e caixa alta conforme especificação
-- **Interface Material 3**: Design moderno com Jetpack Compose
-- **Foco automático**: Campo valor do empréstimo recebe foco ao abrir o app
-- **Campo bloqueado**: Prestação é sempre calculada e não editável
+### Simulação de Empréstimos
+- **Valor do empréstimo**: Campo monetário com formatação R$
+- **Número de parcelas**: 1 a 15 parcelas
+- **Taxa de juros**: Percentual com 2 casas decimais
+- **Cálculo**: Fórmula `Prestação = Valor × (1 + Juros)ᴺ ÷ N`
+- **Scroll automático**: Tela rola até o resultado após calcular
+- **Campo somente-leitura**: Prestação calculada automaticamente
+
+### Validações Dinâmicas
+- **Nova tabela de limites**: Parcelas 1-2 (15-100%), 3 (15-30%), 4-15 (limites específicos)
+- **Mensagens contextuais**: Singular "1 PARCELA" vs plural "N PARCELAS"
+- **Validação em tempo real**: Limpeza automática se campos ficarem vazios
+
+### Exportação PDF
+- **Relatório completo**: Cabeçalho ME EMPREENDIMENTOS + nome do usuário
+- **Tabela de parcelas**: Nº, data vencimento (dia 5), valor
+- **Salvar em Downloads**: Compartilhamento automático disponível
+
+### Configurações
+- **Nome do usuário**: Salvo em DataStore Preferences
+- **Login administrativo**: Usuário "Migueis", senha "Laila@10042009"
+- **Edição de limites**: CRUD para as 15 faixas de juros (admin apenas)
 
 ## Estrutura do Projeto
 
@@ -64,16 +79,25 @@ fun calcularParcela(valor: Double, juros: Double, nParcelas: Int): Double {
 }
 ```
 
-### 2. Tabela de Limites de Juros
+### 2. Nova Tabela de Limites de Juros
 
 ```kotlin
 private val limitesJuros = mapOf(
-    1 to Pair(15.00, 30.00),
-    2 to Pair(15.00, 30.00),
+    1 to Pair(15.00, 100.00),
+    2 to Pair(15.00, 100.00),
     3 to Pair(15.00, 30.00),
     4 to Pair(15.00, 24.00),
-    5 to Pair(15.00, 24.00),
-    // ... até 15 parcelas
+    5 to Pair(15.00, 22.00),
+    6 to Pair(15.00, 20.00),
+    7 to Pair(14.75, 18.00),
+    8 to Pair(14.36, 17.00),
+    9 to Pair(13.92, 16.00),
+    10 to Pair(13.47, 15.00),
+    11 to Pair(13.03, 14.00),
+    12 to Pair(12.60, 13.00),
+    13 to Pair(12.19, 12.60),
+    14 to Pair(11.80, 12.19),
+    15 to Pair(11.43, 11.80)
 )
 ```
 
