@@ -208,7 +208,12 @@ body {
 .result-value {
     font-size: 32px;
     font-weight: 700;
+    color: #1c1b1f;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .result-value {
+    color: #e6e1e5;
 }
 
 .error-section {
