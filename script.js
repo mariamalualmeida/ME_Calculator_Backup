@@ -660,6 +660,8 @@ class SimuladorEmprestimos {
             
             const dataSimulacao = new Date().toLocaleDateString('pt-BR');
             const nomeUsuario = this.configuracoes.nomeUsuario || '';
+            const nomeCliente = this.nomeClienteField.value.trim();
+            const cpfCliente = this.cpfClienteField.value.trim();
             
             // Configurar fonte - Cabeçalho
             doc.setFont('helvetica', 'bold');
@@ -669,12 +671,27 @@ class SimuladorEmprestimos {
             doc.setFontSize(16);
             doc.text('Relatório de Simulação de Empréstimo', 105, 32, { align: 'center' });
             
-            // Dados do usuário (somente se tiver nome)
+            // Dados do cliente (somente se preenchidos)
             let yInicial = 50;
+            if (nomeCliente) {
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(14);
+                doc.text(`Cliente: ${nomeCliente}`, 20, yInicial);
+                yInicial += 12;
+            }
+            
+            if (cpfCliente) {
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(14);
+                doc.text(`CPF: ${cpfCliente}`, 20, yInicial);
+                yInicial += 12;
+            }
+            
+            // Dados do usuário (somente se tiver nome)
             if (nomeUsuario && nomeUsuario.trim() !== '') {
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(14);
-                doc.text(`${nomeUsuario}`, 20, yInicial);
+                doc.text(`Simulado por: ${nomeUsuario}`, 20, yInicial);
                 yInicial += 12;
             }
             
@@ -686,13 +703,18 @@ class SimuladorEmprestimos {
             // Dados da simulação - Fonte maior e negrito
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(14);
-            doc.text(`Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 20, yInicial);
+            doc.text(`Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
             yInicial += 12;
-            doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, yInicial);
-            yInicial += 12;
+            
+            // Incluir taxa de juros apenas se configurado
+            if (this.configuracoes.mostrarJurosRelatorio) {
+                doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, yInicial);
+                yInicial += 12;
+            }
+            
             doc.text(`Número de parcelas: ${nParcelas}`, 20, yInicial);
             yInicial += 12;
-            doc.text(`Valor da prestação: R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 20, yInicial);
+            doc.text(`Valor da prestação: R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
             yInicial += 20;
             
             // Tabela de parcelas - Título centralizado
@@ -728,7 +750,7 @@ class SimuladorEmprestimos {
                 
                 doc.text(i.toString().padStart(2, '0'), 35, yPos, { align: 'center' });
                 doc.text(dataVencimento.toLocaleDateString('pt-BR'), 105, yPos, { align: 'center' });
-                doc.text(`R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 165, yPos, { align: 'center' });
+                doc.text(`R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 165, yPos, { align: 'center' });
                 
                 yPos += 10;
                 

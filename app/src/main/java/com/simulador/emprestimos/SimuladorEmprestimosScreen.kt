@@ -273,6 +273,68 @@ fun SimuladorEmprestimosScreen(
                     )
                 }
                 
+                // Campo Nome do Cliente (Opcional)
+                Column {
+                    Text(
+                        text = "Nome do Cliente (Opcional)",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    
+                    OutlinedTextField(
+                        value = uiState.nomeCliente,
+                        onValueChange = { value ->
+                            viewModel.updateNomeCliente(value)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text("Digite o nome do cliente") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next,
+                            capitalization = KeyboardCapitalization.Words
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = colorScheme.primary,
+                            cursorColor = colorScheme.primary
+                        )
+                    )
+                }
+                
+                // Campo CPF do Cliente (Opcional)
+                Column {
+                    Text(
+                        text = "CPF do Cliente (Opcional)",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    
+                    OutlinedTextField(
+                        value = uiState.cpfCliente,
+                        onValueChange = { value ->
+                            val cpfFormatado = formatarCpf(value)
+                            viewModel.updateCpfCliente(cpfFormatado)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text("000.000.000-00") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = { 
+                                focusManager.clearFocus()
+                                viewModel.calcular()
+                            }
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = colorScheme.primary,
+                            cursorColor = colorScheme.primary
+                        )
+                    )
+                }
+                
                 // Botão calcular
                 Button(
                     onClick = { 

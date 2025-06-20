@@ -11,6 +11,8 @@ data class SimuladorUiState(
     val numeroParcelas: String = "",
     val taxaJuros: String = "",
     val dataInicial: String = "",
+    val nomeCliente: String = "",
+    val cpfCliente: String = "",
     val resultado: Double? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
@@ -23,6 +25,7 @@ data class Configuracoes(
     val themeMode: String = "light",
     val colorTheme: String = "default",
     val igpmAnual: Double = 0.0,
+    val mostrarJurosRelatorio: Boolean = false,
     val isAdmin: Boolean = false,
     val adminUser: String = "Migueis",
     val adminPassword: String = "Laila@10042009",
@@ -90,6 +93,14 @@ class SimuladorViewModel : ViewModel() {
     
     fun updateDataInicial(data: String) {
         _uiState.value = _uiState.value.copy(dataInicial = data)
+    }
+    
+    fun updateNomeCliente(nome: String) {
+        _uiState.value = _uiState.value.copy(nomeCliente = nome)
+    }
+    
+    fun updateCpfCliente(cpf: String) {
+        _uiState.value = _uiState.value.copy(cpfCliente = cpf)
     }
     
     fun calcular() {

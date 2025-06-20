@@ -78,6 +78,18 @@ fun isAnoBissexto(ano: Int): Boolean {
     return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0)
 }
 
+// Formatação de CPF
+fun formatarCpf(input: String): String {
+    val digitos = input.replace(Regex("[^0-9]"), "").take(11)
+    
+    return when {
+        digitos.length <= 3 -> digitos
+        digitos.length <= 6 -> "${digitos.substring(0, 3)}.${digitos.substring(3)}"
+        digitos.length <= 9 -> "${digitos.substring(0, 3)}.${digitos.substring(3, 6)}.${digitos.substring(6)}"
+        else -> "${digitos.substring(0, 3)}.${digitos.substring(3, 6)}.${digitos.substring(6, 9)}-${digitos.substring(9)}"
+    }
+}
+
 // Paletas de cores para diferentes temas
 fun getColorSchemeForTheme(colorTheme: String, isDark: Boolean): ColorScheme {
     val colors = when (colorTheme) {

@@ -105,6 +105,11 @@ SimuladorEmprestimos/
 - June 20, 2025: Fixed PWA icon compatibility - created dedicated SVG icons (192x192 and 512x512) with proper manifest configuration
 - June 20, 2025: Implemented comprehensive date validation system rejecting impossible dates (32/13/2025, 55/55/2030) with leap year support
 - June 20, 2025: Enhanced Android validation functions with proper date formatting and business rule validation
+- June 20, 2025: Implemented simplified solution - added fixed optional client name/CPF fields on main screen
+- June 20, 2025: Added configuration toggle for showing interest rate in PDF reports
+- June 20, 2025: Updated PDF generation to use exactly 2 decimal places formatting (R$ 1.234,56)
+- June 20, 2025: Created new golden dollar sign ($) icon replacing lion design for clearer financial representation
+- June 20, 2025: Applied same enhancements to Android version with name/CPF fields and CPF auto-formatting
 
 ## User Preferences
 
