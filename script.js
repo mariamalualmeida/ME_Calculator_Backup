@@ -245,10 +245,10 @@ class SimuladorEmprestimos {
         }
 
         // IGPM mensal (anual dividido por 12)
-        const igpmMensal = this.configuracoes.igmpAnual / 12;
+        const igpmMensal = this.configuracoes.igpmAnual / 12;
 
         // Calcular prestação
-        const valorPrestacao = this.calcularParcela(valor, juros, nParcelas, diasExtra, igmpMensal);
+        const valorPrestacao = this.calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal);
         
         // Mostrar resultado
         this.mostrarResultado(valorPrestacao);
