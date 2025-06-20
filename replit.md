@@ -90,12 +90,12 @@ SimuladorEmprestimos/
 
 ## Changelog
 
-- June 20, 2025: Initial web application setup
-- June 20, 2025: Complete migration to Android native application with Kotlin and Jetpack Compose
-- June 20, 2025: Added comprehensive test suite and README documentation
-- June 20, 2025: Updated app branding to "ME EMPREENDIMENTOS" with company name prominently displayed above "Simulador de Empréstimos"
-- June 20, 2025: Implemented prompt revisado completo - nova tabela de limites dinâmicos, scroll automático, exportação PDF com tabela de vencimentos, configurações de usuário e área administrativa
-- June 20, 2025: Corrigido tipo de teclado para campos monetários (Decimal) e ajustado datas PDF para começar 30 dias após simulação
+- June 20, 2025: Initial web application setup with basic loan calculator
+- June 20, 2025: Implemented complete feature set - dynamic interest rate limits table, automatic scroll, PDF export with payment schedule, user configurations, and administrative area
+- June 20, 2025: Added comprehensive test suite and complete README documentation
+- June 20, 2025: Updated app branding to "ME EMPREENDIMENTOS" with company name prominently displayed
+- June 20, 2025: Consolidated to pure web application - removed Android components for focused web deployment
+- June 20, 2025: Final optimization - cleaned CSS redundancies, removed unused Material Icons dependency, updated documentation to reflect web-only architecture
 
 ## User Preferences
 
