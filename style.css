@@ -382,6 +382,8 @@ body {
 
 .config-group {
     margin-bottom: 24px;
+    display: block !important;
+    visibility: visible !important;
 }
 
 .config-group label {
@@ -401,6 +403,8 @@ body {
     font-size: 14px;
     background: #fef7ff;
     box-sizing: border-box;
+    display: block !important;
+    visibility: visible !important;
 }
 
 .admin-section h4 {
@@ -655,4 +659,23 @@ body {
 
 [data-theme="dark"] .config-btn:hover {
     background: rgba(30, 30, 30, 1) !important;
+}
+
+/* Garantir visibilidade da opção de tema */
+#themeMode {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    width: 100% !important;
+    background: #fef7ff !important;
+    border: 2px solid #6750a4 !important;
+    color: #1c1b1f !important;
+    font-weight: 500 !important;
+}
+
+[data-theme="dark"] #themeMode {
+    background: var(--input-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: #d0bcff !important;
 }
