@@ -75,8 +75,15 @@ class SimuladorEmprestimos {
         });
         
         this.valorEmprestimoField.addEventListener('focus', (e) => {
-            if (e.target.value === '' || e.target.value === '0,00') {
+            if (e.target.value === '' || e.target.value === '0,00' || e.target.placeholder === e.target.value) {
                 e.target.value = '';
+                e.target.placeholder = '';
+            }
+        });
+        
+        this.valorEmprestimoField.addEventListener('blur', (e) => {
+            if (e.target.value === '') {
+                e.target.placeholder = '0,00';
             }
         });
 
@@ -91,16 +98,30 @@ class SimuladorEmprestimos {
         });
         
         this.dataInicialField.addEventListener('keydown', (e) => {
-            // Permitir apagar com backspace e delete
+            // Permitir navegação e seleção
+            if (['ArrowLeft', 'ArrowRight', 'Home', 'End', 'Tab'].includes(e.key)) {
+                return;
+            }
+            
+            // Permitir apagar
             if (e.key === 'Backspace' || e.key === 'Delete') {
                 e.preventDefault();
-                const valor = e.target.value;
-                if (e.key === 'Backspace' && valor.length > 0) {
-                    e.target.value = valor.slice(0, -1);
+                const valor = e.target.value.replace(/\D/g, '');
+                
+                if (e.key === 'Backspace') {
+                    const novoValor = valor.slice(0, -1);
+                    e.target.value = novoValor;
+                    this.formatarData(e.target);
                 } else if (e.key === 'Delete') {
                     e.target.value = '';
                 }
-                this.formatarData(e.target);
+                return;
+            }
+            
+            // Apenas números
+            if (!/^\d$/.test(e.key)) {
+                e.preventDefault();
+                return;
             }
         });
 
@@ -205,14 +226,21 @@ class SimuladorEmprestimos {
     formatarData(input) {
         let valor = input.value.replace(/\D/g, '');
         
-        if (valor.length >= 2) {
-            valor = valor.substring(0, 2) + '/' + valor.substring(2);
-        }
-        if (valor.length >= 5) {
-            valor = valor.substring(0, 5) + '/' + valor.substring(5, 9);
+        // Limitar a 8 dígitos (DDMMAAAA)
+        valor = valor.substring(0, 8);
+        
+        if (valor.length === 0) {
+            input.value = '';
+            return;
         }
         
-        input.value = valor;
+        if (valor.length <= 2) {
+            input.value = valor;
+        } else if (valor.length <= 4) {
+            input.value = valor.substring(0, 2) + '/' + valor.substring(2);
+        } else {
+            input.value = valor.substring(0, 2) + '/' + valor.substring(2, 4) + '/' + valor.substring(4);
+        }
     }
 
     obterValorNumerico(valorFormatado) {
