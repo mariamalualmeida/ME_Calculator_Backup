@@ -1,11 +1,11 @@
 /**
- * Simulador de Empréstimos
- * Implementa a lógica de cálculo de empréstimos com validação de limites
+ * ME EMPREENDIMENTOS - Simulador de Empréstimos
+ * Implementa cálculo com pró-rata, IGPM e área administrativa
  */
 
 class SimuladorEmprestimos {
     constructor() {
-        // Nova tabela de limites de juros conforme prompt
+        // Nova tabela de limites conforme prompt
         this.limitesJuros = {
             1: { min: 15.00, max: 100.00 },
             2: { min: 15.00, max: 100.00 },
@@ -24,9 +24,7 @@ class SimuladorEmprestimos {
             15: { min: 11.43, max: 11.80 }
         };
 
-        // Configurações padrão (localStorage)
         this.configuracoes = this.carregarConfiguracoes();
-        
         this.initializeElements();
         this.setupEventListeners();
         this.focusInitialField();
@@ -34,12 +32,14 @@ class SimuladorEmprestimos {
 
     carregarConfiguracoes() {
         const config = localStorage.getItem('simulador_config');
-        return config ? JSON.parse(config) : {
+        const defaultConfig = {
             nomeUsuario: '',
             diaFixoVencimento: null,
             igpmAnual: 0.0,
-            isAdmin: false
+            isAdmin: false,
+            limitesPersonalizados: null
         };
+        return config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
     }
 
     salvarConfiguracoes() {
@@ -61,40 +61,70 @@ class SimuladorEmprestimos {
     }
 
     setupEventListeners() {
-        // Formatação de moeda para valor do empréstimo
+        // Formatação de campos
         this.valorEmprestimoField.addEventListener('input', (e) => {
             this.formatarMoeda(e.target);
             this.limparResultado();
         });
 
-        // Formatação de percentual para taxa de juros
         this.taxaJurosField.addEventListener('input', (e) => {
             this.formatarPercentual(e.target);
             this.limparResultado();
         });
 
-        // Limpeza quando número de parcelas muda
+        this.dataInicialField.addEventListener('input', (e) => {
+            this.formatarData(e.target);
+            this.limparResultado();
+        });
+
         this.numeroParcelasField.addEventListener('input', () => {
             this.limparResultado();
         });
 
-        // Botão calcular
+        // Botões
         this.calcularBtn.addEventListener('click', () => {
             this.calcular();
         });
 
+        this.exportPdfBtn.addEventListener('click', () => {
+            this.exportarPdf();
+        });
+
+        this.configBtn.addEventListener('click', () => {
+            this.abrirConfiguracoes();
+        });
+
+        // Modal de configurações
+        document.getElementById('closeModal').addEventListener('click', () => {
+            this.fecharModal();
+        });
+
+        document.getElementById('saveConfigBtn').addEventListener('click', () => {
+            this.salvarConfiguracoesModal();
+        });
+
+        document.getElementById('adminLoginBtn').addEventListener('click', () => {
+            this.fazerLoginAdmin();
+        });
+
         // Enter para calcular
-        [this.valorEmprestimoField, this.numeroParcelasField, this.taxaJurosField].forEach(field => {
+        [this.valorEmprestimoField, this.numeroParcelasField, this.taxaJurosField, this.dataInicialField].forEach(field => {
             field.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     this.calcular();
                 }
             });
         });
+
+        // Fechar modal ao clicar fora
+        document.getElementById('configModal').addEventListener('click', (e) => {
+            if (e.target.id === 'configModal') {
+                this.fecharModal();
+            }
+        });
     }
 
     focusInitialField() {
-        // Foco automático no campo valor do empréstimo ao abrir
         setTimeout(() => {
             this.valorEmprestimoField.focus();
         }, 100);
@@ -102,171 +132,345 @@ class SimuladorEmprestimos {
 
     formatarMoeda(input) {
         let valor = input.value.replace(/\D/g, '');
-        if (valor.length === 0) {
+        if (valor === '') {
             input.value = '';
             return;
         }
+
+        valor = valor.padStart(3, '0');
+        const reais = valor.slice(0, -2);
+        const centavos = valor.slice(-2);
         
-        valor = parseInt(valor).toString();
-        
-        if (valor.length === 1) {
-            valor = '0,0' + valor;
-        } else if (valor.length === 2) {
-            valor = '0,' + valor;
-        } else {
-            valor = valor.slice(0, -2) + ',' + valor.slice(-2);
-        }
-        
-        // Adicionar pontos para milhares
-        let partes = valor.split(',');
-        partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        
-        input.value = partes.join(',');
+        const reaisFormatados = reais.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+        input.value = `${reaisFormatados},${centavos}`;
     }
 
     formatarPercentual(input) {
         let valor = input.value.replace(/[^\d,]/g, '');
         
         // Permitir apenas uma vírgula
-        let virgulas = valor.split(',').length - 1;
-        if (virgulas > 1) {
-            valor = valor.substring(0, valor.lastIndexOf(','));
+        const virgulas = valor.split(',');
+        if (virgulas.length > 2) {
+            valor = virgulas[0] + ',' + virgulas[1];
         }
         
         // Limitar casas decimais
-        if (valor.includes(',')) {
-            let partes = valor.split(',');
-            if (partes[1].length > 2) {
-                partes[1] = partes[1].substring(0, 2);
-            }
-            valor = partes.join(',');
+        if (virgulas.length === 2 && virgulas[1].length > 2) {
+            valor = virgulas[0] + ',' + virgulas[1].substring(0, 2);
         }
         
         input.value = valor;
     }
 
-    limparResultado() {
-        this.resultValue.textContent = 'R$ 0,00';
+    formatarData(input) {
+        let valor = input.value.replace(/\D/g, '');
+        
+        if (valor.length >= 2) {
+            valor = valor.substring(0, 2) + '/' + valor.substring(2);
+        }
+        if (valor.length >= 5) {
+            valor = valor.substring(0, 5) + '/' + valor.substring(5, 9);
+        }
+        
+        input.value = valor;
+    }
+
+    obterValorNumerico(valorFormatado) {
+        if (!valorFormatado) return 0;
+        return parseFloat(valorFormatado.replace(/\./g, '').replace(',', '.')) || 0;
+    }
+
+    obterPercentualNumerico(percentualFormatado) {
+        if (!percentualFormatado) return 0;
+        return parseFloat(percentualFormatado.replace(',', '.')) || 0;
+    }
+
+    parseData(dataStr) {
+        if (!dataStr || dataStr.length < 10) return null;
+        const partes = dataStr.split('/');
+        if (partes.length !== 3) return null;
+        
+        const dia = parseInt(partes[0]);
+        const mes = parseInt(partes[1]) - 1; // JavaScript mês é 0-indexed
+        const ano = parseInt(partes[2]);
+        
+        if (dia < 1 || dia > 31 || mes < 0 || mes > 11 || ano < 1900) return null;
+        return new Date(ano, mes, dia);
+    }
+
+    calcularParcela(valor, juros, nParcelas, diasExtra = 0, igpmMensal = 0) {
+        // Taxa efetiva (juros + IGPM)
+        const taxaEfetiva = (juros + igpmMensal) / 100;
+        
+        // Prestação base: P = Valor × (1 + JurosMensal)^N ÷ N
+        const prestacaoBase = (valor * Math.pow(1 + taxaEfetiva, nParcelas)) / nParcelas;
+        
+        // Cálculo pró-rata se houver diferença de dias
+        if (diasExtra !== 0) {
+            const taxaDiaria = taxaEfetiva / 30; // Taxa mensal dividida por 30 dias
+            const jurosProrrata = valor * taxaDiaria * diasExtra;
+            const valorAjustado = valor + jurosProrrata;
+            return (valorAjustado * Math.pow(1 + taxaEfetiva, nParcelas)) / nParcelas;
+        }
+        
+        return prestacaoBase;
+    }
+
+    calcular() {
+        // Verificar campos obrigatórios
+        const valor = this.obterValorNumerico(this.valorEmprestimoField.value);
+        const nParcelas = parseInt(this.numeroParcelasField.value) || 0;
+        const juros = this.obterPercentualNumerico(this.taxaJurosField.value);
+        
+        if (!valor || !nParcelas || !juros) {
+            this.limparResultado();
+            return;
+        }
+
+        // Validações
+        const validacao = this.validarCampos(valor, nParcelas, juros);
+        if (!validacao.sucesso) {
+            this.mostrarErro(validacao.mensagem);
+            return;
+        }
+
+        // Cálculo com data e pró-rata
+        const dataSimulacao = new Date();
+        const dataInicial = this.parseData(this.dataInicialField.value);
+        let diasExtra = 0;
+
+        if (dataInicial) {
+            const diffTime = dataInicial.getTime() - dataSimulacao.getTime();
+            diasExtra = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        // IGPM mensal (anual dividido por 12)
+        const igpmMensal = this.configuracoes.igmpAnual / 12;
+
+        // Calcular prestação
+        const valorPrestacao = this.calcularParcela(valor, juros, nParcelas, diasExtra, igmpMensal);
+        
+        // Mostrar resultado
+        this.mostrarResultado(valorPrestacao);
+        this.rolarParaResultado();
+    }
+
+    validarCampos(valor, nParcelas, juros) {
+        // Validar número de parcelas
+        if (nParcelas < 1) {
+            return {
+                sucesso: false,
+                mensagem: "NÚMERO DE PARCELAS INFERIOR AO MÍNIMO PERMITIDO."
+            };
+        }
+
+        if (nParcelas > 15) {
+            return {
+                sucesso: false,
+                mensagem: "VOCÊ NÃO TEM PERMISSÃO PARA SIMULAÇÕES ACIMA DE 15 PARCELAS. PARA SIMULAÇÕES SUPERIORES A 15 PARCELAS, CONSULTE MIGUEIS."
+            };
+        }
+
+        // Obter limites (usar personalizados se admin configurou)
+        const limites = this.configuracoes.limitesPersonalizados?.[nParcelas] || this.limitesJuros[nParcelas];
+        
+        if (juros < limites.min) {
+            const mensagem = nParcelas === 1 ? 
+                `CÁLCULO DE 1 PARCELA, A PORCENTAGEM MÍNIMA PERMITIDA É DE ${limites.min.toFixed(2).replace('.', ',')} %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.` :
+                `CÁLCULOS DE ${nParcelas} PARCELAS, A PORCENTAGEM MÍNIMA PERMITIDA É DE ${limites.min.toFixed(2).replace('.', ',')} %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.`;
+            
+            return { sucesso: false, mensagem };
+        }
+
+        if (juros > limites.max) {
+            const mensagem = nParcelas === 1 ? 
+                `CÁLCULO DE 1 PARCELA, A PORCENTAGEM MÁXIMA PERMITIDA É DE ${limites.max.toFixed(2).replace('.', ',')} %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.` :
+                `CÁLCULOS DE ${nParcelas} PARCELAS, A PORCENTAGEM MÁXIMA PERMITIDA É DE ${limites.max.toFixed(2).replace('.', ',')} %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.`;
+            
+            return { sucesso: false, mensagem };
+        }
+
+        return { sucesso: true };
+    }
+
+    mostrarResultado(valor) {
+        const valorFormatado = new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(valor);
+
+        this.resultValue.textContent = valorFormatado;
+        this.resultCard.style.display = 'block';
+        this.exportPdfBtn.style.display = 'flex';
         this.esconderErro();
     }
 
     mostrarErro(mensagem) {
         this.errorMessage.textContent = mensagem;
-        this.errorSection.style.display = 'flex';
-        this.resultValue.textContent = 'R$ 0,00';
+        this.errorSection.style.display = 'block';
+        this.resultCard.style.display = 'none';
+        this.exportPdfBtn.style.display = 'none';
+    }
+
+    limparResultado() {
+        this.resultCard.style.display = 'none';
+        this.exportPdfBtn.style.display = 'none';
+        this.esconderErro();
     }
 
     esconderErro() {
         this.errorSection.style.display = 'none';
     }
 
-    obterValorNumerico(valorFormatado) {
-        if (!valorFormatado) return 0;
-        return parseFloat(valorFormatado.replace(/\./g, '').replace(',', '.'));
+    rolarParaResultado() {
+        setTimeout(() => {
+            document.querySelector('.result-section').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 100);
     }
 
-    obterPercentualNumerico(percentualFormatado) {
-        if (!percentualFormatado) return 0;
-        return parseFloat(percentualFormatado.replace(',', '.'));
+    abrirConfiguracoes() {
+        // Carregar valores atuais
+        document.getElementById('nomeUsuario').value = this.configuracoes.nomeUsuario || '';
+        document.getElementById('diaVencimento').value = this.configuracoes.diaFixoVencimento || '';
+        document.getElementById('igpmAnual').value = this.configuracoes.igpmAnual || '';
+        
+        // Mostrar modal
+        document.getElementById('configModal').style.display = 'flex';
+        
+        // Se é admin, mostrar painel
+        if (this.configuracoes.isAdmin) {
+            this.mostrarPainelAdmin();
+        }
     }
 
-    /**
-     * Calcula o valor da parcela usando a fórmula: parcela = Valor × (1 + Juros)^N / N
-     * @param {number} valor - Valor do empréstimo
-     * @param {number} juros - Taxa de juros (em percentual)
-     * @param {number} nParcelas - Número de parcelas
-     * @returns {number} - Valor da parcela
-     */
-    calcularParcela(valor, juros, nParcelas) {
-        const jurosDecimal = juros / 100;
-        const parcela = (valor * Math.pow(1 + jurosDecimal, nParcelas)) / nParcelas;
-        return parcela;
+    fecharModal() {
+        document.getElementById('configModal').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'none';
+        this.configuracoes.isAdmin = false;
     }
 
-    validarCampos() {
+    salvarConfiguracoesModal() {
+        this.configuracoes.nomeUsuario = document.getElementById('nomeUsuario').value;
+        this.configuracoes.diaFixoVencimento = document.getElementById('diaVencimento').value || null;
+        this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
+        
+        this.salvarConfiguracoes();
+        this.fecharModal();
+        alert('Configurações salvas com sucesso!');
+    }
+
+    fazerLoginAdmin() {
+        const usuario = document.getElementById('adminUser').value;
+        const senha = document.getElementById('adminPass').value;
+        
+        if (usuario === 'Migueis' && senha === 'Laila@10042009') {
+            this.configuracoes.isAdmin = true;
+            this.mostrarPainelAdmin();
+            document.getElementById('adminUser').value = '';
+            document.getElementById('adminPass').value = '';
+        } else {
+            alert('Usuário ou senha incorretos');
+        }
+    }
+
+    mostrarPainelAdmin() {
+        const panel = document.getElementById('adminPanel');
+        const table = document.getElementById('limitsTable');
+        
+        let html = '<div class="limits-table">';
+        for (let parcelas = 1; parcelas <= 15; parcelas++) {
+            const limite = this.configuracoes.limitesPersonalizados?.[parcelas] || this.limitesJuros[parcelas];
+            html += `
+                <div class="limit-row">
+                    <label>${parcelas}p:</label>
+                    <input type="text" id="min_${parcelas}" value="${limite.min.toFixed(2).replace('.', ',')}" placeholder="Mínimo">
+                    <input type="text" id="max_${parcelas}" value="${limite.max.toFixed(2).replace('.', ',')}" placeholder="Máximo">
+                </div>
+            `;
+        }
+        html += '<button onclick="simulator.salvarLimitesAdmin()" style="margin-top: 16px; padding: 8px 16px; background: #6750a4; color: white; border: none; border-radius: 4px; cursor: pointer;">Salvar Limites</button>';
+        html += '</div>';
+        
+        table.innerHTML = html;
+        panel.style.display = 'block';
+    }
+
+    salvarLimitesAdmin() {
+        const novosLimites = {};
+        
+        for (let parcelas = 1; parcelas <= 15; parcelas++) {
+            const min = parseFloat(document.getElementById(`min_${parcelas}`).value.replace(',', '.'));
+            const max = parseFloat(document.getElementById(`max_${parcelas}`).value.replace(',', '.'));
+            
+            if (!isNaN(min) && !isNaN(max) && min <= max) {
+                novosLimites[parcelas] = { min, max };
+            }
+        }
+        
+        this.configuracoes.limitesPersonalizados = novosLimites;
+        this.salvarConfiguracoes();
+        alert('Limites atualizados com sucesso!');
+    }
+
+    exportarPdf() {
+        if (this.resultCard.style.display === 'none') return;
+        
         const valor = this.obterValorNumerico(this.valorEmprestimoField.value);
         const nParcelas = parseInt(this.numeroParcelasField.value);
         const juros = this.obterPercentualNumerico(this.taxaJurosField.value);
-
-        // Verificar se todos os campos estão preenchidos
-        if (!this.valorEmprestimoField.value.trim() || 
-            !this.numeroParcelasField.value.trim() || 
-            !this.taxaJurosField.value.trim()) {
-            return { valido: false, mensagem: null }; // Limpar resultado silenciosamente
-        }
-
-        // Validar número de parcelas
-        if (nParcelas < 1) {
-            return { 
-                valido: false, 
-                mensagem: "NÚMERO DE PARCELAS INFERIOR AO MÍNIMO PERMITIDO." 
-            };
-        }
-
-        if (nParcelas > 15) {
-            return { 
-                valido: false, 
-                mensagem: "VOCÊ NÃO TEM PERMISSÃO PARA SIMULAÇÕES ACIMA DE 15 PARCELAS. PARA SIMULAÇÕES SUPERIORES A 15 PARCELAS, CONSULTE MIGUEIS." 
-            };
-        }
-
-        // Validar limites de juros
-        const limites = this.limitesJuros[nParcelas];
-        if (juros < limites.min) {
-            return { 
-                valido: false, 
-                mensagem: `[${nParcelas}] PARCELA(S), A PORCENTAGEM MÍNIMA PERMITIDA É DE ${limites.min.toFixed(2).replace('.', ',')} %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.` 
-            };
-        }
-
-        if (juros > limites.max) {
-            return { 
-                valido: false, 
-                mensagem: `[${nParcelas}] PARCELA(S), A PORCENTAGEM MÁXIMA PERMITIDA É DE ${limites.max.toFixed(2).replace('.', ',')} %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.` 
-            };
-        }
-
-        return { valido: true, valor, nParcelas, juros };
+        const prestacao = this.obterValorNumerico(this.resultValue.textContent);
+        
+        this.gerarPdfSimples(valor, nParcelas, juros, prestacao);
     }
 
-    formatarValorMonetario(valor) {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        }).format(valor);
-    }
-
-    calcular() {
-        const validacao = this.validarCampos();
-
-        if (!validacao.valido) {
-            if (validacao.mensagem) {
-                this.mostrarErro(validacao.mensagem);
-            } else {
-                this.limparResultado();
-            }
-            return;
+    gerarPdfSimples(valor, nParcelas, juros, prestacao) {
+        // Simulação simples de exportação PDF
+        const dataSimulacao = new Date().toLocaleDateString('pt-BR');
+        const nomeUsuario = this.configuracoes.nomeUsuario || 'Cliente';
+        
+        let conteudo = `ME EMPREENDIMENTOS\n`;
+        conteudo += `Relatório de Simulação de Empréstimo\n\n`;
+        conteudo += `Cliente: ${nomeUsuario}\n`;
+        conteudo += `Data da simulação: ${dataSimulacao}\n\n`;
+        conteudo += `Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}\n`;
+        conteudo += `Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%\n`;
+        conteudo += `Número de parcelas: ${nParcelas}\n`;
+        conteudo += `Valor da prestação: R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}\n\n`;
+        
+        conteudo += `TABELA DE PARCELAS:\n`;
+        
+        // Calcular datas de vencimento
+        const dataBase = this.parseData(this.dataInicialField.value) || new Date();
+        const diaVencimento = this.configuracoes.diaFixoVencimento || dataBase.getDate();
+        
+        for (let i = 1; i <= nParcelas; i++) {
+            const dataVencimento = new Date(dataBase);
+            dataVencimento.setMonth(dataVencimento.getMonth() + i);
+            dataVencimento.setDate(diaVencimento);
+            
+            conteudo += `${i.toString().padStart(2, '0')}  ${dataVencimento.toLocaleDateString('pt-BR')}  R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}\n`;
         }
-
-        const { valor, nParcelas, juros } = validacao;
-
-        try {
-            const valorParcela = this.calcularParcela(valor, juros, nParcelas);
-            this.resultValue.textContent = this.formatarValorMonetario(valorParcela);
-            this.esconderErro();
-        } catch (error) {
-            this.mostrarErro('ERRO NO CÁLCULO. VERIFIQUE OS VALORES INFORMADOS.');
-            console.error('Erro no cálculo:', error);
-        }
+        
+        // Criar e baixar arquivo
+        const blob = new Blob([conteudo], { type: 'text/plain;charset=utf-8' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `simulacao_emprestimo_${Date.now()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        alert('Relatório exportado para Downloads!');
     }
 }
 
-// Inicializar aplicação quando DOM estiver carregado
+// Inicializar aplicação
+let simulator;
 document.addEventListener('DOMContentLoaded', () => {
-    new SimuladorEmprestimos();
+    simulator = new SimuladorEmprestimos();
 });
-
-// Exportar para testes (se necessário)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { SimuladorEmprestimos };
-}
