@@ -279,6 +279,7 @@ class SimuladorEmprestimos {
         
         if (valor.length === 0) {
             input.value = '';
+            this.marcarDataValida(input);
             return;
         }
         
@@ -289,6 +290,72 @@ class SimuladorEmprestimos {
         } else {
             input.value = valor.substring(0, 2) + '/' + valor.substring(2, 4) + '/' + valor.substring(4);
         }
+        
+        // Validar data se estiver completa
+        if (input.value.length === 10) {
+            this.validarData(input);
+        } else {
+            this.marcarDataValida(input);
+        }
+    }
+    
+    validarData(input) {
+        const data = input.value;
+        const partesData = data.split('/');
+        
+        if (partesData.length !== 3) {
+            this.marcarDataInvalida(input, 'Formato de data inválido');
+            return false;
+        }
+        
+        const dia = parseInt(partesData[0]);
+        const mes = parseInt(partesData[1]);
+        const ano = parseInt(partesData[2]);
+        
+        // Validar ano
+        if (ano < 2020 || ano > 2050) {
+            this.marcarDataInvalida(input, 'Ano deve estar entre 2020 e 2050');
+            return false;
+        }
+        
+        // Validar mês
+        if (mes < 1 || mes > 12) {
+            this.marcarDataInvalida(input, 'Mês deve estar entre 1 e 12');
+            return false;
+        }
+        
+        // Validar dia
+        const diasPorMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        
+        // Verificar ano bissexto
+        if (mes === 2 && this.isAnoBissexto(ano)) {
+            diasPorMes[1] = 29;
+        }
+        
+        if (dia < 1 || dia > diasPorMes[mes - 1]) {
+            this.marcarDataInvalida(input, `Dia inválido para ${mes}/${ano}`);
+            return false;
+        }
+        
+        // Data válida
+        this.marcarDataValida(input);
+        return true;
+    }
+    
+    isAnoBissexto(ano) {
+        return (ano % 4 === 0 && ano % 100 !== 0) || (ano % 400 === 0);
+    }
+    
+    marcarDataInvalida(input, mensagem) {
+        input.style.borderColor = '#f44336';
+        input.style.color = '#f44336';
+        input.title = mensagem;
+    }
+    
+    marcarDataValida(input) {
+        input.style.borderColor = '';
+        input.style.color = '';
+        input.title = '';
     }
 
     obterValorNumerico(valorFormatado) {
@@ -545,7 +612,11 @@ class SimuladorEmprestimos {
         const valor = this.obterValorNumerico(this.valorEmprestimoField.value);
         const nParcelas = parseInt(this.numeroParcelasField.value);
         const juros = this.obterPercentualNumerico(this.taxaJurosField.value);
-        const prestacao = this.obterValorNumerico(this.resultValue.textContent);
+        
+        // Recalcular prestação para garantir valor correto
+        const diasExtra = 0;
+        const igpmMensal = this.configuracoes.igpmAnual / 12.0;
+        const prestacao = this.calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal);
         
         this.gerarPdfSimples(valor, nParcelas, juros, prestacao);
     }

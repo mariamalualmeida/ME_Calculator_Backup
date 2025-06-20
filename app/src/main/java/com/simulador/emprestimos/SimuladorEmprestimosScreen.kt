@@ -250,7 +250,8 @@ fun SimuladorEmprestimosScreen(
                     OutlinedTextField(
                         value = uiState.dataInicial,
                         onValueChange = { value ->
-                            viewModel.updateDataInicial(formatarData(value))
+                            val dataFormatada = formatarData(value)
+                            viewModel.updateDataInicial(dataFormatada)
                         },
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("DD/MM/AAAA") },

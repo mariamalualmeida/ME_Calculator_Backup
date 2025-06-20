@@ -40,14 +40,42 @@ fun formatarPercentual(input: String): String {
 
 // Formatação de data
 fun formatarData(input: String): String {
-    val digitos = input.replace(Regex("[^0-9]"), "")
+    val digitos = input.replace(Regex("[^0-9]"), "").take(8)
     
     return when {
         digitos.length <= 2 -> digitos
         digitos.length <= 4 -> "${digitos.substring(0, 2)}/${digitos.substring(2)}"
-        digitos.length <= 8 -> "${digitos.substring(0, 2)}/${digitos.substring(2, 4)}/${digitos.substring(4)}"
-        else -> "${digitos.substring(0, 2)}/${digitos.substring(2, 4)}/${digitos.substring(4, 8)}"
+        else -> "${digitos.substring(0, 2)}/${digitos.substring(2, 4)}/${digitos.substring(4)}"
     }
+}
+
+// Validação de data
+fun validarData(data: String): Boolean {
+    if (data.length != 10) return true // Permite datas incompletas
+    
+    val partes = data.split("/")
+    if (partes.size != 3) return false
+    
+    val dia = partes[0].toIntOrNull() ?: return false
+    val mes = partes[1].toIntOrNull() ?: return false
+    val ano = partes[2].toIntOrNull() ?: return false
+    
+    // Validar ano
+    if (ano < 2020 || ano > 2050) return false
+    
+    // Validar mês
+    if (mes < 1 || mes > 12) return false
+    
+    // Validar dia
+    val diasPorMes = listOf(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    val maxDias = if (mes == 2 && isAnoBissexto(ano)) 29 else diasPorMes[mes - 1]
+    
+    return dia in 1..maxDias
+}
+
+// Verificar ano bissexto
+fun isAnoBissexto(ano: Int): Boolean {
+    return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0)
 }
 
 // Paletas de cores para diferentes temas
