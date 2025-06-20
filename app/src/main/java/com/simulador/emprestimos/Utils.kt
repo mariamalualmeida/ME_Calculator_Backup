@@ -21,17 +21,18 @@ fun formatarMoeda(input: String): String {
 
 // Formatação de percentual
 fun formatarPercentual(input: String): String {
-    val caracteresPermitidos = input.replace(Regex("[^0-9,.]"), "")
+    val valor = input.replace(Regex("[^\\d,]"), "")
     
-    // Limitar a 2 casas decimais
-    val partes = caracteresPermitidos.split(',', '.')
-    if (partes.size > 2) return input.dropLast(1)
+    // Permitir apenas uma vírgula
+    val virgulas = valor.split(",")
+    val valorFinal = if (virgulas.size > 2) {
+        virgulas[0] + "," + virgulas.drop(1).joinToString("")
+    } else valor
     
-    if (partes.size == 2 && partes[1].length > 2) {
-        return "${partes[0]},${partes[1].take(2)}"
-    }
-    
-    return caracteresPermitidos.replace('.', ',')
+    // Limitar casas decimais a 2
+    return if (virgulas.size == 2 && virgulas[1].length > 2) {
+        virgulas[0] + "," + virgulas[1].substring(0, 2)
+    } else valorFinal
 }
 
 // Formatação de data
