@@ -426,7 +426,7 @@ class SimuladorEmprestimos {
             const taxaDiaria = taxaEfetiva / 30; // Taxa mensal dividida por 30 dias
             const jurosProrrata = valor * taxaDiaria * diasExtra;
             
-            if (metodo === 'distribuir') {
+            if (metodo === 'distribuir' && nParcelas > 1) {
                 // Método distribuir - aplicar pró-rata ao valor principal e dividir por todas as parcelas
                 const valorCorrigido = valor * (1 + (taxaDiaria * diasExtra));
                 const prestacaoDistribuida = (valorCorrigido * Math.pow(1 + taxaEfetiva, nParcelas)) / nParcelas;

@@ -375,6 +375,11 @@ body {
     }
 }
 
+/* Admin free mode - desabilitar borda vermelha */
+.admin-free-mode {
+    border-color: var(--border-color) !important;
+}
+
 /* Export PDF Button */
 .export-pdf-btn {
     background: #ff9800;

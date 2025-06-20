@@ -475,8 +475,10 @@ fun SimuladorEmprestimosScreen(
                             }
                         } else {
                             // Parcelas iguais
+                            val nParcelas = uiState.numeroParcelas.toIntOrNull() ?: 1
+                            val textoParcel = if (nParcelas == 1) "parcela de:" else "parcelas de:"
                             Text(
-                                text = "${uiState.numeroParcelas} parcelas de:",
+                                text = "$nParcelas $textoParcel",
                                 fontSize = 14.sp,
                                 color = Color.White.copy(alpha = 0.9f),
                                 modifier = Modifier.padding(bottom = 8.dp)
