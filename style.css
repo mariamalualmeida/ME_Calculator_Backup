@@ -612,21 +612,42 @@ body {
 
 /* Melhorar estilo do botão de configurações */
 .config-btn {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border: 2px solid #6750a4 !important;
-    border-radius: 12px !important;
-    padding: 8px 16px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    padding: 12px !important;
     color: #6750a4 !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
-    min-width: auto !important;
-    height: auto !important;
-    width: auto !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    width: 48px !important;
+    height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+}
+
+.config-btn svg {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
 }
 
 .config-btn:hover {
     background: rgba(255, 255, 255, 1) !important;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2) !important;
+}
+
+.config-btn:hover svg {
+    transform: rotate(90deg);
+}
+
+[data-theme="dark"] .config-btn {
+    background: rgba(30, 30, 30, 0.95) !important;
+    color: #d0bcff !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+}
+
+[data-theme="dark"] .config-btn:hover {
+    background: rgba(30, 30, 30, 1) !important;
 }
