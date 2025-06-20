@@ -96,8 +96,13 @@ SimuladorEmprestimos/
 - June 20, 2025: Updated app branding to "ME EMPREENDIMENTOS" with company name prominently displayed
 - June 20, 2025: Consolidated to pure web application - removed Android components for focused web deployment
 - June 20, 2025: Final optimization - cleaned CSS redundancies, removed unused Material Icons dependency, updated documentation to reflect web-only architecture
+- June 20, 2025: Added Progressive Web App (PWA) support with manifest.json for Android installation capability
+- June 20, 2025: Created complete Android project structure with Jetpack Compose for future native development
+- June 20, 2025: Implemented PWA installation process as primary method for mobile deployment
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language in Portuguese (PTBR).
 App branding: Company name "ME EMPREENDIMENTOS" should be prominently displayed above application titles.
+Deployment preference: PWA (Progressive Web App) installation for mobile devices as primary method.
+User request: Provide clear instructions for Android installation without technical complexity.
