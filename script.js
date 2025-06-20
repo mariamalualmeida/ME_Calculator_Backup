@@ -831,9 +831,17 @@ class SimuladorEmprestimos {
                 const dataVencimento = new Date(dataBase);
                 dataVencimento.setMonth(dataVencimento.getMonth() + i - 1);
                 
+                // Definir valor da parcela (primeira maior ou normal)
+                let valorParcela;
+                if (i === 1 && resultadoCalculo.diasExtra > 0) {
+                    valorParcela = resultadoCalculo.primeiraParcela;
+                } else {
+                    valorParcela = resultadoCalculo.parcelaNormal;
+                }
+                
                 doc.text(i.toString().padStart(2, '0'), 35, yPos, { align: 'center' });
                 doc.text(dataVencimento.toLocaleDateString('pt-BR'), 105, yPos, { align: 'center' });
-                doc.text(`R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 165, yPos, { align: 'center' });
+                doc.text(`R$ ${valorParcela.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 165, yPos, { align: 'center' });
                 
                 yPos += 10;
                 

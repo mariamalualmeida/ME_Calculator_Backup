@@ -102,7 +102,8 @@
 
                 testes.forEach(teste => {
                     const resultado = this.simulador.calcularParcela(teste.valor, teste.juros, teste.parcelas);
-                    const passou = Math.abs(resultado - teste.esperado) < 0.01;
+                    const valorParcela = resultado.parcelaNormal || resultado; // Compatibilidade com novo formato
+                    const passou = Math.abs(valorParcela - teste.esperado) < 0.01;
                     
                     this.resultados.push({
                         nome: teste.nome,

@@ -6,6 +6,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlin.math.pow
 
+data class ResultadoCalculo(
+    val parcelaNormal: Double,
+    val primeiraParcela: Double,
+    val jurosDiasExtras: Double,
+    val diasExtra: Int
+)
+
 data class SimuladorUiState(
     val valorEmprestimo: String = "",
     val numeroParcelas: String = "",
@@ -13,7 +20,7 @@ data class SimuladorUiState(
     val dataInicial: String = "",
     val nomeCliente: String = "",
     val cpfCliente: String = "",
-    val resultado: Double? = null,
+    val resultado: ResultadoCalculo? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val showResult: Boolean = false,
@@ -133,11 +140,11 @@ class SimuladorViewModel : ViewModel() {
             // Calcular prestação
             val diasExtra = 0 // Por simplicidade, não implementando pró-rata no Android inicialmente
             val igpmMensal = _configuracoes.value.igpmAnual / 12.0
-            val prestacao = calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal)
+            val resultadoCalculo = calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal)
             
             _uiState.value = currentState.copy(
                 isLoading = false,
-                resultado = prestacao,
+                resultado = resultadoCalculo,
                 showResult = true
             )
             
@@ -189,23 +196,33 @@ class SimuladorViewModel : ViewModel() {
         return Pair(true, null)
     }
     
-    private fun calcularParcela(valor: Double, juros: Double, nParcelas: Int, diasExtra: Int = 0, igpmMensal: Double = 0.0): Double {
-        val jurosDecimal = juros / 100.0
-        var valorCorrigido = valor
+    private fun calcularParcela(valor: Double, juros: Double, nParcelas: Int, diasExtra: Int = 0, igpmMensal: Double = 0.0): ResultadoCalculo {
+        // Taxa efetiva (juros + IGPM)
+        val taxaEfetiva = (juros + igpmMensal) / 100.0
         
-        // Aplicar pró-rata se houver dias extras
-        if (diasExtra > 0) {
-            val jurosProRata = (jurosDecimal / 30) * diasExtra
-            valorCorrigido *= (1 + jurosProRata)
+        // Prestação base: P = Valor × (1 + JurosMensal)^N ÷ N
+        val prestacaoBase = (valor * (1 + taxaEfetiva).pow(nParcelas)) / nParcelas
+        
+        // Método da primeira parcela maior - juros dos dias extras apenas na primeira parcela
+        return if (diasExtra != 0) {
+            val taxaDiaria = taxaEfetiva / 30.0 // Taxa mensal dividida por 30 dias
+            val jurosProrrata = valor * taxaDiaria * diasExtra
+            val primeiraParcela = prestacaoBase + jurosProrrata
+            
+            ResultadoCalculo(
+                parcelaNormal = prestacaoBase,
+                primeiraParcela = primeiraParcela,
+                jurosDiasExtras = jurosProrrata,
+                diasExtra = diasExtra
+            )
+        } else {
+            ResultadoCalculo(
+                parcelaNormal = prestacaoBase,
+                primeiraParcela = prestacaoBase,
+                jurosDiasExtras = 0.0,
+                diasExtra = 0
+            )
         }
-        
-        // Aplicar IGPM se configurado
-        if (igpmMensal > 0) {
-            val fatorIGPM = (1 + (igpmMensal / 100)).pow(nParcelas)
-            valorCorrigido *= fatorIGPM
-        }
-        
-        return (valorCorrigido * (1 + jurosDecimal).pow(nParcelas)) / nParcelas
     }
     
     fun formatarValorMonetario(valor: Double): String {

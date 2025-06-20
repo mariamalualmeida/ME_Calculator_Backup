@@ -404,20 +404,64 @@ fun SimuladorEmprestimosScreen(
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
                         
-                        Text(
-                            text = "Valor da Prestação",
-                            fontSize = 14.sp,
-                            color = Color.White.copy(alpha = 0.9f),
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                        
-                        Text(
-                            text = viewModel.formatarValorMonetario(uiState.resultado!!),
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
+                        // Verificar se há diferença entre primeira parcela e demais
+                        if (uiState.resultado!!.diasExtra > 0) {
+                            // Primeira parcela maior
+                            Text(
+                                text = "1ª parcela:",
+                                fontSize = 14.sp,
+                                color = Color.White.copy(alpha = 0.9f),
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            )
+                            
+                            Text(
+                                text = viewModel.formatarValorMonetario(uiState.resultado!!.primeiraParcela),
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
+                            
+                            Text(
+                                text = "Demais ${uiState.numeroParcelas.toIntOrNull()?.minus(1) ?: 0} parcelas:",
+                                fontSize = 14.sp,
+                                color = Color.White.copy(alpha = 0.9f),
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            )
+                            
+                            Text(
+                                text = viewModel.formatarValorMonetario(uiState.resultado!!.parcelaNormal),
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(bottom = 12.dp)
+                            )
+                            
+                            Text(
+                                text = "Dias extras: ${uiState.resultado!!.diasExtra} | Juros extras: ${viewModel.formatarValorMonetario(uiState.resultado!!.jurosDiasExtras)}",
+                                fontSize = 12.sp,
+                                color = Color.White.copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center
+                            )
+                        } else {
+                            // Parcelas iguais
+                            Text(
+                                text = "${uiState.numeroParcelas} parcelas de:",
+                                fontSize = 14.sp,
+                                color = Color.White.copy(alpha = 0.9f),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            
+                            Text(
+                                text = viewModel.formatarValorMonetario(uiState.resultado!!.parcelaNormal),
+                                fontSize = 32.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }
