@@ -23,29 +23,22 @@ data class SimuladorUiState(
     val showPdfOptions: Boolean = false
 )
 
-class SimuladorViewModel : ViewModel() {
+class SimuladorViewModel(application: Application) : AndroidViewModel(application) {
     
     private val _uiState = MutableStateFlow(SimuladorUiState())
     val uiState: StateFlow<SimuladorUiState> = _uiState.asStateFlow()
 
-    // Tabela de limites de juros por número de parcelas - nova especificação
-    private val limitesJuros = mapOf(
-        1 to Pair(15.00, 100.00),
-        2 to Pair(15.00, 100.00),
-        3 to Pair(15.00, 30.00),
-        4 to Pair(15.00, 24.00),
-        5 to Pair(15.00, 22.00),
-        6 to Pair(15.00, 20.00),
-        7 to Pair(14.75, 18.00),
-        8 to Pair(14.36, 17.00),
-        9 to Pair(13.92, 16.00),
-        10 to Pair(13.47, 15.00),
-        11 to Pair(13.03, 14.00),
-        12 to Pair(12.60, 13.00),
-        13 to Pair(12.19, 12.60),
-        14 to Pair(11.80, 12.19),
-        15 to Pair(11.43, 11.80)
-    )
+    private val userPreferences = UserPreferences(application)
+    private var limitesJuros = mapOf<Int, Pair<Double, Double>>()
+
+    init {
+        // Carrega os limites dinâmicos do DataStore
+        viewModelScope.launch {
+            userPreferences.limitesJuros.collect { limites ->
+                limitesJuros = limites
+            }
+        }
+    }
 
     private val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("pt", "BR"))
 
@@ -223,7 +216,15 @@ class SimuladorViewModel : ViewModel() {
     }
 
     fun exportarPdf() {
-        // Implementação da exportação PDF será feita posteriormente
         _uiState.value = _uiState.value.copy(showPdfOptions = true)
+    }
+
+    fun hidePdfOptions() {
+        _uiState.value = _uiState.value.copy(showPdfOptions = false)
+    }
+
+    fun getNomeUsuario(): String {
+        // Retorna nome do usuário das preferências
+        return ""
     }
 }

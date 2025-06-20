@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SimuladorEmprestimosScreen(
+    onNavigateToSettings: () -> Unit = {},
     viewModel: SimuladorViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -88,7 +89,7 @@ fun SimuladorEmprestimosScreen(
             }
             
             IconButton(
-                onClick = { /* TODO: Navigate to settings */ }
+                onClick = onNavigateToSettings
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
@@ -231,7 +232,7 @@ fun SimuladorEmprestimosScreen(
         }
 
         // Botão Exportar PDF (aparece só após cálculo)
-        if (uiState.showPdfOptions) {
+        if (uiState.valorPrestacao != null) {
             Button(
                 onClick = { viewModel.exportarPdf() },
                 modifier = Modifier.fillMaxWidth(),
