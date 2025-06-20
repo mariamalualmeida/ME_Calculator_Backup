@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Empréstimos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1>Simulador de Empréstimos</h1>
+        </header>
+
+        <main class="main-content">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="valorEmprestimo" class="input-label">Valor do empréstimo</label>
+                    <div class="input-wrapper">
+                        <span class="currency-symbol">R$</span>
+                        <input 
+                            type="text" 
+                            id="valorEmprestimo" 
+                            class="input-field" 
+                            placeholder="0,00"
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="numeroParcelas" class="input-label">Número de parcelas</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="number" 
+                            id="numeroParcelas" 
+                            class="input-field" 
+                            placeholder="1-15"
+                            min="1"
+                            max="15"
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="taxaJuros" class="input-label">Taxa de juros (%)</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="taxaJuros" 
+                            class="input-field" 
+                            placeholder="0,00"
+                            autocomplete="off"
+                        >
+                        <span class="percent-symbol">%</span>
+                    </div>
+                </div>
+
+                <button id="calcularBtn" class="calculate-button">
+                    <span class="material-icons">calculate</span>
+                    CALCULAR
+                </button>
+            </div>
+
+            <div class="result-section">
+                <div class="result-card" id="resultCard">
+                    <div class="result-header">
+                        <span class="material-icons">payment</span>
+                        <h3>Valor da Prestação</h3>
+                    </div>
+                    <div class="result-value" id="resultValue">
+                        R$ 0,00
+                    </div>
+                </div>
+            </div>
+
+            <div class="error-section" id="errorSection" style="display: none;">
+                <div class="error-card">
+                    <div class="error-header">
+                        <span class="material-icons">error</span>
+                        <h3>Erro de Validação</h3>
+                    </div>
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
