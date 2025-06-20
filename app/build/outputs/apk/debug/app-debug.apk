@@ -1,0 +1,16 @@
+# SIMULADOR DE EMPRÉSTIMOS - APK PLACEHOLDER
+#
+# Este é um arquivo placeholder que representa onde o APK seria gerado.
+# Para gerar o APK real do aplicativo Android, siga as instruções no README.md:
+#
+# 1. Instale o Android Studio
+# 2. Configure o Android SDK (API 24+)
+# 3. Execute: ./gradlew assembleDebug
+#
+# O APK real será gerado neste local: app/build/outputs/apk/debug/app-debug.apk
+#
+# Aplicativo: Simulador de Empréstimos
+# Versão: 1.0
+# Plataforma: Android nativo (Kotlin + Jetpack Compose)
+# API mínima: 24 (Android 7.0)
+# API alvo: 34 (Android 14)
