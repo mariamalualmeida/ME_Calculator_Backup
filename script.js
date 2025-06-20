@@ -234,15 +234,15 @@ class SimuladorEmprestimos {
         // Permitir apenas uma vírgula
         const virgulas = valor.split(',');
         if (virgulas.length > 2) {
-            valor = virgulas[0] + ',' + virgulas[1];
+            valor = virgulas[0] + ',' + virgulas.slice(1).join('');
         }
         
-        // Limitar casas decimais
+        // Limitar casas decimais a 2
         if (virgulas.length === 2 && virgulas[1].length > 2) {
             valor = virgulas[0] + ',' + virgulas[1].substring(0, 2);
         }
         
-        input.value = valor;
+        input.value = valor + '%';
     }
 
     formatarData(input) {
@@ -529,36 +529,55 @@ class SimuladorEmprestimos {
             const doc = new jsPDF();
             
             const dataSimulacao = new Date().toLocaleDateString('pt-BR');
-            const nomeUsuario = this.configuracoes.nomeUsuario || 'Cliente';
+            const nomeUsuario = this.configuracoes.nomeUsuario || '';
             
-            // Configurar fonte
+            // Configurar fonte - Cabeçalho
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(16);
+            doc.setFontSize(20);
             doc.text('ME EMPREENDIMENTOS', 105, 20, { align: 'center' });
             
-            doc.setFontSize(14);
-            doc.text('Relatório de Simulação de Empréstimo', 105, 30, { align: 'center' });
+            doc.setFontSize(16);
+            doc.text('Relatório de Simulação de Empréstimo', 105, 32, { align: 'center' });
             
-            // Dados do cliente
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(12);
-            doc.text(`Cliente: ${nomeUsuario}`, 20, 50);
-            doc.text(`Data da simulação: ${dataSimulacao}`, 20, 60);
+            // Dados do usuário (somente se tiver nome)
+            let yInicial = 50;
+            if (nomeUsuario && nomeUsuario.trim() !== '') {
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(14);
+                doc.text(`${nomeUsuario}`, 20, yInicial);
+                yInicial += 12;
+            }
             
-            // Dados da simulação
-            doc.text(`Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 20, 80);
-            doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, 90);
-            doc.text(`Número de parcelas: ${nParcelas}`, 20, 100);
-            doc.text(`Valor da prestação: R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 20, 110);
-            
-            // Tabela de parcelas
             doc.setFont('helvetica', 'bold');
-            doc.text('TABELA DE PARCELAS:', 20, 130);
+            doc.setFontSize(14);
+            doc.text(`Data da simulação: ${dataSimulacao}`, 20, yInicial);
+            yInicial += 20;
             
-            doc.setFont('helvetica', 'normal');
-            doc.text('Parc.', 20, 145);
-            doc.text('Vencimento', 50, 145);
-            doc.text('Valor', 120, 145);
+            // Dados da simulação - Fonte maior e negrito
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.text(`Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 20, yInicial);
+            yInicial += 12;
+            doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, yInicial);
+            yInicial += 12;
+            doc.text(`Número de parcelas: ${nParcelas}`, 20, yInicial);
+            yInicial += 12;
+            doc.text(`Valor da prestação: R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 20, yInicial);
+            yInicial += 20;
+            
+            // Tabela de parcelas - Título centralizado
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.text('TABELA DE PARCELAS', 105, yInicial, { align: 'center' });
+            yInicial += 15;
+            
+            // Cabeçalho da tabela - Centralizado e negrito
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.text('Parcela', 35, yInicial, { align: 'center' });
+            doc.text('Vencimento', 105, yInicial, { align: 'center' });
+            doc.text('Valor', 165, yInicial, { align: 'center' });
+            yInicial += 10;
             
             // Calcular datas de vencimento
             let dataBase;
@@ -569,14 +588,17 @@ class SimuladorEmprestimos {
                 dataBase.setDate(dataBase.getDate() + 30);
             }
             
-            let yPos = 155;
+            // Linhas da tabela - Centralizadas e negrito
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            let yPos = yInicial;
             for (let i = 1; i <= nParcelas; i++) {
                 const dataVencimento = new Date(dataBase);
                 dataVencimento.setMonth(dataVencimento.getMonth() + i - 1);
                 
-                doc.text(i.toString().padStart(2, '0'), 20, yPos);
-                doc.text(dataVencimento.toLocaleDateString('pt-BR'), 50, yPos);
-                doc.text(`R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 120, yPos);
+                doc.text(i.toString().padStart(2, '0'), 35, yPos, { align: 'center' });
+                doc.text(dataVencimento.toLocaleDateString('pt-BR'), 105, yPos, { align: 'center' });
+                doc.text(`R$ ${prestacao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 165, yPos, { align: 'center' });
                 
                 yPos += 10;
                 
@@ -584,6 +606,13 @@ class SimuladorEmprestimos {
                 if (yPos > 270) {
                     doc.addPage();
                     yPos = 20;
+                    // Repetir cabeçalho na nova página
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
+                    doc.text('Parcela', 35, yPos, { align: 'center' });
+                    doc.text('Vencimento', 105, yPos, { align: 'center' });
+                    doc.text('Valor', 165, yPos, { align: 'center' });
+                    yPos += 10;
                 }
             }
             
