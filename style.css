@@ -797,10 +797,11 @@ body {
     font-size: 14px !important;
 }
 
-[data-theme="dark"] #themeMode {
+[data-theme="dark"] #themeMode,
+[data-theme="dark"] #colorTheme {
     background: var(--input-bg) !important;
     color: var(--text-primary) !important;
-    border-color: #d0bcff !important;
+    border-color: var(--primary-light) !important;
 }
 
 /* Corrigir estilos dos selects em modo escuro */
