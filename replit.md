@@ -149,6 +149,8 @@ SimuladorEmprestimos/
 - June 21, 2025: Separated percentage input handling from blur formatting to preserve user-entered decimal values during typing across all versions
 - June 21, 2025: Implemented real-time percentage formatting as cents - "1555" now instantly shows "15,55" during typing
 - June 21, 2025: Added 4-digit limit with automatic cent formatting: 1→"0,01", 15→"0,15", 155→"1,55", 1555→"15,55"
+- June 21, 2025: Copied exact structure from working formatarMoeda() function to formatarPercentualTempoReal() for consistency
+- June 21, 2025: Added aggressive event listener attachment strategy with multiple fallbacks and direct DOM manipulation
 
 ## User Preferences
 

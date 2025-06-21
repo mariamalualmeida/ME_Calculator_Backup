@@ -104,16 +104,18 @@ class SimuladorEmprestimos {
             }
         });
 
-        this.taxaJurosField.addEventListener('input', (e) => {
-            console.log('Event listener input disparado, valor:', e.target.value);
-            e.target.style.backgroundColor = '#ffcccc';
-            setTimeout(() => e.target.style.backgroundColor = '', 200);
-            
-            // Formatação automática como centavos em tempo real
-            this.formatarPercentualTempoReal(e.target);
-            this.validarCampoJuros();
-            this.limparResultado();
-        });
+        // Anexar event listener com múltiplas tentativas
+        if (this.taxaJurosField) {
+            this.taxaJurosField.addEventListener('input', (e) => {
+                // Formatação automática como centavos em tempo real
+                this.formatarPercentualTempoReal(e.target);
+                this.validarCampoJuros();
+                this.limparResultado();
+            });
+            console.log('Event listener anexado ao campo taxaJuros');
+        } else {
+            console.error('Campo taxaJuros não encontrado!');
+        }
         
         this.taxaJurosField.addEventListener('keydown', (e) => {
             // Permitir navegação, seleção e funcionalidades básicas
@@ -303,50 +305,38 @@ class SimuladorEmprestimos {
     }
 
     formatarPercentualTempoReal(input) {
-        console.log('formatarPercentualTempoReal executada, valor inicial:', input.value);
-        
-        // Capturar apenas números
-        let numeros = input.value.replace(/\D/g, '');
-        console.log('Números extraídos:', numeros);
+        let valor = input.value.replace(/\D/g, '');
         
         // Limitar a 4 dígitos
-        if (numeros.length > 4) {
-            numeros = numeros.substring(0, 4);
-            console.log('Limitado a 4 dígitos:', numeros);
+        if (valor.length > 4) {
+            valor = valor.substring(0, 4);
         }
         
-        // Se vazio, deixar vazio
-        if (numeros === '') {
+        if (valor === '' || valor === '0') {
             input.value = '';
-            console.log('Campo vazio, mantendo vazio');
             return;
         }
-        
-        // Formatar como centavos: sempre 2 casas decimais
-        let valorFormatado;
-        switch (numeros.length) {
-            case 1:
-                valorFormatado = `0,0${numeros}`;
-                break;
-            case 2:
-                valorFormatado = `0,${numeros}`;
-                break;
-            case 3:
-                valorFormatado = `${numeros[0]},${numeros.substring(1)}`;
-                break;
-            case 4:
-                valorFormatado = `${numeros.substring(0, 2)},${numeros.substring(2)}`;
-                break;
-            default:
-                valorFormatado = numeros;
+
+        // Remover zeros à esquerda desnecessários, mas manter pelo menos um dígito
+        valor = valor.replace(/^0+/, '') || '0';
+
+        // Formatação baseada no comprimento - EXATAMENTE como formatarMoeda()
+        if (valor.length === 1) {
+            input.value = `0,0${valor}`;
+            return;
         }
-        
-        console.log('Valor formatado final:', valorFormatado);
-        input.value = valorFormatado;
-        
-        // Forçar mudança visual para confirmar execução
-        input.style.borderColor = 'red';
-        setTimeout(() => input.style.borderColor = '', 100);
+        if (valor.length === 2) {
+            input.value = `0,${valor}`;
+            return;
+        }
+        if (valor.length === 3) {
+            input.value = `${valor[0]},${valor.substring(1)}`;
+            return;
+        }
+        if (valor.length === 4) {
+            input.value = `${valor.substring(0, 2)},${valor.substring(2)}`;
+            return;
+        }
     }
 
     formatarPercentual(input) {
@@ -1295,3 +1285,48 @@ setTimeout(() => {
         initializeApp();
     }
 }, 1000);
+
+// Estratégia adicional: anexar event listener diretamente
+function forceAttachEventListener() {
+    const taxaField = document.getElementById('taxaJuros');
+    if (taxaField && !taxaField.hasAttribute('data-listener-attached')) {
+        taxaField.addEventListener('input', function(e) {
+            let valor = e.target.value.replace(/\D/g, '');
+            
+            if (valor.length > 4) {
+                valor = valor.substring(0, 4);
+            }
+            
+            if (valor === '' || valor === '0') {
+                e.target.value = '';
+                return;
+            }
+
+            valor = valor.replace(/^0+/, '') || '0';
+
+            if (valor.length === 1) {
+                e.target.value = `0,0${valor}`;
+                return;
+            }
+            if (valor.length === 2) {
+                e.target.value = `0,${valor}`;
+                return;
+            }
+            if (valor.length === 3) {
+                e.target.value = `${valor[0]},${valor.substring(1)}`;
+                return;
+            }
+            if (valor.length === 4) {
+                e.target.value = `${valor.substring(0, 2)},${valor.substring(2)}`;
+                return;
+            }
+        });
+        taxaField.setAttribute('data-listener-attached', 'true');
+        console.log('Event listener anexado diretamente ao campo taxaJuros');
+    }
+}
+
+// Tentar anexar em múltiplos momentos
+setTimeout(forceAttachEventListener, 100);
+setTimeout(forceAttachEventListener, 500);
+setTimeout(forceAttachEventListener, 1500);

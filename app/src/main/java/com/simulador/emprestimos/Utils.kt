@@ -24,27 +24,37 @@ fun formatarPercentual(input: String): String {
     return formatarPercentualTempoReal(input)
 }
 
-// Formatação de percentual em tempo real como centavos
+// Formatação de percentual em tempo real - COPIADA da formatarMoeda que funciona
 fun formatarPercentualTempoReal(input: String): String {
-    // Remover todos os caracteres não numéricos
-    val valor = input.replace(Regex("\\D"), "")
+    var valor = input.replace(Regex("\\D"), "")
     
     // Limitar a 4 dígitos
-    val valorLimitado = if (valor.length > 4) valor.substring(0, 4) else valor
+    if (valor.length > 4) {
+        valor = valor.substring(0, 4)
+    }
     
-    // Se vazio, retornar vazio
-    if (valorLimitado.isEmpty()) {
+    if (valor.isEmpty() || valor == "0") {
         return ""
     }
-    
-    // Formatar como centavos
-    return when (valorLimitado.length) {
-        1 -> "0,0$valorLimitado"
-        2 -> "0,$valorLimitado"
-        3 -> "${valorLimitado[0]},${valorLimitado.substring(1)}"
-        4 -> "${valorLimitado.substring(0, 2)},${valorLimitado.substring(2)}"
-        else -> valorLimitado
+
+    // Remover zeros à esquerda, mas manter pelo menos um dígito
+    valor = valor.replace(Regex("^0+"), "").ifEmpty { "0" }
+
+    // Formatação baseada no comprimento - EXATAMENTE como formatarMoeda()
+    if (valor.length == 1) {
+        return "0,0$valor"
     }
+    if (valor.length == 2) {
+        return "0,$valor"
+    }
+    if (valor.length == 3) {
+        return "${valor[0]},${valor.substring(1)}"
+    }
+    if (valor.length == 4) {
+        return "${valor.substring(0, 2)},${valor.substring(2)}"
+    }
+    
+    return valor
 }
 
 // Função legacy removida - usar apenas formatarPercentualTempoReal
