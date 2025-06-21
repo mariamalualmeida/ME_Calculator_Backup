@@ -427,9 +427,9 @@ class SimuladorEmprestimos {
             const jurosProrrata = valor * taxaDiaria * diasExtra;
             
             if (metodo === 'distribuir' && nParcelas > 1) {
-                // Método distribuir - aplicar pró-rata ao valor principal e dividir por todas as parcelas
-                const valorCorrigido = valor * (1 + (taxaDiaria * diasExtra));
-                const prestacaoDistribuida = (valorCorrigido * Math.pow(1 + taxaEfetiva, nParcelas)) / nParcelas;
+                // Método distribuir corrigido - distribuir apenas os juros extras, sem juros compostos
+                const jurosProrrataPorParcela = jurosProrrata / nParcelas;
+                const prestacaoDistribuida = prestacaoBase + jurosProrrataPorParcela;
                 
                 return {
                     parcelaNormal: prestacaoDistribuida,
@@ -601,7 +601,7 @@ class SimuladorEmprestimos {
                 this.resultValue.innerHTML = `
                     <div style="margin-bottom: 12px;">
                         <strong>${nParcelas} parcelas de:</strong> ${valorParcela}
-                        <br><small style="color: #666;">(Juros de dias extras distribuídos)</small>
+                        <br><small style="color: #666;">(Juros de dias extras distribuídos igualmente)</small>
                     </div>
                     <div style="font-size: 14px; color: #666; margin-top: 8px;">
                         Dias extras: ${diasExtras} | Juros extras: ${jurosExtras}
@@ -868,7 +868,7 @@ class SimuladorEmprestimos {
                     yInicial += 12;
                     doc.setFont('helvetica', 'normal');
                     doc.setFontSize(12);
-                    doc.text(`(Juros de dias extras distribuídos)`, 20, yInicial);
+                    doc.text(`(Juros de dias extras distribuídos igualmente)`, 20, yInicial);
                     yInicial += 8;
                     doc.text(`(Dias extras: ${resultadoCalculo.diasExtra} | Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
                     yInicial += 12;

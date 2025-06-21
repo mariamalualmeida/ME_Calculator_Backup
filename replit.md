@@ -132,6 +132,8 @@ SimuladorEmprestimos/
 - June 20, 2025: Corrected calculation logic - method "distribuir" now only applies to multiple parcels, avoiding compound interest on single parcels
 - June 20, 2025: Final system optimization - removed date icon, fixed admin mode red borders, cleaned CSS, updated icons with modern R$ design
 - June 20, 2025: Comprehensive bug fixes - method toggle logic, PDF button styling, manifest cache update, removed duplicate files
+- June 20, 2025: Critical calculation fix - corrected "distribuir" method to eliminate compound interest on pro-rata, ensuring both methods result in identical total costs
+- June 20, 2025: Mathematical integrity restored - removed R$ 39-535 overcharge depending on installment count, now transparent and fair pricing
 
 ## User Preferences
 

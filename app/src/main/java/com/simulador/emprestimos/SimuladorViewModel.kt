@@ -141,7 +141,8 @@ class SimuladorViewModel : ViewModel() {
             // Calcular prestação com pró-rata se houver data
             val diasExtra = calcularDiasExtras(_uiState.value.dataInicial)
             val igpmMensal = _configuracoes.value.igpmAnual / 12.0
-            val resultadoCalculo = calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal)
+            val metodo = "primeira" // Por simplicidade, usando método primeira parcela maior no Android
+            val resultadoCalculo = calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal, metodo)
             
             _uiState.value = currentState.copy(
                 isLoading = false,
@@ -213,25 +214,39 @@ class SimuladorViewModel : ViewModel() {
         return Pair(true, null)
     }
     
-    private fun calcularParcela(valor: Double, juros: Double, nParcelas: Int, diasExtra: Int = 0, igpmMensal: Double = 0.0): ResultadoCalculo {
+    private fun calcularParcela(valor: Double, juros: Double, nParcelas: Int, diasExtra: Int = 0, igpmMensal: Double = 0.0, metodo: String = "primeira"): ResultadoCalculo {
         // Taxa efetiva (juros + IGPM)
         val taxaEfetiva = (juros + igpmMensal) / 100.0
         
         // Prestação base: P = Valor × (1 + JurosMensal)^N ÷ N
         val prestacaoBase = (valor * (1 + taxaEfetiva).pow(nParcelas)) / nParcelas
         
-        // Método da primeira parcela maior - juros dos dias extras apenas na primeira parcela
         return if (diasExtra != 0) {
             val taxaDiaria = taxaEfetiva / 30.0 // Taxa mensal dividida por 30 dias
             val jurosProrrata = valor * taxaDiaria * diasExtra
-            val primeiraParcela = prestacaoBase + jurosProrrata
             
-            ResultadoCalculo(
-                parcelaNormal = prestacaoBase,
-                primeiraParcela = primeiraParcela,
-                jurosDiasExtras = jurosProrrata,
-                diasExtra = diasExtra
-            )
+            if (metodo == "distribuir" && nParcelas > 1) {
+                // Método distribuir corrigido - distribuir apenas os juros extras, sem juros compostos
+                val jurosProrrataPorParcela = jurosProrrata / nParcelas
+                val prestacaoDistribuida = prestacaoBase + jurosProrrataPorParcela
+                
+                ResultadoCalculo(
+                    parcelaNormal = prestacaoDistribuida,
+                    primeiraParcela = prestacaoDistribuida,
+                    jurosDiasExtras = jurosProrrata,
+                    diasExtra = diasExtra
+                )
+            } else {
+                // Método primeira parcela maior - juros dos dias extras apenas na primeira parcela
+                val primeiraParcela = prestacaoBase + jurosProrrata
+                
+                ResultadoCalculo(
+                    parcelaNormal = prestacaoBase,
+                    primeiraParcela = primeiraParcela,
+                    jurosDiasExtras = jurosProrrata,
+                    diasExtra = diasExtra
+                )
+            }
         } else {
             ResultadoCalculo(
                 parcelaNormal = prestacaoBase,
