@@ -47,12 +47,12 @@ body {
 }
 
 .company-line1 {
-    font-size: 28px;
+    font-size: 34px;
     margin-bottom: -4px;
 }
 
 .company-line2 {
-    font-size: 32px;
+    font-size: 28px;
 }
 
 .app-title {
@@ -288,11 +288,11 @@ body {
     }
     
     .company-line1 {
-        font-size: 24px;
+        font-size: 30px;
     }
     
     .company-line2 {
-        font-size: 28px;
+        font-size: 24px;
     }
     
     .app-title {

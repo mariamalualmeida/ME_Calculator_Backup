@@ -91,19 +91,19 @@ fun SimuladorEmprestimosScreen(
                     ) {
                         Text(
                             text = "ME",
+                            fontSize = 34.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 32.sp
+                        )
+                        Text(
+                            text = "EMPREENDIMENTOS",
                             fontSize = 28.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
                             textAlign = TextAlign.Center,
                             lineHeight = 26.sp
-                        )
-                        Text(
-                            text = "EMPREENDIMENTOS",
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 30.sp
                         )
                     }
                     Spacer(modifier = Modifier.height(4.dp))
