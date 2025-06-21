@@ -200,12 +200,19 @@ class SimuladorEmprestimos {
             this.salvarCredenciaisAdmin();
         });
 
-        // Listener para detectar mudanças no localStorage (sincronização entre abas/modais)
+        // Listener para detectar mudanças no localStorage (sincronização entre abas)
         window.addEventListener('storage', (e) => {
             if (e.key === 'simulador-configuracoes') {
                 this.carregarConfiguracoes();
-                this.esconderErro(); // Remove bordas vermelhas se regras foram desabilitadas
+                this.esconderErro();
             }
+        });
+
+        // Listener para eventos customizados (sincronização na mesma aba)
+        window.addEventListener('configuracoesAtualizadas', () => {
+            this.carregarConfiguracoes();
+            this.esconderErro();
+            this.atualizarClassesModoLivre();
         });
 
         // Event listener para mudança de tema (evitar duplicação)
@@ -757,6 +764,10 @@ class SimuladorEmprestimos {
         this.aplicarTema(this.configuracoes.themeMode);
         this.aplicarPaletaCores(this.configuracoes.colorTheme);
         this.salvarConfiguracoes();
+        
+        // Disparar evento customizado para sincronização na mesma aba
+        window.dispatchEvent(new CustomEvent('configuracoesAtualizadas'));
+        
         this.fecharModal();
         alert('Configurações salvas com sucesso!');
     }
@@ -817,9 +828,8 @@ class SimuladorEmprestimos {
         this.configuracoes.limitesPersonalizados = novosLimites;
         this.salvarConfiguracoes();
         
-        // Forçar atualização da interface principal
-        this.carregarConfiguracoes();
-        this.esconderErro();
+        // Disparar evento customizado para sincronização na mesma aba
+        window.dispatchEvent(new CustomEvent('configuracoesAtualizadas'));
         
         alert('Limites atualizados com sucesso!');
     }
@@ -1059,6 +1069,9 @@ class SimuladorEmprestimos {
         this.configuracoes.adminUser = novoUsuario;
         this.configuracoes.adminPassword = novaSenha;
         this.salvarConfiguracoes();
+        
+        // Disparar evento customizado para sincronização na mesma aba
+        window.dispatchEvent(new CustomEvent('configuracoesAtualizadas'));
         
         document.getElementById('newAdminUser').value = '';
         document.getElementById('newAdminPass').value = '';

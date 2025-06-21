@@ -54,6 +54,9 @@ class SimuladorViewModel : ViewModel() {
     private val _configuracoes = MutableStateFlow(Configuracoes())
     val configuracoes: StateFlow<Configuracoes> = _configuracoes.asStateFlow()
     
+    // Callback para notificar mudanças de configuração
+    private var onConfiguracoesChanged: (() -> Unit)? = null
+    
     // Tabela de limites de juros conforme a versão web
     private val limitesJuros = mapOf(
         1 to LimiteJuros(15.00, 100.00),
@@ -119,6 +122,15 @@ class SimuladorViewModel : ViewModel() {
     
     fun updateMetodoDiasExtras(metodo: String) {
         _uiState.value = _uiState.value.copy(metodoDiasExtras = metodo)
+    }
+    
+    fun setOnConfiguracoesChangedCallback(callback: () -> Unit) {
+        onConfiguracoesChanged = callback
+    }
+    
+    fun updateConfiguracoes(novasConfiguracoes: Configuracoes) {
+        _configuracoes.value = novasConfiguracoes
+        onConfiguracoesChanged?.invoke() // Notificar mudanças
     }
     
     fun calcular() {
