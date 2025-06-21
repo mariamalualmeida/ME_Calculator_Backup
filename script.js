@@ -1,6 +1,7 @@
 /**
  * ME EMPREENDIMENTOS - Simulador de Empréstimos
  * Implementa cálculo com pró-rata, IGPM e área administrativa
+ * Updated: 2025-06-21 13:33 - Real-time percentage formatting
  */
 
 class SimuladorEmprestimos {
@@ -100,6 +101,10 @@ class SimuladorEmprestimos {
         });
 
         this.taxaJurosField.addEventListener('input', (e) => {
+            // Debug: Verificar se está sendo chamado
+            e.target.style.backgroundColor = '#f0f8ff';
+            setTimeout(() => e.target.style.backgroundColor = '', 100);
+            
             // Formatação automática como centavos em tempo real
             this.formatarPercentualTempoReal(e.target);
             this.validarCampoJuros();
@@ -299,30 +304,40 @@ class SimuladorEmprestimos {
     }
 
     formatarPercentualTempoReal(input) {
-        // Remover todos os caracteres não numéricos
-        let valor = input.value.replace(/\D/g, '');
+        // Capturar apenas números
+        let numeros = input.value.replace(/\D/g, '');
         
         // Limitar a 4 dígitos
-        if (valor.length > 4) {
-            valor = valor.substring(0, 4);
+        if (numeros.length > 4) {
+            numeros = numeros.substring(0, 4);
         }
         
-        // Se vazio, limpar campo
-        if (valor === '') {
+        // Se vazio, deixar vazio
+        if (numeros === '') {
             input.value = '';
             return;
         }
         
-        // Formatar como centavos
-        if (valor.length === 1) {
-            input.value = `0,0${valor}`;
-        } else if (valor.length === 2) {
-            input.value = `0,${valor}`;
-        } else if (valor.length === 3) {
-            input.value = `${valor[0]},${valor.substring(1)}`;
-        } else if (valor.length === 4) {
-            input.value = `${valor.substring(0, 2)},${valor.substring(2)}`;
+        // Formatar como centavos: sempre 2 casas decimais
+        let valorFormatado;
+        switch (numeros.length) {
+            case 1:
+                valorFormatado = `0,0${numeros}`;
+                break;
+            case 2:
+                valorFormatado = `0,${numeros}`;
+                break;
+            case 3:
+                valorFormatado = `${numeros[0]},${numeros.substring(1)}`;
+                break;
+            case 4:
+                valorFormatado = `${numeros.substring(0, 2)},${numeros.substring(2)}`;
+                break;
+            default:
+                valorFormatado = numeros;
         }
+        
+        input.value = valorFormatado;
     }
 
     formatarPercentual(input) {
