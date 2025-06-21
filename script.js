@@ -1117,6 +1117,18 @@ class SimuladorEmprestimos {
         document.documentElement.setAttribute('data-theme', theme);
         document.body.setAttribute('data-theme', theme);
         
+        // Aplicar tema aos modais
+        const modal = document.getElementById('configModal');
+        const adminPanel = document.getElementById('adminPanel');
+        
+        if (modal) {
+            modal.setAttribute('data-theme', theme);
+        }
+        
+        if (adminPanel) {
+            adminPanel.setAttribute('data-theme', theme);
+        }
+        
         // Salvar a preferência
         localStorage.setItem('app-theme', theme);
         
@@ -1130,6 +1142,18 @@ class SimuladorEmprestimos {
     aplicarPaletaCores(colorTheme) {
         document.documentElement.setAttribute('data-color-theme', colorTheme);
         document.body.setAttribute('data-color-theme', colorTheme);
+        
+        // Aplicar tema aos modais
+        const modal = document.getElementById('configModal');
+        const adminPanel = document.getElementById('adminPanel');
+        
+        if (modal) {
+            modal.setAttribute('data-color-theme', colorTheme);
+        }
+        
+        if (adminPanel) {
+            adminPanel.setAttribute('data-color-theme', colorTheme);
+        }
         
         // Salvar a preferência
         localStorage.setItem('app-color-theme', colorTheme);

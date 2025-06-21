@@ -873,3 +873,47 @@ body {
     background: var(--card-bg) !important;
     color: var(--text-primary) !important;
 }
+
+/* iOS Safari específico para selects e campos */
+@supports (-webkit-touch-callout: none) {
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23666' d='M4.427 9.573L8 13.146l3.573-3.573a1 1 0 0 1 1.414 1.414l-4.28 4.28a1 1 0 0 1-1.414 0l-4.28-4.28a1 1 0 0 1 1.414-1.414z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
+        padding-right: 40px;
+        min-height: 56px;
+        height: 56px;
+        font-size: 16px;
+    }
+    
+    /* Específico para iPhone */
+    @media screen and (max-device-width: 428px) and (-webkit-min-device-pixel-ratio: 2) {
+        select,
+        .input-field,
+        #nomeCliente,
+        #cpfCliente {
+            min-height: 56px !important;
+            height: 56px !important;
+            font-size: 16px !important;
+            -webkit-appearance: none !important;
+        }
+        
+        select {
+            background-size: 20px !important;
+            background-position: right 16px center !important;
+            padding-right: 48px !important;
+        }
+        
+        /* Botões uniformes no iPhone */
+        .calculate-button,
+        .export-pdf-btn {
+            min-height: 56px !important;
+            font-size: 16px !important;
+            padding: 16px 24px !important;
+        }
+    }
+}
