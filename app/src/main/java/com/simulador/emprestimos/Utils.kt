@@ -65,7 +65,7 @@ fun formatarPercentualTempoReal(input: String): String {
     }
 }
 
-// Compatibilidade - usar a nova função
+// Função legacy removida - usar apenas formatarPercentualTempoReal
 fun formatarPercentualInput(input: String): String {
     return formatarPercentualTempoReal(input)
 }

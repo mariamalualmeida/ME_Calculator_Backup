@@ -101,19 +101,10 @@ class SimuladorEmprestimos {
         });
 
         this.taxaJurosField.addEventListener('input', (e) => {
-            // Debug: Verificar se está sendo chamado
-            e.target.style.backgroundColor = '#f0f8ff';
-            setTimeout(() => e.target.style.backgroundColor = '', 100);
-            
             // Formatação automática como centavos em tempo real
             this.formatarPercentualTempoReal(e.target);
             this.validarCampoJuros();
             this.limparResultado();
-        });
-        
-        this.taxaJurosField.addEventListener('blur', (e) => {
-            this.formatarPercentual(e.target);
-            this.validarCampoJuros();
         });
         
         this.taxaJurosField.addEventListener('keydown', (e) => {
@@ -341,8 +332,8 @@ class SimuladorEmprestimos {
     }
 
     formatarPercentual(input) {
-        // Manter a função para compatibilidade no blur
-        this.formatarPercentualTempoReal(input);
+        // Função removida - formatação é feita apenas em tempo real no input
+        return;
     }
 
     formatarData(input) {
@@ -1258,8 +1249,31 @@ class SimuladorEmprestimos {
     }
 }
 
-// Inicializar aplicação
+// Inicializar aplicação com fallback
 let simulator;
-document.addEventListener('DOMContentLoaded', () => {
-    simulator = new SimuladorEmprestimos();
-});
+
+function initializeApp() {
+    try {
+        simulator = new SimuladorEmprestimos();
+        console.log('Simulador inicializado com sucesso');
+    } catch (error) {
+        console.error('Erro ao inicializar simulador:', error);
+        // Tentar novamente após 500ms
+        setTimeout(initializeApp, 500);
+    }
+}
+
+// Múltiplas estratégias de inicialização
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    initializeApp();
+}
+
+// Fallback adicional
+setTimeout(() => {
+    if (!simulator) {
+        console.log('Forçando inicialização...');
+        initializeApp();
+    }
+}, 1000);
