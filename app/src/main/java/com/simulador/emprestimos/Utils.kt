@@ -44,19 +44,30 @@ fun formatarPercentual(input: String): String {
 
 // Formatação de percentual durante input (sem formatação automática)
 fun formatarPercentualInput(input: String): String {
-    val valor = input.replace(Regex("[^\\d,]"), "")
+    // Remover apenas caracteres inválidos, manter vírgula
+    val valorLimpo = input.replace(Regex("[^\\d,]"), "")
     
-    // Permitir apenas uma vírgula
-    val partes = valor.split(",")
-    val valorFinal = if (partes.size > 2) {
-        // Se há mais de uma vírgula, manter apenas a primeira e remover as outras
-        partes[0] + "," + partes.drop(1).joinToString("").replace(",", "")
-    } else valor
+    // Se tem vírgula, validar formato
+    if (valorLimpo.contains(",")) {
+        val partes = valorLimpo.split(",")
+        return when {
+            partes.size == 2 -> {
+                // Limitar parte decimal a 2 dígitos
+                if (partes[1].length > 2) {
+                    "${partes[0]},${partes[1].substring(0, 2)}"
+                } else {
+                    valorLimpo
+                }
+            }
+            partes.size > 2 -> {
+                // Múltiplas vírgulas - manter só a primeira
+                "${partes[0]},${partes[1]}"
+            }
+            else -> valorLimpo
+        }
+    }
     
-    // Limitar casas decimais a 2
-    return if (partes.size == 2 && partes[1].length > 2) {
-        partes[0] + "," + partes[1].substring(0, 2)
-    } else valorFinal
+    return valorLimpo
 }
 
 // Formatação de data

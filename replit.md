@@ -145,6 +145,8 @@ SimuladorEmprestimos/
 - June 21, 2025: Created comprehensive tutorial documentation system with 4 detailed installation guides (Android PWA/APK, iPhone PWA/React Native)
 - June 21, 2025: Enhanced build-android.sh script with automated dependency checking, error handling, and installation assistance
 - June 21, 2025: Implemented PDF tutorial generator for offline documentation distribution and user training materials
+- June 21, 2025: Fixed critical percentage formatting bug where "15,50" was corrupted to "1555" by implementing input validation without destructive reformatting
+- June 21, 2025: Separated percentage input handling from blur formatting to preserve user-entered decimal values during typing across all versions
 
 ## User Preferences
 

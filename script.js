@@ -100,22 +100,30 @@ class SimuladorEmprestimos {
         });
 
         this.taxaJurosField.addEventListener('input', (e) => {
-            // Apenas limpar caracteres inválidos, sem formatação automática
-            let valor = e.target.value.replace(/[^\d,]/g, '');
+            // Apenas validar caracteres, sem alterar formatação existente
+            let valor = e.target.value;
             
-            // Permitir apenas uma vírgula
-            const partes = valor.split(',');
-            if (partes.length > 2) {
-                // Se há mais de uma vírgula, manter apenas a primeira e remover as outras
-                valor = partes[0] + ',' + partes.slice(1).join('').replace(/,/g, '');
+            // Remover caracteres inválidos exceto números e vírgula
+            const valorLimpo = valor.replace(/[^\d,]/g, '');
+            
+            // Se tem vírgula, validar formato
+            if (valorLimpo.includes(',')) {
+                const partes = valorLimpo.split(',');
+                if (partes.length === 2) {
+                    // Limitar parte decimal a 2 dígitos
+                    if (partes[1].length > 2) {
+                        e.target.value = partes[0] + ',' + partes[1].substring(0, 2);
+                    } else {
+                        e.target.value = valorLimpo;
+                    }
+                } else if (partes.length > 2) {
+                    // Múltiplas vírgulas - manter só a primeira
+                    e.target.value = partes[0] + ',' + partes[1];
+                }
+            } else {
+                e.target.value = valorLimpo;
             }
             
-            // Limitar casas decimais a 2
-            if (partes.length === 2 && partes[1].length > 2) {
-                valor = partes[0] + ',' + partes[1].substring(0, 2);
-            }
-            
-            e.target.value = valor;
             this.validarCampoJuros();
             this.limparResultado();
         });
