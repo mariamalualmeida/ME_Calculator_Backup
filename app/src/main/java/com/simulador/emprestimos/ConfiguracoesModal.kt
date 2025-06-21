@@ -261,7 +261,7 @@ fun ConfiguracoesModal(
                                 text = "Área Administrativa",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
+                                color = colorScheme.primary,
                                 modifier = Modifier.padding(bottom = 16.dp)
                             )
                             
@@ -298,9 +298,12 @@ fun ConfiguracoesModal(
                                                 adminPassword = ""
                                             }
                                         },
-                                        modifier = Modifier.height(56.dp)
+                                        modifier = Modifier.height(56.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = colorScheme.primary
+                                        )
                                     ) {
-                                        Text("Login")
+                                        Text("Login", color = Color.White)
                                     }
                                 }
                             } else {
@@ -308,7 +311,7 @@ fun ConfiguracoesModal(
                                 Text(
                                     text = "Acesso administrativo ativo",
                                     fontSize = 14.sp,
-                                    color = MaterialTheme.colorScheme.primary,
+                                    color = colorScheme.primary,
                                     modifier = Modifier.padding(bottom = 16.dp)
                                 )
                                 
@@ -347,9 +350,12 @@ fun ConfiguracoesModal(
                                             newAdminPassword = ""
                                         }
                                     },
-                                    modifier = Modifier.padding(top = 8.dp)
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = colorScheme.primary
+                                    )
                                 ) {
-                                    Text("Alterar Credenciais")
+                                    Text("Alterar Credenciais", color = Color.White)
                                 }
                             }
                         }
@@ -378,7 +384,7 @@ fun ConfiguracoesModal(
                             onSave(novasConfiguracoes)
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
+                            containerColor = colorScheme.primary
                         )
                     ) {
                         Text("Salvar", color = Color.White)
