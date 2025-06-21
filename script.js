@@ -809,7 +809,12 @@ class SimuladorEmprestimos {
         document.getElementById('mostrarJurosRelatorio').checked = this.configuracoes.mostrarJurosRelatorio || false;
         
         // Mostrar modal
-        document.getElementById('configModal').style.display = 'flex';
+        const modal = document.getElementById('configModal');
+        modal.style.display = 'flex';
+        
+        // Aplicar tema atual ao modal
+        modal.setAttribute('data-theme', this.configuracoes.themeMode);
+        modal.setAttribute('data-color-theme', this.configuracoes.colorTheme);
         
         // Se é admin, mostrar painel
         if (this.configuracoes.isAdmin) {
@@ -883,11 +888,15 @@ class SimuladorEmprestimos {
                 </div>
             `;
         }
-        html += '<button onclick="simulador.salvarLimitesAdmin()" style="margin-top: 16px; padding: 8px 16px; background: #6750a4; color: white; border: none; border-radius: 4px; cursor: pointer;">Salvar Limites</button>';
+        html += '<button onclick="simulador.salvarLimitesAdmin()" id="saveLimitsBtn" class="admin-btn" style="margin-top: 16px;">Salvar Limites</button>';
         html += '</div>';
         
         table.innerHTML = html;
         panel.style.display = 'block';
+        
+        // Aplicar tema atual ao painel admin
+        panel.setAttribute('data-theme', this.configuracoes.themeMode);
+        panel.setAttribute('data-color-theme', this.configuracoes.colorTheme);
     }
 
     salvarLimitesAdmin() {

@@ -874,6 +874,73 @@ body {
     color: var(--text-primary) !important;
 }
 
+/* Aplicar paleta de cores aos modais e seus elementos */
+.modal[data-color-theme] .save-btn,
+.modal[data-color-theme] .admin-btn,
+.modal[data-color-theme] #saveConfigBtn,
+.modal[data-color-theme] #saveCredentialsBtn,
+.modal[data-color-theme] #saveLimitsBtn,
+.modal[data-color-theme] #loginAdminBtn {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+.modal[data-color-theme] .save-btn:hover,
+.modal[data-color-theme] .admin-btn:hover,
+.modal[data-color-theme] #saveConfigBtn:hover,
+.modal[data-color-theme] #saveCredentialsBtn:hover,
+.modal[data-color-theme] #saveLimitsBtn:hover,
+.modal[data-color-theme] #loginAdminBtn:hover {
+    background: var(--primary-dark) !important;
+}
+
+.modal[data-color-theme] .admin-section h4,
+.modal[data-color-theme] .admin-section h5 {
+    color: var(--primary-color) !important;
+}
+
+.modal[data-color-theme] .modal-header h3 {
+    color: var(--text-primary) !important;
+}
+
+/* Tema escuro para modais */
+[data-theme="dark"] .modal[data-color-theme] .admin-section h4,
+[data-theme="dark"] .modal[data-color-theme] .admin-section h5 {
+    color: var(--primary-light) !important;
+}
+
+/* Aplicar tema aos elementos do painel admin */
+#adminPanel[data-color-theme] .admin-btn,
+#adminPanel[data-color-theme] #saveLimitsBtn,
+#adminPanel[data-color-theme] #saveCredentialsBtn,
+#adminPanel[data-color-theme] #loginAdminBtn {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    padding: 8px 16px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
+}
+
+#adminPanel[data-color-theme] .admin-btn:hover,
+#adminPanel[data-color-theme] #saveLimitsBtn:hover,
+#adminPanel[data-color-theme] #saveCredentialsBtn:hover,
+#adminPanel[data-color-theme] #loginAdminBtn:hover {
+    background: var(--primary-dark) !important;
+}
+
+#adminPanel[data-color-theme] .admin-section h4,
+#adminPanel[data-color-theme] .admin-section h5 {
+    color: var(--primary-color) !important;
+}
+
+/* Tema escuro para painel admin */
+[data-theme="dark"] #adminPanel[data-color-theme] .admin-section h4,
+[data-theme="dark"] #adminPanel[data-color-theme] .admin-section h5 {
+    color: var(--primary-light) !important;
+}
+
 /* iOS Safari específico para selects e campos */
 @supports (-webkit-touch-callout: none) {
     select {
