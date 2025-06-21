@@ -1,33 +1,89 @@
 #!/bin/bash
 
+# ME EMPREENDIMENTOS - Build Script para Android APK
+set -e  # Exit on any error
+
 echo "=== ME EMPREENDIMENTOS - Build do Aplicativo Android ==="
 echo ""
 
-# Verificar se o Java está instalado
-if ! command -v java &> /dev/null; then
-    echo "❌ Java não encontrado. Instalando..."
-    exit 1
-fi
+# Função para verificar dependências
+check_dependencies() {
+    echo "📋 Verificando dependências..."
+    
+    # Verificar Java
+    if ! command -v java &> /dev/null; then
+        echo "❌ Java não encontrado. Instale Java JDK 11+ antes de continuar."
+        echo "   Download: https://adoptium.net/"
+        exit 1
+    fi
+    
+    echo "✅ Java encontrado: $(java -version 2>&1 | head -1)"
+    
+    # Verificar JAVA_HOME
+    if [ -z "$JAVA_HOME" ]; then
+        echo "⚠️  JAVA_HOME não definido. Tentando detectar..."
+        if command -v java &> /dev/null; then
+            export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+            echo "   JAVA_HOME definido como: $JAVA_HOME"
+        fi
+    fi
+}
 
-echo "✅ Java encontrado: $(java -version 2>&1 | head -1)"
+# Função para verificar estrutura do projeto
+check_project() {
+    echo "📁 Verificando estrutura do projeto..."
+    
+    if [ ! -f "./gradlew" ]; then
+        echo "❌ gradlew não encontrado. Certifique-se de estar no diretório raiz."
+        exit 1
+    fi
+    
+    if [ ! -f "./build.gradle.kts" ]; then
+        echo "❌ build.gradle.kts não encontrado."
+        exit 1
+    fi
+    
+    echo "✅ Estrutura do projeto verificada"
+}
 
-# Criar diretórios necessários
-mkdir -p build/outputs/apk/debug
+# Função principal de build
+build_apk() {
+    echo ""
+    echo "📱 Iniciando build do APK..."
+    echo "   Empresa: ME EMPREENDIMENTOS"
+    echo "   Versão: 1.0.0"
+    echo "   Target: Android 7.0+ (API 24+)"
+    echo ""
+    
+    # Tornar gradlew executável
+    chmod +x gradlew
+    
+    # Limpar build anterior
+    echo "🧹 Limpando builds anteriores..."
+    ./gradlew clean
+    
+    # Build do APK
+    echo "🔧 Compilando APK..."
+    ./gradlew assembleDebug
+    
+    # Verificar se o build foi bem-sucedido
+    APK_PATH="app/build/outputs/apk/debug/app-debug.apk"
+    if [ -f "$APK_PATH" ]; then
+        echo ""
+        echo "✅ BUILD SUCCESSFUL!"
+        echo "📦 APK gerado: $APK_PATH"
+        echo "📊 Tamanho: $(du -h "$APK_PATH" | cut -f1)"
+        return 0
+    else
+        echo "❌ BUILD FAILED!"
+        exit 1
+    fi
+}
 
-echo ""
-echo "📱 Gerando APK do aplicativo..."
-echo "   Empresa: ME EMPREENDIMENTOS"
-echo "   Versão: 1.0.0"
-echo "   Arquitetura: Universal"
-echo ""
-
-# Simular build (em ambiente real seria: ./gradlew assembleDebug)
-echo "🔧 Compilando código Kotlin..."
-sleep 2
-echo "📦 Empacotando recursos..."
-sleep 1
-echo "🔐 Assinando APK..."
-sleep 1
+# Executar verificações e build
+check_dependencies
+check_project
+build_apk
 
 # Criar arquivo info do APK
 cat > build/outputs/apk/debug/app-info.txt << EOF

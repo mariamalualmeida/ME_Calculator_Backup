@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial: React Native para iPhone</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, #61DAFB, #21759B);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #61DAFB;
+            border-radius: 5px;
+        }
+        .step h3 {
+            color: #21759B;
+            margin-top: 0;
+        }
+        .highlight {
+            background: #fef3cd;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #faebcd;
+            margin: 15px 0;
+        }
+        .code {
+            background: #f1f3f4;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .warning {
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .phase {
+            background: #e7f3ff;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            border: 2px solid #b3d9ff;
+        }
+        .phase h2 {
+            color: #0066cc;
+            margin-top: 0;
+        }
+        .cost-box {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ffeaa7;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ME EMPREENDIMENTOS</h1>
+        <h2>Tutorial: React Native para iPhone</h2>
+        <p>Opção 2 - Aplicativo Nativo iOS via React Native</p>
+    </div>
+
+    <div class="highlight">
+        <h3>🎯 Objetivo</h3>
+        <p>Desenvolver versão nativa do Simulador de Empréstimos para iPhone usando React Native, permitindo distribuição via App Store.</p>
+    </div>
+
+    <div class="cost-box">
+        <h3>💰 Custos Envolvidos</h3>
+        <ul>
+            <li><strong>Apple Developer Program:</strong> $99 USD/ano (obrigatório)</li>
+            <li><strong>Mac/MacBook:</strong> Necessário para desenvolvimento iOS</li>
+            <li><strong>Tempo de desenvolvimento:</strong> 2-4 semanas</li>
+            <li><strong>App Store Review:</strong> 1-7 dias para aprovação</li>
+        </ul>
+    </div>
+
+    <div class="warning">
+        <h3>📋 Pré-requisitos Obrigatórios</h3>
+        <ul>
+            <li><strong>Mac/MacBook</strong> com macOS 10.15+</li>
+            <li><strong>Xcode 12+</strong> instalado</li>
+            <li><strong>Node.js 16+</strong> e npm/yarn</li>
+            <li><strong>React Native CLI</strong></li>
+            <li><strong>CocoaPods</strong> (gerenciador de dependências iOS)</li>
+            <li><strong>Conta Apple Developer</strong> ativa</li>
+            <li><strong>iPhone físico</strong> para testes (recomendado)</li>
+        </ul>
+    </div>
+
+    <div class="phase">
+        <h2>🔧 FASE 1: Configuração do Ambiente</h2>
+        
+        <div class="step">
+            <h3>Passo 1: Instalar Dependências</h3>
+            <div class="code">
+# Instalar Homebrew (se não tiver)<br>
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"<br><br>
+# Instalar Node.js<br>
+brew install node<br><br>
+# Instalar Watchman (monitoramento de arquivos)<br>
+brew install watchman<br><br>
+# Instalar CocoaPods<br>
+sudo gem install cocoapods
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 2: Instalar Xcode</h3>
+            <p>1. Abra a <strong>App Store</strong> no Mac</p>
+            <p>2. Procure por <strong>"Xcode"</strong></p>
+            <p>3. Clique em <strong>"Instalar"</strong> (download ~10GB)</p>
+            <p>4. Após instalação, abra o Xcode</p>
+            <p>5. Aceite os termos e instale componentes adicionais</p>
+        </div>
+
+        <div class="step">
+            <h3>Passo 3: Configurar React Native</h3>
+            <div class="code">
+# Instalar React Native CLI globalmente<br>
+npm install -g @react-native-community/cli<br><br>
+# Verificar instalação<br>
+react-native --version
+            </div>
+        </div>
+    </div>
+
+    <div class="phase">
+        <h2>📱 FASE 2: Criação do Projeto</h2>
+        
+        <div class="step">
+            <h3>Passo 1: Inicializar Projeto React Native</h3>
+            <div class="code">
+# Criar novo projeto<br>
+npx react-native init MEEmprestimosApp<br><br>
+# Navegar para o diretório<br>
+cd MEEmprestimosApp
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 2: Instalar Dependências Necessárias</h3>
+            <div class="code">
+# Navegação<br>
+npm install @react-navigation/native @react-navigation/stack<br>
+npm install react-native-screens react-native-safe-area-context<br><br>
+# Componentes UI<br>
+npm install react-native-vector-icons<br>
+npm install react-native-paper<br><br>
+# Geração de PDF<br>
+npm install react-native-html-to-pdf<br><br>
+# Storage local<br>
+npm install @react-native-async-storage/async-storage<br><br>
+# Instalar dependências iOS<br>
+cd ios && pod install && cd ..
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 3: Estrutura Base do Projeto</h3>
+            <p>Criar estrutura de pastas:</p>
+            <div class="code">
+src/<br>
+├── components/          # Componentes reutilizáveis<br>
+├── screens/            # Telas da aplicação<br>
+├── utils/              # Funções auxiliares<br>
+├── styles/             # Estilos globais<br>
+└── navigation/         # Configuração de navegação
+            </div>
+        </div>
+    </div>
+
+    <div class="phase">
+        <h2>⚡ FASE 3: Desenvolvimento</h2>
+        
+        <div class="step">
+            <h3>Passo 1: Migrar Lógica de Negócio</h3>
+            <p>Adaptar código JavaScript existente:</p>
+            <div class="code">
+// src/utils/SimuladorCalculos.js<br>
+export class SimuladorCalculos {<br>
+  calcularParcela(valor, juros, nParcelas, diasExtra = 0) {<br>
+    // Migrar lógica existente do script.js<br>
+    const jurosMensal = juros / 100;<br>
+    const parcelaBase = valor * Math.pow(1 + jurosMensal, nParcelas) / nParcelas;<br>
+    return parcelaBase;<br>
+  }<br>
+}<br><br>
+// src/utils/ValidacaoRegras.js<br>
+export const validarLimites = (parcelas, juros) => {<br>
+  // Migrar validações existentes<br>
+  if (parcelas >= 1 && parcelas <= 3) {<br>
+    return juros >= 15 && juros <= 30;<br>
+  }<br>
+  // ... resto das validações<br>
+};
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 2: Criar Tela Principal</h3>
+            <div class="code">
+// src/screens/SimuladorScreen.js<br>
+import React, { useState } from 'react';<br>
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';<br>
+import { SimuladorCalculos } from '../utils/SimuladorCalculos';<br><br>
+const SimuladorScreen = () => {<br>
+  const [valor, setValor] = useState('');<br>
+  const [parcelas, setParcelas] = useState('');<br>
+  const [juros, setJuros] = useState('');<br>
+  const [resultado, setResultado] = useState(null);<br><br>
+  const calcular = () => {<br>
+    const simulador = new SimuladorCalculos();<br>
+    const parcela = simulador.calcularParcela(<br>
+      parseFloat(valor),<br>
+      parseFloat(juros),<br>
+      parseInt(parcelas)<br>
+    );<br>
+    setResultado(parcela);<br>
+  };<br><br>
+  return (<br>
+    // Interface similar ao design web<br>
+  );<br>
+};<br><br>
+export default SimuladorScreen;
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 3: Implementar Design Material</h3>
+            <div class="code">
+// src/styles/theme.js<br>
+export const theme = {<br>
+  colors: {<br>
+    primary: '#6366f1',<br>
+    secondary: '#8b5cf6',<br>
+    background: '#ffffff',<br>
+    surface: '#f8f9fa',<br>
+    text: '#1f2937'<br>
+  },<br>
+  spacing: {<br>
+    small: 8,<br>
+    medium: 16,<br>
+    large: 24<br>
+  }<br>
+};
+            </div>
+        </div>
+    </div>
+
+    <div class="phase">
+        <h2>🧪 FASE 4: Testes e Depuração</h2>
+        
+        <div class="step">
+            <h3>Passo 1: Executar no Simulador</h3>
+            <div class="code">
+# Abrir simulador iOS<br>
+npx react-native run-ios<br><br>
+# Ou especificar dispositivo<br>
+npx react-native run-ios --simulator="iPhone 14"
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 2: Testar em Dispositivo Real</h3>
+            <p>1. Conecte iPhone via USB ao Mac</p>
+            <p>2. Configure certificados de desenvolvedor no Xcode</p>
+            <p>3. Execute:</p>
+            <div class="code">
+npx react-native run-ios --device
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 3: Debug e Otimização</h3>
+            <div class="code">
+# Ativar debug no dispositivo<br>
+# Shake o dispositivo e selecione "Debug"<br><br>
+# React Native Debugger<br>
+npm install -g react-native-debugger<br><br>
+# Flipper (ferramenta de debug)<br>
+npx react-native doctor
+            </div>
+        </div>
+    </div>
+
+    <div class="phase">
+        <h2>🚀 FASE 5: Preparação para App Store</h2>
+        
+        <div class="step">
+            <h3>Passo 1: Configurar Apple Developer</h3>
+            <p>1. Acesse <strong>developer.apple.com</strong></p>
+            <p>2. Faça login com Apple ID</p>
+            <p>3. Inscreva-se no Developer Program ($99/ano)</p>
+            <p>4. Crie App ID para o projeto</p>
+            <p>5. Configure certificados de distribuição</p>
+        </div>
+
+        <div class="step">
+            <h3>Passo 2: Configurar App no Xcode</h3>
+            <p>1. Abra <strong>ios/MEEmprestimosApp.xcworkspace</strong> no Xcode</p>
+            <p>2. Configure Bundle Identifier único</p>
+            <p>3. Selecione Team de desenvolvimento</p>
+            <p>4. Configure ícones e splash screen</p>
+            <p>5. Ajuste versão e build number</p>
+        </div>
+
+        <div class="step">
+            <h3>Passo 3: Build de Produção</h3>
+            <div class="code">
+# Gerar bundle de produção<br>
+npx react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/main.jsbundle<br><br>
+# No Xcode, mudar schema para "Release"<br>
+# Product → Scheme → Edit Scheme → Run → Release<br><br>
+# Fazer archive<br>
+# Product → Archive
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 4: Submeter para App Store</h3>
+            <p>1. No Xcode Organizer, selecione o archive</p>
+            <p>2. Clique em <strong>"Distribute App"</strong></p>
+            <p>3. Selecione <strong>"App Store Connect"</strong></p>
+            <p>4. Configure opções de distribuição</p>
+            <p>5. Upload para App Store Connect</p>
+            <p>6. Preencha metadados no App Store Connect</p>
+            <p>7. Submeta para review</p>
+        </div>
+    </div>
+
+    <div class="warning">
+        <h3>⚠️ Desafios Comuns</h3>
+        
+        <p><strong>Erros de Build:</strong></p>
+        <ul>
+            <li>Limpar cache: <code>npx react-native start --reset-cache</code></li>
+            <li>Reinstalar pods: <code>cd ios && rm -rf Pods && pod install</code></li>
+            <li>Limpar Xcode: Product → Clean Build Folder</li>
+        </ul>
+        
+        <p><strong>Problemas de Certificado:</strong></p>
+        <ul>
+            <li>Verificar validade do certificado de desenvolvedor</li>
+            <li>Recriar provisioning profiles</li>
+            <li>Sincronizar certificados no Xcode</li>
+        </ul>
+        
+        <p><strong>Rejeição da App Store:</strong></p>
+        <ul>
+            <li>Seguir Human Interface Guidelines</li>
+            <li>Implementar política de privacidade</li>
+            <li>Testar em dispositivos reais</li>
+            <li>Documentar funcionalidades para review</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h3>📊 Cronograma Estimado</h3>
+        
+        <p><strong>Semana 1:</strong> Configuração ambiente + estrutura básica</p>
+        <p><strong>Semana 2:</strong> Migração lógica + interface principal</p>
+        <p><strong>Semana 3:</strong> Funcionalidades avançadas + PDF</p>
+        <p><strong>Semana 4:</strong> Testes + preparação App Store</p>
+        <p><strong>+1-7 dias:</strong> Review da Apple</p>
+    </div>
+
+    <div class="highlight">
+        <h3>✅ Vantagens do React Native</h3>
+        <ul>
+            <li><strong>Código compartilhado</strong> entre iOS e Android</li>
+            <li><strong>Performance próxima ao nativo</strong></li>
+            <li><strong>Reutilização da lógica</strong> JavaScript existente</li>
+            <li><strong>Hot reload</strong> para desenvolvimento rápido</li>
+            <li><strong>Comunidade ativa</strong> e bibliotecas abundantes</li>
+            <li><strong>Distribuição oficial</strong> via App Store</li>
+        </ul>
+    </div>
+
+    <div class="highlight">
+        <h3>🏆 Resultado Final</h3>
+        <p>Após completar este tutorial, você terá:</p>
+        <ul>
+            <li><strong>App nativo iOS</strong> publicado na App Store</li>
+            <li><strong>Performance otimizada</strong> para iPhone</li>
+            <li><strong>Interface Material Design</strong> adaptada para iOS</li>
+            <li><strong>Todas as funcionalidades</strong> do simulador</li>
+            <li><strong>Capacidade de monetização</strong> e analytics</li>
+            <li><strong>Base para versão Android</strong> com código compartilhado</li>
+        </ul>
+    </div>
+
+    <div class="cost-box">
+        <h3>💡 Dica de Economia</h3>
+        <p>Se o custo ou complexidade do desenvolvimento nativo for alto, considere primeiro testar a aceitação do mercado com a versão PWA, que oferece 90% da funcionalidade com 10% do esforço.</p>
+    </div>
+</body>
+</html>

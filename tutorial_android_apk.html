@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial: Compilação APK Android</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, #34d399, #10b981);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+            border-radius: 5px;
+        }
+        .step h3 {
+            color: #10b981;
+            margin-top: 0;
+        }
+        .highlight {
+            background: #fef3cd;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #faebcd;
+            margin: 15px 0;
+        }
+        .code {
+            background: #f1f3f4;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .warning {
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .method {
+            background: #e7f3ff;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            border: 2px solid #b3d9ff;
+        }
+        .method h2 {
+            color: #0066cc;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ME EMPREENDIMENTOS</h1>
+        <h2>Tutorial: Compilação APK Android</h2>
+        <p>Opção 2 - Aplicativo Nativo Kotlin</p>
+    </div>
+
+    <div class="highlight">
+        <h3>🎯 Objetivo</h3>
+        <p>Compilar o aplicativo Android nativo em Kotlin para distribuição via arquivo APK.</p>
+    </div>
+
+    <div class="warning">
+        <h3>📋 Pré-requisitos</h3>
+        <ul>
+            <li><strong>Java JDK 11+</strong> instalado</li>
+            <li><strong>Android Studio</strong> ou Android SDK</li>
+            <li><strong>Git</strong> (para método via repositório)</li>
+            <li><strong>Windows/Mac/Linux</strong> com pelo menos 8GB RAM</li>
+        </ul>
+    </div>
+
+    <div class="method">
+        <h2>📦 MÉTODO 1: Via Android Studio (Recomendado)</h2>
+        
+        <div class="step">
+            <h3>Passo 1: Preparação do Ambiente</h3>
+            <p>1. <strong>Baixe e instale o Android Studio:</strong></p>
+            <div class="code">https://developer.android.com/studio</div>
+            
+            <p>2. <strong>Durante a instalação, certifique-se de incluir:</strong></p>
+            <ul>
+                <li>Android SDK</li>
+                <li>Android SDK Platform-Tools</li>
+                <li>Android Virtual Device (AVD)</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Passo 2: Obter o Código Fonte</h3>
+            <p><strong>Opção A - Via Git Clone:</strong></p>
+            <div class="code">
+git clone [URL_DO_REPOSITORIO]<br>
+cd SimuladorEmprestimos
+            </div>
+            
+            <p><strong>Opção B - Download Direto:</strong></p>
+            <ul>
+                <li>Baixe o arquivo ZIP do projeto</li>
+                <li>Extraia em uma pasta de sua escolha</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Passo 3: Abrir Projeto no Android Studio</h3>
+            <p>1. Abra o <strong>Android Studio</strong></p>
+            <p>2. Clique em <strong>"Open an Existing Project"</strong></p>
+            <p>3. Navegue até a pasta do projeto</p>
+            <p>4. Selecione a pasta raiz (onde está o arquivo <code>build.gradle.kts</code>)</p>
+            <p>5. Clique em <strong>"OK"</strong></p>
+        </div>
+
+        <div class="step">
+            <h3>Passo 4: Sincronização e Build</h3>
+            <p>1. Aguarde o Android Studio sincronizar o projeto</p>
+            <p>2. Se aparecer "Sync Now", clique nele</p>
+            <p>3. Aguarde download das dependências (pode demorar)</p>
+            <p>4. Verifique se não há erros na aba "Build"</p>
+        </div>
+
+        <div class="step">
+            <h3>Passo 5: Compilar APK</h3>
+            <p>1. No menu superior, vá em <strong>Build → Build Bundle(s) / APK(s) → Build APK(s)</strong></p>
+            <p>2. Aguarde a compilação terminar</p>
+            <p>3. Quando aparecer "APK(s) generated successfully", clique em <strong>"locate"</strong></p>
+            <p>4. O APK estará em: <code>app/build/outputs/apk/debug/app-debug.apk</code></p>
+        </div>
+    </div>
+
+    <div class="method">
+        <h2>⚡ MÉTODO 2: Via Linha de Comando (Avançado)</h2>
+        
+        <div class="step">
+            <h3>Passo 1: Instalar Android SDK</h3>
+            <p><strong>Windows:</strong></p>
+            <div class="code">
+# Baixar SDK Command Line Tools<br>
+https://developer.android.com/studio#command-tools<br><br>
+# Extrair em C:\Android\sdk<br>
+# Adicionar ao PATH: C:\Android\sdk\cmdline-tools\latest\bin
+            </div>
+            
+            <p><strong>Linux/Mac:</strong></p>
+            <div class="code">
+# Instalar via package manager ou download manual<br>
+export ANDROID_HOME=$HOME/Android/Sdk<br>
+export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin<br>
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 2: Configurar SDK</h3>
+            <div class="code">
+# Aceitar licenças<br>
+sdkmanager --licenses<br><br>
+# Instalar componentes necessários<br>
+sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 3: Clonar e Compilar</h3>
+            <div class="code">
+# Clonar repositório<br>
+git clone [URL_DO_REPOSITORIO]<br>
+cd SimuladorEmprestimos<br><br>
+# Dar permissão ao gradlew (Linux/Mac)<br>
+chmod +x gradlew<br><br>
+# Compilar APK<br>
+./gradlew assembleDebug<br><br>
+# Windows<br>
+gradlew.bat assembleDebug
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 4: Localizar APK</h3>
+            <p>Após compilação bem-sucedida, o APK estará em:</p>
+            <div class="code">app/build/outputs/apk/debug/app-debug.apk</div>
+        </div>
+    </div>
+
+    <div class="method">
+        <h2>🔧 MÉTODO 3: Via Script Automatizado</h2>
+        
+        <div class="step">
+            <h3>Usando o Script build-android.sh</h3>
+            <p><strong>Linux/Mac:</strong></p>
+            <div class="code">
+chmod +x build-android.sh<br>
+./build-android.sh
+            </div>
+            
+            <p><strong>Windows (Git Bash):</strong></p>
+            <div class="code">bash build-android.sh</div>
+            
+            <p>Este script automaticamente:</p>
+            <ul>
+                <li>Verifica dependências</li>
+                <li>Configura ambiente</li>
+                <li>Compila o APK</li>
+                <li>Mostra localização do arquivo</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>📱 Instalação do APK no Dispositivo</h3>
+        
+        <p><strong>Via USB (ADB):</strong></p>
+        <div class="code">
+# Habilitar "Depuração USB" no Android<br>
+# Conectar dispositivo via USB<br>
+adb install app-debug.apk
+        </div>
+        
+        <p><strong>Via Arquivo (Mais Simples):</strong></p>
+        <ol>
+            <li>Copie o APK para o dispositivo Android</li>
+            <li>Habilite "Fontes desconhecidas" nas configurações</li>
+            <li>Toque no arquivo APK para instalar</li>
+        </ol>
+    </div>
+
+    <div class="warning">
+        <h3>⚠️ Resolução de Problemas Comuns</h3>
+        
+        <p><strong>Erro "JAVA_HOME not set":</strong></p>
+        <div class="code">export JAVA_HOME=/caminho/para/jdk</div>
+        
+        <p><strong>Erro "Android SDK not found":</strong></p>
+        <div class="code">export ANDROID_HOME=/caminho/para/android-sdk</div>
+        
+        <p><strong>Erro de dependências:</strong></p>
+        <div class="code">./gradlew clean<br>./gradlew assembleDebug</div>
+        
+        <p><strong>Problemas de memória:</strong></p>
+        <div class="code">
+# No arquivo gradle.properties<br>
+org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m
+        </div>
+    </div>
+
+    <div class="highlight">
+        <h3>🏆 Resultado Final</h3>
+        <p>Após seguir qualquer um dos métodos, você terá:</p>
+        <ul>
+            <li><strong>Arquivo APK</strong> pronto para distribuição</li>
+            <li><strong>Aplicativo nativo</strong> com performance otimizada</li>
+            <li><strong>Interface Material Design 3</strong> profissional</li>
+            <li><strong>Todas as funcionalidades</strong> do simulador</li>
+            <li><strong>Compatibilidade</strong> com Android 5.0+</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h3>📋 Checklist Final</h3>
+        <ul>
+            <li>✅ APK compilado sem erros</li>
+            <li>✅ Tamanho do arquivo ~10-15MB</li>
+            <li>✅ Teste de instalação em dispositivo</li>
+            <li>✅ Verificação de funcionalidades</li>
+            <li>✅ Teste de cálculos e PDF</li>
+        </ul>
+    </div>
+</body>
+</html>

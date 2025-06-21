@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de PDFs - Tutoriais</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .tutorial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .tutorial-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .tutorial-card:hover {
+            transform: translateY(-2px);
+            border-color: #6366f1;
+        }
+        .tutorial-title {
+            color: #6366f1;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .tutorial-desc {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .btn {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .platform-android { border-left: 4px solid #34d399; }
+        .platform-ios { border-left: 4px solid #007AFF; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ME EMPREENDIMENTOS</h1>
+            <h2>Gerador de Tutoriais PDF</h2>
+            <p>Documentação completa para instalação em Android e iPhone</p>
+        </div>
+
+        <div class="tutorial-grid">
+            <!-- Android PWA -->
+            <div class="tutorial-card platform-android">
+                <div class="tutorial-title">📱 Android - PWA</div>
+                <div class="tutorial-desc">
+                    Instalação via Chrome como Progressive Web App.
+                    Método mais simples e rápido.
+                </div>
+                <button class="btn" onclick="gerarPDF('android-pwa')">
+                    Gerar PDF Tutorial
+                </button>
+                <div id="status-android-pwa"></div>
+            </div>
+
+            <!-- Android APK -->
+            <div class="tutorial-card platform-android">
+                <div class="tutorial-title">⚙️ Android - APK Nativo</div>
+                <div class="tutorial-desc">
+                    Compilação do aplicativo Kotlin nativo via Android Studio e linha de comando.
+                </div>
+                <button class="btn" onclick="gerarPDF('android-apk')">
+                    Gerar PDF Tutorial
+                </button>
+                <div id="status-android-apk"></div>
+            </div>
+
+            <!-- iPhone PWA -->
+            <div class="tutorial-card platform-ios">
+                <div class="tutorial-title">📱 iPhone - PWA</div>
+                <div class="tutorial-desc">
+                    Instalação via Safari como Progressive Web App.
+                    Funciona como app nativo.
+                </div>
+                <button class="btn" onclick="gerarPDF('iphone-pwa')">
+                    Gerar PDF Tutorial
+                </button>
+                <div id="status-iphone-pwa"></div>
+            </div>
+
+            <!-- iPhone React Native -->
+            <div class="tutorial-card platform-ios">
+                <div class="tutorial-title">⚛️ iPhone - React Native</div>
+                <div class="tutorial-desc">
+                    Desenvolvimento nativo com React Native para distribuição via App Store.
+                </div>
+                <button class="btn" onclick="gerarPDF('iphone-react-native')">
+                    Gerar PDF Tutorial
+                </button>
+                <div id="status-iphone-react-native"></div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #e7f3ff; border-radius: 8px; border: 1px solid #b3d9ff;">
+            <h3 style="color: #0066cc; margin-top: 0;">💡 Recomendações</h3>
+            <p><strong>Para usuários finais:</strong> Use os tutoriais PWA (Android Chrome e iPhone Safari)</p>
+            <p><strong>Para desenvolvedores:</strong> Use os tutoriais nativos (APK Android e React Native iOS)</p>
+            <p><strong>Melhor custo-benefício:</strong> PWA oferece 90% da funcionalidade com instalação instantânea</p>
+        </div>
+    </div>
+
+    <script>
+        async function gerarPDF(tipo) {
+            const statusEl = document.getElementById(`status-${tipo}`);
+            statusEl.innerHTML = '<div class="status loading">Gerando PDF...</div>';
+
+            try {
+                let htmlFile, filename, title;
+                
+                switch(tipo) {
+                    case 'android-pwa':
+                        htmlFile = 'tutorial_android_pwa.html';
+                        filename = 'Tutorial_Android_PWA_ME_Empreendimentos.pdf';
+                        title = 'Tutorial: Instalação PWA Android';
+                        break;
+                    case 'android-apk':
+                        htmlFile = 'tutorial_android_apk.html';
+                        filename = 'Tutorial_Android_APK_ME_Empreendimentos.pdf';
+                        title = 'Tutorial: Compilação APK Android';
+                        break;
+                    case 'iphone-pwa':
+                        htmlFile = 'tutorial_iphone_pwa.html';
+                        filename = 'Tutorial_iPhone_PWA_ME_Empreendimentos.pdf';
+                        title = 'Tutorial: Instalação PWA iPhone';
+                        break;
+                    case 'iphone-react-native':
+                        htmlFile = 'tutorial_iphone_react_native.html';
+                        filename = 'Tutorial_iPhone_ReactNative_ME_Empreendimentos.pdf';
+                        title = 'Tutorial: React Native iPhone';
+                        break;
+                }
+
+                // Carregar HTML do tutorial
+                const response = await fetch(htmlFile);
+                const htmlContent = await response.text();
+                
+                // Criar iframe temporário para renderizar
+                const iframe = document.createElement('iframe');
+                iframe.style.position = 'absolute';
+                iframe.style.left = '-9999px';
+                iframe.style.width = '800px';
+                iframe.style.height = '600px';
+                document.body.appendChild(iframe);
+                
+                iframe.contentDocument.write(htmlContent);
+                iframe.contentDocument.close();
+
+                // Aguardar carregamento
+                await new Promise(resolve => {
+                    iframe.onload = resolve;
+                    setTimeout(resolve, 1000);
+                });
+
+                // Capturar como canvas
+                const canvas = await html2canvas(iframe.contentDocument.body, {
+                    width: 800,
+                    height: iframe.contentDocument.body.scrollHeight,
+                    scale: 2
+                });
+
+                // Gerar PDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 295; // A4 height in mm
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                // Download do PDF
+                pdf.save(filename);
+                
+                // Limpar iframe
+                document.body.removeChild(iframe);
+                
+                statusEl.innerHTML = '<div class="status success">PDF gerado com sucesso!</div>';
+                
+            } catch (error) {
+                console.error('Erro ao gerar PDF:', error);
+                statusEl.innerHTML = '<div class="status" style="background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">Erro ao gerar PDF. Tente novamente.</div>';
+            }
+        }
+    </script>
+</body>
+</html>
