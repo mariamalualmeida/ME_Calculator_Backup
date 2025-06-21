@@ -66,6 +66,7 @@ class SimuladorEmprestimos {
     }
 
     initializeElements() {
+        console.log('Inicializando elementos...');
         this.valorEmprestimoField = document.getElementById('valorEmprestimo');
         this.numeroParcelasField = document.getElementById('numeroParcelas');
         this.taxaJurosField = document.getElementById('taxaJuros');
@@ -79,6 +80,9 @@ class SimuladorEmprestimos {
         this.errorMessage = document.getElementById('errorMessage');
         this.exportPdfBtn = document.getElementById('exportPdfBtn');
         this.configBtn = document.getElementById('configBtn');
+        
+        console.log('Taxa de juros field encontrado:', !!this.taxaJurosField);
+        console.log('ID do campo:', this.taxaJurosField?.id);
     }
 
     setupEventListeners() {
@@ -101,6 +105,10 @@ class SimuladorEmprestimos {
         });
 
         this.taxaJurosField.addEventListener('input', (e) => {
+            console.log('Event listener input disparado, valor:', e.target.value);
+            e.target.style.backgroundColor = '#ffcccc';
+            setTimeout(() => e.target.style.backgroundColor = '', 200);
+            
             // Formatação automática como centavos em tempo real
             this.formatarPercentualTempoReal(e.target);
             this.validarCampoJuros();
@@ -295,17 +303,22 @@ class SimuladorEmprestimos {
     }
 
     formatarPercentualTempoReal(input) {
+        console.log('formatarPercentualTempoReal executada, valor inicial:', input.value);
+        
         // Capturar apenas números
         let numeros = input.value.replace(/\D/g, '');
+        console.log('Números extraídos:', numeros);
         
         // Limitar a 4 dígitos
         if (numeros.length > 4) {
             numeros = numeros.substring(0, 4);
+            console.log('Limitado a 4 dígitos:', numeros);
         }
         
         // Se vazio, deixar vazio
         if (numeros === '') {
             input.value = '';
+            console.log('Campo vazio, mantendo vazio');
             return;
         }
         
@@ -328,7 +341,12 @@ class SimuladorEmprestimos {
                 valorFormatado = numeros;
         }
         
+        console.log('Valor formatado final:', valorFormatado);
         input.value = valorFormatado;
+        
+        // Forçar mudança visual para confirmar execução
+        input.style.borderColor = 'red';
+        setTimeout(() => input.style.borderColor = '', 100);
     }
 
     formatarPercentual(input) {
