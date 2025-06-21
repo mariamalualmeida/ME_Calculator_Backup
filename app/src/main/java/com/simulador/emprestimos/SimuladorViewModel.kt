@@ -20,6 +20,7 @@ data class SimuladorUiState(
     val dataInicial: String = "",
     val nomeCliente: String = "",
     val cpfCliente: String = "",
+    val metodoDiasExtras: String = "primeira",
     val resultado: ResultadoCalculo? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
@@ -100,7 +101,12 @@ class SimuladorViewModel : ViewModel() {
     }
     
     fun updateDataInicial(data: String) {
-        _uiState.value = _uiState.value.copy(dataInicial = data)
+        _uiState.value = _uiState.value.copy(
+            dataInicial = data,
+            showResult = false,
+            showError = false,
+            errorMessage = null
+        )
     }
     
     fun updateNomeCliente(nome: String) {
@@ -109,6 +115,10 @@ class SimuladorViewModel : ViewModel() {
     
     fun updateCpfCliente(cpf: String) {
         _uiState.value = _uiState.value.copy(cpfCliente = cpf)
+    }
+    
+    fun updateMetodoDiasExtras(metodo: String) {
+        _uiState.value = _uiState.value.copy(metodoDiasExtras = metodo)
     }
     
     fun calcular() {
@@ -141,7 +151,7 @@ class SimuladorViewModel : ViewModel() {
             // Calcular prestação com pró-rata se houver data
             val diasExtra = calcularDiasExtras(_uiState.value.dataInicial)
             val igpmMensal = _configuracoes.value.igpmAnual / 12.0
-            val metodo = "primeira" // Por simplicidade, usando método primeira parcela maior no Android
+            val metodo = _uiState.value.metodoDiasExtras
             val resultadoCalculo = calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal, metodo)
             
             _uiState.value = currentState.copy(

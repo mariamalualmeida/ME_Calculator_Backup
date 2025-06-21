@@ -50,6 +50,13 @@ class SimuladorEmprestimos {
         this.aplicarTema(loadedConfig.themeMode);
         this.aplicarPaletaCores(loadedConfig.colorTheme);
         
+        // Aplicar classes de modo livre após carregar configurações
+        setTimeout(() => {
+            if (this.atualizarClassesModoLivre) {
+                this.atualizarClassesModoLivre();
+            }
+        }, 100);
+        
         return loadedConfig;
     }
 

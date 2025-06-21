@@ -334,6 +334,74 @@ fun SimuladorEmprestimosScreen(
                     )
                 }
                 
+                // Método de dias extras (aparece apenas quando há data e parcelas > 1)
+                val shouldShowMetodo = uiState.dataInicial.isNotEmpty() && 
+                    uiState.dataInicial.length >= 8 && 
+                    (uiState.numeroParcelas.toIntOrNull() ?: 1) > 1
+                
+                if (shouldShowMetodo) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                color = colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Método para dias extras:",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium,
+                            color = colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            // Primeira parcela maior
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = uiState.metodoDiasExtras == "primeira",
+                                    onClick = { viewModel.updateMetodoDiasExtras("primeira") },
+                                    colors = RadioButtonDefaults.colors(
+                                        selectedColor = colorScheme.primary
+                                    )
+                                )
+                                Text(
+                                    text = "Primeira parcela maior",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(start = 4.dp)
+                                )
+                            }
+                            
+                            // Distribuir
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = uiState.metodoDiasExtras == "distribuir",
+                                    onClick = { viewModel.updateMetodoDiasExtras("distribuir") },
+                                    colors = RadioButtonDefaults.colors(
+                                        selectedColor = colorScheme.primary
+                                    )
+                                )
+                                Text(
+                                    text = "Distribuir igualmente",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(start = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+                
                 // Botão calcular
                 Button(
                     onClick = { 
