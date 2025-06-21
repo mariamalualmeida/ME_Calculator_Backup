@@ -102,17 +102,20 @@ class SimuladorEmprestimos {
         this.taxaJurosField.addEventListener('input', (e) => {
             // Apenas limpar caracteres inválidos, sem formatação automática
             let valor = e.target.value.replace(/[^\d,]/g, '');
-            // Permitir apenas uma vírgula
-            const virgulas = valor.split(',');
-            if (virgulas.length > 2) {
-                valor = virgulas[0] + ',' + virgulas.slice(1).join('');
-            }
-            // Limitar casas decimais a 2
-            if (virgulas.length === 2 && virgulas[1].length > 2) {
-                valor = virgulas[0] + ',' + virgulas[1].substring(0, 2);
-            }
-            e.target.value = valor;
             
+            // Permitir apenas uma vírgula
+            const partes = valor.split(',');
+            if (partes.length > 2) {
+                // Se há mais de uma vírgula, manter apenas a primeira e remover as outras
+                valor = partes[0] + ',' + partes.slice(1).join('').replace(/,/g, '');
+            }
+            
+            // Limitar casas decimais a 2
+            if (partes.length === 2 && partes[1].length > 2) {
+                valor = partes[0] + ',' + partes[1].substring(0, 2);
+            }
+            
+            e.target.value = valor;
             this.validarCampoJuros();
             this.limparResultado();
         });

@@ -47,14 +47,15 @@ fun formatarPercentualInput(input: String): String {
     val valor = input.replace(Regex("[^\\d,]"), "")
     
     // Permitir apenas uma vírgula
-    val virgulas = valor.split(",")
-    val valorFinal = if (virgulas.size > 2) {
-        virgulas[0] + "," + virgulas.drop(1).joinToString("")
+    val partes = valor.split(",")
+    val valorFinal = if (partes.size > 2) {
+        // Se há mais de uma vírgula, manter apenas a primeira e remover as outras
+        partes[0] + "," + partes.drop(1).joinToString("").replace(",", "")
     } else valor
     
     // Limitar casas decimais a 2
-    return if (virgulas.size == 2 && virgulas[1].length > 2) {
-        virgulas[0] + "," + virgulas[1].substring(0, 2)
+    return if (partes.size == 2 && partes[1].length > 2) {
+        partes[0] + "," + partes[1].substring(0, 2)
     } else valorFinal
 }
 
