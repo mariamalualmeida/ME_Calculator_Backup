@@ -152,6 +152,11 @@ SimuladorEmprestimos/
 - June 21, 2025: Copied exact structure from working formatarMoeda() function to formatarPercentualTempoReal() for consistency
 - June 21, 2025: Added aggressive event listener attachment strategy with multiple fallbacks and direct DOM manipulation
 - June 21, 2025: SUCESSO: Formatação em tempo real funcionando corretamente - user confirmou que "1750" agora mostra "17,50" instantaneamente
+- June 21, 2025: Implementado formulário completo de dados cadastrais com seção expansível/recolhível para análise de crédito completa
+- June 21, 2025: Adicionado sistema de juros configuráveis no painel administrativo (Simples, Compostos Diários, Compostos Mensais, Pro-rata Real)
+- June 21, 2025: Melhorias de layout implementadas - removidos campos duplicados, reorganizado telefone após CPF, removidos ícones das seções
+- June 21, 2025: Botão de formulário completo atualizado para seguir paleta de cores ativa, geração PDF expandida para incluir todos dados cadastrais
+- June 21, 2025: Interface administrativa expandida com seleção de sistema de juros e controle de regras unificado usando selects
 
 ## User Preferences
 

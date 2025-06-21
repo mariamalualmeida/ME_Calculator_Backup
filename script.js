@@ -71,8 +71,6 @@ class SimuladorEmprestimos {
         this.numeroParcelasField = document.getElementById('numeroParcelas');
         this.taxaJurosField = document.getElementById('taxaJuros');
         this.dataInicialField = document.getElementById('dataInicial');
-        this.nomeClienteField = document.getElementById('nomeCliente');
-        this.cpfClienteField = document.getElementById('cpfCliente');
         this.calcularBtn = document.getElementById('calcularBtn');
         this.resultCard = document.getElementById('resultCard');
         this.resultValue = document.getElementById('resultValue');
@@ -180,10 +178,7 @@ class SimuladorEmprestimos {
             this.validarCampoJuros(); // Re-validar juros quando parcelas mudam
         });
 
-        // Formatação de CPF
-        this.cpfClienteField.addEventListener('input', (e) => {
-            this.formatarCpf(e.target);
-        });
+        // Remover referência ao campo CPF antigo (removido)
 
         // Botões
         this.calcularBtn.addEventListener('click', () => {
@@ -1247,8 +1242,9 @@ class SimuladorEmprestimos {
             
             const dataSimulacao = new Date().toLocaleDateString('pt-BR');
             const nomeUsuario = this.configuracoes.nomeUsuario || '';
-            const nomeCliente = this.nomeClienteField.value.trim();
-            const cpfCliente = this.cpfClienteField.value.trim();
+            // Usar dados do formulário completo
+            const nomeCliente = document.getElementById('nomeCompleto')?.value.trim() || '';
+            const cpfCliente = document.getElementById('cpfCompleto')?.value.trim() || '';
             
             // Configurar fonte - Cabeçalho
             doc.setFont('helvetica', 'bold');
