@@ -1131,13 +1131,21 @@ class SimuladorEmprestimos {
         document.getElementById('nomeUsuario').value = this.configuracoes.nomeUsuario || '';
         document.getElementById('themeMode').value = this.configuracoes.themeMode || 'light';
         document.getElementById('colorTheme').value = this.configuracoes.colorTheme || 'default';
-        document.getElementById('igpmAnual').value = this.configuracoes.igpmAnual || '';
         document.getElementById('mostrarJurosRelatorio').checked = this.configuracoes.mostrarJurosRelatorio || false;
         
-        // Carregar configurações administrativas se logado
+        // Configurar estado da área administrativa
+        const loginSection = document.getElementById('adminLoginSection');
         if (this.configuracoes.isAdmin) {
+            // Ocultar login e mostrar painel
+            if (loginSection) {
+                loginSection.style.display = 'none';
+            }
+            this.mostrarPainelAdmin();
+            
+            // Carregar configurações administrativas
             const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
             const sistemaJurosSelect = document.getElementById('sistemaJuros');
+            const igpmField = document.getElementById('igpmAnual');
             
             if (desabilitarRegrasSelect) {
                 desabilitarRegrasSelect.value = this.configuracoes.desabilitarRegras ? 'false' : 'true';
@@ -1145,6 +1153,15 @@ class SimuladorEmprestimos {
             
             if (sistemaJurosSelect) {
                 sistemaJurosSelect.value = this.configuracoes.sistemaJuros || 'compostos-mensal';
+            }
+            
+            if (igpmField) {
+                igpmField.value = this.configuracoes.igpmAnual || '';
+            }
+        } else {
+            // Mostrar login se não estiver logado
+            if (loginSection) {
+                loginSection.style.display = 'flex';
             }
         }
         
@@ -1189,6 +1206,22 @@ class SimuladorEmprestimos {
                 this.configuracoes.adminUser = novoUsuario;
                 this.configuracoes.adminPassword = novaSenha;
             }
+            
+            // Salvar limites personalizados
+            const novosLimites = {};
+            for (let parcelas = 1; parcelas <= 15; parcelas++) {
+                const minField = document.getElementById(`min_${parcelas}`);
+                const maxField = document.getElementById(`max_${parcelas}`);
+                if (minField && maxField) {
+                    const min = parseFloat(minField.value.replace(',', '.'));
+                    const max = parseFloat(maxField.value.replace(',', '.'));
+                    
+                    if (!isNaN(min) && !isNaN(max) && min <= max) {
+                        novosLimites[parcelas] = { min, max };
+                    }
+                }
+            }
+            this.configuracoes.limitesPersonalizados = novosLimites;
         }
         
         this.aplicarTema(this.configuracoes.themeMode);
@@ -1213,6 +1246,13 @@ class SimuladorEmprestimos {
         if (usuario === this.configuracoes.adminUser && senha === this.configuracoes.adminPassword) {
             this.configuracoes.isAdmin = true;
             this.mostrarPainelAdmin();
+            
+            // Ocultar seção de login após autenticação
+            const loginSection = document.getElementById('adminLoginSection');
+            if (loginSection) {
+                loginSection.style.display = 'none';
+            }
+            
             document.getElementById('adminUser').value = '';
             document.getElementById('adminPass').value = '';
         } else {
@@ -1238,7 +1278,6 @@ class SimuladorEmprestimos {
                 </div>
             `;
         }
-        html += '<button onclick="simulador.salvarLimitesAdmin()" id="saveLimitsBtn" class="admin-btn" style="margin-top: 16px;">Salvar Limites</button>';
         html += '</div>';
         
         table.innerHTML = html;
@@ -1249,33 +1288,7 @@ class SimuladorEmprestimos {
         panel.setAttribute('data-color-theme', this.configuracoes.colorTheme);
     }
 
-    salvarLimitesAdmin() {
-        const novosLimites = {};
-        
-        for (let parcelas = 1; parcelas <= 15; parcelas++) {
-            const min = parseFloat(document.getElementById(`min_${parcelas}`).value.replace(',', '.'));
-            const max = parseFloat(document.getElementById(`max_${parcelas}`).value.replace(',', '.'));
-            
-            if (!isNaN(min) && !isNaN(max) && min <= max) {
-                novosLimites[parcelas] = { min, max };
-            }
-        }
-        
-        // Salvar configuração de desabilitar regras
-        this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').checked;
-        this.configuracoes.limitesPersonalizados = novosLimites;
-        this.salvarConfiguracoes();
-        
-        // Disparar múltiplos métodos de sincronização para garantir funcionamento
-        window.dispatchEvent(new CustomEvent('configuracoesAtualizadas'));
-        
-        // Callback direto para garantia
-        if (window.simuladorInstance && window.simuladorInstance.forceConfigUpdate) {
-            setTimeout(() => window.simuladorInstance.forceConfigUpdate(), 100);
-        }
-        
-        alert('Limites atualizados com sucesso!');
-    }
+
 
     obterDadosCompletosPdf() {
         const dadosCompletos = {
