@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -233,10 +234,17 @@ fun SimuladorEmprestimosScreen(
                     OutlinedTextField(
                         value = uiState.taxaJuros,
                         onValueChange = { value ->
-                            val valorFormatado = formatarPercentual(value)
+                            val valorFormatado = formatarPercentualInput(value)
                             viewModel.updateTaxaJuros(valorFormatado)
                         },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { focusState ->
+                                if (!focusState.isFocused && uiState.taxaJuros.isNotEmpty()) {
+                                    val valorFormatado = formatarPercentual(uiState.taxaJuros)
+                                    viewModel.updateTaxaJuros(valorFormatado)
+                                }
+                            },
                         placeholder = { Text("0,00") },
                         trailingIcon = { Text("%", fontWeight = FontWeight.Medium) },
                         keyboardOptions = KeyboardOptions(

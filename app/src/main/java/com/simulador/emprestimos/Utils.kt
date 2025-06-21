@@ -21,31 +21,41 @@ fun formatarMoeda(input: String): String {
 
 // Formatação de percentual
 fun formatarPercentual(input: String): String {
-    val valor = input.replace(Regex("[^\\d,]"), "")
+    val valor = input.trim()
     
     // Se valor está vazio, retornar vazio
     if (valor.isEmpty()) return ""
     
-    // Remover vírgulas para processar apenas números
-    val apenasNumeros = valor.replace(",", "")
-    
-    // Se não há números, retornar vazio
-    if (apenasNumeros.isEmpty()) return ""
-    
-    // Converter para número para remover zeros à esquerda
-    val numeroLimpo = apenasNumeros.toLongOrNull()?.toString() ?: "0"
-    
-    // Formatação baseada no comprimento
-    return when (numeroLimpo.length) {
-        1 -> "0,0$numeroLimpo"
-        2 -> "0,$numeroLimpo"
-        else -> {
-            // 3 ou mais dígitos: últimos 2 são decimais
-            val inteiros = numeroLimpo.substring(0, numeroLimpo.length - 2)
-            val decimais = numeroLimpo.substring(numeroLimpo.length - 2)
-            "$inteiros,$decimais"
+    // Se já tem vírgula, garantir formato correto
+    if (valor.contains(",")) {
+        val partes = valor.split(",")
+        if (partes.size == 2) {
+            // Garantir 2 casas decimais
+            val decimais = partes[1].padEnd(2, '0').take(2)
+            return "${partes[0]},$decimais"
         }
     }
+    
+    // Se não tem vírgula, adicionar ,00
+    return if (!valor.contains(",") && valor.isNotEmpty()) {
+        "$valor,00"
+    } else valor
+}
+
+// Formatação de percentual durante input (sem formatação automática)
+fun formatarPercentualInput(input: String): String {
+    val valor = input.replace(Regex("[^\\d,]"), "")
+    
+    // Permitir apenas uma vírgula
+    val virgulas = valor.split(",")
+    val valorFinal = if (virgulas.size > 2) {
+        virgulas[0] + "," + virgulas.drop(1).joinToString("")
+    } else valor
+    
+    // Limitar casas decimais a 2
+    return if (virgulas.size == 2 && virgulas[1].length > 2) {
+        virgulas[0] + "," + virgulas[1].substring(0, 2)
+    } else valorFinal
 }
 
 // Formatação de data

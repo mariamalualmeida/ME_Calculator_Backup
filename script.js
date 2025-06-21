@@ -100,9 +100,26 @@ class SimuladorEmprestimos {
         });
 
         this.taxaJurosField.addEventListener('input', (e) => {
-            this.formatarPercentual(e.target);
+            // Apenas limpar caracteres inválidos, sem formatação automática
+            let valor = e.target.value.replace(/[^\d,]/g, '');
+            // Permitir apenas uma vírgula
+            const virgulas = valor.split(',');
+            if (virgulas.length > 2) {
+                valor = virgulas[0] + ',' + virgulas.slice(1).join('');
+            }
+            // Limitar casas decimais a 2
+            if (virgulas.length === 2 && virgulas[1].length > 2) {
+                valor = virgulas[0] + ',' + virgulas[1].substring(0, 2);
+            }
+            e.target.value = valor;
+            
             this.validarCampoJuros();
             this.limparResultado();
+        });
+        
+        this.taxaJurosField.addEventListener('blur', (e) => {
+            this.formatarPercentual(e.target);
+            this.validarCampoJuros();
         });
         
         this.taxaJurosField.addEventListener('keydown', (e) => {
@@ -293,36 +310,27 @@ class SimuladorEmprestimos {
     }
 
     formatarPercentual(input) {
-        let valor = input.value.replace(/[^\d,]/g, '');
+        let valor = input.value.trim();
         
         // Se valor está vazio, deixar vazio
         if (valor === '') {
-            input.value = '';
             return;
         }
         
-        // Remover vírgulas para processar apenas números
-        let apenasNumeros = valor.replace(/,/g, '');
-        
-        // Se não há números, limpar campo
-        if (apenasNumeros === '') {
-            input.value = '';
-            return;
+        // Se já tem vírgula, garantir formato correto
+        if (valor.includes(',')) {
+            const partes = valor.split(',');
+            if (partes.length === 2) {
+                // Garantir 2 casas decimais
+                const decimais = partes[1].padEnd(2, '0').substring(0, 2);
+                input.value = `${partes[0]},${decimais}`;
+                return;
+            }
         }
         
-        // Converter para número para remover zeros à esquerda
-        apenasNumeros = apenasNumeros.replace(/^0+/, '') || '0';
-        
-        // Formatação baseada no comprimento
-        if (apenasNumeros.length === 1) {
-            input.value = `0,0${apenasNumeros}`;
-        } else if (apenasNumeros.length === 2) {
-            input.value = `0,${apenasNumeros}`;
-        } else {
-            // 3 ou mais dígitos: últimos 2 são decimais
-            const inteiros = apenasNumeros.slice(0, -2);
-            const decimais = apenasNumeros.slice(-2);
-            input.value = `${inteiros},${decimais}`;
+        // Se não tem vírgula, adicionar ,00
+        if (!valor.includes(',') && valor !== '') {
+            input.value = `${valor},00`;
         }
     }
 
