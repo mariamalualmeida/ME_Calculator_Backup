@@ -162,6 +162,11 @@ SimuladorEmprestimos/
 - June 21, 2025: Configuração sistemaJuros incluída em defaultConfig, salvarConfiguracoesModal() e abrirConfiguracoes() para persistência completa
 - June 21, 2025: Função calcular() atualizada para usar this.configuracoes.sistemaJuros e calcularParcela() modificada para aceitar parâmetro sistemaJuros
 - June 21, 2025: Função aplicarPaletaCores() expandida para incluir botão .form-toggle-btn garantindo cores consistentes em toda interface
+- June 21, 2025: MELHORIAS FINAIS IMPLEMENTADAS: PDF dados cadastrais completos, modal tela completa, IGMP movido para admin, sistema juros exibido no resultado
+- June 21, 2025: Modal configurações agora ocupa 95% da tela (width/height) para melhor experiência de usuário
+- June 21, 2025: Campo IGPM transferido de configurações gerais para área administrativa restrita com descrição explicativa
+- June 21, 2025: Sistema de juros usado agora é exibido no resultado do cálculo com destaque visual em caixa colorida
+- June 21, 2025: Função obterDadosCompletosPdf() corrigida para capturar dados independente da visibilidade do formulário
 
 ## User Preferences
 

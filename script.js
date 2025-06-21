@@ -964,6 +964,9 @@ class SimuladorEmprestimos {
                 if (nParcelas === 1) {
                     // Apenas 1 parcela - mostrar só o valor total com explicação
                     this.resultValue.innerHTML = `
+                        <div style="margin-bottom: 8px; padding: 8px; background: var(--primary-container); border-radius: 8px;">
+                            <small style="color: var(--on-primary-container); font-weight: 500;">Sistema: ${nomeSistema}</small>
+                        </div>
                         <div style="margin-bottom: 12px;">
                             <strong>Valor da parcela:</strong> ${primeiraParcela}
                         </div>
@@ -975,6 +978,9 @@ class SimuladorEmprestimos {
                     // Múltiplas parcelas - mostrar primeira e demais
                     const demaisParcelas = formatarMoeda(resultadoCalculo.parcelaNormal);
                     this.resultValue.innerHTML = `
+                        <div style="margin-bottom: 8px; padding: 8px; background: var(--primary-container); border-radius: 8px;">
+                            <small style="color: var(--on-primary-container); font-weight: 500;">Sistema: ${nomeSistema}</small>
+                        </div>
                         <div style="margin-bottom: 12px;">
                             <strong>1ª parcela:</strong> ${primeiraParcela}
                             <br><strong>Demais ${nParcelas - 1} parcelas:</strong> ${demaisParcelas}
@@ -990,6 +996,9 @@ class SimuladorEmprestimos {
             const valorFormatado = formatarMoeda(resultadoCalculo.parcelaNormal);
             const textoParcel = nParcelas === 1 ? 'parcela de:' : 'parcelas de:';
             this.resultValue.innerHTML = `
+                <div style="margin-bottom: 8px; padding: 8px; background: var(--primary-container); border-radius: 8px;">
+                    <small style="color: var(--on-primary-container); font-weight: 500;">Sistema: ${nomeSistema}</small>
+                </div>
                 <strong>${nParcelas} ${textoParcel}</strong> ${valorFormatado}
             `;
         }
