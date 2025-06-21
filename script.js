@@ -141,6 +141,8 @@ class SimuladorEmprestimos {
                 } else if (e.key === 'Delete') {
                     e.target.value = '';
                 }
+                this.toggleMetodoDiasExtras();
+                this.limparResultado();
                 return;
             }
             
@@ -189,6 +191,14 @@ class SimuladorEmprestimos {
 
         document.getElementById('saveCredentialsBtn').addEventListener('click', () => {
             this.salvarCredenciaisAdmin();
+        });
+
+        // Listener para detectar mudanças no localStorage (sincronização entre abas/modais)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'simulador-configuracoes') {
+                this.carregarConfiguracoes();
+                this.esconderErro(); // Remove bordas vermelhas se regras foram desabilitadas
+            }
         });
 
         // Event listener para mudança de tema (evitar duplicação)
@@ -672,6 +682,22 @@ class SimuladorEmprestimos {
 
     esconderErro() {
         this.errorSection.style.display = 'none';
+        
+        // Atualizar classes CSS baseado no modo livre administrativo
+        this.atualizarClassesModoLivre();
+    }
+
+    atualizarClassesModoLivre() {
+        // Adicionar/remover classe admin-free-mode para desabilitar bordas vermelhas
+        const campos = [this.valorEmprestimoField, this.numeroParcelasField, this.taxaJurosField];
+        
+        campos.forEach(campo => {
+            if (this.configuracoes.desabilitarRegras) {
+                campo.classList.add('admin-free-mode');
+            } else {
+                campo.classList.remove('admin-free-mode');
+            }
+        });
     }
 
     rolarParaResultado() {
@@ -779,8 +805,15 @@ class SimuladorEmprestimos {
             }
         }
         
+        // Salvar configuração de desabilitar regras
+        this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').checked;
         this.configuracoes.limitesPersonalizados = novosLimites;
         this.salvarConfiguracoes();
+        
+        // Forçar atualização da interface principal
+        this.carregarConfiguracoes();
+        this.esconderErro();
+        
         alert('Limites atualizados com sucesso!');
     }
 
