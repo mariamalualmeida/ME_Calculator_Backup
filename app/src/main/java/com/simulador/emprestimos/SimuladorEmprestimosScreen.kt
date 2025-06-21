@@ -81,16 +81,32 @@ fun SimuladorEmprestimosScreen(
                     .padding(24.dp)
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 60.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "ME EMPREENDIMENTOS",
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        textAlign = TextAlign.Center
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "ME",
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 26.sp
+                        )
+                        Text(
+                            text = "EMPREENDIMENTOS",
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 30.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Simulador de Empréstimos",
                         fontSize = 18.sp,
@@ -104,6 +120,7 @@ fun SimuladorEmprestimosScreen(
                     onClick = { showConfigModal = true },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
+                        .offset(x = (-8).dp, y = (-8).dp)
                         .background(
                             Color.White.copy(alpha = 0.1f),
                             RoundedCornerShape(50)
