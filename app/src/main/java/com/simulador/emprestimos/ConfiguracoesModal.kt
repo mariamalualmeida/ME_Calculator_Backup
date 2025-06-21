@@ -40,6 +40,9 @@ fun ConfiguracoesModal(
     var newAdminUser by remember { mutableStateOf("") }
     var newAdminPassword by remember { mutableStateOf("") }
     
+    // Cores do tema baseadas na paleta selecionada
+    val colorScheme = getColorSchemeForTheme(colorTheme, themeMode == "dark")
+    
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -52,7 +55,7 @@ fun ConfiguracoesModal(
                 .fillMaxHeight(0.9f),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor = colorScheme.surface
             )
         ) {
             Column(
@@ -70,7 +73,7 @@ fun ConfiguracoesModal(
                         text = "Configurações",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = colorScheme.onSurface
                     )
                     
                     IconButton(onClick = onDismiss) {
