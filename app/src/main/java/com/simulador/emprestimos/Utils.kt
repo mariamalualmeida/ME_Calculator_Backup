@@ -26,16 +26,26 @@ fun formatarPercentual(input: String): String {
     // Se valor está vazio, retornar vazio
     if (valor.isEmpty()) return ""
     
-    // Permitir apenas uma vírgula
-    val virgulas = valor.split(",")
-    val valorFinal = if (virgulas.size > 2) {
-        virgulas[0] + "," + virgulas.drop(1).joinToString("")
-    } else valor
+    // Remover vírgulas para processar apenas números
+    val apenasNumeros = valor.replace(",", "")
     
-    // Limitar casas decimais a 2
-    return if (virgulas.size == 2 && virgulas[1].length > 2) {
-        virgulas[0] + "," + virgulas[1].substring(0, 2)
-    } else valorFinal
+    // Se não há números, retornar vazio
+    if (apenasNumeros.isEmpty()) return ""
+    
+    // Converter para número para remover zeros à esquerda
+    val numeroLimpo = apenasNumeros.toLongOrNull()?.toString() ?: "0"
+    
+    // Formatação baseada no comprimento
+    return when (numeroLimpo.length) {
+        1 -> "0,0$numeroLimpo"
+        2 -> "0,$numeroLimpo"
+        else -> {
+            // 3 ou mais dígitos: últimos 2 são decimais
+            val inteiros = numeroLimpo.substring(0, numeroLimpo.length - 2)
+            val decimais = numeroLimpo.substring(numeroLimpo.length - 2)
+            "$inteiros,$decimais"
+        }
+    }
 }
 
 // Formatação de data

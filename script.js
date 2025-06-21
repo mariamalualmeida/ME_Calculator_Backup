@@ -301,18 +301,29 @@ class SimuladorEmprestimos {
             return;
         }
         
-        // Permitir apenas uma vírgula
-        const virgulas = valor.split(',');
-        if (virgulas.length > 2) {
-            valor = virgulas[0] + ',' + virgulas.slice(1).join('');
+        // Remover vírgulas para processar apenas números
+        let apenasNumeros = valor.replace(/,/g, '');
+        
+        // Se não há números, limpar campo
+        if (apenasNumeros === '') {
+            input.value = '';
+            return;
         }
         
-        // Limitar casas decimais a 2
-        if (virgulas.length === 2 && virgulas[1].length > 2) {
-            valor = virgulas[0] + ',' + virgulas[1].substring(0, 2);
-        }
+        // Converter para número para remover zeros à esquerda
+        apenasNumeros = apenasNumeros.replace(/^0+/, '') || '0';
         
-        input.value = valor;
+        // Formatação baseada no comprimento
+        if (apenasNumeros.length === 1) {
+            input.value = `0,0${apenasNumeros}`;
+        } else if (apenasNumeros.length === 2) {
+            input.value = `0,${apenasNumeros}`;
+        } else {
+            // 3 ou mais dígitos: últimos 2 são decimais
+            const inteiros = apenasNumeros.slice(0, -2);
+            const decimais = apenasNumeros.slice(-2);
+            input.value = `${inteiros},${decimais}`;
+        }
     }
 
     formatarData(input) {
