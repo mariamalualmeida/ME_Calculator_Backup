@@ -42,6 +42,7 @@ class SimuladorEmprestimos {
             mostrarJurosRelatorio: false,
             desabilitarRegras: false,
             colorTheme: 'default',
+            sistemaJuros: 'compostos-mensal',
             adminUser: 'Migueis',
             adminPassword: 'Laila@10042009'
         };
@@ -50,6 +51,14 @@ class SimuladorEmprestimos {
         // Aplicar tema e paleta na inicialização
         this.aplicarTema(loadedConfig.themeMode);
         this.aplicarPaletaCores(loadedConfig.colorTheme);
+        
+        // Configurar sistema de juros
+        setTimeout(() => {
+            const sistemaJurosSelect = document.getElementById('sistemaJuros');
+            if (sistemaJurosSelect) {
+                sistemaJurosSelect.value = loadedConfig.sistemaJuros;
+            }
+        }, 100);
         
         // Aplicar classes de modo livre após carregar configurações
         setTimeout(() => {
@@ -562,7 +571,7 @@ class SimuladorEmprestimos {
         return new Date(ano, mes, dia);
     }
 
-    calcularParcela(valor, juros, nParcelas, diasExtra = 0, igpmMensal = 0, metodo = 'primeira') {
+    calcularParcela(valor, juros, nParcelas, diasExtra = 0, igpmMensal = 0, metodo = 'primeira', sistemaJuros = 'compostos-mensal') {
         // Obter sistema de juros das configurações
         const configs = this.carregarConfiguracoes();
         const sistemaJuros = configs.sistemaJuros || 'compostos-mensal';
@@ -793,8 +802,9 @@ class SimuladorEmprestimos {
         // Obter método de cálculo dos dias extras
         const metodo = this.obterMetodoDiasExtras();
 
-        // Calcular prestação
-        const resultadoCalculo = this.calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal, metodo);
+        // Calcular prestação usando o sistema de juros configurado
+        const sistemaJuros = this.configuracoes.sistemaJuros || 'compostos-mensal';
+        const resultadoCalculo = this.calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal, metodo, sistemaJuros);
         
         // Mostrar resultado
         this.mostrarResultado(resultadoCalculo, valor, nParcelas, juros);
@@ -1134,7 +1144,8 @@ class SimuladorEmprestimos {
         
         // Salvar configuração de desabilitar regras apenas se admin estiver logado
         if (this.configuracoes.isAdmin) {
-            this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').checked;
+            this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').value === 'false';
+            this.configuracoes.sistemaJuros = document.getElementById('sistemaJuros').value;
         }
         
         this.aplicarTema(this.configuracoes.themeMode);
@@ -1242,9 +1253,11 @@ class SimuladorEmprestimos {
             
             const dataSimulacao = new Date().toLocaleDateString('pt-BR');
             const nomeUsuario = this.configuracoes.nomeUsuario || '';
-            // Usar dados do formulário completo
-            const nomeCliente = document.getElementById('nomeCompleto')?.value.trim() || '';
-            const cpfCliente = document.getElementById('cpfCompleto')?.value.trim() || '';
+            // Usar dados do formulário completo com verificação segura
+            const nomeCompletoField = document.getElementById('nomeCompleto');
+            const cpfCompletoField = document.getElementById('cpfCompleto');
+            const nomeCliente = nomeCompletoField?.value?.trim() || '';
+            const cpfCliente = cpfCompletoField?.value?.trim() || '';
             
             // Configurar fonte - Cabeçalho
             doc.setFont('helvetica', 'bold');
