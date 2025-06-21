@@ -101,6 +101,7 @@ class SimuladorEmprestimos {
 
         this.taxaJurosField.addEventListener('input', (e) => {
             this.formatarPercentual(e.target);
+            this.validarCampoJuros();
             this.limparResultado();
         });
         
@@ -163,6 +164,7 @@ class SimuladorEmprestimos {
         this.numeroParcelasField.addEventListener('input', () => {
             this.limparResultado();
             this.toggleMetodoDiasExtras();
+            this.validarCampoJuros(); // Re-validar juros quando parcelas mudam
         });
 
         // Formatação de CPF
@@ -719,6 +721,9 @@ class SimuladorEmprestimos {
                 campo.classList.remove('admin-free-mode');
             }
         });
+        
+        // Re-validar campo de juros após mudança de modo
+        this.validarCampoJuros();
     }
 
     setupConfigPolling() {
@@ -747,7 +752,40 @@ class SimuladorEmprestimos {
         this.carregarConfiguracoes();
         this.esconderErro();
         this.atualizarClassesModoLivre();
+        this.validarCampoJuros(); // Re-validar juros após mudanças admin
         this.lastConfigHash = this.getConfigHash();
+    }
+
+    validarCampoJuros() {
+        // Se regras estão desabilitadas, limpar validação
+        if (this.configuracoes.desabilitarRegras) {
+            this.taxaJurosField.setCustomValidity('');
+            return;
+        }
+
+        const jurosValue = this.obterPercentualNumerico(this.taxaJurosField.value);
+        const nParcelas = parseInt(this.numeroParcelasField.value) || 1;
+
+        // Se campos estão vazios, não validar
+        if (!this.taxaJurosField.value || !this.numeroParcelasField.value) {
+            this.taxaJurosField.setCustomValidity('');
+            return;
+        }
+
+        // Obter limites para o número de parcelas atual
+        const limites = this.configuracoes.limitesPersonalizados?.[nParcelas] || this.limitesJuros[nParcelas];
+        
+        if (!limites) {
+            this.taxaJurosField.setCustomValidity('');
+            return;
+        }
+
+        // Validar se juros está dentro dos limites
+        if (jurosValue < limites.min || jurosValue > limites.max) {
+            this.taxaJurosField.setCustomValidity(`Taxa deve estar entre ${limites.min.toFixed(2).replace('.', ',')}% e ${limites.max.toFixed(2).replace('.', ',')}%`);
+        } else {
+            this.taxaJurosField.setCustomValidity('');
+        }
     }
 
     rolarParaResultado() {

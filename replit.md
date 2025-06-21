@@ -138,6 +138,8 @@ SimuladorEmprestimos/
 - June 21, 2025: Implemented CustomEvent system for Web/PWA - eliminates need for manual page refresh after admin changes
 - June 21, 2025: Enhanced admin mode validation - red borders now respect disabled rules setting in all versions (Web, PWA, Android)
 - June 21, 2025: Added method selection UI to Android version - users can choose between "primeira parcela maior" and "distribuir igualmente"
+- June 21, 2025: Implemented visual validation for interest rate field - red borders when values exceed limits, respects admin free mode
+- June 21, 2025: Enhanced user experience with real-time validation feedback across all platforms (Web, PWA, Android)
 
 ## User Preferences
 

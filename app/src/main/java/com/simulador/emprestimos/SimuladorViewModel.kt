@@ -139,6 +139,29 @@ class SimuladorViewModel : ViewModel() {
         onConfiguracoesChanged?.invoke() // Notificar mudanças imediatamente
     }
     
+    fun isJurosInvalido(taxaJuros: String, numeroParcelas: String): Boolean {
+        // Se regras estão desabilitadas, nunca é inválido
+        if (_configuracoes.value.desabilitarRegras) {
+            return false
+        }
+        
+        // Se campos estão vazios, não validar
+        if (taxaJuros.isEmpty() || numeroParcelas.isEmpty()) {
+            return false
+        }
+        
+        val juros = parsePercentual(taxaJuros)
+        val nParcelas = numeroParcelas.toIntOrNull() ?: return false
+        
+        // Obter limites para o número de parcelas
+        val limites = _configuracoes.value.limitesPersonalizados?.get(nParcelas) 
+            ?: limitesJuros[nParcelas] 
+            ?: return false
+        
+        // Verificar se está fora dos limites
+        return juros < limites.min || juros > limites.max
+    }
+    
     fun calcular() {
         val currentState = _uiState.value
         

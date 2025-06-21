@@ -215,6 +215,8 @@ fun SimuladorEmprestimosScreen(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     
+                    val isJurosInvalido = viewModel.isJurosInvalido(uiState.taxaJuros, uiState.numeroParcelas)
+                    
                     OutlinedTextField(
                         value = uiState.taxaJuros,
                         onValueChange = { value ->
@@ -232,7 +234,8 @@ fun SimuladorEmprestimosScreen(
                             onNext = { focusManager.moveFocus(androidx.compose.ui.focus.FocusDirection.Down) }
                         ),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = colorScheme.primary,
+                            focusedBorderColor = if (isJurosInvalido) colorScheme.error else colorScheme.primary,
+                            unfocusedBorderColor = if (isJurosInvalido) colorScheme.error else colorScheme.outline,
                             cursorColor = colorScheme.primary
                         )
                     )
