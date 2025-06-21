@@ -134,6 +134,10 @@ SimuladorEmprestimos/
 - June 20, 2025: Comprehensive bug fixes - method toggle logic, PDF button styling, manifest cache update, removed duplicate files
 - June 20, 2025: Critical calculation fix - corrected "distribuir" method to eliminate compound interest on pro-rata, ensuring both methods result in identical total costs
 - June 20, 2025: Mathematical integrity restored - removed R$ 39-535 overcharge depending on installment count, now transparent and fair pricing
+- June 21, 2025: Fixed reactive interface issues - date field now hides method options when cleared, admin panel synchronizes automatically with main page
+- June 21, 2025: Implemented CustomEvent system for Web/PWA - eliminates need for manual page refresh after admin changes
+- June 21, 2025: Enhanced admin mode validation - red borders now respect disabled rules setting in all versions (Web, PWA, Android)
+- June 21, 2025: Added method selection UI to Android version - users can choose between "primeira parcela maior" and "distribuir igualmente"
 
 ## User Preferences
 
