@@ -587,28 +587,29 @@ body {
     transform: translateY(1px) !important;
 }
 
-/* Modal Styles */
+/* Modal Styles - Fullscreen */
 .modal {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    width: 100vw;
+    height: 100vh;
+    background: var(--card-bg);
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
     z-index: 1000;
+    overflow: hidden;
 }
 
 .modal-content {
-    background: white;
-    border-radius: 12px;
-    width: 95%;
+    background: var(--card-bg);
+    width: 100%;
+    height: 100%;
     max-width: 100%;
-    height: 95vh;
-    max-height: 95vh;
+    max-height: 100%;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .modal-header {
@@ -637,6 +638,10 @@ body {
 
 .modal-body {
     padding: 24px;
+    flex: 1;
+    overflow-y: auto;
+    /* Ajuste para teclado virtual */
+    padding-bottom: env(keyboard-inset-height, 24px);
 }
 
 .config-group {
@@ -695,19 +700,32 @@ body {
 
 .modal-footer {
     padding: 24px;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--border-color);
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    background: var(--card-bg);
 }
 
-.save-btn {
-    background: #6750a4;
+.save-btn, .admin-btn, #adminLoginBtn {
+    background: var(--primary-color);
     color: white;
     border: none;
-    padding: 12px 24px;
+    padding: 14px 32px;
     border-radius: 8px;
     font-weight: 500;
+    font-size: 16px;
     cursor: pointer;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.save-btn:hover, .admin-btn:hover, #adminLoginBtn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(103, 80, 164, 0.3);
 }
 
 .limits-table {

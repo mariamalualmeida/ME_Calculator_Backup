@@ -1169,32 +1169,41 @@ class SimuladorEmprestimos {
     }
 
     salvarConfiguracoesModal() {
+        // Salvar configurações gerais
         this.configuracoes.nomeUsuario = document.getElementById('nomeUsuario').value;
         this.configuracoes.themeMode = document.getElementById('themeMode').value;
         this.configuracoes.colorTheme = document.getElementById('colorTheme').value;
-        this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
         this.configuracoes.mostrarJurosRelatorio = document.getElementById('mostrarJurosRelatorio').checked;
         
-        // Salvar configuração de desabilitar regras apenas se admin estiver logado
+        // Salvar configurações administrativas se logado
         if (this.configuracoes.isAdmin) {
+            // IGPM movido para área administrativa
+            this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
             this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').value === 'false';
             this.configuracoes.sistemaJuros = document.getElementById('sistemaJuros').value;
+            
+            // Salvar credenciais se alteradas
+            const novoUsuario = document.getElementById('newAdminUser').value;
+            const novaSenha = document.getElementById('newAdminPass').value;
+            if (novoUsuario && novaSenha) {
+                this.configuracoes.adminUser = novoUsuario;
+                this.configuracoes.adminPassword = novaSenha;
+            }
         }
         
         this.aplicarTema(this.configuracoes.themeMode);
         this.aplicarPaletaCores(this.configuracoes.colorTheme);
         this.salvarConfiguracoes();
         
-        // Disparar múltiplos métodos de sincronização para garantir funcionamento
+        // Disparar múltiplos métodos de sincronização
         window.dispatchEvent(new CustomEvent('configuracoesAtualizadas'));
         
-        // Callback direto para garantia
         if (window.simuladorInstance && window.simuladorInstance.forceConfigUpdate) {
             setTimeout(() => window.simuladorInstance.forceConfigUpdate(), 100);
         }
         
         this.fecharModal();
-        alert('Configurações salvas com sucesso!');
+        alert('Todas as configurações foram salvas com sucesso!');
     }
 
     fazerLoginAdmin() {
