@@ -80,10 +80,66 @@ build_apk() {
     fi
 }
 
-# Executar verificações e build
-check_dependencies
-check_project
-build_apk
+# Função para instalação automática
+auto_install() {
+    if command -v adb &> /dev/null; then
+        echo ""
+        echo "🔍 Verificando dispositivos conectados..."
+        
+        DEVICES=$(adb devices | grep -v "List" | grep "device$" | wc -l)
+        
+        if [ $DEVICES -gt 0 ]; then
+            echo "📱 Encontrado(s) $DEVICES dispositivo(s) Android"
+            echo ""
+            read -p "Instalar automaticamente no dispositivo? (y/n): " -n 1 -r
+            echo
+            
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                echo "📲 Instalando APK..."
+                if adb install -r "$APK_PATH"; then
+                    echo "✅ Instalação concluída!"
+                else
+                    echo "❌ Falha na instalação. Instale manualmente."
+                fi
+            fi
+        else
+            echo "📱 Nenhum dispositivo Android detectado"
+        fi
+    fi
+}
+
+# Função para mostrar instruções finais
+show_instructions() {
+    echo ""
+    echo "📋 INSTRUÇÕES DE INSTALAÇÃO MANUAL:"
+    echo "=================================="
+    echo "1. Copie o APK para seu dispositivo Android"
+    echo "2. Vá em Configurações > Segurança > Fontes desconhecidas"
+    echo "3. Ative a opção 'Permitir instalação de apps desconhecidos'"
+    echo "4. Abra o arquivo APK no dispositivo"
+    echo "5. Toque em 'Instalar'"
+    echo ""
+    echo "🌐 ALTERNATIVA PWA (Mais Simples):"
+    echo "================================="
+    echo "1. Acesse o app pelo Chrome no Android"
+    echo "2. Menu (⋮) > 'Adicionar à tela inicial'"
+    echo "3. Funciona como app nativo"
+    echo ""
+}
+
+# Executar todas as funções
+main() {
+    check_dependencies
+    check_project
+    if build_apk; then
+        auto_install
+        show_instructions
+        echo "🏆 Processo concluído!"
+    fi
+}
+
+# Executar função principal
+main
 
 # Criar arquivo info do APK
 cat > build/outputs/apk/debug/app-info.txt << EOF

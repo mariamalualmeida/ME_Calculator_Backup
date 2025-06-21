@@ -140,6 +140,11 @@ SimuladorEmprestimos/
 - June 21, 2025: Added method selection UI to Android version - users can choose between "primeira parcela maior" and "distribuir igualmente"
 - June 21, 2025: Implemented visual validation for interest rate field - red borders when values exceed limits, respects admin free mode
 - June 21, 2025: Enhanced user experience with real-time validation feedback across all platforms (Web, PWA, Android)
+- June 21, 2025: Fixed header layout with proper spacing between "ME" and "EMPREENDIMENTOS" text lines for better visual hierarchy
+- June 21, 2025: Repositioned settings button to avoid text overlap, improved mobile responsiveness with adjusted padding
+- June 21, 2025: Created comprehensive tutorial documentation system with 4 detailed installation guides (Android PWA/APK, iPhone PWA/React Native)
+- June 21, 2025: Enhanced build-android.sh script with automated dependency checking, error handling, and installation assistance
+- June 21, 2025: Implemented PDF tutorial generator for offline documentation distribution and user training materials
 
 ## User Preferences
 

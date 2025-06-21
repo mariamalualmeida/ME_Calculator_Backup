@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial Completo - ME EMPREENDIMENTOS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .cover {
+            text-align: center;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 50px 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+        .cover h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .cover h2 {
+            font-size: 24px;
+            font-weight: normal;
+            margin-bottom: 30px;
+        }
+        .cover .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        .section {
+            background: #f8f9fa;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 10px;
+            border-left: 5px solid #6366f1;
+        }
+        .section h2 {
+            color: #6366f1;
+            margin-top: 0;
+            font-size: 24px;
+        }
+        .method {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+        }
+        .method h3 {
+            color: #495057;
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .step {
+            background: #f1f3f4;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 3px solid #6366f1;
+        }
+        .step h4 {
+            color: #6366f1;
+            margin-top: 0;
+            font-size: 16px;
+        }
+        .code {
+            background: #263238;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ffeaa7;
+            margin: 15px 0;
+        }
+        .warning {
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .platform-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px 5px 5px 0;
+        }
+        .android { background: #34d399; color: white; }
+        .ios { background: #007AFF; color: white; }
+        .pwa { background: #9333ea; color: white; }
+        .native { background: #059669; color: white; }
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .toc h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .toc a {
+            text-decoration: none;
+            color: #6366f1;
+            font-weight: 500;
+        }
+        .btn-pdf {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 20px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="cover">
+        <h1>ME EMPREENDIMENTOS</h1>
+        <h2>Simulador de Empréstimos</h2>
+        <div class="subtitle">
+            Tutorial Completo de Instalação<br>
+            Android • iPhone • PWA • APK Nativo
+        </div>
+        <button class="btn-pdf" onclick="gerarPDF()">📄 Gerar PDF Completo</button>
+    </div>
+
+    <div class="toc">
+        <h3>📋 Índice</h3>
+        <ul>
+            <li><a href="#intro">1. Introdução e Opções Disponíveis</a></li>
+            <li><a href="#android-pwa">2. Android - PWA (Recomendado)</a></li>
+            <li><a href="#android-apk">3. Android - APK Nativo</a></li>
+            <li><a href="#iphone-pwa">4. iPhone - PWA (Recomendado)</a></li>
+            <li><a href="#iphone-native">5. iPhone - React Native</a></li>
+            <li><a href="#comparacao">6. Comparação das Opções</a></li>
+            <li><a href="#suporte">7. Suporte e Resolução de Problemas</a></li>
+        </ul>
+    </div>
+
+    <div class="section" id="intro">
+        <h2>1. Introdução e Opções Disponíveis</h2>
+        
+        <p>O <strong>ME EMPREENDIMENTOS Simulador de Empréstimos</strong> oferece múltiplas formas de instalação para atender diferentes necessidades e dispositivos.</p>
+
+        <div class="highlight">
+            <h4>🎯 Recomendações por Usuário:</h4>
+            <p><strong>Usuários finais:</strong> PWA (Android Chrome + iPhone Safari)</p>
+            <p><strong>Desenvolvedores:</strong> Compilação nativa (APK Android + React Native iOS)</p>
+            <p><strong>Melhor custo-benefício:</strong> PWA oferece 90% da funcionalidade com instalação instantânea</p>
+        </div>
+
+        <div class="method">
+            <h3>Opções Disponíveis:</h3>
+            
+            <p><span class="platform-tag android">ANDROID</span><span class="platform-tag pwa">PWA</span> 
+            <strong>Progressive Web App via Chrome</strong> - Instalação instantânea, sempre atualizada</p>
+            
+            <p><span class="platform-tag android">ANDROID</span><span class="platform-tag native">NATIVO</span> 
+            <strong>APK Kotlin Nativo</strong> - Performance máxima, distribuição independente</p>
+            
+            <p><span class="platform-tag ios">IPHONE</span><span class="platform-tag pwa">PWA</span> 
+            <strong>Progressive Web App via Safari</strong> - Funciona como app nativo</p>
+            
+            <p><span class="platform-tag ios">IPHONE</span><span class="platform-tag native">NATIVO</span> 
+            <strong>React Native</strong> - App Store oficial, funcionalidades nativas completas</p>
+        </div>
+    </div>
+
+    <div class="section" id="android-pwa">
+        <h2>2. Android - PWA (Método Recomendado)</h2>
+        <span class="platform-tag android">ANDROID</span><span class="platform-tag pwa">PWA</span>
+
+        <div class="step">
+            <h4>Passo 1: Abrir no Chrome</h4>
+            <p>1. Abra o <strong>Google Chrome</strong> no Android</p>
+            <p>2. Digite o endereço do aplicativo na barra de endereços</p>
+            <p>3. Aguarde o carregamento completo</p>
+        </div>
+
+        <div class="step">
+            <h4>Passo 2: Instalar como App</h4>
+            <p>1. Procure o banner automático: "Adicionar ME EMPREENDIMENTOS à tela inicial"</p>
+            <p>2. Toque em <strong>"Adicionar"</strong></p>
+            <p>3. Se não aparecer: Menu (⋮) → "Adicionar à tela inicial"</p>
+        </div>
+
+        <div class="step">
+            <h4>Passo 3: Confirmação</h4>
+            <p>1. O ícone aparecerá na tela inicial</p>
+            <p>2. Funciona como aplicativo nativo</p>
+            <p>3. Sem barras do navegador</p>
+        </div>
+
+        <div class="success">
+            <h4>✅ Vantagens PWA Android:</h4>
+            <ul>
+                <li>Instalação instantânea - sem Play Store</li>
+                <li>Sempre atualizada automaticamente</li>
+                <li>Tamanho mínimo - não ocupa espaço</li>
+                <li>Interface idêntica ao app nativo</li>
+                <li>Funciona offline (funcionalidades básicas)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section" id="android-apk">
+        <h2>3. Android - APK Nativo</h2>
+        <span class="platform-tag android">ANDROID</span><span class="platform-tag native">NATIVO</span>
+
+        <div class="warning">
+            <h4>📋 Pré-requisitos:</h4>
+            <ul>
+                <li>Java JDK 11+ instalado</li>
+                <li>Android Studio OU Android SDK</li>
+                <li>Git (para clonar repositório)</li>
+                <li>Computador com 8GB+ RAM</li>
+            </ul>
+        </div>
+
+        <div class="method">
+            <h3>Método 1: Android Studio (Recomendado)</h3>
+            
+            <div class="step">
+                <h4>1. Preparar Ambiente</h4>
+                <p>Baixe e instale o Android Studio:</p>
+                <div class="code">https://developer.android.com/studio</div>
+                <p>Inclua: Android SDK, Platform-Tools, AVD</p>
+            </div>
+
+            <div class="step">
+                <h4>2. Obter Código</h4>
+                <div class="code">git clone [URL_DO_REPOSITORIO]<br>cd SimuladorEmprestimos</div>
+            </div>
+
+            <div class="step">
+                <h4>3. Abrir no Android Studio</h4>
+                <p>1. Open Existing Project</p>
+                <p>2. Selecionar pasta raiz do projeto</p>
+                <p>3. Aguardar sincronização</p>
+            </div>
+
+            <div class="step">
+                <h4>4. Compilar APK</h4>
+                <p>Build → Build Bundle(s) / APK(s) → Build APK(s)</p>
+                <p>APK gerado em: <code>app/build/outputs/apk/debug/app-debug.apk</code></p>
+            </div>
+        </div>
+
+        <div class="method">
+            <h3>Método 2: Linha de Comando</h3>
+            
+            <div class="step">
+                <h4>1. Instalar SDK</h4>
+                <div class="code">
+# Linux/Mac<br>
+export ANDROID_HOME=$HOME/Android/Sdk<br>
+export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin<br><br>
+# Instalar componentes<br>
+sdkmanager "platform-tools" "platforms;android-34"
+                </div>
+            </div>
+
+            <div class="step">
+                <h4>2. Compilar</h4>
+                <div class="code">
+git clone [URL_DO_REPOSITORIO]<br>
+cd SimuladorEmprestimos<br>
+chmod +x gradlew<br>
+./gradlew assembleDebug
+                </div>
+            </div>
+        </div>
+
+        <div class="method">
+            <h3>Método 3: Script Automatizado</h3>
+            <div class="code">chmod +x build-android.sh<br>./build-android.sh</div>
+        </div>
+
+        <div class="step">
+            <h4>Instalação do APK</h4>
+            <p><strong>Via ADB:</strong></p>
+            <div class="code">adb install app-debug.apk</div>
+            
+            <p><strong>Manual:</strong></p>
+            <p>1. Copiar APK para o dispositivo</p>
+            <p>2. Habilitar "Fontes desconhecidas"</p>
+            <p>3. Tocar no arquivo APK</p>
+        </div>
+    </div>
+
+    <div class="section" id="iphone-pwa">
+        <h2>4. iPhone - PWA (Método Recomendado)</h2>
+        <span class="platform-tag ios">IPHONE</span><span class="platform-tag pwa">PWA</span>
+
+        <div class="step">
+            <h4>Passo 1: Abrir no Safari</h4>
+            <p>1. Abra o <strong>Safari</strong> (obrigatório para PWA no iOS)</p>
+            <p>2. Acesse o endereço do aplicativo</p>
+            <p>3. Aguarde carregamento completo</p>
+        </div>
+
+        <div class="step">
+            <h4>Passo 2: Menu de Compartilhamento</h4>
+            <p>1. Toque no ícone de compartilhamento (quadrado com seta ↑)</p>
+            <p>2. Localizado na barra inferior do Safari</p>
+        </div>
+
+        <div class="step">
+            <h4>Passo 3: Adicionar à Tela Inicial</h4>
+            <p>1. Role para baixo no menu</p>
+            <p>2. Toque em <strong>"Adicionar à Tela de Início"</strong></p>
+            <p>3. Confirme o nome do app</p>
+            <p>4. Toque em <strong>"Adicionar"</strong></p>
+        </div>
+
+        <div class="step">
+            <h4>Passo 4: Verificar Instalação</h4>
+            <p>1. Retornar à tela inicial</p>
+            <p>2. Localizar novo ícone do app</p>
+            <p>3. Funciona sem barras do Safari</p>
+        </div>
+
+        <div class="success">
+            <h4>✅ Vantagens PWA iPhone:</h4>
+            <ul>
+                <li>Instalação imediata - sem App Store</li>
+                <li>Interface nativa - sem barras do navegador</li>
+                <li>Ícone personalizado na tela inicial</li>
+                <li>Updates automáticos</li>
+                <li>Funcionalidades offline básicas</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <h4>⚠️ Requisitos:</h4>
+            <ul>
+                <li>iOS 11.3+ (iPhone 6 ou superior)</li>
+                <li>Safari atualizado</li>
+                <li>Use exclusivamente o Safari</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section" id="iphone-native">
+        <h2>5. iPhone - React Native</h2>
+        <span class="platform-tag ios">IPHONE</span><span class="platform-tag native">NATIVO</span>
+
+        <div class="warning">
+            <h4>💰 Custos Envolvidos:</h4>
+            <ul>
+                <li><strong>Apple Developer Program:</strong> $99 USD/ano</li>
+                <li><strong>Mac/MacBook:</strong> Obrigatório para desenvolvimento</li>
+                <li><strong>Tempo:</strong> 2-4 semanas desenvolvimento</li>
+                <li><strong>App Store Review:</strong> 1-7 dias</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h4>Fase 1: Ambiente</h4>
+            <div class="code">
+# Instalar dependências no Mac<br>
+brew install node watchman<br>
+sudo gem install cocoapods<br>
+npm install -g @react-native-community/cli
+            </div>
+            <p>Instalar Xcode via App Store (~10GB)</p>
+        </div>
+
+        <div class="step">
+            <h4>Fase 2: Projeto</h4>
+            <div class="code">
+# Criar projeto React Native<br>
+npx react-native init MEEmprestimosApp<br>
+cd MEEmprestimosApp<br><br>
+# Instalar dependências necessárias<br>
+npm install @react-navigation/native react-native-paper<br>
+npm install react-native-html-to-pdf<br>
+cd ios && pod install && cd ..
+            </div>
+        </div>
+
+        <div class="step">
+            <h4>Fase 3: Desenvolvimento</h4>
+            <p>1. Migrar lógica JavaScript existente</p>
+            <p>2. Criar interface com React Native</p>
+            <p>3. Implementar geração de PDF</p>
+            <p>4. Adaptar validações e cálculos</p>
+        </div>
+
+        <div class="step">
+            <h4>Fase 4: Testes</h4>
+            <div class="code">
+# Executar no simulador<br>
+npx react-native run-ios<br><br>
+# Testar em dispositivo real<br>
+npx react-native run-ios --device
+            </div>
+        </div>
+
+        <div class="step">
+            <h4>Fase 5: App Store</h4>
+            <p>1. Configurar Apple Developer Account</p>
+            <p>2. Configurar certificados no Xcode</p>
+            <p>3. Build de produção: Product → Archive</p>
+            <p>4. Upload via Xcode Organizer</p>
+            <p>5. Submeter para review</p>
+        </div>
+
+        <div class="highlight">
+            <h4>📊 Cronograma Estimado:</h4>
+            <p><strong>Semana 1:</strong> Configuração + estrutura</p>
+            <p><strong>Semana 2:</strong> Migração da lógica</p>
+            <p><strong>Semana 3:</strong> Interface + funcionalidades</p>
+            <p><strong>Semana 4:</strong> Testes + App Store</p>
+            <p><strong>+1-7 dias:</strong> Review da Apple</p>
+        </div>
+    </div>
+
+    <div class="section" id="comparacao">
+        <h2>6. Comparação das Opções</h2>
+
+        <div class="method">
+            <h3>PWA vs Nativo - Comparação</h3>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <tr style="background: #f8f9fa;">
+                    <th style="padding: 12px; border: 1px solid #dee2e6;">Aspecto</th>
+                    <th style="padding: 12px; border: 1px solid #dee2e6;">PWA</th>
+                    <th style="padding: 12px; border: 1px solid #dee2e6;">Nativo</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;"><strong>Instalação</strong></td>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;">Instantânea via navegador</td>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;">Compilação necessária</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;"><strong>Performance</strong></td>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;">Excelente (95% nativo)</td>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;">Máxima (100%)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;"><strong>Atualizações</strong></td>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;">Automáticas</td>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;">Manual via store</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;"><strong>Tamanho</strong></td>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;">~2MB</td>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;">~15-25MB</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;"><strong>Distribuição</strong></td>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;">Link direto</td>
+                    <td style="padding: 12px; border: 1px solid #dee2e6;">Stores oficiais</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="highlight">
+            <h4>🎯 Recomendação Final:</h4>
+            <p>Para a maioria dos usuários, a <strong>PWA oferece a melhor experiência</strong> com 95% da funcionalidade nativa, instalação instantânea e atualizações automáticas.</p>
+            <p>Use versões nativas apenas se precisar de funcionalidades específicas da plataforma ou distribuição via stores oficiais.</p>
+        </div>
+    </div>
+
+    <div class="section" id="suporte">
+        <h2>7. Suporte e Resolução de Problemas</h2>
+
+        <div class="method">
+            <h3>Problemas Comuns - PWA</h3>
+            
+            <div class="step">
+                <h4>Banner de instalação não aparece (Android)</h4>
+                <ul>
+                    <li>Aguarde alguns segundos após carregamento</li>
+                    <li>Use instalação manual: Menu → "Adicionar à tela inicial"</li>
+                    <li>Atualize o Chrome para versão mais recente</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h4>Opção não encontrada (iPhone)</h4>
+                <ul>
+                    <li>Certifique-se de usar o Safari (não Chrome/Firefox)</li>
+                    <li>Atualize o Safari/iOS</li>
+                    <li>Limpe cache do Safari</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="method">
+            <h3>Problemas Comuns - Nativo</h3>
+            
+            <div class="step">
+                <h4>Erro de compilação Android</h4>
+                <div class="code">
+./gradlew clean<br>
+./gradlew assembleDebug<br><br>
+# Se persistir:<br>
+rm -rf .gradle<br>
+./gradlew assembleDebug
+                </div>
+            </div>
+
+            <div class="step">
+                <h4>JAVA_HOME não definido</h4>
+                <div class="code">
+# Linux/Mac<br>
+export JAVA_HOME=/caminho/para/jdk<br><br>
+# Windows<br>
+set JAVA_HOME=C:\Program Files\Java\jdk-11
+                </div>
+            </div>
+        </div>
+
+        <div class="success">
+            <h4>✅ Funcionalidades Garantidas em Todas as Versões:</h4>
+            <ul>
+                <li>Simulação completa de empréstimos</li>
+                <li>Validações em tempo real</li>
+                <li>Área administrativa</li>
+                <li>Exportação de PDF</li>
+                <li>8 temas de cores</li>
+                <li>Modo claro/escuro</li>
+                <li>Campos opcionais (nome/CPF)</li>
+                <li>Cálculos com pro-rata e IGPM</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function gerarPDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            // Configurações
+            const pageWidth = 210;
+            const pageHeight = 297;
+            const margin = 20;
+            const contentWidth = pageWidth - (margin * 2);
+            let yPosition = margin;
+            
+            // Função para adicionar nova página se necessário
+            function checkNewPage(height) {
+                if (yPosition + height > pageHeight - margin) {
+                    pdf.addPage();
+                    yPosition = margin;
+                }
+            }
+            
+            // Capa
+            pdf.setFillColor(99, 102, 241);
+            pdf.rect(0, 0, pageWidth, 80, 'F');
+            
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(28);
+            pdf.text('ME EMPREENDIMENTOS', pageWidth/2, 30, { align: 'center' });
+            
+            pdf.setFontSize(18);
+            pdf.text('Simulador de Empréstimos', pageWidth/2, 45, { align: 'center' });
+            
+            pdf.setFontSize(14);
+            pdf.text('Tutorial Completo de Instalação', pageWidth/2, 60, { align: 'center' });
+            pdf.text('Android • iPhone • PWA • APK Nativo', pageWidth/2, 70, { align: 'center' });
+            
+            yPosition = 100;
+            pdf.setTextColor(0, 0, 0);
+            
+            // Conteúdo do PDF
+            const conteudo = [
+                { titulo: 'ANDROID - PWA (RECOMENDADO)', nivel: 1 },
+                { texto: '1. Abra o Google Chrome no Android' },
+                { texto: '2. Digite o endereço do aplicativo' },
+                { texto: '3. Toque em "Adicionar à tela inicial" quando o banner aparecer' },
+                { texto: '4. Se não aparecer: Menu (⋮) → "Adicionar à tela inicial"' },
+                { texto: 'Vantagens: Instalação instantânea, sempre atualizada, tamanho mínimo' },
+                
+                { titulo: 'ANDROID - APK NATIVO', nivel: 1 },
+                { texto: 'Pré-requisitos: Java JDK 11+, Android Studio/SDK, Git' },
+                { texto: '1. Clone o repositório: git clone [URL]' },
+                { texto: '2. Abra no Android Studio ou use linha de comando' },
+                { texto: '3. Execute: ./gradlew assembleDebug' },
+                { texto: '4. APK gerado em: app/build/outputs/apk/debug/' },
+                { texto: '5. Instale via ADB ou copie para o dispositivo' },
+                
+                { titulo: 'IPHONE - PWA (RECOMENDADO)', nivel: 1 },
+                { texto: '1. Abra o Safari (obrigatório para PWA no iOS)' },
+                { texto: '2. Acesse o endereço do aplicativo' },
+                { texto: '3. Toque no ícone de compartilhamento (⬆️)' },
+                { texto: '4. Role para baixo e toque "Adicionar à Tela de Início"' },
+                { texto: '5. Confirme o nome e toque "Adicionar"' },
+                { texto: 'Funciona como app nativo, sem barras do Safari' },
+                
+                { titulo: 'IPHONE - REACT NATIVE', nivel: 1 },
+                { texto: 'Requisitos: Mac, Xcode, Apple Developer ($99/ano)' },
+                { texto: '1. Instale dependências: Node.js, React Native CLI' },
+                { texto: '2. Crie projeto: npx react-native init MEEmprestimosApp' },
+                { texto: '3. Migre lógica JavaScript existente' },
+                { texto: '4. Configure certificados Apple Developer' },
+                { texto: '5. Build e submeta para App Store' },
+                { texto: 'Tempo estimado: 2-4 semanas + 1-7 dias review' },
+                
+                { titulo: 'COMPARAÇÃO PWA vs NATIVO', nivel: 1 },
+                { texto: 'PWA: Instalação instantânea, 95% performance nativa, 2MB' },
+                { texto: 'Nativo: 100% performance, 15-25MB, distribuição via stores' },
+                { texto: 'Recomendação: PWA para maioria dos usuários' },
+                
+                { titulo: 'RESOLUÇÃO DE PROBLEMAS', nivel: 1 },
+                { texto: 'PWA Android: Atualize Chrome, use instalação manual se banner não aparecer' },
+                { texto: 'PWA iPhone: Use exclusivamente Safari, atualize iOS/Safari' },
+                { texto: 'APK: Execute ./gradlew clean antes de compilar' },
+                { texto: 'Java: Defina JAVA_HOME se erro "not found"' },
+                
+                { titulo: 'FUNCIONALIDADES INCLUÍDAS', nivel: 1 },
+                { texto: '✓ Simulação completa de empréstimos' },
+                { texto: '✓ Validações em tempo real' },
+                { texto: '✓ Área administrativa com controle de regras' },
+                { texto: '✓ Exportação de PDF com cronograma' },
+                { texto: '✓ 8 paletas de cores personalizáveis' },
+                { texto: '✓ Modo claro/escuro dinâmico' },
+                { texto: '✓ Campos opcionais cliente (nome/CPF)' },
+                { texto: '✓ Cálculos pro-rata e correção IGPM' },
+                { texto: '✓ Interface Material Design 3' }
+            ];
+            
+            conteudo.forEach(item => {
+                if (item.titulo) {
+                    checkNewPage(15);
+                    pdf.setFontSize(16);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text(item.titulo, margin, yPosition);
+                    yPosition += 10;
+                } else if (item.texto) {
+                    checkNewPage(8);
+                    pdf.setFontSize(11);
+                    pdf.setFont(undefined, 'normal');
+                    
+                    const lines = pdf.splitTextToSize(item.texto, contentWidth);
+                    lines.forEach(line => {
+                        pdf.text(line, margin, yPosition);
+                        yPosition += 6;
+                    });
+                    yPosition += 2;
+                }
+            });
+            
+            // Rodapé
+            const pageCount = pdf.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                pdf.setPage(i);
+                pdf.setFontSize(10);
+                pdf.setTextColor(128, 128, 128);
+                pdf.text(`ME EMPREENDIMENTOS - Página ${i} de ${pageCount}`, pageWidth/2, pageHeight - 10, { align: 'center' });
+            }
+            
+            // Download
+            pdf.save('Tutorial_Completo_ME_Empreendimentos.pdf');
+        }
+    </script>
+</body>
+</html>
