@@ -23,10 +23,11 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
-    padding: 24px 32px;
+    padding: 24px 16px 24px 32px;
     background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
     color: white;
     border-radius: 12px;
+    position: relative;
 }
 
 .header-content {
@@ -811,6 +812,9 @@ body {
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    position: absolute;
+    top: 16px;
+    right: 16px;
 }
 
 .config-btn svg {
@@ -880,7 +884,8 @@ body {
 .modal[data-color-theme] #saveConfigBtn,
 .modal[data-color-theme] #saveCredentialsBtn,
 .modal[data-color-theme] #saveLimitsBtn,
-.modal[data-color-theme] #loginAdminBtn {
+.modal[data-color-theme] #loginAdminBtn,
+.modal[data-color-theme] #adminLoginBtn {
     background: var(--primary-color) !important;
     color: white !important;
 }
@@ -890,7 +895,8 @@ body {
 .modal[data-color-theme] #saveConfigBtn:hover,
 .modal[data-color-theme] #saveCredentialsBtn:hover,
 .modal[data-color-theme] #saveLimitsBtn:hover,
-.modal[data-color-theme] #loginAdminBtn:hover {
+.modal[data-color-theme] #loginAdminBtn:hover,
+.modal[data-color-theme] #adminLoginBtn:hover {
     background: var(--primary-dark) !important;
 }
 

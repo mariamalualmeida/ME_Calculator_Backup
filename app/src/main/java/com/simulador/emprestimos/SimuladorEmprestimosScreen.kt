@@ -80,45 +80,40 @@ fun SimuladorEmprestimosScreen(
                     )
                     .padding(24.dp)
             ) {
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "ME EMPREENDIMENTOS",
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            textAlign = TextAlign.Center
+                    Text(
+                        text = "ME EMPREENDIMENTOS",
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "Simulador de Empréstimos",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White.copy(alpha = 0.9f),
+                        textAlign = TextAlign.Center
+                    )
+                }
+                
+                IconButton(
+                    onClick = { showConfigModal = true },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .background(
+                            Color.White.copy(alpha = 0.1f),
+                            RoundedCornerShape(50)
                         )
-                        Text(
-                            text = "Simulador de Empréstimos",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.White.copy(alpha = 0.9f),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    
-                    IconButton(
-                        onClick = { showConfigModal = true },
-                        modifier = Modifier
-                            .background(
-                                Color.White.copy(alpha = 0.1f),
-                                RoundedCornerShape(50)
-                            )
-                    ) {
-                        Icon(
-                            Icons.Default.Settings,
-                            contentDescription = "Configurações",
-                            tint = Color.White
-                        )
-                    }
+                ) {
+                    Icon(
+                        Icons.Default.Settings,
+                        contentDescription = "Configurações",
+                        tint = Color.White
+                    )
                 }
             }
         }
