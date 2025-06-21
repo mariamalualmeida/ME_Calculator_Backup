@@ -19,27 +19,9 @@ fun formatarMoeda(input: String): String {
         .replace('X', ',')
 }
 
-// Formatação de percentual
+// Função removida - formatação é feita apenas em tempo real
 fun formatarPercentual(input: String): String {
-    val valor = input.trim()
-    
-    // Se valor está vazio, retornar vazio
-    if (valor.isEmpty()) return ""
-    
-    // Se já tem vírgula, garantir formato correto
-    if (valor.contains(",")) {
-        val partes = valor.split(",")
-        if (partes.size == 2) {
-            // Garantir 2 casas decimais
-            val decimais = partes[1].padEnd(2, '0').take(2)
-            return "${partes[0]},$decimais"
-        }
-    }
-    
-    // Se não tem vírgula, adicionar ,00
-    return if (!valor.contains(",") && valor.isNotEmpty()) {
-        "$valor,00"
-    } else valor
+    return formatarPercentualTempoReal(input)
 }
 
 // Formatação de percentual em tempo real como centavos
