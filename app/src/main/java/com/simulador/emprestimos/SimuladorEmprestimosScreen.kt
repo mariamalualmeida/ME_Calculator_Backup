@@ -234,17 +234,10 @@ fun SimuladorEmprestimosScreen(
                     OutlinedTextField(
                         value = uiState.taxaJuros,
                         onValueChange = { value ->
-                            val valorFormatado = formatarPercentualInput(value)
+                            val valorFormatado = formatarPercentualTempoReal(value)
                             viewModel.updateTaxaJuros(valorFormatado)
                         },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .onFocusChanged { focusState ->
-                                if (!focusState.isFocused && uiState.taxaJuros.isNotEmpty()) {
-                                    val valorFormatado = formatarPercentual(uiState.taxaJuros)
-                                    viewModel.updateTaxaJuros(valorFormatado)
-                                }
-                            },
+                        modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("0,00") },
                         trailingIcon = { Text("%", fontWeight = FontWeight.Medium) },
                         keyboardOptions = KeyboardOptions(

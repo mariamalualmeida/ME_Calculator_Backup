@@ -147,6 +147,8 @@ SimuladorEmprestimos/
 - June 21, 2025: Implemented PDF tutorial generator for offline documentation distribution and user training materials
 - June 21, 2025: Fixed critical percentage formatting bug where "15,50" was corrupted to "1555" by implementing input validation without destructive reformatting
 - June 21, 2025: Separated percentage input handling from blur formatting to preserve user-entered decimal values during typing across all versions
+- June 21, 2025: Implemented real-time percentage formatting as cents - "1555" now instantly shows "15,55" during typing
+- June 21, 2025: Added 4-digit limit with automatic cent formatting: 1→"0,01", 15→"0,15", 155→"1,55", 1555→"15,55"
 
 ## User Preferences
 

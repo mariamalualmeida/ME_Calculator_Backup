@@ -100,30 +100,8 @@ class SimuladorEmprestimos {
         });
 
         this.taxaJurosField.addEventListener('input', (e) => {
-            // Apenas validar caracteres, sem alterar formatação existente
-            let valor = e.target.value;
-            
-            // Remover caracteres inválidos exceto números e vírgula
-            const valorLimpo = valor.replace(/[^\d,]/g, '');
-            
-            // Se tem vírgula, validar formato
-            if (valorLimpo.includes(',')) {
-                const partes = valorLimpo.split(',');
-                if (partes.length === 2) {
-                    // Limitar parte decimal a 2 dígitos
-                    if (partes[1].length > 2) {
-                        e.target.value = partes[0] + ',' + partes[1].substring(0, 2);
-                    } else {
-                        e.target.value = valorLimpo;
-                    }
-                } else if (partes.length > 2) {
-                    // Múltiplas vírgulas - manter só a primeira
-                    e.target.value = partes[0] + ',' + partes[1];
-                }
-            } else {
-                e.target.value = valorLimpo;
-            }
-            
+            // Formatação automática como centavos em tempo real
+            this.formatarPercentualTempoReal(e.target);
             this.validarCampoJuros();
             this.limparResultado();
         });
@@ -320,29 +298,36 @@ class SimuladorEmprestimos {
         input.value = `${reaisFormatados},${centavos}`;
     }
 
-    formatarPercentual(input) {
-        let valor = input.value.trim();
+    formatarPercentualTempoReal(input) {
+        // Remover todos os caracteres não numéricos
+        let valor = input.value.replace(/\D/g, '');
         
-        // Se valor está vazio, deixar vazio
+        // Limitar a 4 dígitos
+        if (valor.length > 4) {
+            valor = valor.substring(0, 4);
+        }
+        
+        // Se vazio, limpar campo
         if (valor === '') {
+            input.value = '';
             return;
         }
         
-        // Se já tem vírgula, garantir formato correto
-        if (valor.includes(',')) {
-            const partes = valor.split(',');
-            if (partes.length === 2) {
-                // Garantir 2 casas decimais
-                const decimais = partes[1].padEnd(2, '0').substring(0, 2);
-                input.value = `${partes[0]},${decimais}`;
-                return;
-            }
+        // Formatar como centavos
+        if (valor.length === 1) {
+            input.value = `0,0${valor}`;
+        } else if (valor.length === 2) {
+            input.value = `0,${valor}`;
+        } else if (valor.length === 3) {
+            input.value = `${valor[0]},${valor.substring(1)}`;
+        } else if (valor.length === 4) {
+            input.value = `${valor.substring(0, 2)},${valor.substring(2)}`;
         }
-        
-        // Se não tem vírgula, adicionar ,00
-        if (!valor.includes(',') && valor !== '') {
-            input.value = `${valor},00`;
-        }
+    }
+
+    formatarPercentual(input) {
+        // Manter a função para compatibilidade no blur
+        this.formatarPercentualTempoReal(input);
     }
 
     formatarData(input) {

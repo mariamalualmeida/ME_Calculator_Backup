@@ -42,32 +42,32 @@ fun formatarPercentual(input: String): String {
     } else valor
 }
 
-// Formatação de percentual durante input (sem formatação automática)
-fun formatarPercentualInput(input: String): String {
-    // Remover apenas caracteres inválidos, manter vírgula
-    val valorLimpo = input.replace(Regex("[^\\d,]"), "")
+// Formatação de percentual em tempo real como centavos
+fun formatarPercentualTempoReal(input: String): String {
+    // Remover todos os caracteres não numéricos
+    val valor = input.replace(Regex("\\D"), "")
     
-    // Se tem vírgula, validar formato
-    if (valorLimpo.contains(",")) {
-        val partes = valorLimpo.split(",")
-        return when {
-            partes.size == 2 -> {
-                // Limitar parte decimal a 2 dígitos
-                if (partes[1].length > 2) {
-                    "${partes[0]},${partes[1].substring(0, 2)}"
-                } else {
-                    valorLimpo
-                }
-            }
-            partes.size > 2 -> {
-                // Múltiplas vírgulas - manter só a primeira
-                "${partes[0]},${partes[1]}"
-            }
-            else -> valorLimpo
-        }
+    // Limitar a 4 dígitos
+    val valorLimitado = if (valor.length > 4) valor.substring(0, 4) else valor
+    
+    // Se vazio, retornar vazio
+    if (valorLimitado.isEmpty()) {
+        return ""
     }
     
-    return valorLimpo
+    // Formatar como centavos
+    return when (valorLimitado.length) {
+        1 -> "0,0$valorLimitado"
+        2 -> "0,$valorLimitado"
+        3 -> "${valorLimitado[0]},${valorLimitado.substring(1)}"
+        4 -> "${valorLimitado.substring(0, 2)},${valorLimitado.substring(2)}"
+        else -> valorLimitado
+    }
+}
+
+// Compatibilidade - usar a nova função
+fun formatarPercentualInput(input: String): String {
+    return formatarPercentualTempoReal(input)
 }
 
 // Formatação de data
