@@ -157,6 +157,11 @@ SimuladorEmprestimos/
 - June 21, 2025: Melhorias de layout implementadas - removidos campos duplicados, reorganizado telefone após CPF, removidos ícones das seções
 - June 21, 2025: Botão de formulário completo atualizado para seguir paleta de cores ativa, geração PDF expandida para incluir todos dados cadastrais
 - June 21, 2025: Interface administrativa expandida com seleção de sistema de juros e controle de regras unificado usando selects
+- June 21, 2025: CORREÇÕES CRÍTICAS IMPLEMENTADAS: Sistema de juros agora persiste configuração, cálculos usam sistema selecionado, botão expandir segue paleta de cores, erro PDF eliminado
+- June 21, 2025: Adicionada função obterDadosCompletosPdf() para inclusão completa de dados cadastrais em PDFs com verificação segura de elementos DOM
+- June 21, 2025: Configuração sistemaJuros incluída em defaultConfig, salvarConfiguracoesModal() e abrirConfiguracoes() para persistência completa
+- June 21, 2025: Função calcular() atualizada para usar this.configuracoes.sistemaJuros e calcularParcela() modificada para aceitar parâmetro sistemaJuros
+- June 21, 2025: Função aplicarPaletaCores() expandida para incluir botão .form-toggle-btn garantindo cores consistentes em toda interface
 
 ## User Preferences
 
