@@ -926,6 +926,16 @@ class SimuladorEmprestimos {
             currency: 'BRL'
         }).format(valor);
 
+        // Obter nome do sistema de juros usado
+        const sistemaJuros = this.configuracoes.sistemaJuros || 'compostos-mensal';
+        const nomesSistemas = {
+            'simples': 'Juros Simples',
+            'compostos-diario': 'Juros Compostos Diários',
+            'compostos-mensal': 'Juros Compostos Mensais',
+            'compostos-prorata-real': 'Juros Compostos + Pro-rata Real'
+        };
+        const nomeSistema = nomesSistemas[sistemaJuros] || 'Juros Compostos Mensais';
+
         // Verificar se há diferença entre primeira parcela e demais
         if (resultadoCalculo.diasExtra > 0) {
             const metodo = this.obterMetodoDiasExtras();
@@ -936,6 +946,9 @@ class SimuladorEmprestimos {
                 // Método distribuir - todas as parcelas iguais
                 const valorParcela = formatarMoeda(resultadoCalculo.parcelaNormal);
                 this.resultValue.innerHTML = `
+                    <div style="margin-bottom: 8px; padding: 8px; background: var(--primary-container); border-radius: 8px;">
+                        <small style="color: var(--on-primary-container); font-weight: 500;">Sistema: ${nomeSistema}</small>
+                    </div>
                     <div style="margin-bottom: 12px;">
                         <strong>${nParcelas} parcelas de:</strong> ${valorParcela}
                         <br><small style="color: #666;">(Juros de dias extras distribuídos igualmente)</small>
@@ -1254,11 +1267,9 @@ class SimuladorEmprestimos {
             referencias: []
         };
 
-        // Verificar se o formulário completo foi expandido e preenchido
+        // Verificar se há dados no formulário completo (independente se está visível)
         const formCompleto = document.getElementById('formCompleto');
-        if (!formCompleto || formCompleto.style.display === 'none') {
-            return dadosCompletos;
-        }
+        // Remover verificação de display para capturar dados sempre que preenchidos
 
         // Dados pessoais
         const pessoais = [];
