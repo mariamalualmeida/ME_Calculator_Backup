@@ -572,9 +572,6 @@ class SimuladorEmprestimos {
     }
 
     calcularParcela(valor, juros, nParcelas, diasExtra = 0, igpmMensal = 0, metodo = 'primeira', sistemaJuros = 'compostos-mensal') {
-        // Obter sistema de juros das configurações
-        const configs = this.carregarConfiguracoes();
-        const sistemaJuros = configs.sistemaJuros || 'compostos-mensal';
         
         // Taxa efetiva (juros + IGPM)
         const taxaEfetiva = (juros + igpmMensal) / 100;
@@ -1115,6 +1112,20 @@ class SimuladorEmprestimos {
         document.getElementById('igpmAnual').value = this.configuracoes.igpmAnual || '';
         document.getElementById('mostrarJurosRelatorio').checked = this.configuracoes.mostrarJurosRelatorio || false;
         
+        // Carregar configurações administrativas se logado
+        if (this.configuracoes.isAdmin) {
+            const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
+            const sistemaJurosSelect = document.getElementById('sistemaJuros');
+            
+            if (desabilitarRegrasSelect) {
+                desabilitarRegrasSelect.value = this.configuracoes.desabilitarRegras ? 'false' : 'true';
+            }
+            
+            if (sistemaJurosSelect) {
+                sistemaJurosSelect.value = this.configuracoes.sistemaJuros || 'compostos-mensal';
+            }
+        }
+        
         // Mostrar modal
         const modal = document.getElementById('configModal');
         modal.style.display = 'flex';
@@ -1233,6 +1244,77 @@ class SimuladorEmprestimos {
         }
         
         alert('Limites atualizados com sucesso!');
+    }
+
+    obterDadosCompletosPdf() {
+        const dadosCompletos = {
+            temDados: false,
+            pessoais: [],
+            profissionais: [],
+            referencias: []
+        };
+
+        // Verificar se o formulário completo foi expandido e preenchido
+        const formCompleto = document.getElementById('formCompleto');
+        if (!formCompleto || formCompleto.style.display === 'none') {
+            return dadosCompletos;
+        }
+
+        // Dados pessoais
+        const pessoais = [];
+        const dataNascimento = document.getElementById('dataNascimento')?.value;
+        const estadoCivil = document.getElementById('estadoCivil')?.value;
+        const endereco = document.getElementById('endereco')?.value;
+        const numero = document.getElementById('numero')?.value;
+        const complemento = document.getElementById('complemento')?.value;
+        const bairro = document.getElementById('bairro')?.value;
+        const cidade = document.getElementById('cidade')?.value;
+        const estado = document.getElementById('estado')?.value;
+        const cep = document.getElementById('cep')?.value;
+        const telefone = document.getElementById('telefoneCompleto')?.value;
+
+        if (dataNascimento) pessoais.push(`Data de Nascimento: ${dataNascimento}`);
+        if (estadoCivil) pessoais.push(`Estado Civil: ${estadoCivil}`);
+        if (endereco) pessoais.push(`Endereço: ${endereco}${numero ? `, ${numero}` : ''}${complemento ? `, ${complemento}` : ''}`);
+        if (bairro) pessoais.push(`Bairro: ${bairro}`);
+        if (cidade && estado) pessoais.push(`Cidade: ${cidade} - ${estado}`);
+        if (cep) pessoais.push(`CEP: ${cep}`);
+        if (telefone) pessoais.push(`Telefone: ${telefone}`);
+
+        // Dados profissionais
+        const profissionais = [];
+        const profissao = document.getElementById('profissao')?.value;
+        const empresa = document.getElementById('empresa')?.value;
+        const rendaMensal = document.getElementById('rendaMensal')?.value;
+        const tempoEmprego = document.getElementById('tempoEmprego')?.value;
+
+        if (profissao) profissionais.push(`Profissão: ${profissao}`);
+        if (empresa) profissionais.push(`Empresa: ${empresa}`);
+        if (rendaMensal) profissionais.push(`Renda Mensal: ${rendaMensal}`);
+        if (tempoEmprego) profissionais.push(`Tempo de Emprego: ${tempoEmprego}`);
+
+        // Referências
+        const referencias = [];
+        const ref1Nome = document.getElementById('ref1Nome')?.value;
+        const ref1Telefone = document.getElementById('ref1Telefone')?.value;
+        const ref1Parentesco = document.getElementById('ref1Parentesco')?.value;
+        const ref2Nome = document.getElementById('ref2Nome')?.value;
+        const ref2Telefone = document.getElementById('ref2Telefone')?.value;
+        const ref2Parentesco = document.getElementById('ref2Parentesco')?.value;
+
+        if (ref1Nome || ref1Telefone) {
+            referencias.push(`1ª Referência: ${ref1Nome || 'N/A'}${ref1Telefone ? ` - ${ref1Telefone}` : ''}${ref1Parentesco ? ` (${ref1Parentesco})` : ''}`);
+        }
+        if (ref2Nome || ref2Telefone) {
+            referencias.push(`2ª Referência: ${ref2Nome || 'N/A'}${ref2Telefone ? ` - ${ref2Telefone}` : ''}${ref2Parentesco ? ` (${ref2Parentesco})` : ''}`);
+        }
+
+        dadosCompletos.pessoais = pessoais;
+        dadosCompletos.profissionais = profissionais;
+        dadosCompletos.referencias = referencias;
+        dadosCompletos.temDados = pessoais.length > 0 || profissionais.length > 0 || referencias.length > 0;
+
+        return dadosCompletos;
     }
 
     exportarPdf() {
@@ -1522,9 +1604,10 @@ class SimuladorEmprestimos {
         document.documentElement.setAttribute('data-color-theme', colorTheme);
         document.body.setAttribute('data-color-theme', colorTheme);
         
-        // Aplicar tema aos modais
+        // Aplicar tema aos modais e botão expandir
         const modal = document.getElementById('configModal');
         const adminPanel = document.getElementById('adminPanel');
+        const formToggleBtn = document.querySelector('.form-toggle-btn');
         
         if (modal) {
             modal.setAttribute('data-color-theme', colorTheme);
@@ -1532,6 +1615,10 @@ class SimuladorEmprestimos {
         
         if (adminPanel) {
             adminPanel.setAttribute('data-color-theme', colorTheme);
+        }
+        
+        if (formToggleBtn) {
+            formToggleBtn.setAttribute('data-color-theme', colorTheme);
         }
         
         // Salvar a preferência
