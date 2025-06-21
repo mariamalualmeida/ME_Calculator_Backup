@@ -301,10 +301,10 @@ class SimuladorEmprestimos {
 
     // Configurar formatação dos campos do formulário completo
     setupFormCompletoFormatting() {
-        // CPF da portadora
-        const portadoraCpfField = document.getElementById('portadoraCpf');
-        if (portadoraCpfField) {
-            portadoraCpfField.addEventListener('input', (e) => this.formatarCpf(e.target));
+        // CPF completo (novo campo)
+        const cpfCompletoField = document.getElementById('cpfCompleto');
+        if (cpfCompletoField) {
+            cpfCompletoField.addEventListener('input', (e) => this.formatarCpf(e.target));
         }
 
         // CEP
@@ -313,8 +313,8 @@ class SimuladorEmprestimos {
             cepField.addEventListener('input', (e) => this.formatarCep(e.target));
         }
 
-        // Telefones
-        const telefoneFields = ['telefone', 'ref1Telefone', 'ref2Telefone'];
+        // Telefones (incluindo o novo telefone completo)
+        const telefoneFields = ['telefoneCompleto', 'ref1Telefone', 'ref2Telefone'];
         telefoneFields.forEach(fieldId => {
             const field = document.getElementById(fieldId);
             if (field) {

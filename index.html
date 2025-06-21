@@ -108,31 +108,10 @@
                     </div>
                 </div>
 
-                <!-- Campos básicos de cliente (sempre visíveis) -->
-                <div class="input-group">
-                    <label for="nomeCliente">Nome do Cliente (Opcional)</label>
-                    <input 
-                        type="text" 
-                        id="nomeCliente" 
-                        placeholder="Digite o nome do cliente"
-                        maxlength="100"
-                    >
-                </div>
-
-                <div class="input-group">
-                    <label for="cpfCliente">CPF do Cliente (Opcional)</label>
-                    <input 
-                        type="text" 
-                        id="cpfCliente" 
-                        placeholder="000.000.000-00"
-                        maxlength="14"
-                    >
-                </div>
-
                 <!-- Botão para expandir formulário completo -->
                 <div class="input-group">
                     <button type="button" id="toggleFormCompleto" class="form-toggle-btn">
-                        📋 Dados Completos do Cliente
+                        Dados Completos do Cliente
                         <span class="toggle-icon">▼</span>
                     </button>
                 </div>
@@ -142,7 +121,7 @@
                     
                     <!-- Dados Pessoais -->
                     <div class="form-section">
-                        <h4 class="section-title">👤 Dados Pessoais</h4>
+                        <h4 class="section-title">Dados Pessoais</h4>
                         
                         <div class="input-group">
                             <label for="nomeCompleto">Nome Completo</label>
@@ -150,8 +129,13 @@
                         </div>
 
                         <div class="input-group">
-                            <label for="portadoraCpf">Portadora do CPF</label>
-                            <input type="text" id="portadoraCpf" placeholder="Nome da portadora do CPF" maxlength="150">
+                            <label for="cpfCompleto">CPF</label>
+                            <input type="text" id="cpfCompleto" placeholder="000.000.000-00" maxlength="14">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="telefoneCompleto">Telefone</label>
+                            <input type="text" id="telefoneCompleto" placeholder="(00) 00000-0000" maxlength="15">
                         </div>
 
                         <div class="input-row">
@@ -191,21 +175,15 @@
                             </div>
                         </div>
 
-                        <div class="input-row">
-                            <div class="input-group">
-                                <label for="email">E-mail</label>
-                                <input type="email" id="email" placeholder="cliente@email.com" maxlength="150">
-                            </div>
-                            <div class="input-group">
-                                <label for="telefone">Telefone</label>
-                                <input type="text" id="telefone" placeholder="(00) 00000-0000" maxlength="15">
-                            </div>
+                        <div class="input-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" placeholder="cliente@email.com" maxlength="150">
                         </div>
                     </div>
 
                     <!-- Dados Profissionais -->
                     <div class="form-section">
-                        <h4 class="section-title">💼 Dados Profissionais</h4>
+                        <h4 class="section-title">Dados Profissionais</h4>
                         
                         <div class="input-row">
                             <div class="input-group">
@@ -226,7 +204,7 @@
 
                     <!-- 1ª Referência -->
                     <div class="form-section">
-                        <h4 class="section-title">📞 1ª Referência</h4>
+                        <h4 class="section-title">1ª Referência</h4>
                         
                         <div class="input-group">
                             <label for="ref1Nome">Nome</label>
@@ -258,7 +236,7 @@
 
                     <!-- 2ª Referência -->
                     <div class="form-section">
-                        <h4 class="section-title">📞 2ª Referência</h4>
+                        <h4 class="section-title">2ª Referência</h4>
                         
                         <div class="input-group">
                             <label for="ref2Nome">Nome</label>
