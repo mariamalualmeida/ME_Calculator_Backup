@@ -271,6 +271,94 @@ class SimuladorEmprestimos {
                 this.fecharModal();
             }
         });
+
+        // Event listener para formulário completo
+        const toggleFormBtn = document.getElementById('toggleFormCompleto');
+        if (toggleFormBtn) {
+            toggleFormBtn.addEventListener('click', () => this.toggleFormularioCompleto());
+        }
+
+        // Configurar formatação dos campos do formulário completo
+        this.setupFormCompletoFormatting();
+    }
+
+    // Função para toggle do formulário completo
+    toggleFormularioCompleto() {
+        const container = document.getElementById('formCompletoContainer');
+        const toggleBtn = document.getElementById('toggleFormCompleto');
+        const icon = toggleBtn.querySelector('.toggle-icon');
+        
+        if (container.style.display === 'none') {
+            container.style.display = 'block';
+            toggleBtn.classList.add('expanded');
+            icon.textContent = '▲';
+        } else {
+            container.style.display = 'none';
+            toggleBtn.classList.remove('expanded');
+            icon.textContent = '▼';
+        }
+    }
+
+    // Configurar formatação dos campos do formulário completo
+    setupFormCompletoFormatting() {
+        // CPF da portadora
+        const portadoraCpfField = document.getElementById('portadoraCpf');
+        if (portadoraCpfField) {
+            portadoraCpfField.addEventListener('input', (e) => this.formatarCpf(e.target));
+        }
+
+        // CEP
+        const cepField = document.getElementById('cep');
+        if (cepField) {
+            cepField.addEventListener('input', (e) => this.formatarCep(e.target));
+        }
+
+        // Telefones
+        const telefoneFields = ['telefone', 'ref1Telefone', 'ref2Telefone'];
+        telefoneFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', (e) => this.formatarTelefone(e.target));
+            }
+        });
+
+        // Renda mensal
+        const rendaField = document.getElementById('rendaMensal');
+        if (rendaField) {
+            rendaField.addEventListener('input', (e) => this.formatarMoeda(e.target));
+        }
+
+        // Estado (maiúsculo e 2 caracteres)
+        const estadoField = document.getElementById('estado');
+        if (estadoField) {
+            estadoField.addEventListener('input', (e) => {
+                e.target.value = e.target.value.toUpperCase().substring(0, 2);
+            });
+        }
+    }
+
+    // Formatação de CEP
+    formatarCep(input) {
+        let valor = input.value.replace(/\D/g, '');
+        valor = valor.substring(0, 8);
+        valor = valor.replace(/(\d{5})(\d)/, '$1-$2');
+        input.value = valor;
+    }
+
+    // Formatação de telefone
+    formatarTelefone(input) {
+        let valor = input.value.replace(/\D/g, '');
+        valor = valor.substring(0, 11);
+        
+        if (valor.length <= 10) {
+            valor = valor.replace(/(\d{2})(\d)/, '($1) $2');
+            valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
+        } else {
+            valor = valor.replace(/(\d{2})(\d)/, '($1) $2');
+            valor = valor.replace(/(\d{5})(\d)/, '$1-$2');
+        }
+        
+        input.value = valor;
     }
 
     focusInitialField() {

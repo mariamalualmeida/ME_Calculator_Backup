@@ -201,6 +201,144 @@ body {
     transform: translateY(1px);
 }
 
+/* Formulário Completo - Botão Toggle */
+.form-toggle-btn {
+    width: 100%;
+    padding: 16px 20px;
+    background: var(--secondary-container);
+    color: var(--on-secondary-container);
+    border: 2px solid var(--outline);
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+}
+
+.form-toggle-btn:hover {
+    background: var(--secondary-container-hover, var(--secondary-container));
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.form-toggle-btn:active {
+    transform: translateY(0);
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+    font-size: 14px;
+    margin-left: 8px;
+}
+
+.form-toggle-btn.expanded .toggle-icon {
+    transform: rotate(-180deg);
+}
+
+/* Container do Formulário Completo */
+.form-completo-container {
+    margin-top: 16px;
+    padding: 20px;
+    background: var(--surface-variant);
+    border: 1px solid var(--outline-variant);
+    border-radius: 16px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 2000px;
+    }
+}
+
+/* Seções do Formulário */
+.form-section {
+    margin-bottom: 32px;
+}
+
+.form-section:last-child {
+    margin-bottom: 0;
+}
+
+.section-title {
+    margin: 0 0 20px 0;
+    color: var(--primary);
+    font-size: 18px;
+    font-weight: 600;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primary-container);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Layout de Linha para Campos */
+.input-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+}
+
+.input-row .input-group {
+    flex: 1;
+    margin-bottom: 16px;
+}
+
+.input-row .input-group.input-small {
+    flex: 0 0 120px;
+}
+
+/* Estilos para todos os inputs do formulário completo */
+.form-completo-container input {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #79747e;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #fef7ff;
+    transition: all 0.2s ease;
+    outline: none;
+    min-height: 24px;
+    box-sizing: border-box;
+}
+
+.form-completo-container input:focus {
+    border-color: var(--primary-color);
+    background: white;
+}
+
+/* Responsividade para Formulário */
+@media (max-width: 768px) {
+    .input-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .input-row .input-group.input-small {
+        flex: 1;
+    }
+    
+    .form-completo-container {
+        padding: 16px;
+    }
+    
+    .section-title {
+        font-size: 16px;
+    }
+}
+
 .result-section {
     display: flex;
     justify-content: center;

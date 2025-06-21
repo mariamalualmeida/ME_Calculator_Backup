@@ -108,6 +108,7 @@
                     </div>
                 </div>
 
+                <!-- Campos básicos de cliente (sempre visíveis) -->
                 <div class="input-group">
                     <label for="nomeCliente">Nome do Cliente (Opcional)</label>
                     <input 
@@ -126,6 +127,166 @@
                         placeholder="000.000.000-00"
                         maxlength="14"
                     >
+                </div>
+
+                <!-- Botão para expandir formulário completo -->
+                <div class="input-group">
+                    <button type="button" id="toggleFormCompleto" class="form-toggle-btn">
+                        📋 Dados Completos do Cliente
+                        <span class="toggle-icon">▼</span>
+                    </button>
+                </div>
+
+                <!-- Formulário completo (inicialmente oculto) -->
+                <div id="formCompletoContainer" class="form-completo-container" style="display: none;">
+                    
+                    <!-- Dados Pessoais -->
+                    <div class="form-section">
+                        <h4 class="section-title">👤 Dados Pessoais</h4>
+                        
+                        <div class="input-group">
+                            <label for="nomeCompleto">Nome Completo</label>
+                            <input type="text" id="nomeCompleto" placeholder="Nome completo do cliente" maxlength="150">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="portadoraCpf">Portadora do CPF</label>
+                            <input type="text" id="portadoraCpf" placeholder="Nome da portadora do CPF" maxlength="150">
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="endereco">Endereço</label>
+                                <input type="text" id="endereco" placeholder="Rua, Avenida..." maxlength="200">
+                            </div>
+                            <div class="input-group input-small">
+                                <label for="numero">Número</label>
+                                <input type="text" id="numero" placeholder="123" maxlength="10">
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="complemento">Complemento</label>
+                                <input type="text" id="complemento" placeholder="Apt, Casa, Bloco..." maxlength="100">
+                            </div>
+                            <div class="input-group">
+                                <label for="bairro">Bairro</label>
+                                <input type="text" id="bairro" placeholder="Nome do bairro" maxlength="100">
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="cidade">Cidade</label>
+                                <input type="text" id="cidade" placeholder="Nome da cidade" maxlength="100">
+                            </div>
+                            <div class="input-group input-small">
+                                <label for="estado">Estado</label>
+                                <input type="text" id="estado" placeholder="UF" maxlength="2">
+                            </div>
+                            <div class="input-group input-small">
+                                <label for="cep">CEP</label>
+                                <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="email">E-mail</label>
+                                <input type="email" id="email" placeholder="cliente@email.com" maxlength="150">
+                            </div>
+                            <div class="input-group">
+                                <label for="telefone">Telefone</label>
+                                <input type="text" id="telefone" placeholder="(00) 00000-0000" maxlength="15">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dados Profissionais -->
+                    <div class="form-section">
+                        <h4 class="section-title">💼 Dados Profissionais</h4>
+                        
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="localTrabalho">Local de Trabalho</label>
+                                <input type="text" id="localTrabalho" placeholder="Nome da empresa/local" maxlength="150">
+                            </div>
+                            <div class="input-group">
+                                <label for="profissao">Profissão</label>
+                                <input type="text" id="profissao" placeholder="Cargo/profissão" maxlength="100">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="rendaMensal">Renda Mensal</label>
+                            <input type="text" id="rendaMensal" placeholder="R$ 0,00" maxlength="20">
+                        </div>
+                    </div>
+
+                    <!-- 1ª Referência -->
+                    <div class="form-section">
+                        <h4 class="section-title">📞 1ª Referência</h4>
+                        
+                        <div class="input-group">
+                            <label for="ref1Nome">Nome</label>
+                            <input type="text" id="ref1Nome" placeholder="Nome da referência" maxlength="150">
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="ref1Rua">Rua</label>
+                                <input type="text" id="ref1Rua" placeholder="Endereço da referência" maxlength="200">
+                            </div>
+                            <div class="input-group input-small">
+                                <label for="ref1Numero">Número</label>
+                                <input type="text" id="ref1Numero" placeholder="123" maxlength="10">
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="ref1Bairro">Bairro</label>
+                                <input type="text" id="ref1Bairro" placeholder="Bairro da referência" maxlength="100">
+                            </div>
+                            <div class="input-group">
+                                <label for="ref1Telefone">Telefone</label>
+                                <input type="text" id="ref1Telefone" placeholder="(00) 00000-0000" maxlength="15">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2ª Referência -->
+                    <div class="form-section">
+                        <h4 class="section-title">📞 2ª Referência</h4>
+                        
+                        <div class="input-group">
+                            <label for="ref2Nome">Nome</label>
+                            <input type="text" id="ref2Nome" placeholder="Nome da referência" maxlength="150">
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="ref2Rua">Rua</label>
+                                <input type="text" id="ref2Rua" placeholder="Endereço da referência" maxlength="200">
+                            </div>
+                            <div class="input-group input-small">
+                                <label for="ref2Numero">Número</label>
+                                <input type="text" id="ref2Numero" placeholder="123" maxlength="10">
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="ref2Bairro">Bairro</label>
+                                <input type="text" id="ref2Bairro" placeholder="Bairro da referência" maxlength="100">
+                            </div>
+                            <div class="input-group">
+                                <label for="ref2Telefone">Telefone</label>
+                                <input type="text" id="ref2Telefone" placeholder="(00) 00000-0000" maxlength="15">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <button id="calcularBtn" class="calculate-button">
