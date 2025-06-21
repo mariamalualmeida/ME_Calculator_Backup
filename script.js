@@ -229,6 +229,7 @@ class SimuladorEmprestimos {
             this.carregarConfiguracoes();
             this.esconderErro();
             this.atualizarClassesModoLivre();
+            this.atualizarInformacaoLimites(); // Atualizar limites quando configurações mudam
         });
 
         // Método alternativo - polling para garantir sincronização

@@ -253,6 +253,44 @@ fun SimuladorEmprestimosScreen(
                             cursorColor = colorScheme.primary
                         )
                     )
+                    
+                    // Informação dos limites de juros
+                    val limitesInfo = viewModel.obterLimitesJuros(uiState.numeroParcelas.toIntOrNull() ?: 0)
+                    if (limitesInfo != null && !configuracoes.desabilitarRegras) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = colorScheme.surfaceVariant.copy(alpha = 0.7f)
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(3.dp)
+                                        .height(20.dp)
+                                        .background(
+                                            color = colorScheme.primary,
+                                            shape = RoundedCornerShape(2.dp)
+                                        )
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = limitesInfo,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = colorScheme.onSurfaceVariant,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    }
                 }
                 
                 // Data inicial (opcional)

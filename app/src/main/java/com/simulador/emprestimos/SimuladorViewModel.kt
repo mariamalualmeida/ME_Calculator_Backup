@@ -354,4 +354,39 @@ class SimuladorViewModel : ViewModel() {
             resultado = null
         )
     }
+    
+    fun obterLimitesJuros(nParcelas: Int): String? {
+        if (nParcelas < 1 || nParcelas > 15) {
+            return null
+        }
+        
+        // Usar limites personalizados se admin configurou, senão usar padrão
+        val limites = _configuracoes.value.limitesPersonalizados?.get(nParcelas) 
+            ?: limitesJuros[nParcelas] 
+            ?: return null
+        
+        val textoParcel = if (nParcelas == 1) "parcela" else "parcelas"
+        val minimo = String.format("%.2f", limites.min).replace('.', ',')
+        val maximo = String.format("%.2f", limites.max).replace('.', ',')
+        
+        return "Para $nParcelas $textoParcel, o juros mínimo é ${minimo}% e máximo ${maximo}%"
+    }
+    
+    fun isJurosInvalido(taxaJuros: String, numeroParcelas: String): Boolean {
+        // Se regras estão desabilitadas para admin, não mostrar borda vermelha
+        if (_configuracoes.value.desabilitarRegras == true && _configuracoes.value.isAdmin) {
+            return false
+        }
+        
+        val juros = parsePercentual(taxaJuros)
+        val nParcelas = numeroParcelas.toIntOrNull() ?: return false
+        
+        if (nParcelas < 1 || nParcelas > 15) return false
+        
+        val limites = _configuracoes.value.limitesPersonalizados?.get(nParcelas) 
+            ?: limitesJuros[nParcelas] 
+            ?: return false
+            
+        return juros < limites.min || juros > limites.max
+    }
 }
