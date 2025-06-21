@@ -209,11 +209,18 @@ class SimuladorEmprestimos {
         });
 
         // Listener para eventos customizados (sincronização na mesma aba)
-        window.addEventListener('configuracoesAtualizadas', () => {
+        window.addEventListener('configuracoesAtualizadas', (e) => {
+            console.log('Evento configuracoesAtualizadas recebido');
             this.carregarConfiguracoes();
             this.esconderErro();
             this.atualizarClassesModoLivre();
         });
+
+        // Método alternativo - polling para garantir sincronização
+        this.setupConfigPolling();
+        
+        // Armazenar referência da instância para callbacks globais
+        window.simuladorInstance = this;
 
         // Event listener para mudança de tema (evitar duplicação)
         const themeSelect = document.getElementById('themeMode');
@@ -714,6 +721,35 @@ class SimuladorEmprestimos {
         });
     }
 
+    setupConfigPolling() {
+        // Sistema de polling para detectar mudanças
+        this.lastConfigHash = this.getConfigHash();
+        this.configPollingInterval = setInterval(() => {
+            const currentHash = this.getConfigHash();
+            if (currentHash !== this.lastConfigHash) {
+                console.log('Mudança de configuração detectada via polling');
+                this.carregarConfiguracoes();
+                this.esconderErro();
+                this.atualizarClassesModoLivre();
+                this.lastConfigHash = currentHash;
+            }
+        }, 500); // Verificar a cada 500ms
+    }
+
+    getConfigHash() {
+        const config = localStorage.getItem('simulador_config');
+        return config ? btoa(config).slice(0, 10) : '';
+    }
+
+    // Método para ser chamado diretamente após salvar configurações
+    forceConfigUpdate() {
+        console.log('Atualizando configurações forçadamente');
+        this.carregarConfiguracoes();
+        this.esconderErro();
+        this.atualizarClassesModoLivre();
+        this.lastConfigHash = this.getConfigHash();
+    }
+
     rolarParaResultado() {
         setTimeout(() => {
             const resultSection = document.querySelector('.result-section');
@@ -765,8 +801,13 @@ class SimuladorEmprestimos {
         this.aplicarPaletaCores(this.configuracoes.colorTheme);
         this.salvarConfiguracoes();
         
-        // Disparar evento customizado para sincronização na mesma aba
+        // Disparar múltiplos métodos de sincronização para garantir funcionamento
         window.dispatchEvent(new CustomEvent('configuracoesAtualizadas'));
+        
+        // Callback direto para garantia
+        if (window.simuladorInstance && window.simuladorInstance.forceConfigUpdate) {
+            setTimeout(() => window.simuladorInstance.forceConfigUpdate(), 100);
+        }
         
         this.fecharModal();
         alert('Configurações salvas com sucesso!');
@@ -828,8 +869,13 @@ class SimuladorEmprestimos {
         this.configuracoes.limitesPersonalizados = novosLimites;
         this.salvarConfiguracoes();
         
-        // Disparar evento customizado para sincronização na mesma aba
+        // Disparar múltiplos métodos de sincronização para garantir funcionamento
         window.dispatchEvent(new CustomEvent('configuracoesAtualizadas'));
+        
+        // Callback direto para garantia
+        if (window.simuladorInstance && window.simuladorInstance.forceConfigUpdate) {
+            setTimeout(() => window.simuladorInstance.forceConfigUpdate(), 100);
+        }
         
         alert('Limites atualizados com sucesso!');
     }
@@ -1070,8 +1116,13 @@ class SimuladorEmprestimos {
         this.configuracoes.adminPassword = novaSenha;
         this.salvarConfiguracoes();
         
-        // Disparar evento customizado para sincronização na mesma aba
+        // Disparar múltiplos métodos de sincronização para garantir funcionamento
         window.dispatchEvent(new CustomEvent('configuracoesAtualizadas'));
+        
+        // Callback direto para garantia
+        if (window.simuladorInstance && window.simuladorInstance.forceConfigUpdate) {
+            setTimeout(() => window.simuladorInstance.forceConfigUpdate(), 100);
+        }
         
         document.getElementById('newAdminUser').value = '';
         document.getElementById('newAdminPass').value = '';
