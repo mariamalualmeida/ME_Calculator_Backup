@@ -1,0 +1,128 @@
+Você será responsável por desenvolver o sistema "ME empreendimentos", uma plataforma de análise financeira e consultoria baseada em IA. O objetivo é criar uma aplicação web robusta, segura e amigável, que permita aos usuários (clientes bancários, consultores) carregar documentos financeiros e receber análises detalhadas, insights de risco e consultoria personalizada, com uma experiência de usuário similar à de um chatbot inteligente.
+
+Visão Geral do Sistema:
+
+O sistema será dividido em duas partes principais: um Backend (Python com API) e um Frontend (Interface Web), que se comunicarão de forma fluida. Uma Inteligência Artificial (IA Generativa - como Gemini/GPT) será integrada no backend para raciocínio e consultoria de alto nível.
+
+1. Backend (Python com API)
+
+Tecnologias Sugeridas:
+
+Linguagem: Python 3.9+
+Framework API: FastAPI (preferencial, por performance e async) ou Flask.
+Gerenciamento de Dependências: pip com requirements.txt.
+Bibliotecas de Processamento: pandas, pdfplumber, openpyxl, python-docx, Pillow, pytesseract, PyMuPDF (fitz), tabula-py, scipy, numpy, fuzzywuzzy (para fuzzy matching em categorização).
+Integração IA: SDKs oficiais da OpenAI (openai) ou Google (google-generativeai).
+Funcionalidades Detalhadas (Módulos de Código Fornecidos):
+
+O código Python para o core da análise já foi desenvolvido e será fornecido em módulos separados, seguindo a estrutura abaixo. Seu trabalho será integrá-los e expô-los via API.
+
+config.py: Configurações globais (listas de sites de apostas, processadoras legítimas, mapeamentos genéricos).
+file_io_utils.py:
+Leitura de Arquivos: PDF, DOCX, XLSX, CSV, JPG, PNG.
+OCR: Implementa OCR robusto para imagens e PDFs escaneados (com pytesseract/PyMuPDF).
+Detecção de Tipo/Banco: Inferência básica do tipo de documento (extrato_bancario, fatura_cartao, contracheque) e do banco pelo nome do arquivo.
+data_parsing.py:
+Parsing Financeiro: Funções precisas para extrair e normalizar datas (parse_date_string) e valores monetários (parse_financial_value) de diversas formatações.
+Extração de Dados Cadastrais: Identifica nome, CPF/CNPJ, endereço, agência, conta, etc.
+Processamento de Contratacheque: Extrai dados de renda (bruta/líquida), empresa, cargo.
+bank_specific_parsers.py:
+Parsers Plugáveis de PDF/Texto: Contém funções de extração otimizadas para layouts específicos de PDFs de bancos (ex: parse_nubank_extrato_pdf, parse_c6_fatura_pdf).
+Requisito: Deve ser facilmente extensível. A adição de um novo parser (parse_bancox_extrato.pdf) para um novo layout/banco não deve exigir modificação no main.py ou em outros módulos centrais.
+dataframe_parsers.py:
+Parsers Plugáveis de DataFrame: Contém funções de extração para layouts específicos de CSV/XLSX de bancos (ex: process_nubank_extrato_csv, process_caixa_extrato_csv).
+Parser Genérico de DataFrame: Lógica para inferir colunas (_mapear_colunas_automaticamente) e extrair transações de arquivos tabulares desconhecidos.
+categorization_logic.py:
+Categorização Granular: Classifica cada transação em categorias de gasto/recebimento específicas (ex: "Alimentação", "Lazer", "PIX Recebido", "Compras no Cartão"), utilizando dicionários de palavras-chave e lógica para diferenciar processadoras legítimas de sites de aposta.
+financial_analysis.py:
+Cálculos Financeiros: Soma total de entradas/saídas, cálculo de saldo, agrupamento de transações por mês, cálculo de um "Score Financeiro" (calculate_score).
+Extração de Maiores Transações: Identifica as top N transações de entrada e saída.
+Análise de Risco/Comportamento:
+Cheque Especial/Descoberto: Detecção de uso e persistência de saldo negativo.
+Uso do Limite de Cartão: Percentual de utilização do limite.
+Compras por Impulso: Identifica padrões de alto volume/baixa recorrência em categorias discricionárias.
+Movimentações Circulares/Estruturação: Detecção de recebimento e repasse no mesmo dia, ou múltiplas transações pequenas e sequenciais (riscos de fraude/lavagem).
+Transações Atípicas: Identifica transações em horários incomuns (madrugada).
+Inconsistência Renda/Despesas: Análise da proporção de saídas em relação às entradas.
+Detecção de Apostas: Identifica transações com sites ou termos relacionados a jogos de azar, com filtragem de falsos positivos.
+report_generation.py:
+Geração de Resumos Estruturados: Cria DataFrames (para fácil conversão em JSON/Markdown) de resumos do extrato por categoria, resumo da fatura de cartão e um resumo financeiro geral consolidado. Inclui totais, percentuais e comparativos.
+main.py (Orquestrador Principal):
+Classe FinancialAnalysisSystem: Instancia e coordena o fluxo completo da análise, gerenciando o estado (transações consolidadas, resultados).
+Orquestração de Parsers: A FinancialAnalysisSystem deve conter a lógica para chamar o parser específico correto (do bank_specific_parsers.py ou dataframe_parsers.py) com base no doc_type, bank_name e file_type detectados. Se nenhum parser específico for aplicável ou falhar, deve haver um fallback para a extração por regex em texto bruto.
+Consolidação de Dados: Acumula transações e dados de múltiplos documentos carregados em DataFrames consolidados.
+API Endpoints (FastAPI/Flask):
+
+POST /api/auth/login: Autenticação de usuário.
+POST /api/document/upload:
+Recebe um ou múltiplos arquivos (multipart/form-data).
+Chama FinancialAnalysisSystem.process_document() para cada arquivo.
+Retorna um status: "processing" ou status: "success" para cada upload.
+GET /api/analysis/results:
+Retorna os resultados completos da análise consolidados via FinancialAnalysisSystem.get_analysis_results(). Os dados devem ser retornados em formato JSON.
+POST /api/analysis/query_ia:
+Recebe os resultados da análise (JSON) e uma pergunta do usuário (texto).
+Encaminha os dados e a pergunta para a IA (Gemini/GPT).
+Retorna a resposta textual da IA.
+GET /api/reports/download/{report_id}:
+Endpoint para download de relatórios PDF gerados no backend. O report_id pode ser um hash da sessão ou do relatório.
+Segurança do Backend:
+
+Autenticação/Autorização: Implementar login de usuários (JWT recomendado). Acesso à API deve ser restrito.
+Validação de Entrada: Validar tipos e tamanhos de arquivos.
+Tratamento de Erros: Respostas de erro claras para o frontend.
+HTTPS: Essencial para comunicação segura.
+Gerenciamento de Segredos: Chaves de API de terceiros (IA) devem ser armazenadas de forma segura (variáveis de ambiente).
+Limpeza de Sessão: Implementar lógica para limpar dados de documentos após um período de inatividade ou logout.
+2. Frontend (Interface Web)
+
+Tecnologias Sugeridas:
+
+Framework UI: React, Vue.js ou Angular (preferencial para SPA). Alternativamente, Jinja2/Flask Templates para uma solução mais integrada Python.
+HTTP Client: Axios, Fetch API.
+Layout e Comportamento (Experiência de IA Conversacional):
+
+Pós-Login: O usuário é direcionado para uma tela que mimetiza um chat com uma IA.
+Componentes Principais:
+Header: Título "Miguelita - Sua Assistente Financeira" e elementos de usuário/logout.
+Área de Conversa (Chat History):
+Exibe mensagens do sistema (Miguelita) e do usuário.
+Upload de Arquivo (Visual): Quando o usuário carrega um arquivo, ele aparece como uma "mensagem" do usuário no chat (ex: "extrato.pdf carregado").
+Resultados de Análise (Texto): O texto detalhado e os resumos retornados da API (/api/analysis/results) são formatados e exibidos diretamente no chat usando Markdown (tabelas, listas, negrito).
+Links para Download de PDF: Após a análise, a IA pode "enviar" uma mensagem com um link clicável para baixar o relatório PDF (ex: <a> tag para /api/reports/download/{report_id}).
+Área de Input (Parte Inferior):
+Campo de Texto: Para o usuário digitar perguntas ou comandos.
+Botão de Enviar: Para submeter o texto.
+Botão de Upload de Arquivos (Integrado): Um ícone de clipe de papel (📎) ou similar, ao lado do campo de texto. Ao clicar, abre o explorador de arquivos. Permite múltiplos uploads simultâneos.
+Fluxo de Interação do Usuário:
+
+Login: Usuário acessa o app e faz login.
+Tela da IA: Usuário vê uma tela de chat limpa ou com uma saudação inicial da Miguelita.
+Upload de Documentos:
+Usuário clica no botão de upload e seleciona arquivos (ex: extrato.pdf, fatura.pdf).
+Frontend envia os arquivos via POST /api/document/upload.
+Backend processa (chama FinancialAnalysisSystem.process_document para cada um).
+Frontend exibe "Documentos carregados, aguarde a análise..."
+Análise e Resposta Inicial:
+Após o processamento do backend, o frontend faz um GET /api/analysis/results.
+A IA (no backend, via query_ia ou pré-processada) formata a resposta:
+Saudação e confirmação de processamento.
+Detalhamento Completo das Transações (Extrato: Entradas/Saídas por Categoria; Fatura: Compras/Créditos por Categoria), formatado em Markdown.
+Resumos Consolidados (Extrato, Fatura, Geral) em Markdown.
+Análises de Risco e Comportamento (Indicadores, Apostas, Suspeitas) em Markdown.
+Score Financeiro Geral.
+Menu de Opções:
+"1 - Análise da saúde financeira e risco de concessão de crédito e empréstimo."
+"2 - Consultoria financeira personalizada para otimização e recuperação."
+"Para qualquer outro tipo de informação, basta perguntar!"
+Link para PDF: "Seu relatório completo em PDF está disponível para download: Baixar Relatório PDF".
+Interação Contínua:
+Se usuário digita "1": Frontend envia para query_ia com o comando "Análise de saúde financeira...". Backend aciona a IA com os dados já processados para gerar a análise focada em risco de crédito.
+Se usuário digita "2": Similarmente, aciona a IA para consultoria de otimização/recuperação.
+Se usuário digita pergunta livre: IA responde diretamente.
+Recomendações Adicionais:
+
+Monitoramento: Logs detalhados no backend para depuração e auditoria.
+Cache: Estratégias de cache para resultados de análise, evitando reprocessar os mesmos arquivos desnecessariamente em uma sessão.
+Testes: Testes unitários para cada módulo e testes de integração para a API e o fluxo completo.
+CI/CD: Pipelines de Integração Contínua/Entrega Contínua para automação de testes e deploy.

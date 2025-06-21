@@ -176,6 +176,7 @@ class SimuladorEmprestimos {
         this.numeroParcelasField.addEventListener('input', () => {
             this.limparResultado();
             this.toggleMetodoDiasExtras();
+            this.atualizarInformacaoLimites(); // Atualizar limites de juros
             this.validarCampoJuros(); // Re-validar juros quando parcelas mudam
         });
 
@@ -578,6 +579,53 @@ class SimuladorEmprestimos {
         // Mostrar resultado
         this.mostrarResultado(resultadoCalculo, valor, nParcelas, juros);
         this.rolarParaResultado();
+    }
+
+    obterLimitesJuros(nParcelas) {
+        if (!nParcelas || nParcelas < 1) {
+            return null;
+        }
+        
+        // Usar limites personalizados se admin configurou, senão usar padrão
+        const limitesPersonalizados = this.configuracoes.limitesPersonalizados?.[nParcelas];
+        if (limitesPersonalizados) {
+            return { min: limitesPersonalizados.min, max: limitesPersonalizados.max };
+        }
+        
+        // Limites padrão
+        const limitesDefault = this.limitesJuros[nParcelas];
+        if (limitesDefault) {
+            return { min: limitesDefault.min, max: limitesDefault.max };
+        }
+        
+        return null;
+    }
+
+    atualizarInformacaoLimites() {
+        const limitesInfo = document.getElementById('limitesJuros');
+        const nParcelas = parseInt(this.numeroParcelasField.value);
+        
+        if (!limitesInfo) return;
+        
+        // Esconder se modo livre está ativo
+        if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
+            limitesInfo.style.display = 'none';
+            return;
+        }
+        
+        const limites = this.obterLimitesJuros(nParcelas);
+        
+        if (!limites || nParcelas > 15) {
+            limitesInfo.style.display = 'none';
+            return;
+        }
+        
+        const textoParcel = nParcelas === 1 ? 'parcela' : 'parcelas';
+        const minimo = limites.min.toFixed(2).replace('.', ',');
+        const maximo = limites.max.toFixed(2).replace('.', ',');
+        
+        limitesInfo.textContent = `Para ${nParcelas} ${textoParcel}, o juros mínimo é ${minimo}% e máximo ${maximo}%`;
+        limitesInfo.style.display = 'block';
     }
 
     validarCampos(valor, nParcelas, juros) {
