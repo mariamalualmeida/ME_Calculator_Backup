@@ -1673,32 +1673,7 @@ class SimuladorEmprestimos {
         }
     }
 
-    salvarCredenciaisAdmin() {
-        const novoUsuario = document.getElementById('newAdminUser').value;
-        const novaSenha = document.getElementById('newAdminPass').value;
-        
-        if (!novoUsuario || !novaSenha) {
-            alert('Por favor, preencha todos os campos');
-            return;
-        }
-        
-        this.configuracoes.adminUser = novoUsuario;
-        this.configuracoes.adminPassword = novaSenha;
-        this.salvarConfiguracoes();
-        
-        // Disparar múltiplos métodos de sincronização para garantir funcionamento
-        window.dispatchEvent(new CustomEvent('configuracoesAtualizadas'));
-        
-        // Callback direto para garantia
-        if (window.simuladorInstance && window.simuladorInstance.forceConfigUpdate) {
-            setTimeout(() => window.simuladorInstance.forceConfigUpdate(), 100);
-        }
-        
-        document.getElementById('newAdminUser').value = '';
-        document.getElementById('newAdminPass').value = '';
-        
-        alert('Credenciais alteradas com sucesso!');
-    }
+
 
     formatarValorMonetario(valor) {
         return new Intl.NumberFormat('pt-BR', {
