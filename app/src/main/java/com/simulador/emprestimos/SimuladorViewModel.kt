@@ -133,6 +133,12 @@ class SimuladorViewModel : ViewModel() {
         onConfiguracoesChanged?.invoke() // Notificar mudanças
     }
     
+    fun salvarConfiguracoes(novasConfiguracoes: Configuracoes) {
+        _configuracoes.value = novasConfiguracoes
+        // Simular salvamento persistente (SharedPreferences)
+        onConfiguracoesChanged?.invoke() // Notificar mudanças imediatamente
+    }
+    
     fun calcular() {
         val currentState = _uiState.value
         
