@@ -568,18 +568,37 @@ class SimuladorEmprestimos {
     }
 
     calcularParcela(valor, juros, nParcelas, diasExtra = 0, igpmMensal = 0, metodo = 'primeira') {
+        // Obter sistema de juros das configurações
+        const configs = this.carregarConfiguracoes();
+        const sistemaJuros = configs.sistemaJuros || 'compostos-mensal';
+        
         // Taxa efetiva (juros + IGPM)
         const taxaEfetiva = (juros + igpmMensal) / 100;
         
-        // Prestação base: P = Valor × (1 + JurosMensal)^N ÷ N
-        const prestacaoBase = (valor * Math.pow(1 + taxaEfetiva, nParcelas)) / nParcelas;
+        // Aplicar sistema de juros selecionado
+        switch (sistemaJuros) {
+            case 'simples':
+                return this.calcularJurosSimples(valor, taxaEfetiva, nParcelas, diasExtra, metodo);
+            case 'compostos-diario':
+                return this.calcularJurosCompostosDiarios(valor, taxaEfetiva, nParcelas, diasExtra, metodo);
+            case 'compostos-prorata-real':
+                return this.calcularJurosCompostosProRataReal(valor, taxaEfetiva, nParcelas, diasExtra, metodo);
+            case 'compostos-mensal':
+            default:
+                return this.calcularJurosCompostosMensais(valor, taxaEfetiva, nParcelas, diasExtra, metodo);
+        }
+    }
+
+    // Sistema de Juros Simples: Montante = Capital × (1 + Taxa × Tempo)
+    calcularJurosSimples(valor, taxaEfetiva, nParcelas, diasExtra = 0, metodo = 'primeira') {
+        const montante = valor * (1 + taxaEfetiva * nParcelas);
+        const prestacaoBase = montante / nParcelas;
         
         if (diasExtra !== 0) {
-            const taxaDiaria = taxaEfetiva / 30; // Taxa mensal dividida por 30 dias
+            const taxaDiaria = taxaEfetiva / 30;
             const jurosProrrata = valor * taxaDiaria * diasExtra;
             
             if (metodo === 'distribuir' && nParcelas > 1) {
-                // Método distribuir corrigido - distribuir apenas os juros extras, sem juros compostos
                 const jurosProrrataPorParcela = jurosProrrata / nParcelas;
                 const prestacaoDistribuida = prestacaoBase + jurosProrrataPorParcela;
                 
@@ -590,7 +609,124 @@ class SimuladorEmprestimos {
                     diasExtra: diasExtra
                 };
             } else {
-                // Método primeira parcela maior - juros dos dias extras apenas na primeira parcela
+                const primeiraParcela = prestacaoBase + jurosProrrata;
+                
+                return {
+                    parcelaNormal: prestacaoBase,
+                    primeiraParcela: primeiraParcela,
+                    jurosDiasExtras: jurosProrrata,
+                    diasExtra: diasExtra
+                };
+            }
+        }
+        
+        return {
+            parcelaNormal: prestacaoBase,
+            primeiraParcela: prestacaoBase,
+            jurosDiasExtras: 0,
+            diasExtra: 0
+        };
+    }
+
+    // Sistema de Juros Compostos Diários
+    calcularJurosCompostosDiarios(valor, taxaEfetiva, nParcelas, diasExtra = 0, metodo = 'primeira') {
+        const taxaDiaria = taxaEfetiva / 30;
+        const diasTotais = nParcelas * 30;
+        const montante = valor * Math.pow(1 + taxaDiaria, diasTotais);
+        const prestacaoBase = montante / nParcelas;
+        
+        if (diasExtra !== 0) {
+            const jurosProrrata = valor * (Math.pow(1 + taxaDiaria, diasExtra) - 1);
+            
+            if (metodo === 'distribuir' && nParcelas > 1) {
+                const jurosProrrataPorParcela = jurosProrrata / nParcelas;
+                const prestacaoDistribuida = prestacaoBase + jurosProrrataPorParcela;
+                
+                return {
+                    parcelaNormal: prestacaoDistribuida,
+                    primeiraParcela: prestacaoDistribuida,
+                    jurosDiasExtras: jurosProrrata,
+                    diasExtra: diasExtra
+                };
+            } else {
+                const primeiraParcela = prestacaoBase + jurosProrrata;
+                
+                return {
+                    parcelaNormal: prestacaoBase,
+                    primeiraParcela: primeiraParcela,
+                    jurosDiasExtras: jurosProrrata,
+                    diasExtra: diasExtra
+                };
+            }
+        }
+        
+        return {
+            parcelaNormal: prestacaoBase,
+            primeiraParcela: prestacaoBase,
+            jurosDiasExtras: 0,
+            diasExtra: 0
+        };
+    }
+
+    // Sistema de Juros Compostos + Pro-rata Real
+    calcularJurosCompostosProRataReal(valor, taxaEfetiva, nParcelas, diasExtra = 0, metodo = 'primeira') {
+        const montante = valor * Math.pow(1 + taxaEfetiva, nParcelas);
+        const prestacaoBase = montante / nParcelas;
+        
+        if (diasExtra !== 0) {
+            // Pro-rata real: cálculo preciso baseado em dias
+            const taxaDiaria = Math.pow(1 + taxaEfetiva, 1/30) - 1;
+            const jurosProrrata = valor * (Math.pow(1 + taxaDiaria, diasExtra) - 1);
+            
+            if (metodo === 'distribuir' && nParcelas > 1) {
+                const jurosProrrataPorParcela = jurosProrrata / nParcelas;
+                const prestacaoDistribuida = prestacaoBase + jurosProrrataPorParcela;
+                
+                return {
+                    parcelaNormal: prestacaoDistribuida,
+                    primeiraParcela: prestacaoDistribuida,
+                    jurosDiasExtras: jurosProrrata,
+                    diasExtra: diasExtra
+                };
+            } else {
+                const primeiraParcela = prestacaoBase + jurosProrrata;
+                
+                return {
+                    parcelaNormal: prestacaoBase,
+                    primeiraParcela: primeiraParcela,
+                    jurosDiasExtras: jurosProrrata,
+                    diasExtra: diasExtra
+                };
+            }
+        }
+        
+        return {
+            parcelaNormal: prestacaoBase,
+            primeiraParcela: prestacaoBase,
+            jurosDiasExtras: 0,
+            diasExtra: 0
+        };
+    }
+
+    // Sistema de Juros Compostos Mensais (método atual)
+    calcularJurosCompostosMensais(valor, taxaEfetiva, nParcelas, diasExtra = 0, metodo = 'primeira') {
+        const prestacaoBase = (valor * Math.pow(1 + taxaEfetiva, nParcelas)) / nParcelas;
+        
+        if (diasExtra !== 0) {
+            const taxaDiaria = taxaEfetiva / 30;
+            const jurosProrrata = valor * taxaDiaria * diasExtra;
+            
+            if (metodo === 'distribuir' && nParcelas > 1) {
+                const jurosProrrataPorParcela = jurosProrrata / nParcelas;
+                const prestacaoDistribuida = prestacaoBase + jurosProrrataPorParcela;
+                
+                return {
+                    parcelaNormal: prestacaoDistribuida,
+                    primeiraParcela: prestacaoDistribuida,
+                    jurosDiasExtras: jurosProrrata,
+                    diasExtra: diasExtra
+                };
+            } else {
                 const primeiraParcela = prestacaoBase + jurosProrrata;
                 
                 return {
@@ -1131,7 +1267,9 @@ class SimuladorEmprestimos {
                 yInicial += 12;
             }
             
-            // Dados do cliente depois (somente se preenchidos)
+            // Dados do cliente (incluir dados completos se preenchidos)
+            const dadosCompletos = this.obterDadosCompletosPdf();
+            
             if (nomeCliente) {
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(14);
@@ -1144,6 +1282,63 @@ class SimuladorEmprestimos {
                 doc.setFontSize(14);
                 doc.text(`CPF: ${cpfCliente}`, 20, yInicial);
                 yInicial += 12;
+            }
+
+            // Adicionar dados completos se disponíveis
+            if (dadosCompletos.temDados) {
+                yInicial += 8;
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(16);
+                doc.text('DADOS COMPLETOS DO CLIENTE', 105, yInicial, { align: 'center' });
+                yInicial += 16;
+
+                // Dados pessoais
+                if (dadosCompletos.pessoais.length > 0) {
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(12);
+                    doc.text('DADOS PESSOAIS:', 20, yInicial);
+                    yInicial += 8;
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(10);
+                    
+                    dadosCompletos.pessoais.forEach(item => {
+                        doc.text(item, 20, yInicial);
+                        yInicial += 6;
+                    });
+                    yInicial += 4;
+                }
+
+                // Dados profissionais
+                if (dadosCompletos.profissionais.length > 0) {
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(12);
+                    doc.text('DADOS PROFISSIONAIS:', 20, yInicial);
+                    yInicial += 8;
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(10);
+                    
+                    dadosCompletos.profissionais.forEach(item => {
+                        doc.text(item, 20, yInicial);
+                        yInicial += 6;
+                    });
+                    yInicial += 4;
+                }
+
+                // Referências
+                if (dadosCompletos.referencias.length > 0) {
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(12);
+                    doc.text('REFERÊNCIAS:', 20, yInicial);
+                    yInicial += 8;
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(10);
+                    
+                    dadosCompletos.referencias.forEach(item => {
+                        doc.text(item, 20, yInicial);
+                        yInicial += 6;
+                    });
+                    yInicial += 8;
+                }
             }
             
             doc.setFont('helvetica', 'bold');

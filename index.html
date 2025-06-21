@@ -390,14 +390,29 @@
                                 <button id="saveCredentialsBtn" class="admin-btn">Salvar Credenciais</button>
                             </div>
                             
+                            <h5>Sistema de Juros</h5>
+                            <div class="config-group">
+                                <label for="sistemaJuros">Método de cálculo de juros</label>
+                                <select id="sistemaJuros">
+                                    <option value="compostos-mensal">Juros Compostos Mensais (Padrão)</option>
+                                    <option value="simples">Juros Simples</option>
+                                    <option value="compostos-diario">Juros Compostos Diários</option>
+                                    <option value="compostos-prorata-real">Juros Compostos + Pro-rata Real</option>
+                                </select>
+                                <small style="color: #666; display: block; margin-top: 4px;">
+                                    Escolha o sistema de cálculo para empréstimos e pro-rata
+                                </small>
+                            </div>
+
                             <h5>Controle de Regras</h5>
                             <div class="config-group">
-                                <label for="desabilitarRegras">
-                                    <input type="checkbox" id="desabilitarRegras">
-                                    Desabilitar sistema de regras (modo livre)
-                                </label>
+                                <label for="desabilitarRegras">Habilitar regras de limite</label>
+                                <select id="desabilitarRegras">
+                                    <option value="true">Habilitado</option>
+                                    <option value="false">Desabilitado (modo livre)</option>
+                                </select>
                                 <small style="color: #666; display: block; margin-top: 4px;">
-                                    Remove todos os limites de parcelas e juros quando ativado
+                                    Remove todos os limites de parcelas e juros quando desabilitado
                                 </small>
                             </div>
                             
