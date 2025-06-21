@@ -151,6 +151,7 @@ SimuladorEmprestimos/
 - June 21, 2025: Added 4-digit limit with automatic cent formatting: 1→"0,01", 15→"0,15", 155→"1,55", 1555→"15,55"
 - June 21, 2025: Copied exact structure from working formatarMoeda() function to formatarPercentualTempoReal() for consistency
 - June 21, 2025: Added aggressive event listener attachment strategy with multiple fallbacks and direct DOM manipulation
+- June 21, 2025: SUCESSO: Formatação em tempo real funcionando corretamente - user confirmou que "1750" agora mostra "17,50" instantaneamente
 
 ## User Preferences
 
