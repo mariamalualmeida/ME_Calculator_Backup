@@ -1573,7 +1573,7 @@ class SimuladorEmprestimos {
                 }
             }
             
-            // Seção de dados da simulação (após dados cadastrais)
+            // Seção de dados da simulação (sempre exibir após dados cadastrais)
             yInicial += 20;
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(16);
@@ -1676,7 +1676,13 @@ class SimuladorEmprestimos {
             let yPos = yInicial;
             for (let i = 1; i <= nParcelas; i++) {
                 const dataVencimento = new Date(dataBase);
-                dataVencimento.setMonth(dataVencimento.getMonth() + i - 1);
+                if (i === 1) {
+                    // Primeira parcela usa a data base diretamente
+                    dataVencimento.setTime(dataBase.getTime());
+                } else {
+                    // Demais parcelas somam meses
+                    dataVencimento.setMonth(dataBase.getMonth() + i - 1);
+                }
                 
                 // Definir valor da parcela conforme método escolhido
                 let valorParcela;
