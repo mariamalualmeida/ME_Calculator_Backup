@@ -171,9 +171,7 @@ body {
     padding-left: 40px;
 }
 
-/* Data icon styles removed */
-
-/* Dark theme data icon styles removed */
+/* Ícones de data removidos para simplificação */
 
 .calculate-button {
     background: var(--primary-color);
@@ -1042,7 +1040,7 @@ body {
     background: var(--card-bg);
 }
 
-/* Redefinição consolidada na seção de temas - removida redundância */
+/* Estilos de tema aplicados via variáveis CSS */
 
 .input-label {
     color: var(--text-secondary);
@@ -1207,28 +1205,17 @@ body {
     box-sizing: border-box;
 }
 
-[data-theme="dark"] #configModal #themeMode,
-[data-theme="dark"] #configModal #colorTheme,
-[data-theme="dark"] #configModal #desabilitarRegras,
-[data-theme="dark"] #configModal #sistemaJuros,
-[data-theme="dark"] #configModal #mostrarJurosRelatorio {
-    background: var(--input-bg) !important;
-    color: var(--text-primary) !important;
-    border-color: var(--primary-light) !important;
+[data-theme="dark"] #configModal select {
+    background: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--primary-light);
 }
 
-/* Estado civil tema escuro */
-[data-theme="dark"] #estadoCivil {
+/* Estilos unificados para todos os selects em modo escuro */
+[data-theme="dark"] select {
     background: var(--input-bg);
     color: var(--text-primary);
     border-color: var(--border-color);
-}
-
-/* Corrigir estilos dos selects em modo escuro */
-[data-theme="dark"] select {
-    background: var(--input-bg) !important;
-    color: var(--text-primary) !important;
-    border-color: var(--border-color) !important;
 }
 
 [data-theme="dark"] option {
