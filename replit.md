@@ -201,6 +201,7 @@ SimuladorEmprestimos/
 - June 22, 2025: NOVA FÓRMULA PRO-RATA REAL IMPLEMENTADA - sistema agora calcula juros extras sobre cada parcela individual e soma totais, em vez de distribuir juros do principal, resultando em valores substancialmente maiores e matemática mais precisa nas versões Web/PWA e Android (v20250622140900)
 - June 22, 2025: CORREÇÃO CRÍTICA PRO-RATA REAL - fórmula corrigida para calcular juros extras sobre valor principal (não sobre parcela), agora todos sistemas convergem para R$ 1.225,00 conforme esperado, sistema padrão definido como "Juros Compostos Mensais", regras de limites mantidas habilitadas por padrão (v20250622143000)
 - June 22, 2025: SINCRONIZAÇÃO DE CONFIGURAÇÕES IMPLEMENTADA - sistema agora recarrega configurações do localStorage antes de cada cálculo, garantindo que mudanças administrativas (sistema de juros, regras de limite, IGPM) sejam aplicadas imediatamente sem necessidade de refresh da página, correção aplicada nas versões Web/PWA e Android (v20250622144500)
+- June 22, 2025: CORREÇÃO ESPECÍFICA PRO-RATA REAL - ajustada fórmula apenas para 1 parcela usar cálculo linear igual aos outros sistemas (R$ 1.225,00), múltiplas parcelas mantém lógica exponencial original, configuração de regras de limites padronizada como "Habilitar regras" por padrão, sincronização de selects administrativos implementada (v20250622145500)
 
 ## User Preferences
 
