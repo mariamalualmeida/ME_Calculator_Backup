@@ -1364,6 +1364,35 @@ body {
 
 /* CSS duplicado removido - agora unificado acima */
 
+/* Header buttons styles */
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hub-btn {
+    background: var(--surface-variant);
+    border: 1px solid var(--divider-color);
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--text-primary);
+}
+
+.hub-btn:hover {
+    background: var(--hover-color);
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
 /* Hub specific styles */
 .hub-main {
     flex: 1;
