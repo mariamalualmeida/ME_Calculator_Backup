@@ -173,6 +173,10 @@ SimuladorEmprestimos/
 - June 22, 2025: Unificadas todas as funções de salvamento (credenciais, limites, configurações) em botão único centralizado e padronizado
 - June 22, 2025: Removidas funções duplicadas salvarLimitesAdmin() e salvarCredenciaisAdmin(), consolidando lógica em salvarConfiguracoesModal()
 - June 22, 2025: Todos os botões administrativos (.save-btn, .admin-btn, #adminLoginBtn) padronizados com mesmo estilo, tamanho e efeitos hover
+- June 22, 2025: CORREÇÕES CRÍTICAS DE RESPONSIVIDADE MOBILE: Modal configurações otimizado para evitar corte superior/inferior
+- June 22, 2025: Implementado max-height 95vh e scroll interno no modal-body para garantir botão "SALVAR" sempre visível
+- June 22, 2025: Reduzido padding de cabeçalho/rodapé (24dp→16dp) e conteúdo (24dp→16dp) para otimizar espaço em telas pequenas
+- June 22, 2025: Correções aplicadas identicamente nas versões Web/PWA e Android para consistência total de experiência
 
 ## User Preferences
 
