@@ -373,8 +373,9 @@ class SimuladorViewModel : ViewModel() {
     }
     
     fun isJurosInvalido(taxaJuros: String, numeroParcelas: String): Boolean {
-        // Se regras estão desabilitadas para admin, não mostrar borda vermelha
-        if (_configuracoes.value.desabilitarRegras == true && _configuracoes.value.isAdmin) {
+        // CORREÇÃO: Verificar modo livre completo (regras desabilitadas E admin logado)
+        if (_configuracoes.value.desabilitarRegras == true && _configuracoes.value.isAdmin == true) {
+            Log.d("SimuladorViewModel", "Debug - isJurosInvalido: Modo livre ativo, pulando validação")
             return false
         }
         

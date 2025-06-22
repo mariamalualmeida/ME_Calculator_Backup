@@ -1200,9 +1200,9 @@ body {
     background: rgba(30, 30, 30, 1);
 }
 
-/* Garantir visibilidade das opções de configuração - TODOS OS SELECTS */
-#themeMode, #colorTheme, #estadoCivil, #desabilitarRegras, #sistemaJuros, #mostrarJurosRelatorio,
-.config-group select, .form-group select, .input-group select {
+/* Estilo específico para selects do MODAL de configurações */
+#configModal select,
+#themeMode, #colorTheme, #desabilitarRegras, #sistemaJuros, #mostrarJurosRelatorio {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -1220,18 +1220,31 @@ body {
     box-sizing: border-box !important;
 }
 
+/* Estilo específico para estado civil no FORMULÁRIO principal */
+#estadoCivil {
+    width: 100% !important;
+    min-width: 200px !important;
+    flex: 1 !important;
+    box-sizing: border-box !important;
+    /* Mantém estilo padrão dos campos normais */
+}
+
+[data-theme="dark"] #configModal select,
 [data-theme="dark"] #themeMode,
 [data-theme="dark"] #colorTheme,
-[data-theme="dark"] #estadoCivil,
 [data-theme="dark"] #desabilitarRegras,
 [data-theme="dark"] #sistemaJuros,
-[data-theme="dark"] #mostrarJurosRelatorio,
-[data-theme="dark"] .config-group select,
-[data-theme="dark"] .form-group select,
-[data-theme="dark"] .input-group select {
+[data-theme="dark"] #mostrarJurosRelatorio {
     background: var(--input-bg) !important;
     color: var(--text-primary) !important;
     border-color: var(--primary-light) !important;
+}
+
+/* Estado civil no tema escuro - estilo padrão */
+[data-theme="dark"] #estadoCivil {
+    background: var(--input-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
 }
 
 /* Corrigir estilos dos selects em modo escuro */

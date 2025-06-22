@@ -48,13 +48,14 @@ class SimuladorEmprestimos {
         };
         const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
         
-        // CORREÇÃO CRÍTICA: Sempre forçar desautenticação no carregamento
-        loadedConfig.isAdmin = false;
-        
         console.log('Debug - Configurações carregadas:', loadedConfig);
         console.log('Debug - Modo livre ativo?', loadedConfig.desabilitarRegras && loadedConfig.isAdmin);
         
         this.configuracoes = loadedConfig;
+        
+        // CORREÇÃO CRÍTICA: Sempre forçar desautenticação no carregamento
+        // Mas manter outras configurações intactas
+        this.configuracoes.isAdmin = false;
         
         // Aplicar tema e paleta na inicialização
         this.aplicarTema(loadedConfig.themeMode);
@@ -1155,9 +1156,11 @@ class SimuladorEmprestimos {
     }
 
     validarCampoJuros() {
-        // Se regras estão desabilitadas, limpar validação
-        if (this.configuracoes.desabilitarRegras) {
+        // CORREÇÃO: Verificar modo livre completo (regras desabilitadas E admin logado)
+        if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
             this.taxaJurosField.setCustomValidity('');
+            this.taxaJurosField.classList.remove('invalid');
+            console.log('Debug - validarCampoJuros: Modo livre ativo, pulando validação');
             return;
         }
 
@@ -1205,6 +1208,13 @@ class SimuladorEmprestimos {
         document.getElementById('colorTheme').value = this.configuracoes.colorTheme || 'default';
         document.getElementById('mostrarJurosRelatorio').value = this.configuracoes.mostrarJurosRelatorio ? 'true' : 'false';
         
+        // CORREÇÃO: Carregar valor do toggle de regras SEMPRE (independente de isAdmin)
+        const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
+        if (desabilitarRegrasSelect) {
+            desabilitarRegrasSelect.value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
+            console.log('Debug - Toggle carregado:', desabilitarRegrasSelect.value, 'configuracao:', this.configuracoes.desabilitarRegras);
+        }
+        
         // Configurar estado da área administrativa
         const loginSection = document.getElementById('adminLoginSection');
         if (this.configuracoes.isAdmin) {
@@ -1215,13 +1225,8 @@ class SimuladorEmprestimos {
             this.mostrarPainelAdmin();
             
             // Carregar configurações administrativas
-            const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
             const sistemaJurosSelect = document.getElementById('sistemaJuros');
             const igpmField = document.getElementById('igpmAnual');
-            
-            if (desabilitarRegrasSelect) {
-                desabilitarRegrasSelect.value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
-            }
             
             if (sistemaJurosSelect) {
                 sistemaJurosSelect.value = this.configuracoes.sistemaJuros || 'compostos-mensal';
