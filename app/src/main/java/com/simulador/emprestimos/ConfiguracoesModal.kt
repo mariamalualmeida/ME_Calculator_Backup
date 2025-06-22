@@ -389,7 +389,7 @@ fun ConfiguracoesModal(
                                 themeMode = themeMode,
                                 colorTheme = colorTheme,
                                 igpmAnual = igpmAnual.replace(',', '.').toDoubleOrNull() ?: 0.0,
-                                isAdmin = false, // CORREÇÃO: Forçar logout ao salvar configurações
+                                isAdmin = isAdmin, // SOLUÇÃO 1: Preservar estado administrativo
                                 desabilitarRegras = desabilitarRegras == "desabilitar",
                                 adminUser = if (newAdminUser.isNotEmpty()) newAdminUser else configuracoes.adminUser,
                                 adminPassword = if (newAdminPassword.isNotEmpty()) newAdminPassword else configuracoes.adminPassword
