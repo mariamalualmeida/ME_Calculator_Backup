@@ -191,6 +191,10 @@ SimuladorEmprestimos/
 - June 22, 2025: Sistema de preservação de configurações implementado - estado administrativo preservado durante sessão, validações funcionam corretamente com modo livre
 - June 22, 2025: Correções aplicadas em todas as versões (Web/PWA/Android) - fecharModal() não destrói mais configurações, atualizarClassesModoLivre() funciona adequadamente
 - June 22, 2025: Arquitetura simplificada - removido sistema complexo de localStorage session tracking, implementado fluxo direto de login a cada abertura de configurações
+- June 22, 2025: LIMPEZA COMPLETA DO SISTEMA - removidas 94 linhas CSS redundantes do estado civil, eliminado MutationObserver desnecessário, consolidadas validações duplicadas
+- June 22, 2025: Otimização massiva - removidas funções obsoletas, comentários redundantes, event listeners duplicados, simplificado CSS com solução de 2 linhas para estado civil
+- June 22, 2025: Padronização de código - unificados tipos de dados boolean/string, consolidadas funções de validação, removido JavaScript forçando CSS via DOM
+- June 22, 2025: Performance melhorada - eliminados timeouts desnecessários, MutationObserver, event listeners múltiplos, especificidade CSS extrema
 
 ## User Preferences
 
