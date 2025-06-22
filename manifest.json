@@ -2,7 +2,7 @@
   "name": "ME EMPREENDIMENTOS - Simulador",
   "short_name": "Simulador ME",
   "description": "Simulador de Empréstimos ME EMPREENDIMENTOS",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1976d2",
