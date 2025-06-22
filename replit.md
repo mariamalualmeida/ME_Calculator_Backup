@@ -182,6 +182,11 @@ SimuladorEmprestimos/
 - June 22, 2025: Implementado reset completo do estado administrativo ao fechar modal - limpa campos e oculta painel
 - June 22, 2025: Adicionado suporte à paleta de cores no botão de formulário completo para consistência visual
 - June 22, 2025: Modal Android reduzido para 90% da tela (0.9f) seguindo mesmo padrão das outras versões
+- June 22, 2025: TODAS CORREÇÕES FINAIS IMPLEMENTADAS: Modal tamanho corrigido (640px), select estado civil padronizado (min-width 180px)
+- June 22, 2025: Ícones senha atualizados para símbolos minimalistas (●/○), campos numéricos com teclado apropriado (type="tel" inputmode="numeric")
+- June 22, 2025: Validação data nascimento corrigida (anos desde 1920), código duplicado removido, toggle regras funcionando corretamente
+- June 22, 2025: Campos telefone/CEP/referências configurados para teclado numérico, caches atualizados (v=20250622062500)
+- June 22, 2025: Consistência total entre versões Web/PWA/Android mantida - todas correções aplicadas sistematicamente em todas plataformas
 
 ## User Preferences
 
