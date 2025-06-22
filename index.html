@@ -136,11 +136,11 @@
                         <div class="input-row">
                             <div class="input-group">
                                 <label for="dataNascimento">Data de Nascimento</label>
-                                <input type="date" id="dataNascimento">
+                                <input type="text" id="dataNascimento" placeholder="DD/MM/AAAA" maxlength="10">
                             </div>
                             <div class="input-group">
                                 <label for="estadoCivil">Estado Civil</label>
-                                <select id="estadoCivil">
+                                <select id="estadoCivil" class="input-field">
                                     <option value="">Selecione...</option>
                                     <option value="Solteiro(a)">Solteiro(a)</option>
                                     <option value="Casado(a)">Casado(a)</option>
@@ -373,7 +373,10 @@
                         <h4>Área Administrativa</h4>
                         <div class="admin-login" id="adminLoginSection">
                             <input type="text" id="adminUser" placeholder="Usuário">
-                            <input type="password" id="adminPass" placeholder="Senha">
+                            <div class="password-wrapper">
+                                <input type="password" id="adminPass" placeholder="Senha">
+                                <button type="button" class="password-toggle" onclick="togglePassword('adminPass')">👁</button>
+                            </div>
                             <button id="adminLoginBtn">LOGIN</button>
                         </div>
                         <div id="adminPanel" style="display: none;">
@@ -385,7 +388,10 @@
                                 </div>
                                 <div class="config-group">
                                     <label for="newAdminPass">Nova senha</label>
-                                    <input type="password" id="newAdminPass" placeholder="Nova senha">
+                                    <div class="password-wrapper">
+                                        <input type="password" id="newAdminPass" placeholder="Nova senha">
+                                        <button type="button" class="password-toggle" onclick="togglePassword('newAdminPass')">👁</button>
+                                    </div>
                                 </div>
 
                             </div>
