@@ -52,7 +52,7 @@ fun ConfiguracoesModal(
         Card(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
-                .fillMaxHeight(0.9f),
+                .fillMaxHeight(0.95f),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
                 containerColor = colorScheme.surface
@@ -65,7 +65,7 @@ fun ConfiguracoesModal(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(24.dp),
+                        .padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -89,9 +89,9 @@ fun ConfiguracoesModal(
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 24.dp)
+                        .padding(horizontal = 16.dp)
                         .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     // Nome do usuário
                     Column {
@@ -366,7 +366,7 @@ fun ConfiguracoesModal(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(24.dp),
+                        .padding(16.dp),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
