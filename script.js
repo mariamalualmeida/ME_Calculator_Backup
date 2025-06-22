@@ -789,6 +789,9 @@ class SimuladorEmprestimos {
     }
 
     calcular() {
+        // Recarregar configurações mais recentes antes do cálculo
+        this.carregarConfiguracoes();
+        
         // Verificar campos obrigatórios
         const valor = this.obterValorNumerico(this.valorEmprestimoField.value);
         const nParcelas = parseInt(this.numeroParcelasField.value) || 0;

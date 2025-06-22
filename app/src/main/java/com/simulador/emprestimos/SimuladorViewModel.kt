@@ -140,6 +140,18 @@ class SimuladorViewModel : ViewModel() {
         onConfiguracoesChanged?.invoke() // Notificar mudanças imediatamente
     }
     
+    private fun recarregarConfiguracoes() {
+        // Simular recarregamento das configurações do SharedPreferences
+        // Em uma implementação real, seria algo como:
+        // val savedConfig = sharedPreferences.getString("configuracoes", null)
+        // if (savedConfig != null) {
+        //     _configuracoes.value = Json.decodeFromString(savedConfig)
+        // }
+        // 
+        // Por enquanto, manter as configurações atuais
+        // pois não temos persistência real implementada
+    }
+    
     fun isJurosInvalido(taxaJuros: String, numeroParcelas: String): Boolean {
         val modoLivreAtivo = _configuracoes.value.isAdmin && _configuracoes.value.desabilitarRegras
         if (modoLivreAtivo || taxaJuros.isEmpty() || numeroParcelas.isEmpty()) {
@@ -160,6 +172,9 @@ class SimuladorViewModel : ViewModel() {
     
     fun calcular() {
         val currentState = _uiState.value
+        
+        // Recarregar configurações mais recentes antes do cálculo
+        recarregarConfiguracoes()
         
         // Limpar mensagens anteriores
         _uiState.value = currentState.copy(

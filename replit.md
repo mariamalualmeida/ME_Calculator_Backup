@@ -200,6 +200,7 @@ SimuladorEmprestimos/
 - June 22, 2025: IMPLEMENTAÇÃO COMPLETA DAS SOLICITAÇÕES - estado civil agora igual aos outros campos (estrutura HTML corrigida), campos bairro/cidade adicionados às referências, geração PDF atualizada com novos campos, modal fecha automaticamente após salvar, correções aplicadas em todas versões (v20250622102400)
 - June 22, 2025: NOVA FÓRMULA PRO-RATA REAL IMPLEMENTADA - sistema agora calcula juros extras sobre cada parcela individual e soma totais, em vez de distribuir juros do principal, resultando em valores substancialmente maiores e matemática mais precisa nas versões Web/PWA e Android (v20250622140900)
 - June 22, 2025: CORREÇÃO CRÍTICA PRO-RATA REAL - fórmula corrigida para calcular juros extras sobre valor principal (não sobre parcela), agora todos sistemas convergem para R$ 1.225,00 conforme esperado, sistema padrão definido como "Juros Compostos Mensais", regras de limites mantidas habilitadas por padrão (v20250622143000)
+- June 22, 2025: SINCRONIZAÇÃO DE CONFIGURAÇÕES IMPLEMENTADA - sistema agora recarrega configurações do localStorage antes de cada cálculo, garantindo que mudanças administrativas (sistema de juros, regras de limite, IGPM) sejam aplicadas imediatamente sem necessidade de refresh da página, correção aplicada nas versões Web/PWA e Android (v20250622144500)
 
 ## User Preferences
 
