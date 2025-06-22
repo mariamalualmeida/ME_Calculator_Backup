@@ -1293,8 +1293,9 @@ class SimuladorEmprestimos {
         // Aplicar mudanças imediatamente sem eventos complexos
         this.atualizarClassesModoLivre();
         
-        // NÃO fechar modal automaticamente - deixar usuário decidir
+        // Fechar modal automaticamente após salvar
         alert('Todas as configurações foram salvas com sucesso!');
+        this.fecharModal();
     }
 
     fazerLoginAdmin() {
@@ -1411,18 +1412,20 @@ class SimuladorEmprestimos {
         if (rendaMensal) profissionais.push(`Renda Mensal: ${rendaMensal}`);
         if (tempoEmprego) profissionais.push(`Tempo de Emprego: ${tempoEmprego}`);
 
-        // Referências organizadas igual aos dados do cliente
+        // Referências organizadas igual aos dados do cliente (com cidade)
         const referencias1 = [];
         const ref1Nome = document.getElementById('ref1Nome')?.value;
         const ref1Telefone = document.getElementById('ref1Telefone')?.value;
         const ref1Rua = document.getElementById('ref1Rua')?.value;
         const ref1Numero = document.getElementById('ref1Numero')?.value;
         const ref1Bairro = document.getElementById('ref1Bairro')?.value;
+        const ref1Cidade = document.getElementById('ref1Cidade')?.value;
         
         if (ref1Nome) referencias1.push(`Nome: ${ref1Nome}`);
         if (ref1Telefone) referencias1.push(`Telefone: ${ref1Telefone}`);
         if (ref1Rua) referencias1.push(`Endereço: ${ref1Rua}${ref1Numero ? `, ${ref1Numero}` : ''}`);
         if (ref1Bairro) referencias1.push(`Bairro: ${ref1Bairro}`);
+        if (ref1Cidade) referencias1.push(`Cidade: ${ref1Cidade}`);
 
         const referencias2 = [];
         const ref2Nome = document.getElementById('ref2Nome')?.value;
@@ -1430,11 +1433,13 @@ class SimuladorEmprestimos {
         const ref2Rua = document.getElementById('ref2Rua')?.value;
         const ref2Numero = document.getElementById('ref2Numero')?.value;
         const ref2Bairro = document.getElementById('ref2Bairro')?.value;
+        const ref2Cidade = document.getElementById('ref2Cidade')?.value;
         
         if (ref2Nome) referencias2.push(`Nome: ${ref2Nome}`);
         if (ref2Telefone) referencias2.push(`Telefone: ${ref2Telefone}`);
         if (ref2Rua) referencias2.push(`Endereço: ${ref2Rua}${ref2Numero ? `, ${ref2Numero}` : ''}`);
         if (ref2Bairro) referencias2.push(`Bairro: ${ref2Bairro}`);
+        if (ref2Cidade) referencias2.push(`Cidade: ${ref2Cidade}`);
 
         dadosCompletos.pessoais = pessoais;
         dadosCompletos.profissionais = profissionais;
