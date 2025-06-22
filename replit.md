@@ -168,7 +168,7 @@ SimuladorEmprestimos/
 - June 21, 2025: Sistema de juros usado agora é exibido no resultado do cálculo com destaque visual em caixa colorida
 - June 21, 2025: Função obterDadosCompletosPdf() corrigida para capturar dados independente da visibilidade do formulário
 - June 22, 2025: IMPLEMENTADAS MELHORIAS DE UX AVANÇADAS: Modal fullscreen responsivo, login admin oculto após autenticação, botões unificados
-- June 22, 2025: Modal configurações revertido para padrão centralizado seguindo layout da tela inicial (max-width 600px, backdrop escurecido)
+- June 22, 2025: Modal configurações revertido para padrão centralizado seguindo layout da tela inicial (max-width 800px, backdrop escurecido)
 - June 22, 2025: Login administrativo agora oculta automaticamente após autenticação, melhorando fluxo de navegação
 - June 22, 2025: Unificadas todas as funções de salvamento (credenciais, limites, configurações) em botão único centralizado e padronizado
 - June 22, 2025: Removidas funções duplicadas salvarLimitesAdmin() e salvarCredenciaisAdmin(), consolidando lógica em salvarConfiguracoesModal()
