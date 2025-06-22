@@ -264,27 +264,22 @@ class SimuladorViewModel : ViewModel() {
         
         return when (sistemaJuros) {
             "compostos-prorata-real" -> {
-                // Sistema Pro-rata Real: nova fórmula - calcular juros extras sobre cada parcela e somar
+                // Sistema Pro-rata Real: corrigido - calcular juros extras sobre valor principal
                 val prestacaoBase = (valor * (1 + taxaEfetiva).pow(nParcelas)) / nParcelas
                 
                 if (diasExtra != 0) {
-                    // Taxa diária real (exponencial)
-                    val taxaDiariaReal = (1 + taxaEfetiva).pow(1.0/30.0) - 1
+                    // Corrigido: calcular juros extras sobre o valor principal, não sobre a parcela
+                    val taxaDiaria = taxaEfetiva / 30.0 // Taxa linear para consistência
+                    val jurosProrrata = valor * taxaDiaria * diasExtra
                     
-                    // Calcular juros dos dias extras para cada parcela individual
-                    val jurosExtrasPorParcela = prestacaoBase * ((1 + taxaDiariaReal).pow(diasExtra.toDouble()) - 1)
-                    
-                    // Somar juros de todas as parcelas
-                    val jurosExtrasTotal = jurosExtrasPorParcela * nParcelas
-                    
-                    // Distribuir o total entre todas as parcelas
-                    val acrescimoPorParcela = jurosExtrasTotal / nParcelas
-                    val prestacaoComJurosExtras = prestacaoBase + acrescimoPorParcela
+                    // Distribuir juros extras igualmente entre todas as parcelas
+                    val jurosProrrataPorParcela = jurosProrrata / nParcelas
+                    val prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela
                     
                     ResultadoCalculo(
                         parcelaNormal = prestacaoComJurosExtras,
                         primeiraParcela = prestacaoComJurosExtras,
-                        jurosDiasExtras = jurosExtrasTotal,
+                        jurosDiasExtras = jurosProrrata,
                         diasExtra = diasExtra
                     )
                 } else {

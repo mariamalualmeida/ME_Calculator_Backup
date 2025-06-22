@@ -64,29 +64,24 @@ function calcularJurosCompostosMensais(valor, taxaEfetiva, nParcelas, diasExtra 
     };
 }
 
-// 3. Juros Compostos Pro-rata Real (nova fórmula)
+// 3. Juros Compostos Pro-rata Real (fórmula corrigida)
 function calcularJurosCompostosProRataReal(valor, taxaEfetiva, nParcelas, diasExtra = 0) {
     const montante = valor * Math.pow(1 + taxaEfetiva, nParcelas);
     const prestacaoBase = montante / nParcelas;
     
     if (diasExtra !== 0) {
-        // Nova fórmula: calcular juros extras SOBRE CADA parcela e somar
-        const taxaDiaria = Math.pow(1 + taxaEfetiva, 1/30) - 1;
+        // Corrigido: calcular juros extras sobre o valor principal, não sobre a parcela
+        const taxaDiaria = taxaEfetiva / 30.0; // Taxa linear para consistência
+        const jurosProrrata = valor * taxaDiaria * diasExtra;
         
-        // Calcular juros dos dias extras para cada parcela individual
-        const jurosExtrasPorParcela = prestacaoBase * (Math.pow(1 + taxaDiaria, diasExtra) - 1);
-        
-        // Somar juros de todas as parcelas
-        const jurosExtrasTotal = jurosExtrasPorParcela * nParcelas;
-        
-        // Distribuir o total entre todas as parcelas
-        const acrescimoPorParcela = jurosExtrasTotal / nParcelas;
-        const prestacaoComJurosExtras = prestacaoBase + acrescimoPorParcela;
+        // Distribuir juros extras igualmente entre todas as parcelas
+        const jurosProrrataPorParcela = jurosProrrata / nParcelas;
+        const prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela;
         
         return {
             parcelaNormal: prestacaoComJurosExtras,
             primeiraParcela: prestacaoComJurosExtras,
-            jurosDiasExtras: jurosExtrasTotal,
+            jurosDiasExtras: jurosProrrata,
             diasExtra: diasExtra
         };
     }
