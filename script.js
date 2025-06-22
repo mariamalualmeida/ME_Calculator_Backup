@@ -48,6 +48,11 @@ class SimuladorEmprestimos {
         };
         const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
         
+        console.log('Debug - Configurações carregadas:', loadedConfig);
+        console.log('Debug - Modo livre ativo?', loadedConfig.desabilitarRegras && loadedConfig.isAdmin);
+        
+        this.configuracoes = loadedConfig;
+        
         // Aplicar tema e paleta na inicialização
         this.aplicarTema(loadedConfig.themeMode);
         this.aplicarPaletaCores(loadedConfig.colorTheme);
@@ -913,8 +918,19 @@ class SimuladorEmprestimos {
     }
 
     validarCampos(valor, nParcelas, juros) {
+        // Debug: Log das configurações atuais
+        console.log('Debug - validarCampos:', {
+            desabilitarRegras: this.configuracoes.desabilitarRegras,
+            isAdmin: this.configuracoes.isAdmin,
+            valor: valor,
+            nParcelas: nParcelas,
+            juros: juros
+        });
+        
         // Verificar se regras estão desabilitadas para admin
         if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
+            console.log('Debug - Modo livre ativo, pulando validações');
+            
             // Aplicar classe para desabilitar borda vermelha no modo livre
             this.numeroParcelasField.classList.add('admin-free-mode');
             this.taxaJurosField.classList.add('admin-free-mode');
@@ -928,6 +944,8 @@ class SimuladorEmprestimos {
             // No modo livre, permitir qualquer número de parcelas e juros
             return { sucesso: true };
         }
+        
+        console.log('Debug - Modo normal, aplicando validações');
         
         // Modo normal - remover classe para permitir borda vermelha
         this.numeroParcelasField.classList.remove('admin-free-mode');
@@ -1918,9 +1936,9 @@ function togglePassword(fieldId) {
     
     if (field.type === 'password') {
         field.type = 'text';
-        button.textContent = '👁';
+        button.textContent = '○';
     } else {
         field.type = 'password';
-        button.textContent = '👁‍🗨';
+        button.textContent = '●';
     }
 }
