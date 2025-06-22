@@ -38,7 +38,8 @@ data class Configuracoes(
     val adminUser: String = "Migueis",
     val adminPassword: String = "Laila@10042009",
     val limitesPersonalizados: Map<Int, LimiteJuros>? = null,
-    val desabilitarRegras: Boolean = false
+    val desabilitarRegras: Boolean = false,
+    val sistemaJuros: String = "compostos-mensal"
 )
 
 data class LimiteJuros(

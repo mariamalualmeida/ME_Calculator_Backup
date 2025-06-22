@@ -1254,10 +1254,29 @@ class SimuladorEmprestimos {
     }
 
     resetarSessaoAdministrativa() {
-        // Função específica para resetar APENAS a sessão administrativa
-        // Mantém todas as outras configurações intactas
-        this.configuracoes.isAdmin = false;
-        console.log('Debug - Sessão administrativa resetada no carregamento');
+        // REFATORAÇÃO: Reset específico apenas no constructor inicial
+        // Preserva configurações salvas, reseta apenas sessão ativa
+        if (this.configuracoes) {
+            this.configuracoes.isAdmin = false;
+            console.log('Debug - Sessão administrativa resetada no carregamento inicial');
+        }
+    }
+
+    // REFATORAÇÃO: Método separado para recarregar sem resetar sessão
+    recarregarConfiguracoesSemReset() {
+        const config = localStorage.getItem('simulador_config');
+        if (config) {
+            const loadedConfig = JSON.parse(config);
+            // Preservar estado de autenticação atual
+            const isAdminAtual = this.configuracoes.isAdmin;
+            this.configuracoes = { ...this.configuracoes, ...loadedConfig };
+            this.configuracoes.isAdmin = isAdminAtual;
+            
+            // Aplicar temas e configurações visuais
+            this.aplicarTema(this.configuracoes.themeMode);
+            this.aplicarPaletaCores(this.configuracoes.colorTheme);
+            this.atualizarClassesModoLivre();
+        }
     }
 
     salvarConfiguracoesModal() {

@@ -1223,16 +1223,22 @@ body {
     box-sizing: border-box !important;
 }
 
-/* Estilo específico para estado civil APENAS no formulário principal */
-#estadoCivil:not(#configModal #estadoCivil) {
+/* REFATORAÇÃO: Especificidade absoluta para estado civil no formulário principal */
+body .container .main-content .form-completo-container #estadoCivil {
     width: 100% !important;
     min-width: 180px !important;
     flex: 1 !important;
     box-sizing: border-box !important;
-    /* Mantém estilo padrão dos campos normais - SEM border colorido */
-    background: var(--input-bg) !important;
-    border: 2px solid var(--border-color) !important;
-    color: var(--text-primary) !important;
+    padding: 16px !important;
+    border: 2px solid #79747e !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+    background: #fef7ff !important;
+    transition: all 0.2s ease !important;
+    outline: none !important;
+    min-height: 58px !important;
+    height: 58px !important;
+    color: #1c1b1f !important;
 }
 
 [data-theme="dark"] #configModal #themeMode,
@@ -1245,8 +1251,8 @@ body {
     border-color: var(--primary-light) !important;
 }
 
-/* Estado civil no tema escuro - estilo padrão (APENAS formulário principal) */
-[data-theme="dark"] #estadoCivil:not(#configModal #estadoCivil) {
+/* REFATORAÇÃO: Estado civil tema escuro com especificidade absoluta */
+[data-theme="dark"] body .container .main-content .form-completo-container #estadoCivil {
     background: var(--input-bg) !important;
     color: var(--text-primary) !important;
     border-color: var(--border-color) !important;
