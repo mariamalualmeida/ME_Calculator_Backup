@@ -53,9 +53,9 @@ class SimuladorEmprestimos {
         
         this.configuracoes = loadedConfig;
         
-        // CORREÇÃO CRÍTICA: Sempre forçar desautenticação no carregamento
-        // Mas manter outras configurações intactas
-        this.configuracoes.isAdmin = false;
+        // CORREÇÃO CRÍTICA: Forçar desautenticação apenas no carregamento inicial
+        // Criar função separada para reset de sessão
+        this.resetarSessaoAdministrativa();
         
         // Aplicar tema e paleta na inicialização
         this.aplicarTema(loadedConfig.themeMode);
@@ -129,7 +129,10 @@ class SimuladorEmprestimos {
             this.taxaJurosField.addEventListener('input', (e) => {
                 // Formatação automática como centavos em tempo real
                 this.formatarPercentualTempoReal(e.target);
-                this.validarCampoJuros();
+                // CORREÇÃO: Validar apenas se não estiver em modo livre
+                if (!(this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin)) {
+                    this.validarCampoJuros();
+                }
                 this.limparResultado();
             });
             console.log('Event listener anexado ao campo taxaJuros');
@@ -202,7 +205,10 @@ class SimuladorEmprestimos {
                 this.limparResultado();
                 this.toggleMetodoDiasExtras();
                 this.atualizarInformacaoLimites(); // Atualizar limites de juros
-                this.validarCampoJuros(); // Re-validar juros quando parcelas mudam
+                // CORREÇÃO: Re-validar juros apenas se não estiver em modo livre
+                if (!(this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin)) {
+                    this.validarCampoJuros();
+                }
             });
         }
 
@@ -1259,10 +1265,8 @@ class SimuladorEmprestimos {
     fecharModal() {
         document.getElementById('configModal').style.display = 'none';
         
-        // CORREÇÃO CRÍTICA: Reset completo do estado administrativo
-        this.configuracoes.isAdmin = false;
-        this.salvarConfiguracoes(); // Salvar o estado deslogado
-        
+        // CORREÇÃO: NÃO resetar estado administrativo se acabou de salvar
+        // Apenas limpar campos visuais, manter configurações salvas
         const adminPanel = document.getElementById('adminPanel');
         const loginSection = document.getElementById('adminLoginSection');
         
@@ -1281,7 +1285,14 @@ class SimuladorEmprestimos {
         if (adminUserField) adminUserField.value = '';
         if (adminPassField) adminPassField.value = '';
         
-        console.log('Debug - Modal fechado, admin deslogado');
+        console.log('Debug - Modal fechado, preservando configurações salvas');
+    }
+
+    resetarSessaoAdministrativa() {
+        // Função específica para resetar APENAS a sessão administrativa
+        // Mantém todas as outras configurações intactas
+        this.configuracoes.isAdmin = false;
+        console.log('Debug - Sessão administrativa resetada no carregamento');
     }
 
     salvarConfiguracoesModal() {
@@ -1334,7 +1345,7 @@ class SimuladorEmprestimos {
             setTimeout(() => window.simuladorInstance.forceConfigUpdate(), 100);
         }
         
-        this.fecharModal();
+        // NÃO fechar modal automaticamente - deixar usuário decidir
         alert('Todas as configurações foram salvas com sucesso!');
     }
 

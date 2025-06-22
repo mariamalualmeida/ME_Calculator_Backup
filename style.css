@@ -1200,9 +1200,12 @@ body {
     background: rgba(30, 30, 30, 1);
 }
 
-/* Estilo específico para selects do MODAL de configurações */
-#configModal select,
-#themeMode, #colorTheme, #desabilitarRegras, #sistemaJuros, #mostrarJurosRelatorio {
+/* Estilo EXCLUSIVO para selects do MODAL de configurações */
+#configModal #themeMode,
+#configModal #colorTheme, 
+#configModal #desabilitarRegras, 
+#configModal #sistemaJuros, 
+#configModal #mostrarJurosRelatorio {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -1220,28 +1223,30 @@ body {
     box-sizing: border-box !important;
 }
 
-/* Estilo específico para estado civil no FORMULÁRIO principal */
-#estadoCivil {
+/* Estilo específico para estado civil APENAS no formulário principal */
+#estadoCivil:not(#configModal #estadoCivil) {
     width: 100% !important;
-    min-width: 200px !important;
+    min-width: 180px !important;
     flex: 1 !important;
     box-sizing: border-box !important;
-    /* Mantém estilo padrão dos campos normais */
+    /* Mantém estilo padrão dos campos normais - SEM border colorido */
+    background: var(--input-bg) !important;
+    border: 2px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] #configModal select,
-[data-theme="dark"] #themeMode,
-[data-theme="dark"] #colorTheme,
-[data-theme="dark"] #desabilitarRegras,
-[data-theme="dark"] #sistemaJuros,
-[data-theme="dark"] #mostrarJurosRelatorio {
+[data-theme="dark"] #configModal #themeMode,
+[data-theme="dark"] #configModal #colorTheme,
+[data-theme="dark"] #configModal #desabilitarRegras,
+[data-theme="dark"] #configModal #sistemaJuros,
+[data-theme="dark"] #configModal #mostrarJurosRelatorio {
     background: var(--input-bg) !important;
     color: var(--text-primary) !important;
     border-color: var(--primary-light) !important;
 }
 
-/* Estado civil no tema escuro - estilo padrão */
-[data-theme="dark"] #estadoCivil {
+/* Estado civil no tema escuro - estilo padrão (APENAS formulário principal) */
+[data-theme="dark"] #estadoCivil:not(#configModal #estadoCivil) {
     background: var(--input-bg) !important;
     color: var(--text-primary) !important;
     border-color: var(--border-color) !important;
