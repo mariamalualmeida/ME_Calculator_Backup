@@ -1187,7 +1187,7 @@ class SimuladorEmprestimos {
         document.getElementById('nomeUsuario').value = this.configuracoes.nomeUsuario || '';
         document.getElementById('themeMode').value = this.configuracoes.themeMode || 'light';
         document.getElementById('colorTheme').value = this.configuracoes.colorTheme || 'default';
-        document.getElementById('mostrarJurosRelatorio').checked = this.configuracoes.mostrarJurosRelatorio || false;
+        document.getElementById('mostrarJurosRelatorio').value = this.configuracoes.mostrarJurosRelatorio ? 'true' : 'false';
         
         // Configurar estado da área administrativa
         const loginSection = document.getElementById('adminLoginSection');
@@ -1265,7 +1265,7 @@ class SimuladorEmprestimos {
         this.configuracoes.nomeUsuario = document.getElementById('nomeUsuario').value;
         this.configuracoes.themeMode = document.getElementById('themeMode').value;
         this.configuracoes.colorTheme = document.getElementById('colorTheme').value;
-        this.configuracoes.mostrarJurosRelatorio = document.getElementById('mostrarJurosRelatorio').checked;
+        this.configuracoes.mostrarJurosRelatorio = document.getElementById('mostrarJurosRelatorio').value === 'true';
         
         // Salvar configurações administrativas se logado
         if (this.configuracoes.isAdmin) {
@@ -1564,12 +1564,13 @@ class SimuladorEmprestimos {
                 }
             }
             
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(14);
-            doc.text(`Data da simulação: ${dataSimulacao}`, 20, yInicial);
+            // Seção de dados da simulação (após dados cadastrais)
             yInicial += 20;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.text('DADOS DA SIMULAÇÃO', 105, yInicial, { align: 'center' });
+            yInicial += 16;
             
-            // Dados da simulação - Fonte maior e negrito
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(14);
             doc.text(`Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
