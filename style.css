@@ -789,6 +789,56 @@ body {
     }
 }
 
+/* Limites Section Styles */
+.limits-section {
+    margin-top: 16px;
+}
+
+.limits-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #6750a4;
+    border-bottom: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+}
+
+.limits-header:hover {
+    background: rgba(103, 80, 164, 0.05);
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 8px;
+    border-bottom: 1px solid transparent;
+}
+
+.limits-header .toggle-icon {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+.limits-header.expanded .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.limits-content {
+    margin-top: 16px;
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .limits-header {
+    color: var(--primary-light);
+    border-bottom-color: #49454f;
+}
+
+[data-theme="dark"] .limits-header:hover {
+    background: rgba(208, 188, 255, 0.1);
+}
+
 /* Theme Variables */
 :root {
     --background: #f5f5f5;

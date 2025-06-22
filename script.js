@@ -308,6 +308,12 @@ class SimuladorEmprestimos {
             toggleFormBtn.addEventListener('click', () => this.toggleFormularioCompleto());
         }
 
+        // Event listener para toggle dos limites de juros
+        const limitsToggle = document.getElementById('limitsToggle');
+        if (limitsToggle) {
+            limitsToggle.addEventListener('click', () => this.toggleLimitsSection());
+        }
+
         // Configurar formatação dos campos do formulário completo
         this.setupFormCompletoFormatting();
     }
@@ -331,6 +337,25 @@ class SimuladorEmprestimos {
             container.style.display = 'none';
             toggleBtn.classList.remove('expanded');
             if (icon) icon.textContent = '▼';
+        }
+    }
+
+    // Função para toggle da seção de limites de juros
+    toggleLimitsSection() {
+        const limitsContent = document.getElementById('limitsTable');
+        const limitsHeader = document.getElementById('limitsToggle');
+        
+        if (!limitsContent || !limitsHeader) {
+            console.error('Elementos da seção de limites não encontrados');
+            return;
+        }
+        
+        if (limitsContent.style.display === 'none' || limitsContent.style.display === '') {
+            limitsContent.style.display = 'block';
+            limitsHeader.classList.add('expanded');
+        } else {
+            limitsContent.style.display = 'none';
+            limitsHeader.classList.remove('expanded');
         }
     }
 
@@ -1356,7 +1381,7 @@ class SimuladorEmprestimos {
         const pessoais = [];
         const dataNascimento = document.getElementById('dataNascimento')?.value;
         const estadoCivil = document.getElementById('estadoCivil')?.value;
-        const endereco = document.getElementById('endereco')?.value;
+        const rua = document.getElementById('rua')?.value;
         const numero = document.getElementById('numero')?.value;
         const complemento = document.getElementById('complemento')?.value;
         const bairro = document.getElementById('bairro')?.value;
@@ -1367,7 +1392,7 @@ class SimuladorEmprestimos {
 
         if (dataNascimento) pessoais.push(`Data de Nascimento: ${dataNascimento}`);
         if (estadoCivil) pessoais.push(`Estado Civil: ${estadoCivil}`);
-        if (endereco) pessoais.push(`Endereço: ${endereco}${numero ? `, ${numero}` : ''}${complemento ? `, ${complemento}` : ''}`);
+        if (rua) pessoais.push(`Endereço: ${rua}${numero ? `, ${numero}` : ''}${complemento ? `, ${complemento}` : ''}`);
         if (bairro) pessoais.push(`Bairro: ${bairro}`);
         if (cidade && estado) pessoais.push(`Cidade: ${cidade} - ${estado}`);
         if (cep) pessoais.push(`CEP: ${cep}`);
