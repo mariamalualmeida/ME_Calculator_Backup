@@ -722,24 +722,15 @@ class SimuladorEmprestimos {
 
     // Sistema de Juros Compostos + Pro-rata Real (distribui juros extras em todas as parcelas)
     calcularJurosCompostosProRataReal(valor, taxaEfetiva, nParcelas, diasExtra = 0, metodo = 'primeira') {
-        // Para sistema pro-rata real, usar juros simples como base e taxa diária exponencial para dias extras
-        const montanteBase = valor * (1 + taxaEfetiva * nParcelas);
-        const prestacaoBase = montanteBase / nParcelas;
+        const montante = valor * Math.pow(1 + taxaEfetiva, nParcelas);
+        const prestacaoBase = montante / nParcelas;
         
         if (diasExtra !== 0) {
-            // Pro-rata real: taxa diária exponencial aplicada ao valor principal
+            // Pro-rata real: distribui juros extras em TODAS as parcelas
             const taxaDiaria = Math.pow(1 + taxaEfetiva, 1/30) - 1;
             const jurosProrrata = valor * (Math.pow(1 + taxaDiaria, diasExtra) - 1);
             const jurosProrrataPorParcela = jurosProrrata / nParcelas;
             const prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela;
-            
-            console.log('Debug Pro-rata Real:', {
-                valor,
-                prestacaoBase: prestacaoBase.toFixed(2),
-                jurosProrrata: jurosProrrata.toFixed(2),
-                jurosPorParcela: jurosProrrataPorParcela.toFixed(2),
-                prestacaoFinal: prestacaoComJurosExtras.toFixed(2)
-            });
             
             return {
                 parcelaNormal: prestacaoComJurosExtras,
@@ -997,20 +988,16 @@ class SimuladorEmprestimos {
             const diasExtras = resultadoCalculo.diasExtra;
             const jurosExtras = formatarMoeda(resultadoCalculo.jurosDiasExtras);
             
-            if (metodo === 'distribuir' || sistemaJuros === 'compostos-prorata-real') {
-                // Método distribuir ou sistema pro-rata real - todas as parcelas iguais
+            if (metodo === 'distribuir') {
+                // Método distribuir - todas as parcelas iguais
                 const valorParcela = formatarMoeda(resultadoCalculo.parcelaNormal);
-                const textoMetodo = sistemaJuros === 'compostos-prorata-real' ? 
-                    '(Juros de dias extras distribuídos em todas as parcelas)' :
-                    '(Juros de dias extras distribuídos igualmente)';
-                
                 this.resultValue.innerHTML = `
                     <div style="margin-bottom: 8px; padding: 8px; background: var(--primary-container); border-radius: 8px;">
                         <small style="color: var(--on-primary-container); font-weight: 500;">Sistema: ${nomeSistema}</small>
                     </div>
                     <div style="margin-bottom: 12px;">
                         <strong>${nParcelas} parcelas de:</strong> ${valorParcela}
-                        <br><small style="color: #666;">${textoMetodo}</small>
+                        <br><small style="color: #666;">(Juros de dias extras distribuídos igualmente)</small>
                     </div>
                     <div style="font-size: 14px; color: #666; margin-top: 8px;">
                         Dias extras: ${diasExtras} | Juros extras: ${jurosExtras}

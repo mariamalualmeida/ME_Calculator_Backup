@@ -198,8 +198,6 @@ SimuladorEmprestimos/
 - June 22, 2025: CORREÇÕES CRÍTICAS APLICADAS EM TODAS VERSÕES - credenciais hardcoded removidas (admin/admin123), timeouts eliminados, console logs limpos, CSS otimizado, validações consolidadas, estado administrativo corrigido, cache atualizado (v20250622095500)
 - June 22, 2025: TODOS OS PROBLEMAS SISTEMÁTICOS CORRIGIDOS - estado civil com estilos completos, CSS redundante removido, especificidade excessiva eliminada, regras unificadas para formulários, dark theme consolidado, comentários atualizados, arquitetura CSS reorganizada (v20250622101000)
 - June 22, 2025: IMPLEMENTAÇÃO COMPLETA DAS SOLICITAÇÕES - estado civil agora igual aos outros campos (estrutura HTML corrigida), campos bairro/cidade adicionados às referências, geração PDF atualizada com novos campos, modal fecha automaticamente após salvar, correções aplicadas em todas versões (v20250622102400)
-- June 22, 2025: IMPLEMENTADA FÓRMULA PRO-RATA REAL DISTRIBUTIVA - sistema juros compostos pro-rata real agora distribui juros extras em TODAS as parcelas (não apenas primeira), mantendo taxa diária exponencial correta, aplicado em Web/PWA/Android (v20250622130500)
-- June 22, 2025: CORREÇÕES CRÍTICAS SISTEMA PRO-RATA REAL - corrigido problema passagem parâmetros função calcularParcela(), valor juros extras exibido corretamente na interface e PDFs, sistema funciona independente do método selecionado, consistência entre versões Web/PWA/Android garantida (v20250622132200)
 
 ## User Preferences
 
