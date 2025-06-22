@@ -536,9 +536,9 @@ class SimuladorEmprestimos {
         const mes = parseInt(partesData[1]);
         const ano = parseInt(partesData[2]);
         
-        // Validar ano
-        if (ano < 2020 || ano > 2050) {
-            this.marcarDataInvalida(input, 'Ano deve estar entre 2020 e 2050');
+        // Validar ano (permitir desde 1920 para data de nascimento)
+        if (ano < 1920 || ano > new Date().getFullYear()) {
+            this.marcarDataInvalida(input, `Ano deve estar entre 1920 e ${new Date().getFullYear()}`);
             return false;
         }
         

@@ -300,8 +300,18 @@ body {
     flex: 0 0 120px;
 }
 
-.input-row .input-group select.input-field {
+.input-row .input-group select.input-field,
+#estadoCivil {
     min-width: 180px;
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #79747e;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #fef7ff;
+    transition: all 0.2s ease;
+    outline: none;
+    box-sizing: border-box;
 }
 
 /* Estilos para todos os inputs do formulário completo */
