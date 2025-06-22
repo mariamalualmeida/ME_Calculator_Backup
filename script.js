@@ -26,10 +26,7 @@ class SimuladorEmprestimos {
         };
 
         this.configuracoes = this.carregarConfiguracoes();
-        // CORREÇÃO CRÍTICA: Reset apenas se não há configuração salva de admin ativo
-        if (!localStorage.getItem('admin_session_active')) {
-            this.resetarSessaoAdministrativa();
-        }
+        // Estado administrativo será gerenciado apenas durante uso do modal
         this.initializeElements();
         this.setupEventListeners();
         this.forcarLarguraEstadoCivil();
@@ -1115,19 +1112,26 @@ class SimuladorEmprestimos {
     }
 
     atualizarClassesModoLivre() {
+        // CORREÇÃO: Verificar se admin está ativo E regras estão desabilitadas
+        const modoLivreAtivo = this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras;
+        
         // Adicionar/remover classe admin-free-mode para desabilitar bordas vermelhas
         const campos = [this.valorEmprestimoField, this.numeroParcelasField, this.taxaJurosField];
         
         campos.forEach(campo => {
-            if (this.configuracoes.desabilitarRegras) {
-                campo.classList.add('admin-free-mode');
-            } else {
-                campo.classList.remove('admin-free-mode');
+            if (campo) {
+                if (modoLivreAtivo) {
+                    campo.classList.add('admin-free-mode');
+                } else {
+                    campo.classList.remove('admin-free-mode');
+                }
             }
         });
         
         // Re-validar campo de juros após mudança de modo
         this.validarCampoJuros();
+        
+        console.log('Debug - Modo livre atualizado:', modoLivreAtivo, 'isAdmin:', this.configuracoes.isAdmin, 'regras desabilitadas:', this.configuracoes.desabilitarRegras);
     }
 
     // CORREÇÃO JAVASCRIPT: Forçar largura do estado civil via DOM
@@ -1228,50 +1232,30 @@ class SimuladorEmprestimos {
     }
 
     abrirConfiguracoes() {
-        // SOLUÇÃO 1: Sincronizar estado isAdmin com localStorage
-        const sessionActive = localStorage.getItem('admin_session_active') === 'true';
-        this.configuracoes.isAdmin = sessionActive;
-        console.log('Debug - Estado admin sincronizado:', sessionActive);
-        
-        // Carregar valores atuais
+        // Carregar valores atuais nos campos básicos
         document.getElementById('nomeUsuario').value = this.configuracoes.nomeUsuario || '';
         document.getElementById('themeMode').value = this.configuracoes.themeMode || 'light';
         document.getElementById('colorTheme').value = this.configuracoes.colorTheme || 'default';
         document.getElementById('mostrarJurosRelatorio').value = this.configuracoes.mostrarJurosRelatorio ? 'true' : 'false';
         
-        // Formato unificado boolean para todos os valores
-        const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
-        if (desabilitarRegrasSelect) {
-            desabilitarRegrasSelect.value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
-            console.log('Debug - Toggle carregado:', desabilitarRegrasSelect.value, 'configuracao:', this.configuracoes.desabilitarRegras);
+        // NOVA LÓGICA: Sempre ocultar painel administrativo ao abrir configurações
+        const adminPanel = document.getElementById('adminPanel');
+        const loginSection = document.getElementById('adminLoginSection');
+        
+        if (adminPanel) {
+            adminPanel.style.display = 'none';
         }
         
-        // Configurar estado da área administrativa baseado em sessão sincronizada
-        const loginSection = document.getElementById('adminLoginSection');
-        if (sessionActive) {
-            // Ocultar login e mostrar painel
-            if (loginSection) {
-                loginSection.style.display = 'none';
-            }
-            this.mostrarPainelAdmin();
-            
-            // Carregar configurações administrativas
-            const sistemaJurosSelect = document.getElementById('sistemaJuros');
-            const igpmField = document.getElementById('igpmAnual');
-            
-            if (sistemaJurosSelect) {
-                sistemaJurosSelect.value = this.configuracoes.sistemaJuros || 'compostos-mensal';
-            }
-            
-            if (igpmField) {
-                igpmField.value = this.configuracoes.igpmAnual || '';
-            }
-        } else {
-            // Mostrar login se não estiver logado
-            if (loginSection) {
-                loginSection.style.display = 'flex';
-            }
+        // SEMPRE mostrar seção de login (exige reautenticação a cada acesso)
+        if (loginSection) {
+            loginSection.style.display = 'flex';
         }
+        
+        // Limpar campos de login para nova autenticação
+        const adminUserField = document.getElementById('adminUser');
+        const adminPassField = document.getElementById('adminPass');
+        if (adminUserField) adminUserField.value = '';
+        if (adminPassField) adminPassField.value = '';
         
         // Mostrar modal
         const modal = document.getElementById('configModal');
@@ -1281,41 +1265,39 @@ class SimuladorEmprestimos {
         modal.setAttribute('data-theme', this.configuracoes.themeMode);
         modal.setAttribute('data-color-theme', this.configuracoes.colorTheme);
         
-        // CORREÇÃO: Não mostrar painel automaticamente - só se sessionActive for true
-        if (sessionActive) {
-            this.mostrarPainelAdmin();
-        }
+        console.log('Debug - Configurações abertas, painel admin oculto, login obrigatório');
     }
 
     fecharModal() {
         document.getElementById('configModal').style.display = 'none';
         
-        // CORREÇÃO FINAL: Sempre ocultar painel e forçar logout ao fechar
-        this.configuracoes.isAdmin = false;
-        localStorage.removeItem('admin_session_active');
+        // NOVA LÓGICA: Preservar configurações, resetar apenas UI
+        // NÃO destruir this.configuracoes.isAdmin ou configurações salvas
         
         const adminPanel = document.getElementById('adminPanel');
         const loginSection = document.getElementById('adminLoginSection');
         
+        // Ocultar painel administrativo (será mostrado novamente após próximo login)
         if (adminPanel) {
             adminPanel.style.display = 'none';
         }
         
+        // Mostrar seção de login para próxima autenticação
         if (loginSection) {
             loginSection.style.display = 'flex';
         }
         
-        // Limpar campos de login
+        // Limpar campos de login para próxima sessão
         const adminUserField = document.getElementById('adminUser');
-        const adminPassField = document.getElementById('adminPassword');
+        const adminPassField = document.getElementById('adminPass');
         
         if (adminUserField) adminUserField.value = '';
         if (adminPassField) adminPassField.value = '';
         
-        // Atualizar estado visual
+        // IMPORTANTE: Aplicar configurações administrativas na página principal
         this.atualizarClassesModoLivre();
         
-        console.log('Debug - Modal fechado, sessão encerrada');
+        console.log('Debug - Modal fechado, configurações preservadas, UI resetada');
     }
 
     resetarSessaoAdministrativa() {
@@ -1400,19 +1382,26 @@ class SimuladorEmprestimos {
         const senha = document.getElementById('adminPass').value;
         
         if (usuario === this.configuracoes.adminUser && senha === this.configuracoes.adminPassword) {
+            // Ativar estado administrativo
             this.configuracoes.isAdmin = true;
-            // CORREÇÃO: Salvar sessão administrativa ativa
-            localStorage.setItem('admin_session_active', 'true');
-            this.mostrarPainelAdmin();
             
-            // Ocultar seção de login após autenticação
+            // Ocultar seção de login
             const loginSection = document.getElementById('adminLoginSection');
             if (loginSection) {
                 loginSection.style.display = 'none';
             }
             
+            // Mostrar painel administrativo temporariamente (apenas nesta sessão do modal)
+            this.mostrarPainelAdmin();
+            
+            // Limpar campos de login
             document.getElementById('adminUser').value = '';
             document.getElementById('adminPass').value = '';
+            
+            // Aplicar modo livre imediatamente se configurado
+            this.atualizarClassesModoLivre();
+            
+            console.log('Debug - Login admin realizado, painel temporário exibido');
         } else {
             alert('Usuário ou senha incorretos');
         }
