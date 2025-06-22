@@ -1230,8 +1230,10 @@ class SimuladorEmprestimos {
     fecharModal() {
         document.getElementById('configModal').style.display = 'none';
         
-        // CORREÇÃO: NÃO resetar estado administrativo se acabou de salvar
-        // Apenas limpar campos visuais, manter configurações salvas
+        // CORREÇÃO FINAL: Resetar completamente o estado administrativo ao fechar
+        // Forçar logout e ocultar painel administrativo
+        this.configuracoes.isAdmin = false;
+        
         const adminPanel = document.getElementById('adminPanel');
         const loginSection = document.getElementById('adminLoginSection');
         
@@ -1250,7 +1252,10 @@ class SimuladorEmprestimos {
         if (adminUserField) adminUserField.value = '';
         if (adminPassField) adminPassField.value = '';
         
-        console.log('Debug - Modal fechado, preservando configurações salvas');
+        // Atualizar classes de modo livre para refletir logout
+        this.atualizarClassesModoLivre();
+        
+        console.log('Debug - Modal fechado, sessão administrativa encerrada');
     }
 
     resetarSessaoAdministrativa() {

@@ -1223,10 +1223,11 @@ body {
     box-sizing: border-box !important;
 }
 
-/* REFATORAÇÃO: Especificidade absoluta para estado civil no formulário principal */
-body .container .main-content .form-completo-container #estadoCivil {
+/* CORREÇÃO FINAL: Máxima especificidade para estado civil no formulário */
+html body .container .main-content .form-completo-container .input-row .input-group select#estadoCivil.input-field {
     width: 100% !important;
     min-width: 180px !important;
+    max-width: none !important;
     flex: 1 !important;
     box-sizing: border-box !important;
     padding: 16px !important;
@@ -1239,6 +1240,16 @@ body .container .main-content .form-completo-container #estadoCivil {
     min-height: 58px !important;
     height: 58px !important;
     color: #1c1b1f !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+/* Sobrescrever qualquer estilo do modal que possa estar interferindo */
+html body .container .main-content .form-completo-container .input-row .input-group select#estadoCivil.input-field:not(#configModal select) {
+    background: #fef7ff !important;
+    border: 2px solid #79747e !important;
+    font-weight: normal !important;
 }
 
 [data-theme="dark"] #configModal #themeMode,
@@ -1251,8 +1262,8 @@ body .container .main-content .form-completo-container #estadoCivil {
     border-color: var(--primary-light) !important;
 }
 
-/* REFATORAÇÃO: Estado civil tema escuro com especificidade absoluta */
-[data-theme="dark"] body .container .main-content .form-completo-container #estadoCivil {
+/* CORREÇÃO FINAL: Estado civil tema escuro com máxima especificidade */
+[data-theme="dark"] html body .container .main-content .form-completo-container .input-row .input-group select#estadoCivil.input-field {
     background: var(--input-bg) !important;
     color: var(--text-primary) !important;
     border-color: var(--border-color) !important;
