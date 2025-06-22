@@ -29,7 +29,6 @@ class SimuladorEmprestimos {
         // Estado administrativo será gerenciado apenas durante uso do modal
         this.initializeElements();
         this.setupEventListeners();
-        this.forcarLarguraEstadoCivil();
         this.focusInitialField();
     }
 
@@ -1134,37 +1133,7 @@ class SimuladorEmprestimos {
         console.log('Debug - Modo livre atualizado:', modoLivreAtivo, 'isAdmin:', this.configuracoes.isAdmin, 'regras desabilitadas:', this.configuracoes.desabilitarRegras);
     }
 
-    // CORREÇÃO JAVASCRIPT: Forçar largura do estado civil via DOM
-    forcarLarguraEstadoCivil() {
-        const estadoCivil = document.getElementById('estadoCivil');
-        if (estadoCivil) {
-            // Aplicar estilos diretos via JavaScript
-            estadoCivil.style.width = '100%';
-            estadoCivil.style.minWidth = '100%';
-            estadoCivil.style.maxWidth = 'none';
-            estadoCivil.style.flex = '1';
-            estadoCivil.style.boxSizing = 'border-box';
-            
-            // Remover qualquer atributo de largura inline
-            estadoCivil.removeAttribute('width');
-            
-            // Observer para reagir a mudanças
-            const observer = new MutationObserver(() => {
-                if (estadoCivil.style.width !== '100%') {
-                    estadoCivil.style.width = '100%';
-                    estadoCivil.style.minWidth = '100%';
-                    estadoCivil.style.maxWidth = 'none';
-                }
-            });
-            
-            observer.observe(estadoCivil, {
-                attributes: true,
-                attributeFilter: ['style', 'class']
-            });
-            
-            console.log('Debug - Largura do estado civil forçada via JavaScript');
-        }
-    }
+
 
     // SOLUÇÃO 2: Sistema de Limpeza Visual Ativa
     limparErrosVisuais() {
@@ -1186,36 +1155,28 @@ class SimuladorEmprestimos {
     }
 
     validarCampoJuros() {
-        // SOLUÇÃO 2: Sempre limpar erros primeiro
         this.limparErrosVisuais();
         
-        // Verificar modo livre completo (regras desabilitadas E admin logado)
-        if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
-            console.log('Debug - validarCampoJuros: Modo livre ativo, pulando validação');
+        const modoLivreAtivo = this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras;
+        if (modoLivreAtivo) {
             return;
         }
 
         const jurosValue = this.obterPercentualNumerico(this.taxaJurosField.value);
         const nParcelas = parseInt(this.numeroParcelasField.value) || 1;
 
-        // Se campos estão vazios, não validar
         if (!this.taxaJurosField.value || !this.numeroParcelasField.value) {
             return;
         }
 
-        // Obter limites para o número de parcelas atual
         const limites = this.configuracoes.limitesPersonalizados?.[nParcelas] || this.limitesJuros[nParcelas];
-        
-        if (!limites) {
-            return;
-        }
+        if (!limites) return;
 
-        // Aplicar erro visual apenas se fora dos limites
-        if (jurosValue < limites.min || jurosValue > limites.max) {
+        const foraDosLimites = jurosValue < limites.min || jurosValue > limites.max;
+        if (foraDosLimites) {
             this.taxaJurosField.style.borderColor = '#d32f2f';
             this.taxaJurosField.style.color = '#d32f2f';
             this.taxaJurosField.title = `Para ${nParcelas} parcela(s), os juros devem estar entre ${limites.min.toFixed(2)}% e ${limites.max.toFixed(2)}%`;
-            console.log('Debug - Juros fora dos limites, aplicando erro visual');
         }
     }
 
@@ -1300,11 +1261,7 @@ class SimuladorEmprestimos {
         console.log('Debug - Modal fechado, configurações preservadas, UI resetada');
     }
 
-    resetarSessaoAdministrativa() {
-        // OBSOLETO: Função mantida para compatibilidade
-        // Estado administrativo agora é gerenciado apenas durante uso do modal
-        console.log('Debug - Sistema de sessão administrativa simplificado');
-    }
+
 
     // REFATORAÇÃO: Método separado para recarregar sem resetar sessão
     recarregarConfiguracoesSemReset() {

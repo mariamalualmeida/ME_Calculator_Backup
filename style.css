@@ -1223,68 +1223,10 @@ body {
     box-sizing: border-box !important;
 }
 
-/* CORREÇÃO EXTREMA: Anular completamente qualquer largura fixa do estado civil */
-select#estadoCivil {
-    width: 100% !important;
-    min-width: 100% !important;
-    max-width: none !important;
-    flex: 1 !important;
-}
-
-/* Força bruta: Especificidade máxima absoluta */
-html body * select#estadoCivil,
-html body div * select#estadoCivil,
-html body * * select#estadoCivil,
-.container * select#estadoCivil,
-.form-completo-container select#estadoCivil,
-div div div select#estadoCivil,
-* * * select#estadoCivil {
-    width: 100% !important;
-    min-width: 100% !important;
-    max-width: none !important;
-    flex: 1 !important;
-    box-sizing: border-box !important;
-    padding: 16px !important;
-    border: 2px solid #79747e !important;
-    border-radius: 8px !important;
-    font-size: 16px !important;
-    background: #fef7ff !important;
-    transition: all 0.2s ease !important;
-    outline: none !important;
-    min-height: 58px !important;
-    height: 58px !important;
-    color: #1c1b1f !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
-}
-
-/* Interceptação de media queries iOS específica para estado civil */
-@supports (-webkit-touch-callout: none) {
-    select#estadoCivil,
-    html body * select#estadoCivil,
-    * select#estadoCivil {
-        width: 100% !important;
-        min-width: 100% !important;
-        max-width: none !important;
-        font-size: 16px !important;
-        min-height: 58px !important;
-        height: 58px !important;
-        flex: 1 !important;
-    }
-}
-
-/* Força largura em todas as situações possíveis */
-select#estadoCivil,
-#estadoCivil,
-.form-completo-container select#estadoCivil,
-.input-group select#estadoCivil,
-.input-row select#estadoCivil {
-    width: 100% !important;
-    min-width: 100% !important;
-    max-width: 100% !important;
-    flex: 1 !important;
-    box-sizing: border-box !important;
+/* Estado civil - solução simples e limpa */
+#estadoCivil {
+    width: 100%;
+    flex: 1;
 }
 
 [data-theme="dark"] #configModal #themeMode,
@@ -1297,14 +1239,11 @@ select#estadoCivil,
     border-color: var(--primary-light) !important;
 }
 
-/* SOLUÇÃO 3: Estado civil tema escuro com especificidade máxima */
-[data-theme="dark"] html[data-theme] body[class] div.container[class] div.main-content[class] div.form-completo-container[class] div.input-row[class] div.input-group[class] select#estadoCivil[class*="input"][id="estadoCivil"]:not([id*="config"]) {
-    background: var(--input-bg) !important;
-    color: var(--text-primary) !important;
-    border-color: var(--border-color) !important;
-    width: 100% !important;
-    min-width: 100% !important;
-    max-width: 100% !important;
+/* Estado civil tema escuro */
+[data-theme="dark"] #estadoCivil {
+    background: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
 }
 
 /* Corrigir estilos dos selects em modo escuro */
