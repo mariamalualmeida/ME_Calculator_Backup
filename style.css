@@ -301,7 +301,8 @@ body {
 }
 
 .input-row .input-group select.input-field,
-#estadoCivil {
+#estadoCivil,
+.form-completo-container select {
     min-width: 180px;
     width: 100%;
     padding: 16px;
@@ -312,6 +313,13 @@ body {
     transition: all 0.2s ease;
     outline: none;
     box-sizing: border-box;
+    min-height: 58px;
+    height: 58px;
+}
+
+.form-completo-container select:focus {
+    border-color: var(--primary-color);
+    background: white;
 }
 
 /* Estilos para todos os inputs do formulário completo */
@@ -719,25 +727,36 @@ body {
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    background: transparent;
-    border: none;
+    background: transparent !important;
+    border: none !important;
     cursor: pointer;
-    font-size: 14px;
-    padding: 2px;
-    opacity: 0.5;
-    color: #666;
-    outline: none;
-    border-radius: 0;
+    font-size: 16px;
+    padding: 4px !important;
+    opacity: 0.6;
+    color: #666 !important;
+    outline: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    min-width: auto !important;
+    width: auto !important;
+    height: auto !important;
 }
 
 .password-toggle:hover {
-    opacity: 0.8;
-    background: transparent;
+    opacity: 0.9;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
 .password-toggle:focus {
-    outline: none;
-    box-shadow: none;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.password-toggle:active {
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
 .admin-login button {
