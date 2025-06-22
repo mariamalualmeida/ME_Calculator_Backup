@@ -1377,11 +1377,15 @@ class SimuladorEmprestimos {
         const formCompleto = document.getElementById('formCompleto');
         // Remover verificação de display para capturar dados sempre que preenchidos
 
-        // Dados pessoais
+        // Dados pessoais - incluindo nome e CPF aqui
         const pessoais = [];
+        const nomeCompletoField = document.getElementById('nomeCompleto');
+        const cpfCompletoField = document.getElementById('cpfCompleto');
+        const nomeCompleto = nomeCompletoField?.value?.trim() || '';
+        const cpfCompleto = cpfCompletoField?.value?.trim() || '';
         const dataNascimento = document.getElementById('dataNascimento')?.value;
         const estadoCivil = document.getElementById('estadoCivil')?.value;
-        const rua = document.getElementById('rua')?.value;
+        const endereco = document.getElementById('endereco')?.value;
         const numero = document.getElementById('numero')?.value;
         const complemento = document.getElementById('complemento')?.value;
         const bairro = document.getElementById('bairro')?.value;
@@ -1390,9 +1394,11 @@ class SimuladorEmprestimos {
         const cep = document.getElementById('cep')?.value;
         const telefone = document.getElementById('telefoneCompleto')?.value;
 
+        if (nomeCompleto) pessoais.push(`Nome: ${nomeCompleto}`);
+        if (cpfCompleto) pessoais.push(`CPF: ${cpfCompleto}`);
         if (dataNascimento) pessoais.push(`Data de Nascimento: ${dataNascimento}`);
         if (estadoCivil) pessoais.push(`Estado Civil: ${estadoCivil}`);
-        if (rua) pessoais.push(`Endereço: ${rua}${numero ? `, ${numero}` : ''}${complemento ? `, ${complemento}` : ''}`);
+        if (endereco) pessoais.push(`Endereço: ${endereco}${numero ? `, ${numero}` : ''}${complemento ? `, ${complemento}` : ''}`);
         if (bairro) pessoais.push(`Bairro: ${bairro}`);
         if (cidade && estado) pessoais.push(`Cidade: ${cidade} - ${estado}`);
         if (cep) pessoais.push(`CEP: ${cep}`);
@@ -1401,12 +1407,12 @@ class SimuladorEmprestimos {
         // Dados profissionais
         const profissionais = [];
         const profissao = document.getElementById('profissao')?.value;
-        const empresa = document.getElementById('empresa')?.value;
+        const localTrabalho = document.getElementById('localTrabalho')?.value;
         const rendaMensal = document.getElementById('rendaMensal')?.value;
         const tempoEmprego = document.getElementById('tempoEmprego')?.value;
 
         if (profissao) profissionais.push(`Profissão: ${profissao}`);
-        if (empresa) profissionais.push(`Empresa: ${empresa}`);
+        if (localTrabalho) profissionais.push(`Local de Trabalho: ${localTrabalho}`);
         if (rendaMensal) profissionais.push(`Renda Mensal: ${rendaMensal}`);
         if (tempoEmprego) profissionais.push(`Tempo de Emprego: ${tempoEmprego}`);
 
@@ -1414,16 +1420,36 @@ class SimuladorEmprestimos {
         const referencias = [];
         const ref1Nome = document.getElementById('ref1Nome')?.value;
         const ref1Telefone = document.getElementById('ref1Telefone')?.value;
-        const ref1Parentesco = document.getElementById('ref1Parentesco')?.value;
+        const ref1Rua = document.getElementById('ref1Rua')?.value;
+        const ref1Numero = document.getElementById('ref1Numero')?.value;
+        const ref1Bairro = document.getElementById('ref1Bairro')?.value;
         const ref2Nome = document.getElementById('ref2Nome')?.value;
         const ref2Telefone = document.getElementById('ref2Telefone')?.value;
-        const ref2Parentesco = document.getElementById('ref2Parentesco')?.value;
+        const ref2Rua = document.getElementById('ref2Rua')?.value;
+        const ref2Numero = document.getElementById('ref2Numero')?.value;
+        const ref2Bairro = document.getElementById('ref2Bairro')?.value;
 
         if (ref1Nome || ref1Telefone) {
-            referencias.push(`1ª Referência: ${ref1Nome || 'N/A'}${ref1Telefone ? ` - ${ref1Telefone}` : ''}${ref1Parentesco ? ` (${ref1Parentesco})` : ''}`);
+            let ref1Info = `1ª Referência: ${ref1Nome || 'N/A'}${ref1Telefone ? ` - ${ref1Telefone}` : ''}`;
+            referencias.push(ref1Info);
+            if (ref1Rua || ref1Numero || ref1Bairro) {
+                let endereco1 = 'Endereço: ';
+                if (ref1Rua) endereco1 += ref1Rua;
+                if (ref1Numero) endereco1 += `, ${ref1Numero}`;
+                if (ref1Bairro) endereco1 += ` - ${ref1Bairro}`;
+                referencias.push(endereco1);
+            }
         }
         if (ref2Nome || ref2Telefone) {
-            referencias.push(`2ª Referência: ${ref2Nome || 'N/A'}${ref2Telefone ? ` - ${ref2Telefone}` : ''}${ref2Parentesco ? ` (${ref2Parentesco})` : ''}`);
+            let ref2Info = `2ª Referência: ${ref2Nome || 'N/A'}${ref2Telefone ? ` - ${ref2Telefone}` : ''}`;
+            referencias.push(ref2Info);
+            if (ref2Rua || ref2Numero || ref2Bairro) {
+                let endereco2 = 'Endereço: ';
+                if (ref2Rua) endereco2 += ref2Rua;
+                if (ref2Numero) endereco2 += `, ${ref2Numero}`;
+                if (ref2Bairro) endereco2 += ` - ${ref2Bairro}`;
+                referencias.push(endereco2);
+            }
         }
 
         dadosCompletos.pessoais = pessoais;
@@ -1466,7 +1492,7 @@ class SimuladorEmprestimos {
             doc.setFontSize(16);
             doc.text('Relatório de Simulação de Empréstimo', 105, 32, { align: 'center' });
             
-            // Dados do usuário primeiro (somente se tiver nome)
+            // Simulado por e data da simulação
             let yInicial = 50;
             if (nomeUsuario && nomeUsuario.trim() !== '') {
                 doc.setFont('helvetica', 'bold');
@@ -1475,29 +1501,18 @@ class SimuladorEmprestimos {
                 yInicial += 12;
             }
             
-            // Dados do cliente (incluir dados completos se preenchidos)
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.text(`Data da simulação: ${dataSimulacao}`, 20, yInicial);
+            yInicial += 20;
+
+            // Dados cadastrais primeiro (conforme solicitado)
             const dadosCompletos = this.obterDadosCompletosPdf();
             
-            if (nomeCliente) {
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(14);
-                doc.text(`Cliente: ${nomeCliente}`, 20, yInicial);
-                yInicial += 12;
-            }
-            
-            if (cpfCliente) {
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(14);
-                doc.text(`CPF: ${cpfCliente}`, 20, yInicial);
-                yInicial += 12;
-            }
-
-            // Adicionar dados completos se disponíveis
             if (dadosCompletos.temDados) {
-                yInicial += 8;
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(16);
-                doc.text('DADOS COMPLETOS DO CLIENTE', 105, yInicial, { align: 'center' });
+                doc.text('DADOS CADASTRAIS DO CLIENTE', 105, yInicial, { align: 'center' });
                 yInicial += 16;
 
                 // Dados pessoais
