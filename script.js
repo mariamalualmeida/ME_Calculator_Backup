@@ -735,7 +735,7 @@ class SimuladorEmprestimos {
             return {
                 parcelaNormal: prestacaoComJurosExtras,
                 primeiraParcela: prestacaoComJurosExtras,
-                jurosDiasExtras: jurosProrrata,
+                jurosDiasExtras: jurosProrrata, // Valor original dos juros extras para exibição
                 diasExtra: diasExtra
             };
         }
@@ -988,16 +988,20 @@ class SimuladorEmprestimos {
             const diasExtras = resultadoCalculo.diasExtra;
             const jurosExtras = formatarMoeda(resultadoCalculo.jurosDiasExtras);
             
-            if (metodo === 'distribuir') {
-                // Método distribuir - todas as parcelas iguais
+            if (metodo === 'distribuir' || sistemaJuros === 'compostos-prorata-real') {
+                // Método distribuir ou sistema pro-rata real - todas as parcelas iguais
                 const valorParcela = formatarMoeda(resultadoCalculo.parcelaNormal);
+                const textoMetodo = sistemaJuros === 'compostos-prorata-real' ? 
+                    '(Juros de dias extras distribuídos em todas as parcelas)' :
+                    '(Juros de dias extras distribuídos igualmente)';
+                
                 this.resultValue.innerHTML = `
                     <div style="margin-bottom: 8px; padding: 8px; background: var(--primary-container); border-radius: 8px;">
                         <small style="color: var(--on-primary-container); font-weight: 500;">Sistema: ${nomeSistema}</small>
                     </div>
                     <div style="margin-bottom: 12px;">
                         <strong>${nParcelas} parcelas de:</strong> ${valorParcela}
-                        <br><small style="color: #666;">(Juros de dias extras distribuídos igualmente)</small>
+                        <br><small style="color: #666;">${textoMetodo}</small>
                     </div>
                     <div style="font-size: 14px; color: #666; margin-top: 8px;">
                         Dias extras: ${diasExtras} | Juros extras: ${jurosExtras}
