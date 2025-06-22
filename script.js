@@ -124,22 +124,13 @@ class SimuladorEmprestimos {
             });
         }
 
-        // Anexar event listener com múltiplas tentativas
         if (this.taxaJurosField) {
             this.taxaJurosField.addEventListener('input', (e) => {
-                // SOLUÇÃO 2: Limpar erros primeiro, depois formatar
                 this.limparErrosVisuais();
-                // Formatação automática como centavos em tempo real
                 this.formatarPercentualTempoReal(e.target);
-                // Validar apenas se não estiver em modo livre
-                if (!(this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin)) {
-                    this.validarCampoJuros();
-                }
+                this.validarCampoJuros();
                 this.limparResultado();
             });
-            console.log('Event listener anexado ao campo taxaJuros');
-        } else {
-            console.error('Campo taxaJuros não encontrado!');
         }
         
         if (this.taxaJurosField) {
@@ -1135,23 +1126,15 @@ class SimuladorEmprestimos {
 
 
 
-    // SOLUÇÃO 2: Sistema de Limpeza Visual Ativa
     limparErrosVisuais() {
-        // Remover todas as bordas vermelhas de erro
-        if (this.taxaJurosField) this.taxaJurosField.style.borderColor = '';
-        if (this.numeroParcelasField) this.numeroParcelasField.style.borderColor = '';
-        if (this.valorEmprestimoField) this.valorEmprestimoField.style.borderColor = '';
-        
-        // Remover classes de erro se existirem
         [this.taxaJurosField, this.numeroParcelasField, this.valorEmprestimoField].forEach(field => {
             if (field) {
-                field.classList.remove('error-state');
+                field.style.borderColor = '';
                 field.style.color = '';
                 field.title = '';
+                field.classList.remove('error-state');
             }
         });
-        
-        console.log('Debug - Erros visuais limpos');
     }
 
     validarCampoJuros() {

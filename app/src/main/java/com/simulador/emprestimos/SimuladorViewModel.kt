@@ -141,14 +141,8 @@ class SimuladorViewModel : ViewModel() {
     }
     
     fun isJurosInvalido(taxaJuros: String, numeroParcelas: String): Boolean {
-        // CORREÇÃO: Verificar se admin está ativo E regras estão desabilitadas
         val modoLivreAtivo = _configuracoes.value.isAdmin && _configuracoes.value.desabilitarRegras
-        if (modoLivreAtivo) {
-            return false
-        }
-        
-        // Se campos estão vazios, não validar
-        if (taxaJuros.isEmpty() || numeroParcelas.isEmpty()) {
+        if (modoLivreAtivo || taxaJuros.isEmpty() || numeroParcelas.isEmpty()) {
             return false
         }
         
@@ -222,20 +216,12 @@ class SimuladorViewModel : ViewModel() {
     }
     
     private fun validarCampos(valor: Double, nParcelas: Int, juros: Double): Pair<Boolean, String?> {
-        // CORREÇÃO: Verificar se admin está ativo E regras estão desabilitadas
         val modoLivreAtivo = _configuracoes.value.isAdmin && _configuracoes.value.desabilitarRegras
         
         if (modoLivreAtivo) {
-            // Modo livre - apenas validações básicas
-            if (valor <= 0) {
-                return Pair(false, "Valor do empréstimo deve ser maior que zero.")
-            }
-            if (nParcelas < 1) {
-                return Pair(false, "NÚMERO DE PARCELAS DEVE SER MAIOR QUE ZERO.")
-            }
-            if (juros < 0) {
-                return Pair(false, "TAXA DE JUROS DEVE SER MAIOR OU IGUAL A ZERO.")
-            }
+            if (valor <= 0) return Pair(false, "Valor do empréstimo deve ser maior que zero.")
+            if (nParcelas < 1) return Pair(false, "NÚMERO DE PARCELAS DEVE SER MAIOR QUE ZERO.")
+            if (juros < 0) return Pair(false, "TAXA DE JUROS DEVE SER MAIOR OU IGUAL A ZERO.")
             return Pair(true, null)
         }
         
