@@ -26,7 +26,8 @@ class SimuladorEmprestimos {
         };
 
         this.configuracoes = this.carregarConfiguracoes();
-        // Estado administrativo será gerenciado apenas durante uso do modal
+        // Forçar reset do estado administrativo na inicialização
+        this.configuracoes.isAdmin = false;
         this.initializeElements();
         this.setupEventListeners();
         this.focusInitialField();
@@ -44,19 +45,11 @@ class SimuladorEmprestimos {
             desabilitarRegras: false,
             colorTheme: 'default',
             sistemaJuros: 'compostos-mensal',
-            adminUser: 'Migueis',
-            adminPassword: 'Laila@10042009'
+            adminUser: 'admin',
+            adminPassword: 'admin123'
         };
         const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
-        
-        console.log('Debug - Configurações carregadas:', loadedConfig);
-        console.log('Debug - Modo livre ativo?', loadedConfig.desabilitarRegras && loadedConfig.isAdmin);
-        
         this.configuracoes = loadedConfig;
-        
-        // REFATORAÇÃO: Reset de sessão APENAS no constructor inicial
-        // Remover reset automático que quebrava autenticação
-        
         // Aplicar tema e paleta na inicialização
         this.aplicarTema(loadedConfig.themeMode);
         this.aplicarPaletaCores(loadedConfig.colorTheme);
@@ -1121,7 +1114,7 @@ class SimuladorEmprestimos {
         // Re-validar campo de juros após mudança de modo
         this.validarCampoJuros();
         
-        console.log('Debug - Modo livre atualizado:', modoLivreAtivo, 'isAdmin:', this.configuracoes.isAdmin, 'regras desabilitadas:', this.configuracoes.desabilitarRegras);
+
     }
 
 
@@ -1141,18 +1134,14 @@ class SimuladorEmprestimos {
         this.limparErrosVisuais();
         
         const modoLivreAtivo = this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras;
-        if (modoLivreAtivo) {
+        if (modoLivreAtivo || !this.taxaJurosField.value || !this.numeroParcelasField.value) {
             return;
         }
 
         const jurosValue = this.obterPercentualNumerico(this.taxaJurosField.value);
         const nParcelas = parseInt(this.numeroParcelasField.value) || 1;
-
-        if (!this.taxaJurosField.value || !this.numeroParcelasField.value) {
-            return;
-        }
-
         const limites = this.configuracoes.limitesPersonalizados?.[nParcelas] || this.limitesJuros[nParcelas];
+        
         if (!limites) return;
 
         const foraDosLimites = jurosValue < limites.min || jurosValue > limites.max;
@@ -1164,15 +1153,13 @@ class SimuladorEmprestimos {
     }
 
     rolarParaResultado() {
-        setTimeout(() => {
-            const resultSection = document.querySelector('.result-section');
-            if (resultSection) {
-                resultSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            }
-        }, 300);
+        const resultSection = document.querySelector('.result-section');
+        if (resultSection) {
+            resultSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
     }
 
     abrirConfiguracoes() {
