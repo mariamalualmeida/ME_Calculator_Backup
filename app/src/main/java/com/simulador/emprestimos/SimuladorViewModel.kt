@@ -141,8 +141,9 @@ class SimuladorViewModel : ViewModel() {
     }
     
     fun isJurosInvalido(taxaJuros: String, numeroParcelas: String): Boolean {
-        // Se regras estão desabilitadas, nunca é inválido
-        if (_configuracoes.value.desabilitarRegras) {
+        // CORREÇÃO: Verificar se admin está ativo E regras estão desabilitadas
+        val modoLivreAtivo = _configuracoes.value.isAdmin && _configuracoes.value.desabilitarRegras
+        if (modoLivreAtivo) {
             return false
         }
         
@@ -221,8 +222,10 @@ class SimuladorViewModel : ViewModel() {
     }
     
     private fun validarCampos(valor: Double, nParcelas: Int, juros: Double): Pair<Boolean, String?> {
-        // Verificar se regras estão desabilitadas para admin
-        if (_configuracoes.value.desabilitarRegras == true && _configuracoes.value.isAdmin) {
+        // CORREÇÃO: Verificar se admin está ativo E regras estão desabilitadas
+        val modoLivreAtivo = _configuracoes.value.isAdmin && _configuracoes.value.desabilitarRegras
+        
+        if (modoLivreAtivo) {
             // Modo livre - apenas validações básicas
             if (valor <= 0) {
                 return Pair(false, "Valor do empréstimo deve ser maior que zero.")

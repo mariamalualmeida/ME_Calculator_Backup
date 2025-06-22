@@ -187,6 +187,10 @@ SimuladorEmprestimos/
 - June 22, 2025: Validação data nascimento corrigida (anos desde 1920), código duplicado removido, toggle regras funcionando corretamente
 - June 22, 2025: Campos telefone/CEP/referências configurados para teclado numérico, caches atualizados (v=20250622062500)
 - June 22, 2025: Consistência total entre versões Web/PWA/Android mantida - todas correções aplicadas sistematicamente em todas plataformas
+- June 22, 2025: SOLUÇÃO DEFINITIVA IMPLEMENTADA: Nova arquitetura de autenticação administrativa - painel sempre oculto ao abrir configurações, exige reautenticação a cada acesso
+- June 22, 2025: Sistema de preservação de configurações implementado - estado administrativo preservado durante sessão, validações funcionam corretamente com modo livre
+- June 22, 2025: Correções aplicadas em todas as versões (Web/PWA/Android) - fecharModal() não destrói mais configurações, atualizarClassesModoLivre() funciona adequadamente
+- June 22, 2025: Arquitetura simplificada - removido sistema complexo de localStorage session tracking, implementado fluxo direto de login a cada abertura de configurações
 
 ## User Preferences
 
