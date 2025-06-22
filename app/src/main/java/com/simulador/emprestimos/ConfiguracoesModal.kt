@@ -289,7 +289,7 @@ fun ConfiguracoesModal(
                                         visualTransformation = if (passwordVisible) androidx.compose.ui.text.input.VisualTransformation.None else PasswordVisualTransformation(),
                                         trailingIcon = {
                                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                                                Text(if (passwordVisible) "👁" else "👁‍🗨", fontSize = 16.sp)
+                                                Text(if (passwordVisible) "○" else "●", fontSize = 20.sp)
                                             }
                                         },
                                         singleLine = true
@@ -348,7 +348,7 @@ fun ConfiguracoesModal(
                                     visualTransformation = if (newPasswordVisible) androidx.compose.ui.text.input.VisualTransformation.None else PasswordVisualTransformation(),
                                     trailingIcon = {
                                         IconButton(onClick = { newPasswordVisible = !newPasswordVisible }) {
-                                            Text(if (newPasswordVisible) "👁" else "👁‍🗨", fontSize = 16.sp)
+                                            Text(if (newPasswordVisible) "○" else "●", fontSize = 20.sp)
                                         }
                                     },
                                     singleLine = true
