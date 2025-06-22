@@ -587,7 +587,7 @@ body {
     transform: translateY(1px) !important;
 }
 
-/* Modal Styles - Centralizado como tela inicial */
+/* Modal Styles - Igual ao container da tela principal */
 .modal {
     position: fixed;
     top: 0;
@@ -608,7 +608,8 @@ body {
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     width: 100%;
-    max-width: 800px;
+    max-width: 600px;
+    max-height: 90vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -642,6 +643,7 @@ body {
     padding: 24px;
     flex: 1;
     overflow-y: auto;
+    max-height: calc(90vh - 120px);
 }
 
 .config-group {

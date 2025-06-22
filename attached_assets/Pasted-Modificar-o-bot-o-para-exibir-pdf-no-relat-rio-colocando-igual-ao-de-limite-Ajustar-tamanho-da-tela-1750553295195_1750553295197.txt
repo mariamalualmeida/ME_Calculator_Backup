@@ -1,0 +1,21 @@
+Modificar o botão para exibir pdf no relatório colocando igual ao de limite.
+Ajustar tamanho da tela de configurações para ocupar a tela igual a página inicial.
+Ajustar tamanho e posição do botão "salvar credenciais", "salvar limites" e "salvar, igual ao botão "Login"
+Caso o usuário logue em "Area Administrativa", ao invez de expandir a aba, o painel administrativo seja aberto em outra aba.
+Não implemente nada, apenas avalie as propostas, grau de dificuldade e me de o feedback
+
+
+
+Poderíamos então implementar a função de ocultar expandir as funções de configurações e painel administrativo ao invés de criar uma nova aba.
+Aplicar modal fullscreen para toda a aba.
+Percebi que após entrar no painel administrativo, a opção de logar ainda continua sendo exibida, acredito que após logan, ela poderá ser ocultada.
+Existe também um botão para salvar alteração de limites, salvar alteração em dados cadastrais e um botão salvar no final da página, poderia unificar as funções de salvar no final da página, mantendo apenas 1 botão, ajustando para ter o tamanho padronizado e centralizado igual ao botão de login
+Uma outra coisa que percebi é que a aba não se ajusta quando o teclado virtual é aberto.
+Fiz também algumas simulações de juros e gostaria que analizase, comparasse e confirmar se estão corretas.
+Simulei o valor de 1000,00 dividido de 10 vezes a juros de 15% e mais 15 dias extras, sendo a simulação tealizada no dia 21/06/2025 com vencimento da primeira parcela para o dia 06/08/2025, distribuindo os juros extras em todas as parcelas. Fiz a simulação todos os sistemas de juros.
+No juros compostos padrão mensal deu 10 parcelas de 412,06
+No juros simples deu 10 parcelas de 257,50
+No juros compostos diários deu 10 parcelas de 454,27
+No juros compostos real pro-rata deu 10 parcelas de 411,79.
+Lembro que antes, no sistema real pro-rata, era calculado juros sobre juros sobre os 15 dias, todos os meses, o que resultava um valor acumulado final muito alto.
+Não quero que implemente nada, apenas avalie as sugestões anteriores juntos com as atuais e cálculos propostos, mende um feedback do que acha e dá dificuldade em implementar as modificações e correções

@@ -290,16 +290,21 @@ class SimuladorEmprestimos {
     toggleFormularioCompleto() {
         const container = document.getElementById('formCompletoContainer');
         const toggleBtn = document.getElementById('toggleFormCompleto');
-        const icon = toggleBtn.querySelector('.toggle-icon');
+        const icon = toggleBtn ? toggleBtn.querySelector('.toggle-icon') : null;
         
-        if (container.style.display === 'none') {
+        if (!container || !toggleBtn) {
+            console.error('Elementos do formulário completo não encontrados');
+            return;
+        }
+        
+        if (container.style.display === 'none' || container.style.display === '') {
             container.style.display = 'block';
             toggleBtn.classList.add('expanded');
-            icon.textContent = '▲';
+            if (icon) icon.textContent = '▲';
         } else {
             container.style.display = 'none';
             toggleBtn.classList.remove('expanded');
-            icon.textContent = '▼';
+            if (icon) icon.textContent = '▼';
         }
     }
 
