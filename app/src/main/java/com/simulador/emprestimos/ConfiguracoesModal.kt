@@ -345,7 +345,12 @@ fun ConfiguracoesModal(
                                     onValueChange = { newAdminPassword = it },
                                     modifier = Modifier.fillMaxWidth(),
                                     placeholder = { Text("Nova senha") },
-                                    visualTransformation = PasswordVisualTransformation(),
+                                    visualTransformation = if (newPasswordVisible) androidx.compose.ui.text.input.VisualTransformation.None else PasswordVisualTransformation(),
+                                    trailingIcon = {
+                                        IconButton(onClick = { newPasswordVisible = !newPasswordVisible }) {
+                                            Text(if (newPasswordVisible) "🙈" else "👁")
+                                        }
+                                    },
                                     singleLine = true
                                 )
                                 
