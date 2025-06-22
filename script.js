@@ -184,7 +184,8 @@ class SimuladorEmprestimos {
             if (!/^\d$/.test(e.key)) {
                 e.preventDefault();
                 return;
-            });
+            }
+        });
         }
 
         if (this.numeroParcelasField) {
@@ -230,13 +231,19 @@ class SimuladorEmprestimos {
             });
         }
 
-        document.getElementById('adminLoginBtn').addEventListener('click', () => {
-            this.fazerLoginAdmin();
-        });
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        if (adminLoginBtn) {
+            adminLoginBtn.addEventListener('click', () => {
+                this.fazerLoginAdmin();
+            });
+        }
 
-        document.getElementById('saveCredentialsBtn').addEventListener('click', () => {
-            this.salvarCredenciaisAdmin();
-        });
+        const saveCredentialsBtn = document.getElementById('saveCredentialsBtn');
+        if (saveCredentialsBtn) {
+            saveCredentialsBtn.addEventListener('click', () => {
+                this.salvarCredenciaisAdmin();
+            });
+        }
 
         // Listener para detectar mudanças no localStorage (sincronização entre abas)
         window.addEventListener('storage', (e) => {
