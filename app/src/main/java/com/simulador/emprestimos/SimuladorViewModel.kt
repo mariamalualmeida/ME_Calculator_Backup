@@ -265,7 +265,8 @@ class SimuladorViewModel : ViewModel() {
         return when (sistemaJuros) {
             "compostos-prorata-real" -> {
                 // Sistema Pro-rata Real: distribui juros extras em TODAS as parcelas
-                val prestacaoBase = (valor * (1 + taxaEfetiva).pow(nParcelas)) / nParcelas
+                val montante = valor * (1 + taxaEfetiva).pow(nParcelas)
+                val prestacaoBase = montante / nParcelas
                 
                 if (diasExtra != 0) {
                     // Taxa diária real (exponencial)
