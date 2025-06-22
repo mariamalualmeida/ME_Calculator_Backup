@@ -26,6 +26,8 @@ class SimuladorEmprestimos {
         };
 
         this.configuracoes = this.carregarConfiguracoes();
+        // REFATORAÇÃO: Reset de sessão apenas no constructor inicial
+        this.resetarSessaoAdministrativa();
         this.initializeElements();
         this.setupEventListeners();
         this.focusInitialField();
@@ -53,9 +55,8 @@ class SimuladorEmprestimos {
         
         this.configuracoes = loadedConfig;
         
-        // CORREÇÃO CRÍTICA: Forçar desautenticação apenas no carregamento inicial
-        // Criar função separada para reset de sessão
-        this.resetarSessaoAdministrativa();
+        // REFATORAÇÃO: Reset de sessão APENAS no constructor inicial
+        // Remover reset automático que quebrava autenticação
         
         // Aplicar tema e paleta na inicialização
         this.aplicarTema(loadedConfig.themeMode);
@@ -268,17 +269,8 @@ class SimuladorEmprestimos {
             }
         });
 
-        // Listener para eventos customizados (sincronização na mesma aba)
-        window.addEventListener('configuracoesAtualizadas', (e) => {
-            console.log('Evento configuracoesAtualizadas recebido');
-            this.carregarConfiguracoes();
-            this.esconderErro();
-            this.atualizarClassesModoLivre();
-            this.atualizarInformacaoLimites(); // Atualizar limites quando configurações mudam
-        });
-
-        // Método alternativo - polling para garantir sincronização
-        this.setupConfigPolling();
+        // REFATORAÇÃO: Sistema de sincronização automática removido
+        // Sincronização manual via interface direta
         
         // Armazenar referência da instância para callbacks globais
         window.simuladorInstance = this;
@@ -1131,35 +1123,8 @@ class SimuladorEmprestimos {
         this.validarCampoJuros();
     }
 
-    setupConfigPolling() {
-        // Sistema de polling para detectar mudanças
-        this.lastConfigHash = this.getConfigHash();
-        this.configPollingInterval = setInterval(() => {
-            const currentHash = this.getConfigHash();
-            if (currentHash !== this.lastConfigHash) {
-                console.log('Mudança de configuração detectada via polling');
-                this.carregarConfiguracoes();
-                this.esconderErro();
-                this.atualizarClassesModoLivre();
-                this.lastConfigHash = currentHash;
-            }
-        }, 500); // Verificar a cada 500ms
-    }
-
-    getConfigHash() {
-        const config = localStorage.getItem('simulador_config');
-        return config ? btoa(config).slice(0, 10) : '';
-    }
-
-    // Método para ser chamado diretamente após salvar configurações
-    forceConfigUpdate() {
-        console.log('Atualizando configurações forçadamente');
-        this.carregarConfiguracoes();
-        this.esconderErro();
-        this.atualizarClassesModoLivre();
-        this.validarCampoJuros(); // Re-validar juros após mudanças admin
-        this.lastConfigHash = this.getConfigHash();
-    }
+    // REFATORAÇÃO: Métodos de sincronização complexa removidos
+    // Usar aplicação direta de mudanças sem polling ou eventos
 
     validarCampoJuros() {
         // CORREÇÃO: Verificar modo livre completo (regras desabilitadas E admin logado)
@@ -1214,7 +1179,7 @@ class SimuladorEmprestimos {
         document.getElementById('colorTheme').value = this.configuracoes.colorTheme || 'default';
         document.getElementById('mostrarJurosRelatorio').value = this.configuracoes.mostrarJurosRelatorio ? 'true' : 'false';
         
-        // CORREÇÃO: Carregar valor do toggle de regras SEMPRE (independente de isAdmin)
+        // REFATORAÇÃO: Formato unificado boolean para todos os valores
         const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
         if (desabilitarRegrasSelect) {
             desabilitarRegrasSelect.value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
@@ -1338,14 +1303,9 @@ class SimuladorEmprestimos {
         this.aplicarPaletaCores(this.configuracoes.colorTheme);
         this.salvarConfiguracoes();
         
-        // CORREÇÃO: Disparar eventos APÓS todas as operações de salvamento
-        setTimeout(() => {
-            window.dispatchEvent(new CustomEvent('configuracoesAtualizadas'));
-            
-            if (window.simuladorInstance && window.simuladorInstance.forceConfigUpdate) {
-                window.simuladorInstance.forceConfigUpdate();
-            }
-        }, 50);
+        // REFATORAÇÃO: Eliminado sistema de sincronização automática
+        // Aplicar mudanças imediatamente sem eventos complexos
+        this.atualizarClassesModoLivre();
         
         // NÃO fechar modal automaticamente - deixar usuário decidir
         alert('Todas as configurações foram salvas com sucesso!');
@@ -1376,8 +1336,8 @@ class SimuladorEmprestimos {
         const panel = document.getElementById('adminPanel');
         const table = document.getElementById('limitsTable');
         
-        // Carregar configuração de desabilitar regras
-        document.getElementById('desabilitarRegras').value = this.configuracoes.desabilitarRegras ? 'true' : 'false';
+        // REFATORAÇÃO: Formato unificado boolean consistente
+        document.getElementById('desabilitarRegras').value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
         
         let html = '<div class="limits-table">';
         for (let parcelas = 1; parcelas <= 15; parcelas++) {
