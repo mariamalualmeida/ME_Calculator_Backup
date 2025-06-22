@@ -33,6 +33,8 @@ fun ConfiguracoesModal(
     // Estados para área administrativa
     var adminUser by remember { mutableStateOf("") }
     var adminPassword by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var newPasswordVisible by remember { mutableStateOf(false) }
     var isAdmin by remember { mutableStateOf(configuracoes.isAdmin) }
     var showAdminPanel by remember { mutableStateOf(configuracoes.isAdmin) }
     
@@ -284,7 +286,12 @@ fun ConfiguracoesModal(
                                         onValueChange = { adminPassword = it },
                                         modifier = Modifier.weight(1f),
                                         placeholder = { Text("Senha") },
-                                        visualTransformation = PasswordVisualTransformation(),
+                                        visualTransformation = if (passwordVisible) androidx.compose.ui.text.input.VisualTransformation.None else PasswordVisualTransformation(),
+                                        trailingIcon = {
+                                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                                Text(if (passwordVisible) "🙈" else "👁")
+                                            }
+                                        },
                                         singleLine = true
                                     )
                                     

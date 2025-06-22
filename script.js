@@ -316,6 +316,7 @@ class SimuladorEmprestimos {
 
         // Configurar formatação dos campos do formulário completo
         this.setupFormCompletoFormatting();
+        this.setupDateMaskFormatting();
     }
 
     // Função para toggle do formulário completo
@@ -1827,6 +1828,13 @@ class SimuladorEmprestimos {
         const metodoSelecionado = document.querySelector('input[name="metodoDias"]:checked');
         return metodoSelecionado ? metodoSelecionado.value : 'primeira';
     }
+
+    setupDateMaskFormatting() {
+        const dataNascimentoField = document.getElementById('dataNascimento');
+        if (dataNascimentoField) {
+            dataNascimentoField.addEventListener('input', (e) => this.formatarData(e.target));
+        }
+    }
 }
 
 // Inicializar aplicação com fallback
@@ -1902,3 +1910,17 @@ function forceAttachEventListener() {
 setTimeout(forceAttachEventListener, 100);
 setTimeout(forceAttachEventListener, 500);
 setTimeout(forceAttachEventListener, 1500);
+
+// Função para toggle de senha
+function togglePassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    const button = field.nextElementSibling;
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        button.textContent = '🙈';
+    } else {
+        field.type = 'password';
+        button.textContent = '👁';
+    }
+}
