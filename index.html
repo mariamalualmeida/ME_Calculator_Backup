@@ -338,10 +338,15 @@
 
                     
                     <div class="config-group">
-                        <label for="mostrarJurosRelatorio">
-                            <input type="checkbox" id="mostrarJurosRelatorio">
-                            Exibir taxa de juros no relatório PDF
-                        </label>
+                        <div class="config-toggle">
+                            <label for="mostrarJurosRelatorio">Exibir taxa de juros no relatório PDF</label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="mostrarJurosRelatorio" class="toggle-input">
+                                <label for="mostrarJurosRelatorio" class="toggle-label">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="config-group admin-section">
@@ -399,8 +404,13 @@
                                 </small>
                             </div>
                             
-                            <h5>Editar Limites de Juros</h5>
-                            <div id="limitsTable"></div>
+                            <div class="limits-section">
+                                <h5 class="limits-header" id="limitsToggle">
+                                    <span>Editar Limites de Juros</span>
+                                    <span class="toggle-icon">▼</span>
+                                </h5>
+                                <div id="limitsTable" class="limits-content" style="display: none;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

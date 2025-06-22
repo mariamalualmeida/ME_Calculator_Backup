@@ -755,22 +755,22 @@ body {
 
 @media (max-width: 768px) {
     .modal {
-        padding: 10px;
-        align-items: flex-start;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding: 16px;
+        align-items: center;
+        padding-top: 20px;
+        padding-bottom: 20px;
     }
     
     .modal-content {
         width: 100%;
         max-width: 100%;
-        max-height: 95vh;
-        margin-top: 0;
+        max-height: 90vh;
+        margin: 0;
     }
     
     .modal-body {
         padding: 16px;
-        max-height: calc(95vh - 140px);
+        max-height: calc(90vh - 120px);
         overflow-y: auto;
     }
     
