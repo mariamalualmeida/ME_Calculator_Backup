@@ -30,13 +30,13 @@ fun ConfiguracoesModal(
     var colorTheme by remember { mutableStateOf(configuracoes.colorTheme) }
     var igpmAnual by remember { mutableStateOf(configuracoes.igpmAnual.toString().replace('.', ',')) }
     
-    // Estados para área administrativa - NOVA LÓGICA: sempre oculto ao abrir
+    // Estados para área administrativa - CORREÇÃO: reset completo a cada abertura
     var adminUser by remember { mutableStateOf("") }
     var adminPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var newPasswordVisible by remember { mutableStateOf(false) }
-    var isAdmin by remember { mutableStateOf(false) } // Sempre inicia como false
-    var showAdminPanel by remember { mutableStateOf(false) } // Sempre oculto inicialmente
+    var isAdmin by remember { mutableStateOf(false) }
+    var showAdminPanel by remember { mutableStateOf(false) }
     
     // Estados para alteração de credenciais
     var newAdminUser by remember { mutableStateOf("") }
