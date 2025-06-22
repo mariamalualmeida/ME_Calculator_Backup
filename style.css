@@ -1223,11 +1223,25 @@ body {
     box-sizing: border-box !important;
 }
 
-/* SOLUÇÃO 3: Especificidade máxima com múltiplas dimensões para estado civil */
-html[data-theme] body[class] div.container[class] div.main-content[class] div.form-completo-container[class] div.input-row[class] div.input-group[class] select#estadoCivil[class*="input"][id="estadoCivil"]:not([id*="config"]):not(#configModal select):not(#configModal #estadoCivil) {
+/* CORREÇÃO EXTREMA: Anular completamente qualquer largura fixa do estado civil */
+select#estadoCivil {
     width: 100% !important;
     min-width: 100% !important;
-    max-width: 100% !important;
+    max-width: none !important;
+    flex: 1 !important;
+}
+
+/* Força bruta: Especificidade máxima absoluta */
+html body * select#estadoCivil,
+html body div * select#estadoCivil,
+html body * * select#estadoCivil,
+.container * select#estadoCivil,
+.form-completo-container select#estadoCivil,
+div div div select#estadoCivil,
+* * * select#estadoCivil {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: none !important;
     flex: 1 !important;
     box-sizing: border-box !important;
     padding: 16px !important;
@@ -1247,13 +1261,16 @@ html[data-theme] body[class] div.container[class] div.main-content[class] div.fo
 
 /* Interceptação de media queries iOS específica para estado civil */
 @supports (-webkit-touch-callout: none) {
-    html body div.container div.main-content div.form-completo-container select#estadoCivil {
+    select#estadoCivil,
+    html body * select#estadoCivil,
+    * select#estadoCivil {
         width: 100% !important;
         min-width: 100% !important;
-        max-width: 100% !important;
+        max-width: none !important;
         font-size: 16px !important;
         min-height: 58px !important;
         height: 58px !important;
+        flex: 1 !important;
     }
 }
 

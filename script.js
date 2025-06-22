@@ -32,6 +32,7 @@ class SimuladorEmprestimos {
         }
         this.initializeElements();
         this.setupEventListeners();
+        this.forcarLarguraEstadoCivil();
         this.focusInitialField();
     }
 
@@ -1129,6 +1130,38 @@ class SimuladorEmprestimos {
         this.validarCampoJuros();
     }
 
+    // CORREÇÃO JAVASCRIPT: Forçar largura do estado civil via DOM
+    forcarLarguraEstadoCivil() {
+        const estadoCivil = document.getElementById('estadoCivil');
+        if (estadoCivil) {
+            // Aplicar estilos diretos via JavaScript
+            estadoCivil.style.width = '100%';
+            estadoCivil.style.minWidth = '100%';
+            estadoCivil.style.maxWidth = 'none';
+            estadoCivil.style.flex = '1';
+            estadoCivil.style.boxSizing = 'border-box';
+            
+            // Remover qualquer atributo de largura inline
+            estadoCivil.removeAttribute('width');
+            
+            // Observer para reagir a mudanças
+            const observer = new MutationObserver(() => {
+                if (estadoCivil.style.width !== '100%') {
+                    estadoCivil.style.width = '100%';
+                    estadoCivil.style.minWidth = '100%';
+                    estadoCivil.style.maxWidth = 'none';
+                }
+            });
+            
+            observer.observe(estadoCivil, {
+                attributes: true,
+                attributeFilter: ['style', 'class']
+            });
+            
+            console.log('Debug - Largura do estado civil forçada via JavaScript');
+        }
+    }
+
     // SOLUÇÃO 2: Sistema de Limpeza Visual Ativa
     limparErrosVisuais() {
         // Remover todas as bordas vermelhas de erro
@@ -1248,8 +1281,8 @@ class SimuladorEmprestimos {
         modal.setAttribute('data-theme', this.configuracoes.themeMode);
         modal.setAttribute('data-color-theme', this.configuracoes.colorTheme);
         
-        // Se é admin, mostrar painel
-        if (this.configuracoes.isAdmin) {
+        // CORREÇÃO: Não mostrar painel automaticamente - só se sessionActive for true
+        if (sessionActive) {
             this.mostrarPainelAdmin();
         }
     }
@@ -1257,8 +1290,10 @@ class SimuladorEmprestimos {
     fecharModal() {
         document.getElementById('configModal').style.display = 'none';
         
-        // CORREÇÃO: Manter sessão administrativa se estiver logado
-        // Apenas ocultar painel, não forçar logout
+        // CORREÇÃO FINAL: Sempre ocultar painel e forçar logout ao fechar
+        this.configuracoes.isAdmin = false;
+        localStorage.removeItem('admin_session_active');
+        
         const adminPanel = document.getElementById('adminPanel');
         const loginSection = document.getElementById('adminLoginSection');
         
@@ -1267,19 +1302,20 @@ class SimuladorEmprestimos {
         }
         
         if (loginSection) {
-            loginSection.style.display = this.configuracoes.isAdmin ? 'none' : 'flex';
+            loginSection.style.display = 'flex';
         }
         
-        // Limpar campos de login apenas se não estiver logado
-        if (!this.configuracoes.isAdmin) {
-            const adminUserField = document.getElementById('adminUser');
-            const adminPassField = document.getElementById('adminPassword');
-            
-            if (adminUserField) adminUserField.value = '';
-            if (adminPassField) adminPassField.value = '';
-        }
+        // Limpar campos de login
+        const adminUserField = document.getElementById('adminUser');
+        const adminPassField = document.getElementById('adminPassword');
         
-        console.log('Debug - Modal fechado, sessão preservada:', this.configuracoes.isAdmin);
+        if (adminUserField) adminUserField.value = '';
+        if (adminPassField) adminPassField.value = '';
+        
+        // Atualizar estado visual
+        this.atualizarClassesModoLivre();
+        
+        console.log('Debug - Modal fechado, sessão encerrada');
     }
 
     resetarSessaoAdministrativa() {
