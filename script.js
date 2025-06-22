@@ -1284,7 +1284,7 @@ class SimuladorEmprestimos {
         if (this.configuracoes.isAdmin) {
             // IGPM movido para área administrativa
             this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
-            this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').value === 'true';
+            this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').value === 'desabilitar';
             this.configuracoes.sistemaJuros = document.getElementById('sistemaJuros').value;
             
             // Salvar credenciais se alteradas
