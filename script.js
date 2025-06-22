@@ -48,6 +48,9 @@ class SimuladorEmprestimos {
         };
         const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
         
+        // CORREÇÃO CRÍTICA: Sempre forçar desautenticação no carregamento
+        loadedConfig.isAdmin = false;
+        
         console.log('Debug - Configurações carregadas:', loadedConfig);
         console.log('Debug - Modo livre ativo?', loadedConfig.desabilitarRegras && loadedConfig.isAdmin);
         
@@ -1251,7 +1254,10 @@ class SimuladorEmprestimos {
     fecharModal() {
         document.getElementById('configModal').style.display = 'none';
         
-        // Reset completo do estado administrativo
+        // CORREÇÃO CRÍTICA: Reset completo do estado administrativo
+        this.configuracoes.isAdmin = false;
+        this.salvarConfiguracoes(); // Salvar o estado deslogado
+        
         const adminPanel = document.getElementById('adminPanel');
         const loginSection = document.getElementById('adminLoginSection');
         
@@ -1263,14 +1269,14 @@ class SimuladorEmprestimos {
             loginSection.style.display = 'flex';
         }
         
-        // Limpar campos de login e resetar estado
+        // Limpar campos de login
         const adminUserField = document.getElementById('adminUser');
         const adminPassField = document.getElementById('adminPassword');
         
         if (adminUserField) adminUserField.value = '';
         if (adminPassField) adminPassField.value = '';
         
-        this.configuracoes.isAdmin = false;
+        console.log('Debug - Modal fechado, admin deslogado');
     }
 
     salvarConfiguracoesModal() {
