@@ -919,19 +919,13 @@ class SimuladorEmprestimos {
             this.numeroParcelasField.classList.add('admin-free-mode');
             this.taxaJurosField.classList.add('admin-free-mode');
             
-            // Modo livre - apenas validações básicas
-            if (nParcelas < 1) {
-                return {
-                    sucesso: false,
-                    mensagem: "NÚMERO DE PARCELAS DEVE SER MAIOR QUE ZERO."
-                };
+            // Modo livre - NENHUMA validação de regras de negócio
+            // Apenas verificações básicas de entrada válida
+            if (valor <= 0) {
+                return { sucesso: false, mensagem: 'VALOR DO EMPRÉSTIMO DEVE SER MAIOR QUE ZERO.' };
             }
-            if (juros < 0) {
-                return {
-                    sucesso: false,
-                    mensagem: "TAXA DE JUROS DEVE SER MAIOR OU IGUAL A ZERO."
-                };
-            }
+            
+            // No modo livre, permitir qualquer número de parcelas e juros
             return { sucesso: true };
         }
         
