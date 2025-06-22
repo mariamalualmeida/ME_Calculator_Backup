@@ -726,16 +726,23 @@ class SimuladorEmprestimos {
         const prestacaoBase = montante / nParcelas;
         
         if (diasExtra !== 0) {
-            // Pro-rata real: distribui juros extras em TODAS as parcelas
+            // Nova fórmula: calcular juros extras SOBRE CADA parcela e somar
             const taxaDiaria = Math.pow(1 + taxaEfetiva, 1/30) - 1;
-            const jurosProrrata = valor * (Math.pow(1 + taxaDiaria, diasExtra) - 1);
-            const jurosProrrataPorParcela = jurosProrrata / nParcelas;
-            const prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela;
+            
+            // Calcular juros dos dias extras para cada parcela individual
+            const jurosExtrasPorParcela = prestacaoBase * (Math.pow(1 + taxaDiaria, diasExtra) - 1);
+            
+            // Somar juros de todas as parcelas
+            const jurosExtrasTotal = jurosExtrasPorParcela * nParcelas;
+            
+            // Distribuir o total entre todas as parcelas
+            const acrescimoPorParcela = jurosExtrasTotal / nParcelas;
+            const prestacaoComJurosExtras = prestacaoBase + acrescimoPorParcela;
             
             return {
                 parcelaNormal: prestacaoComJurosExtras,
                 primeiraParcela: prestacaoComJurosExtras,
-                jurosDiasExtras: jurosProrrata,
+                jurosDiasExtras: jurosExtrasTotal,
                 diasExtra: diasExtra
             };
         }

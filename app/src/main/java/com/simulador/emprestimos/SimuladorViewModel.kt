@@ -264,20 +264,27 @@ class SimuladorViewModel : ViewModel() {
         
         return when (sistemaJuros) {
             "compostos-prorata-real" -> {
-                // Sistema Pro-rata Real: distribui juros extras em TODAS as parcelas
+                // Sistema Pro-rata Real: nova fórmula - calcular juros extras sobre cada parcela e somar
                 val prestacaoBase = (valor * (1 + taxaEfetiva).pow(nParcelas)) / nParcelas
                 
                 if (diasExtra != 0) {
                     // Taxa diária real (exponencial)
                     val taxaDiariaReal = (1 + taxaEfetiva).pow(1.0/30.0) - 1
-                    val jurosProrrata = valor * ((1 + taxaDiariaReal).pow(diasExtra.toDouble()) - 1)
-                    val jurosProrrataPorParcela = jurosProrrata / nParcelas
-                    val prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela
+                    
+                    // Calcular juros dos dias extras para cada parcela individual
+                    val jurosExtrasPorParcela = prestacaoBase * ((1 + taxaDiariaReal).pow(diasExtra.toDouble()) - 1)
+                    
+                    // Somar juros de todas as parcelas
+                    val jurosExtrasTotal = jurosExtrasPorParcela * nParcelas
+                    
+                    // Distribuir o total entre todas as parcelas
+                    val acrescimoPorParcela = jurosExtrasTotal / nParcelas
+                    val prestacaoComJurosExtras = prestacaoBase + acrescimoPorParcela
                     
                     ResultadoCalculo(
                         parcelaNormal = prestacaoComJurosExtras,
                         primeiraParcela = prestacaoComJurosExtras,
-                        jurosDiasExtras = jurosProrrata,
+                        jurosDiasExtras = jurosExtrasTotal,
                         diasExtra = diasExtra
                     )
                 } else {
