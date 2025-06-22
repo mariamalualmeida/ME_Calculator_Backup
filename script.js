@@ -722,20 +722,29 @@ class SimuladorEmprestimos {
 
     // Sistema de Juros Compostos + Pro-rata Real (distribui juros extras em todas as parcelas)
     calcularJurosCompostosProRataReal(valor, taxaEfetiva, nParcelas, diasExtra = 0, metodo = 'primeira') {
-        const montante = valor * Math.pow(1 + taxaEfetiva, nParcelas);
-        const prestacaoBase = montante / nParcelas;
+        // Para sistema pro-rata real, usar juros simples como base e taxa diária exponencial para dias extras
+        const montanteBase = valor * (1 + taxaEfetiva * nParcelas);
+        const prestacaoBase = montanteBase / nParcelas;
         
         if (diasExtra !== 0) {
-            // Pro-rata real: distribui juros extras em TODAS as parcelas
+            // Pro-rata real: taxa diária exponencial aplicada ao valor principal
             const taxaDiaria = Math.pow(1 + taxaEfetiva, 1/30) - 1;
             const jurosProrrata = valor * (Math.pow(1 + taxaDiaria, diasExtra) - 1);
             const jurosProrrataPorParcela = jurosProrrata / nParcelas;
             const prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela;
             
+            console.log('Debug Pro-rata Real:', {
+                valor,
+                prestacaoBase: prestacaoBase.toFixed(2),
+                jurosProrrata: jurosProrrata.toFixed(2),
+                jurosPorParcela: jurosProrrataPorParcela.toFixed(2),
+                prestacaoFinal: prestacaoComJurosExtras.toFixed(2)
+            });
+            
             return {
                 parcelaNormal: prestacaoComJurosExtras,
                 primeiraParcela: prestacaoComJurosExtras,
-                jurosDiasExtras: jurosProrrata, // Valor original dos juros extras para exibição
+                jurosDiasExtras: jurosProrrata,
                 diasExtra: diasExtra
             };
         }
