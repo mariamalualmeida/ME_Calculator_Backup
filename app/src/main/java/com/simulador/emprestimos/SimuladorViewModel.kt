@@ -296,16 +296,16 @@ class SimuladorViewModel : ViewModel() {
                             diasExtra = diasExtra
                         )
                     } else {
-                        // Para múltiplas parcelas: manter lógica original pro-rata real
+                        // Para múltiplas parcelas: calcular juros extras a cada mês e somar à parcela
                         val taxaDiariaReal = (1 + taxaEfetiva).pow(1.0/30.0) - 1
-                        val jurosProrrata = valor * ((1 + taxaDiariaReal).pow(diasExtra.toDouble()) - 1)
-                        val jurosProrrataPorParcela = jurosProrrata / nParcelas
-                        val prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela
+                        val jurosExtrasPorParcela = prestacaoBase * ((1 + taxaDiariaReal).pow(diasExtra.toDouble()) - 1)
+                        val prestacaoComJurosExtras = prestacaoBase + jurosExtrasPorParcela
+                        val jurosExtrasTotal = jurosExtrasPorParcela * nParcelas
                         
                         ResultadoCalculo(
                             parcelaNormal = prestacaoComJurosExtras,
                             primeiraParcela = prestacaoComJurosExtras,
-                            jurosDiasExtras = jurosProrrata,
+                            jurosDiasExtras = jurosExtrasTotal,
                             diasExtra = diasExtra
                         )
                     }
