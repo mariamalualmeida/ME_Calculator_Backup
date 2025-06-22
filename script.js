@@ -130,9 +130,11 @@ class SimuladorEmprestimos {
         // Anexar event listener com múltiplas tentativas
         if (this.taxaJurosField) {
             this.taxaJurosField.addEventListener('input', (e) => {
+                // SOLUÇÃO 2: Limpar erros primeiro, depois formatar
+                this.limparErrosVisuais();
                 // Formatação automática como centavos em tempo real
                 this.formatarPercentualTempoReal(e.target);
-                // CORREÇÃO: Validar apenas se não estiver em modo livre
+                // Validar apenas se não estiver em modo livre
                 if (!(this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin)) {
                     this.validarCampoJuros();
                 }
@@ -205,10 +207,12 @@ class SimuladorEmprestimos {
 
         if (this.numeroParcelasField) {
             this.numeroParcelasField.addEventListener('input', () => {
+                // SOLUÇÃO 2: Limpar erros visuais primeiro
+                this.limparErrosVisuais();
                 this.limparResultado();
                 this.toggleMetodoDiasExtras();
                 this.atualizarInformacaoLimites(); // Atualizar limites de juros
-                // CORREÇÃO: Re-validar juros apenas se não estiver em modo livre
+                // Re-validar juros apenas se não estiver em modo livre
                 if (!(this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin)) {
                     this.validarCampoJuros();
                 }
@@ -1125,14 +1129,31 @@ class SimuladorEmprestimos {
         this.validarCampoJuros();
     }
 
-    // REFATORAÇÃO: Métodos de sincronização complexa removidos
-    // Usar aplicação direta de mudanças sem polling ou eventos
+    // SOLUÇÃO 2: Sistema de Limpeza Visual Ativa
+    limparErrosVisuais() {
+        // Remover todas as bordas vermelhas de erro
+        if (this.taxaJurosField) this.taxaJurosField.style.borderColor = '';
+        if (this.numeroParcelasField) this.numeroParcelasField.style.borderColor = '';
+        if (this.valorEmprestimoField) this.valorEmprestimoField.style.borderColor = '';
+        
+        // Remover classes de erro se existirem
+        [this.taxaJurosField, this.numeroParcelasField, this.valorEmprestimoField].forEach(field => {
+            if (field) {
+                field.classList.remove('error-state');
+                field.style.color = '';
+                field.title = '';
+            }
+        });
+        
+        console.log('Debug - Erros visuais limpos');
+    }
 
     validarCampoJuros() {
-        // CORREÇÃO: Verificar modo livre completo (regras desabilitadas E admin logado)
+        // SOLUÇÃO 2: Sempre limpar erros primeiro
+        this.limparErrosVisuais();
+        
+        // Verificar modo livre completo (regras desabilitadas E admin logado)
         if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
-            this.taxaJurosField.setCustomValidity('');
-            this.taxaJurosField.classList.remove('invalid');
             console.log('Debug - validarCampoJuros: Modo livre ativo, pulando validação');
             return;
         }
@@ -1142,7 +1163,6 @@ class SimuladorEmprestimos {
 
         // Se campos estão vazios, não validar
         if (!this.taxaJurosField.value || !this.numeroParcelasField.value) {
-            this.taxaJurosField.setCustomValidity('');
             return;
         }
 
@@ -1150,15 +1170,15 @@ class SimuladorEmprestimos {
         const limites = this.configuracoes.limitesPersonalizados?.[nParcelas] || this.limitesJuros[nParcelas];
         
         if (!limites) {
-            this.taxaJurosField.setCustomValidity('');
             return;
         }
 
-        // Validar se juros está dentro dos limites
+        // Aplicar erro visual apenas se fora dos limites
         if (jurosValue < limites.min || jurosValue > limites.max) {
-            this.taxaJurosField.setCustomValidity(`Taxa deve estar entre ${limites.min.toFixed(2).replace('.', ',')}% e ${limites.max.toFixed(2).replace('.', ',')}%`);
-        } else {
-            this.taxaJurosField.setCustomValidity('');
+            this.taxaJurosField.style.borderColor = '#d32f2f';
+            this.taxaJurosField.style.color = '#d32f2f';
+            this.taxaJurosField.title = `Para ${nParcelas} parcela(s), os juros devem estar entre ${limites.min.toFixed(2)}% e ${limites.max.toFixed(2)}%`;
+            console.log('Debug - Juros fora dos limites, aplicando erro visual');
         }
     }
 
@@ -1175,22 +1195,27 @@ class SimuladorEmprestimos {
     }
 
     abrirConfiguracoes() {
+        // SOLUÇÃO 1: Sincronizar estado isAdmin com localStorage
+        const sessionActive = localStorage.getItem('admin_session_active') === 'true';
+        this.configuracoes.isAdmin = sessionActive;
+        console.log('Debug - Estado admin sincronizado:', sessionActive);
+        
         // Carregar valores atuais
         document.getElementById('nomeUsuario').value = this.configuracoes.nomeUsuario || '';
         document.getElementById('themeMode').value = this.configuracoes.themeMode || 'light';
         document.getElementById('colorTheme').value = this.configuracoes.colorTheme || 'default';
         document.getElementById('mostrarJurosRelatorio').value = this.configuracoes.mostrarJurosRelatorio ? 'true' : 'false';
         
-        // REFATORAÇÃO: Formato unificado boolean para todos os valores
+        // Formato unificado boolean para todos os valores
         const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
         if (desabilitarRegrasSelect) {
             desabilitarRegrasSelect.value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
             console.log('Debug - Toggle carregado:', desabilitarRegrasSelect.value, 'configuracao:', this.configuracoes.desabilitarRegras);
         }
         
-        // Configurar estado da área administrativa
+        // Configurar estado da área administrativa baseado em sessão sincronizada
         const loginSection = document.getElementById('adminLoginSection');
-        if (this.configuracoes.isAdmin) {
+        if (sessionActive) {
             // Ocultar login e mostrar painel
             if (loginSection) {
                 loginSection.style.display = 'none';

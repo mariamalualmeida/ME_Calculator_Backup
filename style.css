@@ -1223,20 +1223,8 @@ body {
     box-sizing: border-box !important;
 }
 
-/* CORREÇÃO EXTREMA: Força largura completa do estado civil */
-select#estadoCivil {
-    width: 100% !important;
-    min-width: 100% !important;
-    max-width: 100% !important;
-    flex: 1 !important;
-    box-sizing: border-box !important;
-}
-
-/* Especificidade extrema para todas as situações possíveis */
-html body div.container div.main-content div.form-completo-container div.input-row div.input-group select#estadoCivil.input-field,
-.form-completo-container select#estadoCivil,
-#estadoCivil.input-field,
-select#estadoCivil {
+/* SOLUÇÃO 3: Especificidade máxima com múltiplas dimensões para estado civil */
+html[data-theme] body[class] div.container[class] div.main-content[class] div.form-completo-container[class] div.input-row[class] div.input-group[class] select#estadoCivil[class*="input"][id="estadoCivil"]:not([id*="config"]):not(#configModal select):not(#configModal #estadoCivil) {
     width: 100% !important;
     min-width: 100% !important;
     max-width: 100% !important;
@@ -1257,13 +1245,29 @@ select#estadoCivil {
     appearance: none !important;
 }
 
-/* Anular QUALQUER estilo conflitante */
-select#estadoCivil:not(#configModal select):not(#configModal #estadoCivil) {
-    background: #fef7ff !important;
-    border: 2px solid #79747e !important;
-    font-weight: normal !important;
+/* Interceptação de media queries iOS específica para estado civil */
+@supports (-webkit-touch-callout: none) {
+    html body div.container div.main-content div.form-completo-container select#estadoCivil {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        font-size: 16px !important;
+        min-height: 58px !important;
+        height: 58px !important;
+    }
+}
+
+/* Força largura em todas as situações possíveis */
+select#estadoCivil,
+#estadoCivil,
+.form-completo-container select#estadoCivil,
+.input-group select#estadoCivil,
+.input-row select#estadoCivil {
     width: 100% !important;
     min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 !important;
+    box-sizing: border-box !important;
 }
 
 [data-theme="dark"] #configModal #themeMode,
