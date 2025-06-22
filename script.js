@@ -624,7 +624,7 @@ class SimuladorEmprestimos {
         const mes = parseInt(partes[1]) - 1; // JavaScript mês é 0-indexed
         const ano = parseInt(partes[2]);
         
-        if (dia < 1 || dia > 31 || mes < 0 || mes > 11 || ano < 1900) return null;
+        if (dia < 1 || dia > 31 || mes < 0 || mes > 11 || ano < 1920) return null;
         return new Date(ano, mes, dia);
     }
 
@@ -1341,7 +1341,7 @@ class SimuladorEmprestimos {
         const table = document.getElementById('limitsTable');
         
         // Carregar configuração de desabilitar regras
-        document.getElementById('desabilitarRegras').checked = this.configuracoes.desabilitarRegras || false;
+        document.getElementById('desabilitarRegras').value = this.configuracoes.desabilitarRegras ? 'true' : 'false';
         
         let html = '<div class="limits-table">';
         for (let parcelas = 1; parcelas <= 15; parcelas++) {
@@ -1559,6 +1559,12 @@ class SimuladorEmprestimos {
 
                 // 2ª Referência
                 if (dadosCompletos.referencias2.length > 0) {
+                    // Verificar espaço antes de adicionar 2ª referência
+                    if (yInicial > 220) {
+                        doc.addPage();
+                        yInicial = 20;
+                    }
+                    
                     doc.setFont('helvetica', 'bold');
                     doc.setFontSize(14);
                     doc.text('2ª REFERÊNCIA:', 20, yInicial);
@@ -1918,9 +1924,9 @@ function togglePassword(fieldId) {
     
     if (field.type === 'password') {
         field.type = 'text';
-        button.textContent = '🙈';
+        button.textContent = '◉';
     } else {
         field.type = 'password';
-        button.textContent = '👁';
+        button.textContent = '◯';
     }
 }
