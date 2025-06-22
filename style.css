@@ -1200,8 +1200,9 @@ body {
     background: rgba(30, 30, 30, 1);
 }
 
-/* Garantir visibilidade das opções de configuração */
-#themeMode, #colorTheme {
+/* Garantir visibilidade das opções de configuração - TODOS OS SELECTS */
+#themeMode, #colorTheme, #estadoCivil, #desabilitarRegras, #sistemaJuros, #mostrarJurosRelatorio,
+.config-group select, .form-group select, .input-group select {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -1214,10 +1215,20 @@ body {
     padding: 12px !important;
     border-radius: 8px !important;
     font-size: 14px !important;
+    min-width: 200px !important;
+    flex: 1 !important;
+    box-sizing: border-box !important;
 }
 
 [data-theme="dark"] #themeMode,
-[data-theme="dark"] #colorTheme {
+[data-theme="dark"] #colorTheme,
+[data-theme="dark"] #estadoCivil,
+[data-theme="dark"] #desabilitarRegras,
+[data-theme="dark"] #sistemaJuros,
+[data-theme="dark"] #mostrarJurosRelatorio,
+[data-theme="dark"] .config-group select,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .input-group select {
     background: var(--input-bg) !important;
     color: var(--text-primary) !important;
     border-color: var(--primary-light) !important;
@@ -1374,21 +1385,4 @@ body {
     height: 40px;
 }
 
-/* Correção definitiva para largura do estado civil */
-#estadoCivil {
-    min-width: 200px !important;
-    width: 100% !important;
-    flex: 1 !important;
-    box-sizing: border-box !important;
-    max-width: none !important;
-}
-
-/* Correção para todos os selects dentro de input-group */
-.input-group select,
-.form-group select {
-    min-width: 200px !important;
-    width: 100% !important;
-    flex: 1 !important;
-    box-sizing: border-box !important;
-    max-width: none !important;
-}
+/* CSS duplicado removido - agora unificado acima */

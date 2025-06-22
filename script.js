@@ -1220,7 +1220,7 @@ class SimuladorEmprestimos {
             const igpmField = document.getElementById('igpmAnual');
             
             if (desabilitarRegrasSelect) {
-                desabilitarRegrasSelect.value = this.configuracoes.desabilitarRegras ? 'true' : 'false';
+                desabilitarRegrasSelect.value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
             }
             
             if (sistemaJurosSelect) {
