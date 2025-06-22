@@ -1573,8 +1573,15 @@ class SimuladorEmprestimos {
                 }
             }
             
+            // Verificar se precisa de nova página antes dos dados da simulação
+            if (yInicial > 200) {
+                doc.addPage();
+                yInicial = 20;
+            } else {
+                yInicial += 20;
+            }
+            
             // Seção de dados da simulação (sempre exibir após dados cadastrais)
-            yInicial += 20;
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(16);
             doc.text('DADOS DA SIMULAÇÃO', 105, yInicial, { align: 'center' });
@@ -1647,6 +1654,14 @@ class SimuladorEmprestimos {
             }
             yInicial += 8;
             
+            // Verificar se precisa de nova página antes da tabela
+            if (yInicial > 200) {
+                doc.addPage();
+                yInicial = 20;
+            } else {
+                yInicial += 12;
+            }
+            
             // Tabela de parcelas - Título centralizado
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(16);
@@ -1676,13 +1691,8 @@ class SimuladorEmprestimos {
             let yPos = yInicial;
             for (let i = 1; i <= nParcelas; i++) {
                 const dataVencimento = new Date(dataBase);
-                if (i === 1) {
-                    // Primeira parcela usa a data base diretamente
-                    dataVencimento.setTime(dataBase.getTime());
-                } else {
-                    // Demais parcelas somam meses
-                    dataVencimento.setMonth(dataBase.getMonth() + i - 1);
-                }
+                // Cada parcela adiciona (i-1) meses à data base
+                dataVencimento.setMonth(dataBase.getMonth() + (i - 1));
                 
                 // Definir valor da parcela conforme método escolhido
                 let valorParcela;
