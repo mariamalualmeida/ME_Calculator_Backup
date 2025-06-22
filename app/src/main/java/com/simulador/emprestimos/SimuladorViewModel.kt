@@ -259,42 +259,73 @@ class SimuladorViewModel : ViewModel() {
         // Taxa efetiva (juros + IGPM)
         val taxaEfetiva = (juros + igpmMensal) / 100.0
         
-        // Prestação base: P = Valor × (1 + JurosMensal)^N ÷ N
-        val prestacaoBase = (valor * (1 + taxaEfetiva).pow(nParcelas)) / nParcelas
+        // Aplicar sistema de juros baseado na configuração
+        val sistemaJuros = _configuracoes.value.sistemaJuros ?: "compostos-mensal"
         
-        return if (diasExtra != 0) {
-            val taxaDiaria = taxaEfetiva / 30.0 // Taxa mensal dividida por 30 dias
-            val jurosProrrata = valor * taxaDiaria * diasExtra
-            
-            if (metodo == "distribuir" && nParcelas > 1) {
-                // Método distribuir corrigido - distribuir apenas os juros extras, sem juros compostos
-                val jurosProrrataPorParcela = jurosProrrata / nParcelas
-                val prestacaoDistribuida = prestacaoBase + jurosProrrataPorParcela
+        return when (sistemaJuros) {
+            "compostos-prorata-real" -> {
+                // Sistema Pro-rata Real: distribui juros extras em TODAS as parcelas
+                val prestacaoBase = (valor * (1 + taxaEfetiva).pow(nParcelas)) / nParcelas
                 
-                ResultadoCalculo(
-                    parcelaNormal = prestacaoDistribuida,
-                    primeiraParcela = prestacaoDistribuida,
-                    jurosDiasExtras = jurosProrrata,
-                    diasExtra = diasExtra
-                )
-            } else {
-                // Método primeira parcela maior - juros dos dias extras apenas na primeira parcela
-                val primeiraParcela = prestacaoBase + jurosProrrata
-                
-                ResultadoCalculo(
-                    parcelaNormal = prestacaoBase,
-                    primeiraParcela = primeiraParcela,
-                    jurosDiasExtras = jurosProrrata,
-                    diasExtra = diasExtra
-                )
+                if (diasExtra != 0) {
+                    // Taxa diária real (exponencial)
+                    val taxaDiariaReal = (1 + taxaEfetiva).pow(1.0/30.0) - 1
+                    val jurosProrrata = valor * ((1 + taxaDiariaReal).pow(diasExtra.toDouble()) - 1)
+                    val jurosProrrataPorParcela = jurosProrrata / nParcelas
+                    val prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela
+                    
+                    ResultadoCalculo(
+                        parcelaNormal = prestacaoComJurosExtras,
+                        primeiraParcela = prestacaoComJurosExtras,
+                        jurosDiasExtras = jurosProrrata,
+                        diasExtra = diasExtra
+                    )
+                } else {
+                    ResultadoCalculo(
+                        parcelaNormal = prestacaoBase,
+                        primeiraParcela = prestacaoBase,
+                        jurosDiasExtras = 0.0,
+                        diasExtra = 0
+                    )
+                }
             }
-        } else {
-            ResultadoCalculo(
-                parcelaNormal = prestacaoBase,
-                primeiraParcela = prestacaoBase,
-                jurosDiasExtras = 0.0,
-                diasExtra = 0
-            )
+            else -> {
+                // Sistemas padrão (simples, compostos, etc.)
+                val prestacaoBase = (valor * (1 + taxaEfetiva).pow(nParcelas)) / nParcelas
+                
+                if (diasExtra != 0) {
+                    val taxaDiaria = taxaEfetiva / 30.0
+                    val jurosProrrata = valor * taxaDiaria * diasExtra
+                    
+                    if (metodo == "distribuir" && nParcelas > 1) {
+                        val jurosProrrataPorParcela = jurosProrrata / nParcelas
+                        val prestacaoDistribuida = prestacaoBase + jurosProrrataPorParcela
+                        
+                        ResultadoCalculo(
+                            parcelaNormal = prestacaoDistribuida,
+                            primeiraParcela = prestacaoDistribuida,
+                            jurosDiasExtras = jurosProrrata,
+                            diasExtra = diasExtra
+                        )
+                    } else {
+                        val primeiraParcela = prestacaoBase + jurosProrrata
+                        
+                        ResultadoCalculo(
+                            parcelaNormal = prestacaoBase,
+                            primeiraParcela = primeiraParcela,
+                            jurosDiasExtras = jurosProrrata,
+                            diasExtra = diasExtra
+                        )
+                    }
+                } else {
+                    ResultadoCalculo(
+                        parcelaNormal = prestacaoBase,
+                        primeiraParcela = prestacaoBase,
+                        jurosDiasExtras = 0.0,
+                        diasExtra = 0
+                    )
+                }
+            }
         }
     }
     

@@ -720,36 +720,24 @@ class SimuladorEmprestimos {
         };
     }
 
-    // Sistema de Juros Compostos + Pro-rata Real
+    // Sistema de Juros Compostos + Pro-rata Real (distribui juros extras em todas as parcelas)
     calcularJurosCompostosProRataReal(valor, taxaEfetiva, nParcelas, diasExtra = 0, metodo = 'primeira') {
         const montante = valor * Math.pow(1 + taxaEfetiva, nParcelas);
         const prestacaoBase = montante / nParcelas;
         
         if (diasExtra !== 0) {
-            // Pro-rata real: cálculo preciso baseado em dias
+            // Pro-rata real: distribui juros extras em TODAS as parcelas
             const taxaDiaria = Math.pow(1 + taxaEfetiva, 1/30) - 1;
             const jurosProrrata = valor * (Math.pow(1 + taxaDiaria, diasExtra) - 1);
+            const jurosProrrataPorParcela = jurosProrrata / nParcelas;
+            const prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela;
             
-            if (metodo === 'distribuir' && nParcelas > 1) {
-                const jurosProrrataPorParcela = jurosProrrata / nParcelas;
-                const prestacaoDistribuida = prestacaoBase + jurosProrrataPorParcela;
-                
-                return {
-                    parcelaNormal: prestacaoDistribuida,
-                    primeiraParcela: prestacaoDistribuida,
-                    jurosDiasExtras: jurosProrrata,
-                    diasExtra: diasExtra
-                };
-            } else {
-                const primeiraParcela = prestacaoBase + jurosProrrata;
-                
-                return {
-                    parcelaNormal: prestacaoBase,
-                    primeiraParcela: primeiraParcela,
-                    jurosDiasExtras: jurosProrrata,
-                    diasExtra: diasExtra
-                };
-            }
+            return {
+                parcelaNormal: prestacaoComJurosExtras,
+                primeiraParcela: prestacaoComJurosExtras,
+                jurosDiasExtras: jurosProrrata,
+                diasExtra: diasExtra
+            };
         }
         
         return {
