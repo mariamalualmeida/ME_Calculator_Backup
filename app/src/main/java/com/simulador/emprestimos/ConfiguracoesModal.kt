@@ -390,6 +390,7 @@ fun ConfiguracoesModal(
                                 colorTheme = colorTheme,
                                 igpmAnual = igpmAnual.replace(',', '.').toDoubleOrNull() ?: 0.0,
                                 isAdmin = isAdmin,
+                                desabilitarRegras = desabilitarRegras == "desabilitar",
                                 adminUser = if (newAdminUser.isNotEmpty()) newAdminUser else configuracoes.adminUser,
                                 adminPassword = if (newAdminPassword.isNotEmpty()) newAdminPassword else configuracoes.adminPassword
                             )

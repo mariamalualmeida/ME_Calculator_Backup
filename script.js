@@ -1338,12 +1338,14 @@ class SimuladorEmprestimos {
         this.aplicarPaletaCores(this.configuracoes.colorTheme);
         this.salvarConfiguracoes();
         
-        // Disparar múltiplos métodos de sincronização
-        window.dispatchEvent(new CustomEvent('configuracoesAtualizadas'));
-        
-        if (window.simuladorInstance && window.simuladorInstance.forceConfigUpdate) {
-            setTimeout(() => window.simuladorInstance.forceConfigUpdate(), 100);
-        }
+        // CORREÇÃO: Disparar eventos APÓS todas as operações de salvamento
+        setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('configuracoesAtualizadas'));
+            
+            if (window.simuladorInstance && window.simuladorInstance.forceConfigUpdate) {
+                window.simuladorInstance.forceConfigUpdate();
+            }
+        }, 50);
         
         // NÃO fechar modal automaticamente - deixar usuário decidir
         alert('Todas as configurações foram salvas com sucesso!');
