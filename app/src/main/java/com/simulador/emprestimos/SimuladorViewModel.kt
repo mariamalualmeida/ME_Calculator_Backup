@@ -279,24 +279,36 @@ class SimuladorViewModel : ViewModel() {
         
         return when (sistemaJuros) {
             "compostos-prorata-real" -> {
-                // Sistema Pro-rata Real: corrigido - calcular juros extras sobre valor principal
+                // Sistema Pro-rata Real: diferente para 1 parcela vs múltiplas parcelas
                 val prestacaoBase = (valor * (1 + taxaEfetiva).pow(nParcelas)) / nParcelas
                 
                 if (diasExtra != 0) {
-                    // Corrigido: calcular juros extras sobre o valor principal, não sobre a parcela
-                    val taxaDiaria = taxaEfetiva / 30.0 // Taxa linear para consistência
-                    val jurosProrrata = valor * taxaDiaria * diasExtra
-                    
-                    // Distribuir juros extras igualmente entre todas as parcelas
-                    val jurosProrrataPorParcela = jurosProrrata / nParcelas
-                    val prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela
-                    
-                    ResultadoCalculo(
-                        parcelaNormal = prestacaoComJurosExtras,
-                        primeiraParcela = prestacaoComJurosExtras,
-                        jurosDiasExtras = jurosProrrata,
-                        diasExtra = diasExtra
-                    )
+                    if (nParcelas == 1) {
+                        // Para 1 parcela: usar cálculo linear simples igual aos outros sistemas
+                        val taxaDiaria = taxaEfetiva / 30.0
+                        val jurosProrrata = valor * taxaDiaria * diasExtra
+                        val prestacaoComJurosExtras = prestacaoBase + jurosProrrata
+                        
+                        ResultadoCalculo(
+                            parcelaNormal = prestacaoComJurosExtras,
+                            primeiraParcela = prestacaoComJurosExtras,
+                            jurosDiasExtras = jurosProrrata,
+                            diasExtra = diasExtra
+                        )
+                    } else {
+                        // Para múltiplas parcelas: manter lógica original pro-rata real
+                        val taxaDiariaReal = (1 + taxaEfetiva).pow(1.0/30.0) - 1
+                        val jurosProrrata = valor * ((1 + taxaDiariaReal).pow(diasExtra.toDouble()) - 1)
+                        val jurosProrrataPorParcela = jurosProrrata / nParcelas
+                        val prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela
+                        
+                        ResultadoCalculo(
+                            parcelaNormal = prestacaoComJurosExtras,
+                            primeiraParcela = prestacaoComJurosExtras,
+                            jurosDiasExtras = jurosProrrata,
+                            diasExtra = diasExtra
+                        )
+                    }
                 } else {
                     ResultadoCalculo(
                         parcelaNormal = prestacaoBase,

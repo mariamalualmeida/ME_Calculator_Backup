@@ -64,26 +64,38 @@ function calcularJurosCompostosMensais(valor, taxaEfetiva, nParcelas, diasExtra 
     };
 }
 
-// 3. Juros Compostos Pro-rata Real (fórmula corrigida)
+// 3. Juros Compostos Pro-rata Real (fórmula corrigida para 1 parcela)
 function calcularJurosCompostosProRataReal(valor, taxaEfetiva, nParcelas, diasExtra = 0) {
     const montante = valor * Math.pow(1 + taxaEfetiva, nParcelas);
     const prestacaoBase = montante / nParcelas;
     
     if (diasExtra !== 0) {
-        // Corrigido: calcular juros extras sobre o valor principal, não sobre a parcela
-        const taxaDiaria = taxaEfetiva / 30.0; // Taxa linear para consistência
-        const jurosProrrata = valor * taxaDiaria * diasExtra;
-        
-        // Distribuir juros extras igualmente entre todas as parcelas
-        const jurosProrrataPorParcela = jurosProrrata / nParcelas;
-        const prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela;
-        
-        return {
-            parcelaNormal: prestacaoComJurosExtras,
-            primeiraParcela: prestacaoComJurosExtras,
-            jurosDiasExtras: jurosProrrata,
-            diasExtra: diasExtra
-        };
+        if (nParcelas === 1) {
+            // Para 1 parcela: usar cálculo linear simples igual aos outros sistemas
+            const taxaDiaria = taxaEfetiva / 30.0;
+            const jurosProrrata = valor * taxaDiaria * diasExtra;
+            const prestacaoComJurosExtras = prestacaoBase + jurosProrrata;
+            
+            return {
+                parcelaNormal: prestacaoComJurosExtras,
+                primeiraParcela: prestacaoComJurosExtras,
+                jurosDiasExtras: jurosProrrata,
+                diasExtra: diasExtra
+            };
+        } else {
+            // Para múltiplas parcelas: manter lógica original pro-rata real
+            const taxaDiaria = Math.pow(1 + taxaEfetiva, 1/30) - 1;
+            const jurosProrrata = valor * (Math.pow(1 + taxaDiaria, diasExtra) - 1);
+            const jurosProrrataPorParcela = jurosProrrata / nParcelas;
+            const prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela;
+            
+            return {
+                parcelaNormal: prestacaoComJurosExtras,
+                primeiraParcela: prestacaoComJurosExtras,
+                jurosDiasExtras: jurosProrrata,
+                diasExtra: diasExtra
+            };
+        }
     }
     
     return {

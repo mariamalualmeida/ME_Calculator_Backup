@@ -54,11 +54,16 @@ class SimuladorEmprestimos {
         this.aplicarTema(loadedConfig.themeMode);
         this.aplicarPaletaCores(loadedConfig.colorTheme);
         
-        // Configurar sistema de juros
+        // Configurar sistema de juros e regras de limite
         setTimeout(() => {
             const sistemaJurosSelect = document.getElementById('sistemaJuros');
             if (sistemaJurosSelect) {
                 sistemaJurosSelect.value = loadedConfig.sistemaJuros;
+            }
+            
+            const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
+            if (desabilitarRegrasSelect) {
+                desabilitarRegrasSelect.value = loadedConfig.desabilitarRegras ? 'desabilitar' : 'habilitar';
             }
         }, 100);
         
@@ -726,20 +731,32 @@ class SimuladorEmprestimos {
         const prestacaoBase = montante / nParcelas;
         
         if (diasExtra !== 0) {
-            // Corrigido: calcular juros extras sobre o valor principal, não sobre a parcela
-            const taxaDiaria = taxaEfetiva / 30.0; // Taxa linear para consistência
-            const jurosProrrata = valor * taxaDiaria * diasExtra;
-            
-            // Distribuir juros extras igualmente entre todas as parcelas
-            const jurosProrrataPorParcela = jurosProrrata / nParcelas;
-            const prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela;
-            
-            return {
-                parcelaNormal: prestacaoComJurosExtras,
-                primeiraParcela: prestacaoComJurosExtras,
-                jurosDiasExtras: jurosProrrata,
-                diasExtra: diasExtra
-            };
+            if (nParcelas === 1) {
+                // Para 1 parcela: usar cálculo linear simples igual aos outros sistemas
+                const taxaDiaria = taxaEfetiva / 30.0;
+                const jurosProrrata = valor * taxaDiaria * diasExtra;
+                const prestacaoComJurosExtras = prestacaoBase + jurosProrrata;
+                
+                return {
+                    parcelaNormal: prestacaoComJurosExtras,
+                    primeiraParcela: prestacaoComJurosExtras,
+                    jurosDiasExtras: jurosProrrata,
+                    diasExtra: diasExtra
+                };
+            } else {
+                // Para múltiplas parcelas: manter lógica original pro-rata real
+                const taxaDiaria = Math.pow(1 + taxaEfetiva, 1/30) - 1;
+                const jurosProrrata = valor * (Math.pow(1 + taxaDiaria, diasExtra) - 1);
+                const jurosProrrataPorParcela = jurosProrrata / nParcelas;
+                const prestacaoComJurosExtras = prestacaoBase + jurosProrrataPorParcela;
+                
+                return {
+                    parcelaNormal: prestacaoComJurosExtras,
+                    primeiraParcela: prestacaoComJurosExtras,
+                    jurosDiasExtras: jurosProrrata,
+                    diasExtra: diasExtra
+                };
+            }
         }
         
         return {
