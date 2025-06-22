@@ -1204,7 +1204,7 @@ class SimuladorEmprestimos {
             const igpmField = document.getElementById('igpmAnual');
             
             if (desabilitarRegrasSelect) {
-                desabilitarRegrasSelect.value = this.configuracoes.desabilitarRegras ? 'false' : 'true';
+                desabilitarRegrasSelect.value = this.configuracoes.desabilitarRegras ? 'true' : 'false';
             }
             
             if (sistemaJurosSelect) {
@@ -1271,7 +1271,7 @@ class SimuladorEmprestimos {
         if (this.configuracoes.isAdmin) {
             // IGPM movido para área administrativa
             this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
-            this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').value === 'false';
+            this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').value === 'true';
             this.configuracoes.sistemaJuros = document.getElementById('sistemaJuros').value;
             
             // Salvar credenciais se alteradas
@@ -1403,6 +1403,9 @@ class SimuladorEmprestimos {
         if (cidade && estado) pessoais.push(`Cidade: ${cidade} - ${estado}`);
         if (cep) pessoais.push(`CEP: ${cep}`);
         if (telefone) pessoais.push(`Telefone: ${telefone}`);
+        
+        const email = document.getElementById('email')?.value;
+        if (email) pessoais.push(`E-mail: ${email}`);
 
         // Dados profissionais
         const profissionais = [];
@@ -1416,46 +1419,36 @@ class SimuladorEmprestimos {
         if (rendaMensal) profissionais.push(`Renda Mensal: ${rendaMensal}`);
         if (tempoEmprego) profissionais.push(`Tempo de Emprego: ${tempoEmprego}`);
 
-        // Referências
-        const referencias = [];
+        // Referências organizadas igual aos dados do cliente
+        const referencias1 = [];
         const ref1Nome = document.getElementById('ref1Nome')?.value;
         const ref1Telefone = document.getElementById('ref1Telefone')?.value;
         const ref1Rua = document.getElementById('ref1Rua')?.value;
         const ref1Numero = document.getElementById('ref1Numero')?.value;
         const ref1Bairro = document.getElementById('ref1Bairro')?.value;
+        
+        if (ref1Nome) referencias1.push(`Nome: ${ref1Nome}`);
+        if (ref1Telefone) referencias1.push(`Telefone: ${ref1Telefone}`);
+        if (ref1Rua) referencias1.push(`Endereço: ${ref1Rua}${ref1Numero ? `, ${ref1Numero}` : ''}`);
+        if (ref1Bairro) referencias1.push(`Bairro: ${ref1Bairro}`);
+
+        const referencias2 = [];
         const ref2Nome = document.getElementById('ref2Nome')?.value;
         const ref2Telefone = document.getElementById('ref2Telefone')?.value;
         const ref2Rua = document.getElementById('ref2Rua')?.value;
         const ref2Numero = document.getElementById('ref2Numero')?.value;
         const ref2Bairro = document.getElementById('ref2Bairro')?.value;
-
-        if (ref1Nome || ref1Telefone) {
-            let ref1Info = `1ª Referência: ${ref1Nome || 'N/A'}${ref1Telefone ? ` - ${ref1Telefone}` : ''}`;
-            referencias.push(ref1Info);
-            if (ref1Rua || ref1Numero || ref1Bairro) {
-                let endereco1 = 'Endereço: ';
-                if (ref1Rua) endereco1 += ref1Rua;
-                if (ref1Numero) endereco1 += `, ${ref1Numero}`;
-                if (ref1Bairro) endereco1 += ` - ${ref1Bairro}`;
-                referencias.push(endereco1);
-            }
-        }
-        if (ref2Nome || ref2Telefone) {
-            let ref2Info = `2ª Referência: ${ref2Nome || 'N/A'}${ref2Telefone ? ` - ${ref2Telefone}` : ''}`;
-            referencias.push(ref2Info);
-            if (ref2Rua || ref2Numero || ref2Bairro) {
-                let endereco2 = 'Endereço: ';
-                if (ref2Rua) endereco2 += ref2Rua;
-                if (ref2Numero) endereco2 += `, ${ref2Numero}`;
-                if (ref2Bairro) endereco2 += ` - ${ref2Bairro}`;
-                referencias.push(endereco2);
-            }
-        }
+        
+        if (ref2Nome) referencias2.push(`Nome: ${ref2Nome}`);
+        if (ref2Telefone) referencias2.push(`Telefone: ${ref2Telefone}`);
+        if (ref2Rua) referencias2.push(`Endereço: ${ref2Rua}${ref2Numero ? `, ${ref2Numero}` : ''}`);
+        if (ref2Bairro) referencias2.push(`Bairro: ${ref2Bairro}`);
 
         dadosCompletos.pessoais = pessoais;
         dadosCompletos.profissionais = profissionais;
-        dadosCompletos.referencias = referencias;
-        dadosCompletos.temDados = pessoais.length > 0 || profissionais.length > 0 || referencias.length > 0;
+        dadosCompletos.referencias1 = referencias1;
+        dadosCompletos.referencias2 = referencias2;
+        dadosCompletos.temDados = pessoais.length > 0 || profissionais.length > 0 || referencias1.length > 0 || referencias2.length > 0;
 
         return dadosCompletos;
     }
@@ -1518,49 +1511,65 @@ class SimuladorEmprestimos {
                 // Dados pessoais
                 if (dadosCompletos.pessoais.length > 0) {
                     doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(12);
+                    doc.setFontSize(14);
                     doc.text('DADOS PESSOAIS:', 20, yInicial);
-                    yInicial += 8;
-                    doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(10);
+                    yInicial += 10;
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
                     
                     dadosCompletos.pessoais.forEach(item => {
                         doc.text(item, 20, yInicial);
-                        yInicial += 6;
+                        yInicial += 8;
                     });
-                    yInicial += 4;
+                    yInicial += 6;
                 }
 
                 // Dados profissionais
                 if (dadosCompletos.profissionais.length > 0) {
                     doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(12);
+                    doc.setFontSize(14);
                     doc.text('DADOS PROFISSIONAIS:', 20, yInicial);
-                    yInicial += 8;
-                    doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(10);
+                    yInicial += 10;
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
                     
                     dadosCompletos.profissionais.forEach(item => {
                         doc.text(item, 20, yInicial);
-                        yInicial += 6;
+                        yInicial += 8;
                     });
-                    yInicial += 4;
+                    yInicial += 6;
                 }
 
-                // Referências
-                if (dadosCompletos.referencias.length > 0) {
+                // 1ª Referência
+                if (dadosCompletos.referencias1.length > 0) {
                     doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(12);
-                    doc.text('REFERÊNCIAS:', 20, yInicial);
-                    yInicial += 8;
-                    doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(10);
+                    doc.setFontSize(14);
+                    doc.text('1ª REFERÊNCIA:', 20, yInicial);
+                    yInicial += 10;
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
                     
-                    dadosCompletos.referencias.forEach(item => {
+                    dadosCompletos.referencias1.forEach(item => {
                         doc.text(item, 20, yInicial);
-                        yInicial += 6;
+                        yInicial += 8;
                     });
-                    yInicial += 8;
+                    yInicial += 6;
+                }
+
+                // 2ª Referência
+                if (dadosCompletos.referencias2.length > 0) {
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
+                    doc.text('2ª REFERÊNCIA:', 20, yInicial);
+                    yInicial += 10;
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
+                    
+                    dadosCompletos.referencias2.forEach(item => {
+                        doc.text(item, 20, yInicial);
+                        yInicial += 8;
+                    });
+                    yInicial += 6;
                 }
             }
             
