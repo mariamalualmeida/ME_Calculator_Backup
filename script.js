@@ -1594,6 +1594,17 @@ class SimuladorEmprestimos {
             doc.text(`Número de parcelas: ${nParcelas}`, 20, yInicial);
             yInicial += 12;
             
+            // Mostrar sistema de juros utilizado
+            const sistemasJuros = {
+                'simples': 'Juros Simples',
+                'compostos-diarios': 'Juros Compostos Diários', 
+                'compostos-mensal': 'Juros Compostos Mensais',
+                'pro-rata-real': 'Pro-rata Real'
+            };
+            const sistemaAtual = sistemasJuros[this.configuracoes.sistemaJuros] || 'Juros Compostos Mensais';
+            doc.text(`Sistema de juros: ${sistemaAtual}`, 20, yInicial);
+            yInicial += 15;
+            
             // Mostrar informações das parcelas conforme o tipo de cálculo
             if (resultadoCalculo.diasExtra > 0) {
                 const metodo = this.obterMetodoDiasExtras();
