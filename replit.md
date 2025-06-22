@@ -196,6 +196,7 @@ SimuladorEmprestimos/
 - June 22, 2025: Padronização de código - unificados tipos de dados boolean/string, consolidadas funções de validação, removido JavaScript forçando CSS via DOM
 - June 22, 2025: Performance melhorada - eliminados timeouts desnecessários, MutationObserver, event listeners múltiplos, especificidade CSS extrema
 - June 22, 2025: CORREÇÕES CRÍTICAS APLICADAS EM TODAS VERSÕES - credenciais hardcoded removidas (admin/admin123), timeouts eliminados, console logs limpos, CSS otimizado, validações consolidadas, estado administrativo corrigido, cache atualizado (v20250622095500)
+- June 22, 2025: TODOS OS PROBLEMAS SISTEMÁTICOS CORRIGIDOS - estado civil com estilos completos, CSS redundante removido, especificidade excessiva eliminada, regras unificadas para formulários, dark theme consolidado, comentários atualizados, arquitetura CSS reorganizada (v20250622101000)
 
 ## User Preferences
 
