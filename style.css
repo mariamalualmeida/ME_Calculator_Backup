@@ -1223,11 +1223,23 @@ body {
     box-sizing: border-box !important;
 }
 
-/* CORREÇÃO FINAL: Máxima especificidade para estado civil no formulário */
-html body .container .main-content .form-completo-container .input-row .input-group select#estadoCivil.input-field {
+/* CORREÇÃO EXTREMA: Força largura completa do estado civil */
+select#estadoCivil {
     width: 100% !important;
-    min-width: 180px !important;
-    max-width: none !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 !important;
+    box-sizing: border-box !important;
+}
+
+/* Especificidade extrema para todas as situações possíveis */
+html body div.container div.main-content div.form-completo-container div.input-row div.input-group select#estadoCivil.input-field,
+.form-completo-container select#estadoCivil,
+#estadoCivil.input-field,
+select#estadoCivil {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
     flex: 1 !important;
     box-sizing: border-box !important;
     padding: 16px !important;
@@ -1245,11 +1257,13 @@ html body .container .main-content .form-completo-container .input-row .input-gr
     appearance: none !important;
 }
 
-/* Sobrescrever qualquer estilo do modal que possa estar interferindo */
-html body .container .main-content .form-completo-container .input-row .input-group select#estadoCivil.input-field:not(#configModal select) {
+/* Anular QUALQUER estilo conflitante */
+select#estadoCivil:not(#configModal select):not(#configModal #estadoCivil) {
     background: #fef7ff !important;
     border: 2px solid #79747e !important;
     font-weight: normal !important;
+    width: 100% !important;
+    min-width: 100% !important;
 }
 
 [data-theme="dark"] #configModal #themeMode,
@@ -1262,11 +1276,14 @@ html body .container .main-content .form-completo-container .input-row .input-gr
     border-color: var(--primary-light) !important;
 }
 
-/* CORREÇÃO FINAL: Estado civil tema escuro com máxima especificidade */
-[data-theme="dark"] html body .container .main-content .form-completo-container .input-row .input-group select#estadoCivil.input-field {
+/* CORREÇÃO EXTREMA: Estado civil tema escuro */
+[data-theme="dark"] select#estadoCivil,
+[data-theme="dark"] html body div.container div.main-content div.form-completo-container div.input-row div.input-group select#estadoCivil.input-field {
     background: var(--input-bg) !important;
     color: var(--text-primary) !important;
     border-color: var(--border-color) !important;
+    width: 100% !important;
+    min-width: 100% !important;
 }
 
 /* Corrigir estilos dos selects em modo escuro */

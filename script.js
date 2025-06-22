@@ -26,8 +26,10 @@ class SimuladorEmprestimos {
         };
 
         this.configuracoes = this.carregarConfiguracoes();
-        // REFATORAÇÃO: Reset de sessão apenas no constructor inicial
-        this.resetarSessaoAdministrativa();
+        // CORREÇÃO CRÍTICA: Reset apenas se não há configuração salva de admin ativo
+        if (!localStorage.getItem('admin_session_active')) {
+            this.resetarSessaoAdministrativa();
+        }
         this.initializeElements();
         this.setupEventListeners();
         this.focusInitialField();
@@ -1230,10 +1232,8 @@ class SimuladorEmprestimos {
     fecharModal() {
         document.getElementById('configModal').style.display = 'none';
         
-        // CORREÇÃO FINAL: Resetar completamente o estado administrativo ao fechar
-        // Forçar logout e ocultar painel administrativo
-        this.configuracoes.isAdmin = false;
-        
+        // CORREÇÃO: Manter sessão administrativa se estiver logado
+        // Apenas ocultar painel, não forçar logout
         const adminPanel = document.getElementById('adminPanel');
         const loginSection = document.getElementById('adminLoginSection');
         
@@ -1242,27 +1242,26 @@ class SimuladorEmprestimos {
         }
         
         if (loginSection) {
-            loginSection.style.display = 'flex';
+            loginSection.style.display = this.configuracoes.isAdmin ? 'none' : 'flex';
         }
         
-        // Limpar campos de login
-        const adminUserField = document.getElementById('adminUser');
-        const adminPassField = document.getElementById('adminPassword');
+        // Limpar campos de login apenas se não estiver logado
+        if (!this.configuracoes.isAdmin) {
+            const adminUserField = document.getElementById('adminUser');
+            const adminPassField = document.getElementById('adminPassword');
+            
+            if (adminUserField) adminUserField.value = '';
+            if (adminPassField) adminPassField.value = '';
+        }
         
-        if (adminUserField) adminUserField.value = '';
-        if (adminPassField) adminPassField.value = '';
-        
-        // Atualizar classes de modo livre para refletir logout
-        this.atualizarClassesModoLivre();
-        
-        console.log('Debug - Modal fechado, sessão administrativa encerrada');
+        console.log('Debug - Modal fechado, sessão preservada:', this.configuracoes.isAdmin);
     }
 
     resetarSessaoAdministrativa() {
-        // REFATORAÇÃO: Reset específico apenas no constructor inicial
-        // Preserva configurações salvas, reseta apenas sessão ativa
+        // CORREÇÃO: Reset apenas quando explicitamente necessário
         if (this.configuracoes) {
             this.configuracoes.isAdmin = false;
+            localStorage.removeItem('admin_session_active');
             console.log('Debug - Sessão administrativa resetada no carregamento inicial');
         }
     }
@@ -1341,6 +1340,8 @@ class SimuladorEmprestimos {
         
         if (usuario === this.configuracoes.adminUser && senha === this.configuracoes.adminPassword) {
             this.configuracoes.isAdmin = true;
+            // CORREÇÃO: Salvar sessão administrativa ativa
+            localStorage.setItem('admin_session_active', 'true');
             this.mostrarPainelAdmin();
             
             // Ocultar seção de login após autenticação
