@@ -1113,11 +1113,7 @@ class SimuladorEmprestimos {
         
         // Re-validar campo de juros após mudança de modo
         this.validarCampoJuros();
-        
-
     }
-
-
 
     limparErrosVisuais() {
         [this.taxaJurosField, this.numeroParcelasField, this.valorEmprestimoField].forEach(field => {

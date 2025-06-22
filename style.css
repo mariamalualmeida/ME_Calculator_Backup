@@ -300,29 +300,9 @@ body {
     flex: 0 0 120px;
 }
 
-.input-row .input-group select.input-field,
-#estadoCivil,
-.form-completo-container select,
-.input-row .input-group select {
-    min-width: 180px !important;
-    width: 100% !important;
-    flex: 1 !important;
-    padding: 16px !important;
-    border: 2px solid #79747e !important;
-    border-radius: 8px !important;
-    font-size: 16px !important;
-    background: #fef7ff !important;
-    transition: all 0.2s ease !important;
-    outline: none !important;
-    box-sizing: border-box !important;
-    min-height: 58px !important;
-    height: 58px !important;
-}
-
-.form-completo-container select:focus,
-.input-row .input-group select:focus {
-    border-color: var(--primary-color) !important;
-    background: white !important;
+/* Estado civil - solução simplificada */
+#estadoCivil {
+    min-width: 180px;
 }
 
 /* Estilos para todos os inputs do formulário completo */
@@ -1221,12 +1201,6 @@ body {
     min-width: 200px !important;
     flex: 1 !important;
     box-sizing: border-box !important;
-}
-
-/* Estado civil - solução simples e limpa */
-#estadoCivil {
-    width: 100%;
-    flex: 1;
 }
 
 [data-theme="dark"] #configModal #themeMode,

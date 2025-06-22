@@ -35,8 +35,8 @@ data class Configuracoes(
     val igpmAnual: Double = 0.0,
     val mostrarJurosRelatorio: Boolean = false,
     val isAdmin: Boolean = false,
-    val adminUser: String = "Migueis",
-    val adminPassword: String = "Laila@10042009",
+    val adminUser: String = "admin",
+    val adminPassword: String = "admin123",
     val limitesPersonalizados: Map<Int, LimiteJuros>? = null,
     val desabilitarRegras: Boolean = false,
     val sistemaJuros: String = "compostos-mensal"
@@ -365,7 +365,6 @@ class SimuladorViewModel : ViewModel() {
     fun isJurosInvalido(taxaJuros: String, numeroParcelas: String): Boolean {
         // CORREÇÃO: Verificar modo livre completo (regras desabilitadas E admin logado)
         if (_configuracoes.value.desabilitarRegras == true && _configuracoes.value.isAdmin == true) {
-            Log.d("SimuladorViewModel", "Debug - isJurosInvalido: Modo livre ativo, pulando validação")
             return false
         }
         
