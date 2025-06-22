@@ -101,17 +101,19 @@ class SimuladorEmprestimos {
             });
         }
         
-        this.valorEmprestimoField.addEventListener('focus', (e) => {
-            // Limpar completamente o campo ao focar
-            e.target.value = '';
-            e.target.placeholder = '';
-        });
-        
-        this.valorEmprestimoField.addEventListener('blur', (e) => {
-            if (e.target.value === '') {
-                e.target.placeholder = '0,00';
-            }
-        });
+        if (this.valorEmprestimoField) {
+            this.valorEmprestimoField.addEventListener('focus', (e) => {
+                // Limpar completamente o campo ao focar
+                e.target.value = '';
+                e.target.placeholder = '';
+            });
+            
+            this.valorEmprestimoField.addEventListener('blur', (e) => {
+                if (e.target.value === '') {
+                    e.target.placeholder = '0,00';
+                }
+            });
+        }
 
         // Anexar event listener com múltiplas tentativas
         if (this.taxaJurosField) {
@@ -126,33 +128,36 @@ class SimuladorEmprestimos {
             console.error('Campo taxaJuros não encontrado!');
         }
         
-        this.taxaJurosField.addEventListener('keydown', (e) => {
-            // Permitir navegação, seleção e funcionalidades básicas
-            if (['ArrowLeft', 'ArrowRight', 'Home', 'End', 'Tab', 'Shift', 'Ctrl', 'Alt'].includes(e.key)) {
-                return;
-            }
-            
-            // Permitir Backspace e Delete
-            if (e.key === 'Backspace' || e.key === 'Delete') {
-                return;
-            }
-            
-            // Permitir números e vírgula
-            if (/[\d,]/.test(e.key)) {
-                return;
-            }
-            
-            // Bloquear tudo o resto
-            e.preventDefault();
-        });
+        if (this.taxaJurosField) {
+            this.taxaJurosField.addEventListener('keydown', (e) => {
+                // Permitir navegação, seleção e funcionalidades básicas
+                if (['ArrowLeft', 'ArrowRight', 'Home', 'End', 'Tab', 'Shift', 'Ctrl', 'Alt'].includes(e.key)) {
+                    return;
+                }
+                
+                // Permitir Backspace e Delete
+                if (e.key === 'Backspace' || e.key === 'Delete') {
+                    return;
+                }
+                
+                // Permitir números e vírgula
+                if (/[\d,]/.test(e.key)) {
+                    return;
+                }
+                
+                // Bloquear tudo o resto
+                e.preventDefault();
+            });
+        }
 
-        this.dataInicialField.addEventListener('input', (e) => {
-            this.formatarData(e.target);
-            this.toggleMetodoDiasExtras();
-            this.limparResultado();
-        });
-        
-        this.dataInicialField.addEventListener('keydown', (e) => {
+        if (this.dataInicialField) {
+            this.dataInicialField.addEventListener('input', (e) => {
+                this.formatarData(e.target);
+                this.toggleMetodoDiasExtras();
+                this.limparResultado();
+            });
+            
+            this.dataInicialField.addEventListener('keydown', (e) => {
             // Permitir navegação e seleção
             if (['ArrowLeft', 'ArrowRight', 'Home', 'End', 'Tab'].includes(e.key)) {
                 return;
@@ -179,39 +184,51 @@ class SimuladorEmprestimos {
             if (!/^\d$/.test(e.key)) {
                 e.preventDefault();
                 return;
-            }
-        });
+            });
+        }
 
-        this.numeroParcelasField.addEventListener('input', () => {
-            this.limparResultado();
-            this.toggleMetodoDiasExtras();
-            this.atualizarInformacaoLimites(); // Atualizar limites de juros
-            this.validarCampoJuros(); // Re-validar juros quando parcelas mudam
-        });
-
-        // Remover referência ao campo CPF antigo (removido)
+        if (this.numeroParcelasField) {
+            this.numeroParcelasField.addEventListener('input', () => {
+                this.limparResultado();
+                this.toggleMetodoDiasExtras();
+                this.atualizarInformacaoLimites(); // Atualizar limites de juros
+                this.validarCampoJuros(); // Re-validar juros quando parcelas mudam
+            });
+        }
 
         // Botões
-        this.calcularBtn.addEventListener('click', () => {
-            this.calcular();
-        });
+        if (this.calcularBtn) {
+            this.calcularBtn.addEventListener('click', () => {
+                this.calcular();
+            });
+        }
 
-        this.exportPdfBtn.addEventListener('click', () => {
-            this.exportarPdf();
-        });
+        if (this.exportPdfBtn) {
+            this.exportPdfBtn.addEventListener('click', () => {
+                this.exportarPdf();
+            });
+        }
 
-        this.configBtn.addEventListener('click', () => {
-            this.abrirConfiguracoes();
-        });
+        if (this.configBtn) {
+            this.configBtn.addEventListener('click', () => {
+                this.abrirConfiguracoes();
+            });
+        }
 
         // Modal de configurações
-        document.getElementById('closeModal').addEventListener('click', () => {
-            this.fecharModal();
-        });
+        const closeModal = document.getElementById('closeModal');
+        if (closeModal) {
+            closeModal.addEventListener('click', () => {
+                this.fecharModal();
+            });
+        }
 
-        document.getElementById('saveConfigBtn').addEventListener('click', () => {
-            this.salvarConfiguracoesModal();
-        });
+        const saveConfigBtn = document.getElementById('saveConfigBtn');
+        if (saveConfigBtn) {
+            saveConfigBtn.addEventListener('click', () => {
+                this.salvarConfiguracoesModal();
+            });
+        }
 
         document.getElementById('adminLoginBtn').addEventListener('click', () => {
             this.fazerLoginAdmin();
