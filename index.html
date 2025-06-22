@@ -189,7 +189,7 @@
                             </div>
                             <div class="input-group input-small">
                                 <label for="cep">CEP</label>
-                                <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+                                <input type="tel" id="cep" placeholder="00000-000" maxlength="9" inputmode="numeric">
                             </div>
                         </div>
 
@@ -253,7 +253,7 @@
                             </div>
                             <div class="input-group">
                                 <label for="ref1Telefone">Telefone</label>
-                                <input type="text" id="ref1Telefone" placeholder="(00) 00000-0000" maxlength="15">
+                                <input type="tel" id="ref1Telefone" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -375,7 +375,7 @@
                             <input type="text" id="adminUser" placeholder="Usuário">
                             <div class="password-wrapper">
                                 <input type="password" id="adminPass" placeholder="Senha">
-                                <button type="button" class="password-toggle" onclick="togglePassword('adminPass')">◯</button>
+                                <button type="button" class="password-toggle" onclick="togglePassword('adminPass')">○</button>
                             </div>
                             <button id="adminLoginBtn">LOGIN</button>
                         </div>
@@ -390,7 +390,7 @@
                                     <label for="newAdminPass">Nova senha</label>
                                     <div class="password-wrapper">
                                         <input type="password" id="newAdminPass" placeholder="Nova senha">
-                                        <button type="button" class="password-toggle" onclick="togglePassword('newAdminPass')">◯</button>
+                                        <button type="button" class="password-toggle" onclick="togglePassword('newAdminPass')">○</button>
                                     </div>
                                 </div>
 

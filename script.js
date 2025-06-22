@@ -1924,9 +1924,9 @@ function togglePassword(fieldId) {
     
     if (field.type === 'password') {
         field.type = 'text';
-        button.textContent = '◉';
+        button.textContent = '●';
     } else {
         field.type = 'password';
-        button.textContent = '◯';
+        button.textContent = '○';
     }
 }
