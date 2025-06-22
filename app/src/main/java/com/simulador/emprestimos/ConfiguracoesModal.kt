@@ -51,8 +51,8 @@ fun ConfiguracoesModal(
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.95f)
-                .fillMaxHeight(0.95f),
+                .fillMaxWidth(0.9f)
+                .fillMaxHeight(0.9f),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
                 containerColor = colorScheme.surface

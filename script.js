@@ -93,11 +93,13 @@ class SimuladorEmprestimos {
     }
 
     setupEventListeners() {
-        // Formatação de campos
-        this.valorEmprestimoField.addEventListener('input', (e) => {
-            this.formatarMoeda(e.target);
-            this.limparResultado();
-        });
+        // Formatação de campos com validação
+        if (this.valorEmprestimoField) {
+            this.valorEmprestimoField.addEventListener('input', (e) => {
+                this.formatarMoeda(e.target);
+                this.limparResultado();
+            });
+        }
         
         this.valorEmprestimoField.addEventListener('focus', (e) => {
             // Limpar completamente o campo ao focar
@@ -1186,7 +1188,26 @@ class SimuladorEmprestimos {
 
     fecharModal() {
         document.getElementById('configModal').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'none';
+        
+        // Reset completo do estado administrativo
+        const adminPanel = document.getElementById('adminPanel');
+        const loginSection = document.getElementById('adminLoginSection');
+        
+        if (adminPanel) {
+            adminPanel.style.display = 'none';
+        }
+        
+        if (loginSection) {
+            loginSection.style.display = 'flex';
+        }
+        
+        // Limpar campos de login e resetar estado
+        const adminUserField = document.getElementById('adminUser');
+        const adminPassField = document.getElementById('adminPassword');
+        
+        if (adminUserField) adminUserField.value = '';
+        if (adminPassField) adminPassField.value = '';
+        
         this.configuracoes.isAdmin = false;
     }
 

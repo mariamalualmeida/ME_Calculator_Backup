@@ -177,6 +177,11 @@ SimuladorEmprestimos/
 - June 22, 2025: Implementado max-height 95vh e scroll interno no modal-body para garantir botão "SALVAR" sempre visível
 - June 22, 2025: Reduzido padding de cabeçalho/rodapé (24dp→16dp) e conteúdo (24dp→16dp) para otimizar espaço em telas pequenas
 - June 22, 2025: Correções aplicadas identicamente nas versões Web/PWA e Android para consistência total de experiência
+- June 22, 2025: REVERSÃO COMPLETA PARA FORMATO DA TELA PRINCIPAL: Modal configurações ajustado para max-width 600px igual container principal
+- June 22, 2025: Corrigido problema crítico do botão "Dados completos do cliente" com validação robusta de elementos DOM
+- June 22, 2025: Implementado reset completo do estado administrativo ao fechar modal - limpa campos e oculta painel
+- June 22, 2025: Adicionado suporte à paleta de cores no botão de formulário completo para consistência visual
+- June 22, 2025: Modal Android reduzido para 90% da tela (0.9f) seguindo mesmo padrão das outras versões
 
 ## User Preferences
 

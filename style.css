@@ -1124,6 +1124,15 @@ body {
     color: white !important;
 }
 
+/* Aplicar paleta de cores ao botão de formulário completo */
+.form-toggle-btn[data-color-theme] {
+    background: var(--primary-color) !important;
+}
+
+.form-toggle-btn[data-color-theme]:hover {
+    background: var(--primary-dark) !important;
+}
+
 .modal[data-color-theme] .save-btn:hover,
 .modal[data-color-theme] .admin-btn:hover,
 .modal[data-color-theme] #saveConfigBtn:hover,
