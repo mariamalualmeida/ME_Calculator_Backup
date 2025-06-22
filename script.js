@@ -1301,12 +1301,9 @@ class SimuladorEmprestimos {
     }
 
     resetarSessaoAdministrativa() {
-        // CORREÇÃO: Reset apenas quando explicitamente necessário
-        if (this.configuracoes) {
-            this.configuracoes.isAdmin = false;
-            localStorage.removeItem('admin_session_active');
-            console.log('Debug - Sessão administrativa resetada no carregamento inicial');
-        }
+        // OBSOLETO: Função mantida para compatibilidade
+        // Estado administrativo agora é gerenciado apenas durante uso do modal
+        console.log('Debug - Sistema de sessão administrativa simplificado');
     }
 
     // REFATORAÇÃO: Método separado para recarregar sem resetar sessão

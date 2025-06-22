@@ -30,13 +30,13 @@ fun ConfiguracoesModal(
     var colorTheme by remember { mutableStateOf(configuracoes.colorTheme) }
     var igpmAnual by remember { mutableStateOf(configuracoes.igpmAnual.toString().replace('.', ',')) }
     
-    // Estados para área administrativa
+    // Estados para área administrativa - NOVA LÓGICA: sempre oculto ao abrir
     var adminUser by remember { mutableStateOf("") }
     var adminPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var newPasswordVisible by remember { mutableStateOf(false) }
-    var isAdmin by remember { mutableStateOf(configuracoes.isAdmin) }
-    var showAdminPanel by remember { mutableStateOf(configuracoes.isAdmin) }
+    var isAdmin by remember { mutableStateOf(false) } // Sempre inicia como false
+    var showAdminPanel by remember { mutableStateOf(false) } // Sempre oculto inicialmente
     
     // Estados para alteração de credenciais
     var newAdminUser by remember { mutableStateOf("") }
@@ -299,8 +299,10 @@ fun ConfiguracoesModal(
                                         onClick = {
                                             if (adminUser == configuracoes.adminUser && 
                                                 adminPassword == configuracoes.adminPassword) {
+                                                // Ativar estado administrativo temporariamente
                                                 isAdmin = true
                                                 showAdminPanel = true
+                                                // Limpar campos de login
                                                 adminUser = ""
                                                 adminPassword = ""
                                             }
