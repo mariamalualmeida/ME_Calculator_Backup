@@ -304,6 +304,8 @@ class SimuladorEmprestimos {
                 this.limparResultado();
                 this.toggleMetodoDiasExtras();
                 this.atualizarInformacaoLimites(); // Atualizar limites de juros
+                // CORREÇÃO: Recarregar configurações antes da validação
+                this.configuracoes = this.carregarConfiguracoes();
                 // Re-validar juros apenas se não estiver em modo livre
                 if (!(this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin)) {
                     this.validarCampoJuros();
@@ -1258,6 +1260,9 @@ class SimuladorEmprestimos {
     }
 
     atualizarClassesModoLivre() {
+        // CORREÇÃO CRÍTICA: Recarregar configurações sempre antes de aplicar
+        this.configuracoes = this.carregarConfiguracoes();
+        
         // CORREÇÃO: Verificar se admin está ativo E regras estão desabilitadas
         const modoLivreAtivo = this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras;
         
@@ -1268,14 +1273,20 @@ class SimuladorEmprestimos {
             if (campo) {
                 if (modoLivreAtivo) {
                     campo.classList.add('admin-free-mode');
+                    // Limpar qualquer borda vermelha existente
+                    campo.style.borderColor = '';
+                    campo.style.color = '';
+                    campo.title = '';
                 } else {
                     campo.classList.remove('admin-free-mode');
                 }
             }
         });
         
-        // Re-validar campo de juros após mudança de modo
-        this.validarCampoJuros();
+        // Re-validar campo de juros após mudança de modo APENAS se não estiver em modo livre
+        if (!modoLivreAtivo) {
+            this.validarCampoJuros();
+        }
     }
 
     limparErrosVisuais() {
@@ -1291,6 +1302,9 @@ class SimuladorEmprestimos {
 
     validarCampoJuros() {
         this.limparErrosVisuais();
+        
+        // CORREÇÃO CRÍTICA: Recarregar configurações antes da validação
+        this.configuracoes = this.carregarConfiguracoes();
         
         const modoLivreAtivo = this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras;
         if (modoLivreAtivo || !this.taxaJurosField.value || !this.numeroParcelasField.value) {
@@ -2282,6 +2296,13 @@ function tryInitialize() {
         if (!success && document.readyState !== 'complete') {
             // Aguardar DOM completar se ainda não está pronto
             window.addEventListener('load', tryInitialize, { once: true });
+        } else if (window.simulator) {
+            // Garantir event listeners para preview Replit
+            setTimeout(() => {
+                if (window.simulator) {
+                    window.simulator.setupEventListeners();
+                }
+            }, 100);
         }
     } catch (error) {
         // Tentar novamente após timeout (necessário para preview Replit)
