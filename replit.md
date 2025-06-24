@@ -221,6 +221,7 @@ SimuladorEmprestimos/
 - June 24, 2025: CORREÇÕES FINAIS CRÍTICAS - corrigido erro exportação PDF (verificação jsPDF, melhores mensagens de erro), implementado sistema completo de exportação JSON para importação, removido ícone 💰 da análise financeira, centralizada caixa de análise financeira (max-width 400px, margin auto, text-align center), adicionado botão "EXPORTAR DADOS JSON" secundário, instruções claras para importação, cache v=20250624310000 (v20250624310000)
 - June 24, 2025: CORREÇÃO CRÍTICA PREVIEW REPLIT - corrigidos todos os problemas de funcionalidade na janela de preview: adicionadas verificações de existência (if(window.simulator)) em todos os onclick handlers, timeout nos event listeners para garantir carregamento DOM, funções globais window.togglePassword e window.toggleSection, window.simulator global, validações de elementos null nos formatadores, cache v=20250624320000 (v20250624320000)
 - June 24, 2025: SISTEMA TOTALMENTE FUNCIONAL NO PREVIEW - confirmado funcionamento completo: botões clicáveis, formatação automática de vírgulas, expansão de seções, modal configurações, área administrativa, validações visuais, todos event listeners ativos, inicialização robusta garantida
+- June 24, 2025: ÍCONE SACO DE DINHEIRO REMOVIDO - removido emoji 💰 da seção "ANÁLISE FINANCEIRA (Modo Livre)" conforme solicitado pelo usuário, mantendo apenas o texto, cache v=20250624330000 (v20250624330000)
 
 ## User Preferences
 

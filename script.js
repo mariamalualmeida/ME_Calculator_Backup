@@ -1130,7 +1130,7 @@ class SimuladorEmprestimos {
             analiseFinanceira = `
                 <div class="analise-financeira-box" style="margin-top: 16px; padding: 16px; background: var(--surface-variant); border-radius: 12px; border: 1px solid var(--outline-variant);">
                     <div style="font-weight: 600; color: var(--on-surface-variant); margin-bottom: 8px; display: flex; align-items: center;">
-                        <span style="margin-right: 8px;">💰</span> ANÁLISE FINANCEIRA (Modo Livre)
+                        ANÁLISE FINANCEIRA (Modo Livre)
                     </div>
                     <div style="font-size: 14px; color: var(--on-surface-variant); line-height: 1.4;">
                         <div style="margin-bottom: 4px;"><strong>Capital emprestado:</strong> ${formatarMoeda(valorEmprestimo)}</div>
