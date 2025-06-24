@@ -1240,7 +1240,7 @@ class SimuladorEmprestimos {
         document.getElementById('nomeUsuario').value = this.configuracoes.nomeUsuario || '';
         document.getElementById('themeMode').value = this.configuracoes.themeMode || 'light';
         document.getElementById('colorTheme').value = this.configuracoes.colorTheme || 'default';
-        document.getElementById('mostrarJurosRelatorio').value = this.configuracoes.mostrarJurosRelatorio ? 'true' : 'false';
+        document.getElementById('exibirDadosJuros').value = this.configuracoes.exibirDadosJuros ? 'true' : 'false';
         
         // NOVA LÓGICA: Sempre ocultar painel administrativo ao abrir configurações
         const adminPanel = document.getElementById('adminPanel');
@@ -1388,8 +1388,8 @@ class SimuladorEmprestimos {
         this.atualizarClassesModoLivre();
         
         // Fechar modal automaticamente após salvar
-        alert('Todas as configurações foram salvas com sucesso!');
         this.fecharModal();
+        alert('Todas as configurações foram salvas com sucesso!');
         
 
     }
@@ -1467,7 +1467,7 @@ class SimuladorEmprestimos {
         // Configurações de contratos
         document.getElementById('promissoriasColoridas').value = this.configuracoes.promissoriasColoridas ? 'true' : 'false';
         document.getElementById('promissoriasPorFolha').value = this.configuracoes.promissoriasPorFolha || 2;
-        document.getElementById('templateContrato').value = this.configuracoes.templateContrato || getTemplateContratoDefault();
+        document.getElementById('templateContrato').value = this.configuracoes.templateContrato || this.getTemplateContratoDefault();
     }
 
 
