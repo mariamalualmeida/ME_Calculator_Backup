@@ -203,9 +203,9 @@ body {
 .form-toggle-btn {
     width: 100%;
     padding: 16px 20px;
-    background: var(--primary-container);
-    color: var(--on-primary-container);
-    border: 2px solid var(--primary);
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: 2px solid var(--primary-color) !important;
     border-radius: 12px;
     font-size: 16px;
     font-weight: 500;
@@ -218,8 +218,9 @@ body {
 }
 
 .form-toggle-btn:hover {
-    background: var(--primary-container-hover, var(--primary-container));
-    border-color: var(--primary);
+    background: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
+    color: white !important;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

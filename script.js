@@ -339,10 +339,12 @@ class SimuladorEmprestimos {
         if (container.style.display === 'none' || container.style.display === '') {
             container.style.display = 'block';
             toggleBtn.classList.add('expanded');
+            toggleBtn.textContent = 'Ocultar dados completos do cliente';
             if (icon) icon.textContent = '▲';
         } else {
             container.style.display = 'none';
             toggleBtn.classList.remove('expanded');
+            toggleBtn.textContent = 'Dados completos do cliente';
             if (icon) icon.textContent = '▼';
         }
     }
