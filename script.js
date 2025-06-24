@@ -1038,18 +1038,10 @@ class SimuladorEmprestimos {
     }
 
     validarCampos(valor, nParcelas, juros) {
-        // Debug: Log das configurações atuais
-        console.log('Debug - validarCampos:', {
-            desabilitarRegras: this.configuracoes.desabilitarRegras,
-            isAdmin: this.configuracoes.isAdmin,
-            valor: valor,
-            nParcelas: nParcelas,
-            juros: juros
-        });
-        
         // Verificar se regras estão desabilitadas para admin
-        if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
-            console.log('Debug - Modo livre ativo, pulando validações');
+        const modoLivreAtivo = this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin;
+        
+        if (modoLivreAtivo) {
             
             // Aplicar classe para desabilitar borda vermelha no modo livre
             this.numeroParcelasField.classList.add('admin-free-mode');
@@ -1665,6 +1657,11 @@ class SimuladorEmprestimos {
 
     gerarPdfSimples(valor, nParcelas, juros, resultadoCalculo) {
         try {
+            // Verificar se jsPDF está disponível
+            if (typeof window.jspdf === 'undefined') {
+                throw new Error('Biblioteca jsPDF não carregada. Recarregue a página.');
+            }
+            
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
@@ -1947,9 +1944,12 @@ class SimuladorEmprestimos {
             doc.save(nomeArquivo);
             this.showNotification('PDF exportado com sucesso!', 'success');
             
+            // Gerar também arquivo JSON para importação
+            this.exportarDadosJSON();
+            
         } catch (error) {
-            // Erro na geração de PDF
-            this.showNotification('Erro ao gerar PDF. Tente novamente.', 'error');
+            console.error('Erro detalhado na geração de PDF:', error);
+            this.showNotification('Erro ao gerar PDF: ' + error.message, 'error', 5000);
         }
     }
 
@@ -2111,7 +2111,7 @@ Testemunha 2: _____________________________________ CPF: _______________________
         if (!arquivo) return;
         
         if (arquivo.type === 'application/pdf') {
-            this.showNotification('Funcionalidade de importação de PDF em desenvolvimento. Use arquivos JSON exportados pelo sistema.', 'warning', 4000);
+            this.showNotification('Para importar dados, use o botão "EXPORTAR DADOS JSON" após fazer uma simulação, depois importe o arquivo .json gerado.', 'warning', 6000);
             return;
         }
         
@@ -2146,6 +2146,50 @@ Testemunha 2: _____________________________________ CPF: _______________________
             }
         };
         reader.readAsText(arquivo);
+    }
+
+    exportarDadosJSON() {
+        try {
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '').replace('T', '_');
+            const nomeClienteJson = (this.nomeClienteField?.value || 'Cliente').replace(/[^a-zA-Z0-9]/g, '');
+            const cpfClienteJson = (this.cpfClienteField?.value || 'SemCPF').replace(/[^0-9]/g, '');
+            
+            const dadosCompletos = this.obterDadosCompletosPdf();
+            
+            const dadosExportacao = {
+                versao: '1.0',
+                timestamp: timestamp,
+                simulacao: {
+                    valor: this.valorEmprestimoField?.value || '',
+                    parcelas: this.numeroParcelasField?.value || '',
+                    juros: this.taxaJurosField?.value || '',
+                    dataInicial: this.dataInicialField?.value || ''
+                },
+                cliente: {
+                    nome: this.nomeClienteField?.value || '',
+                    cpf: this.cpfClienteField?.value || ''
+                },
+                dadosCompletos: dadosCompletos,
+                configuracoes: this.configuracoes
+            };
+            
+            const jsonString = JSON.stringify(dadosExportacao, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `dados_simulacao_${nomeClienteJson}_${cpfClienteJson}_${timestamp}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            this.showNotification('Arquivo JSON para importação gerado com sucesso!', 'success');
+        } catch (error) {
+            console.error('Erro ao exportar JSON:', error);
+            this.showNotification('Erro ao gerar arquivo JSON: ' + error.message, 'error');
+        }
     }
 }
 
