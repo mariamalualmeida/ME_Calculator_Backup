@@ -399,7 +399,7 @@
                                 <input type="password" id="adminPass" placeholder="Senha">
                                 <button type="button" class="password-toggle" onclick="togglePassword('adminPass')">●</button>
                             </div>
-                            <button id="adminLoginBtn">LOGIN</button>
+                            <button id="adminLoginBtn" onclick="if(window.simulator) window.simulator.fazerLoginAdmin()">LOGIN</button>
                         </div>
                         <div id="adminPanel" style="display: none;">
                             <!-- Seção Financeira Expansível -->
@@ -538,7 +538,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="saveConfigBtn" class="save-btn">SALVAR</button>
+                    <button id="saveConfigBtn" class="save-btn" onclick="if(window.simulator) window.simulator.salvarConfiguracoesModal()">SALVAR</button>
                 </div>
             </div>
         </div>
