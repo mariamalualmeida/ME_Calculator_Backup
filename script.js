@@ -119,6 +119,14 @@ class SimuladorEmprestimos {
     }
 
     showNotification(message, type = 'info', duration = 3000) {
+        // Debounce para evitar notificações duplicadas
+        const notificationKey = `${type}_${message}`;
+        if (this.lastNotification === notificationKey && Date.now() - this.lastNotificationTime < 1000) {
+            return; // Ignorar notificação duplicada
+        }
+        this.lastNotification = notificationKey;
+        this.lastNotificationTime = Date.now();
+        
         const container = document.getElementById('notification-container');
         const notification = document.createElement('div');
         
@@ -1666,7 +1674,31 @@ class SimuladorEmprestimos {
 
     gerarPdfSimples(valor, nParcelas, juros, resultadoCalculo) {
         try {
-            // Verificar se jsPDF está disponível
+            // Verificar se jsPDF está disponível com timeout para carregamento
+            const checkJsPDF = () => {
+                if (typeof window.jspdf !== 'undefined') {
+                    return true;
+                }
+                // Tentar acessar jsPDF de forma alternativa
+                if (typeof jsPDF !== 'undefined') {
+                    window.jspdf = { jsPDF };
+                    return true;
+                }
+                return false;
+            };
+            
+            if (!checkJsPDF()) {
+                // Aguardar um pouco para biblioteca carregar
+                setTimeout(() => {
+                    if (checkJsPDF()) {
+                        this.exportarPdf();
+                    } else {
+                        throw new Error('Biblioteca jsPDF não carregada. Recarregue a página.');
+                    }
+                }, 1000);
+                return;
+            }
+            
             if (typeof window.jspdf === 'undefined') {
                 throw new Error('Biblioteca jsPDF não carregada. Recarregue a página.');
             }
@@ -2202,7 +2234,7 @@ Testemunha 2: _____________________________________ CPF: _______________________
     }
 }
 
-// Inicialização robusta sem timeouts desnecessários
+// Inicialização robusta com timeout para compatibilidade Replit preview
 let simulator;
 
 function initializeApp() {
@@ -2230,16 +2262,20 @@ function tryInitialize() {
             window.addEventListener('load', tryInitialize, { once: true });
         }
     } catch (error) {
-        // Erro crítico na inicialização
-        // Erro crítico na inicialização
+        // Tentar novamente após timeout (necessário para preview Replit)
+        setTimeout(tryInitialize, 500);
     }
 }
 
-// Estratégia de inicialização otimizada
+// Estratégia de inicialização robusta para preview e navegador direto
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', tryInitialize);
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(tryInitialize, 100); // Timeout para preview Replit
+    });
 } else {
+    // DOM já carregado, tentar imediatamente e com fallback
     tryInitialize();
+    setTimeout(tryInitialize, 200); // Fallback para garantir funcionamento
 }
 
 
