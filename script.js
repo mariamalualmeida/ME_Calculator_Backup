@@ -1840,7 +1840,16 @@ class SimuladorEmprestimos {
             doc.text(`Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
             yInicial += 12;
             
-            // Informações do sistema de juros e taxa apenas se habilitado
+            // Corrigir ordem: Taxa antes do Sistema (como no PDF exemplo)
+            if (this.configuracoes.exibirDadosJuros) {
+                doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, yInicial);
+                yInicial += 12;
+            }
+            
+            doc.text(`Número de parcelas: ${nParcelas}`, 20, yInicial);
+            yInicial += 12;
+            
+            // Sistema de juros depois do número de parcelas (como no PDF exemplo)
             if (this.configuracoes.exibirDadosJuros) {
                 const sistemaJurosTexto = this.configuracoes.sistemaJuros === 'simples' ? 'Juros Simples' :
                                         this.configuracoes.sistemaJuros === 'compostos-diarios' ? 'Juros Compostos Diários' :
@@ -1848,13 +1857,9 @@ class SimuladorEmprestimos {
                                         'Juros Compostos Mensais';
                 doc.text(`Sistema de juros: ${sistemaJurosTexto}`, 20, yInicial);
                 yInicial += 12;
-                
-                doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}% ao mês`, 20, yInicial);
-                yInicial += 12;
             }
 
-            doc.text(`Número de parcelas: ${nParcelas}`, 20, yInicial);
-            yInicial += 15;
+            yInicial += 3;
             
             // Mostrar informações das parcelas conforme o tipo de cálculo
             if (resultadoCalculo.diasExtra > 0) {
@@ -1986,9 +1991,19 @@ class SimuladorEmprestimos {
                              agora.getMinutes().toString().padStart(2, '0') +
                              agora.getSeconds().toString().padStart(2, '0');
             
-            const nomeClientePdf = (this.nomeClienteField.value || 'Cliente').replace(/[^a-zA-Z0-9]/g, '_');
-            const cpfClientePdf = (this.cpfClienteField.value || 'SemCPF').replace(/[^0-9]/g, '');
-            const nomeArquivo = `${nomeClientePdf}_${cpfClientePdf}_${timestamp}.pdf`;
+            // Verificar se nome e CPF estão preenchidos para nomear arquivo
+            const nomeCliente = this.nomeClienteField?.value?.trim();
+            const cpfCliente = this.cpfClienteField?.value?.trim();
+            
+            let nomeArquivo;
+            if (nomeCliente && cpfCliente) {
+                const nomeClientePdf = nomeCliente.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+                const cpfClientePdf = cpfCliente.replace(/[^0-9]/g, '');
+                nomeArquivo = `${nomeClientePdf}_${cpfClientePdf}_${timestamp}.pdf`;
+            } else {
+                nomeArquivo = `Simulacao_Emprestimos_${timestamp}.pdf`;
+            }
+
             
             doc.save(nomeArquivo);
             this.showNotification('PDF exportado com sucesso!', 'success');
@@ -2238,6 +2253,13 @@ Testemunha 2: _____________________________________ CPF: _______________________
         } catch (error) {
             console.error('Erro ao exportar JSON:', error);
             this.showNotification('Erro ao gerar arquivo JSON: ' + error.message, 'error');
+        }
+    }
+
+    // Função para aplicar modo livre completo após inicialização
+    aplicarModoLivreCompleto() {
+        if (this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras) {
+            this.limparErrosVisuais();
         }
     }
 }
