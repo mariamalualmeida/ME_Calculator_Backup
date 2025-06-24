@@ -253,6 +253,17 @@ class SimuladorEmprestimos {
             });
         }
 
+        // Event listeners para configurações PDF
+        const corTemaSelect = document.getElementById('corTema');
+        if (corTemaSelect) {
+            corTemaSelect.addEventListener('change', () => this.toggleCorPersonalizada());
+        }
+
+        const incluirRodapeSelect = document.getElementById('incluirRodape');
+        if (incluirRodapeSelect) {
+            incluirRodapeSelect.addEventListener('change', () => this.toggleRodapePersonalizado());
+        }
+
         if (this.configBtn) {
             this.configBtn.addEventListener('click', () => {
                 this.abrirConfiguracoes();
@@ -1326,6 +1337,20 @@ class SimuladorEmprestimos {
         this.configuracoes.colorTheme = document.getElementById('colorTheme').value;
         this.configuracoes.exibirDadosJuros = document.getElementById('exibirDadosJuros').value === 'true';
         
+        // Salvar configurações avançadas de PDF
+        this.configuracoes.pdfOptions = {
+            incluirLogo: document.getElementById('incluirLogo').value === 'true',
+            logoUrl: document.getElementById('logoUrl').value || '',
+            incluirDataHora: document.getElementById('incluirDataHora').value === 'true',
+            incluirInformacoesExtras: document.getElementById('incluirInformacoesExtras').value === 'true',
+            formatoTabela: document.getElementById('formatoTabela').value,
+            corTema: document.getElementById('corTema').value,
+            corPersonalizada: document.getElementById('corPersonalizada').value,
+            incluirRodape: document.getElementById('incluirRodape').value === 'true',
+            textoRodape: document.getElementById('textoRodape').value || '',
+            tamanhoFonte: document.getElementById('tamanhoFonte').value
+        };
+        
         // Salvar configurações administrativas se logado
         if (this.configuracoes.isAdmin) {
             // IGPM movido para área administrativa
@@ -1773,19 +1798,38 @@ class SimuladorEmprestimos {
                 yInicial += 12;
             }
             
-            // Tabela de parcelas - Título centralizado
+            // Tabela de parcelas - Título centralizado com cor do tema
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(16);
+            doc.setFontSize(tamanhoFonte.titulo);
+            doc.setTextColor(corTema.r, corTema.g, corTema.b);
             doc.text('TABELA DE PARCELAS', 105, yInicial, { align: 'center' });
+            doc.setTextColor(0, 0, 0);
             yInicial += 15;
             
-            // Cabeçalho da tabela - Centralizado e negrito
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(14);
-            doc.text('Parcela', 35, yInicial, { align: 'center' });
-            doc.text('Vencimento', 105, yInicial, { align: 'center' });
-            doc.text('Valor', 165, yInicial, { align: 'center' });
-            yInicial += 10;
+            // Cabeçalho da tabela com formatação configurável
+            if (pdfOptions.formatoTabela !== 'minima') {
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(tamanhoFonte.subtitulo);
+                
+                if (pdfOptions.formatoTabela === 'completa') {
+                    // Desenhar bordas do cabeçalho
+                    doc.setDrawColor(corTema.r, corTema.g, corTema.b);
+                    doc.rect(20, yInicial - 5, 150, 10);
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFillColor(corTema.r, corTema.g, corTema.b);
+                    doc.rect(20, yInicial - 5, 150, 10, 'F');
+                }
+                
+                doc.text('Parcela', 35, yInicial, { align: 'center' });
+                doc.text('Vencimento', 105, yInicial, { align: 'center' });
+                doc.text('Valor', 165, yInicial, { align: 'center' });
+                
+                if (pdfOptions.formatoTabela === 'completa') {
+                    doc.setTextColor(0, 0, 0);
+                }
+                
+                yInicial += 10;
+            }
             
             // Calcular datas de vencimento
             let dataBase;
@@ -1796,9 +1840,9 @@ class SimuladorEmprestimos {
                 dataBase.setDate(dataBase.getDate() + 30);
             }
             
-            // Linhas da tabela - Centralizadas e negrito
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(12);
+            // Linhas da tabela com formatação configurável
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(tamanhoFonte.normal);
             let yPos = yInicial;
             for (let i = 1; i <= nParcelas; i++) {
                 const dataVencimento = new Date(dataBase);
@@ -1822,6 +1866,15 @@ class SimuladorEmprestimos {
                     }
                 } else {
                     valorParcela = resultadoCalculo.parcelaNormal;
+                }
+                
+                // Aplicar formatação baseada no tipo de tabela
+                if (pdfOptions.formatoTabela === 'completa') {
+                    // Desenhar bordas das células
+                    doc.setDrawColor(200, 200, 200);
+                    doc.rect(20, yPos - 5, 30, 8);
+                    doc.rect(50, yPos - 5, 70, 8);
+                    doc.rect(120, yPos - 5, 50, 8);
                 }
                 
                 doc.text(i.toString().padStart(2, '0'), 35, yPos, { align: 'center' });
