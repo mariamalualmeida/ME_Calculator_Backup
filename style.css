@@ -654,9 +654,16 @@ body {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 8px;
+    padding: 12px;
     border-radius: 50%;
     color: #49454f;
+    font-size: 24px;
+    font-weight: bold;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-body {
