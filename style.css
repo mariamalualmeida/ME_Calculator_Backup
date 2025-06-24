@@ -203,9 +203,9 @@ body {
 .form-toggle-btn {
     width: 100%;
     padding: 16px 20px;
-    background: var(--primary-color) !important;
-    color: white !important;
-    border: 2px solid var(--primary-color) !important;
+    background: var(--primary-container);
+    color: var(--on-primary-container);
+    border: 2px solid var(--primary);
     border-radius: 12px;
     font-size: 16px;
     font-weight: 500;
@@ -218,9 +218,8 @@ body {
 }
 
 .form-toggle-btn:hover {
-    background: var(--primary-dark) !important;
-    border-color: var(--primary-dark) !important;
-    color: white !important;
+    background: var(--primary-container-hover, var(--primary-container));
+    border-color: var(--primary);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -655,16 +654,9 @@ body {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 12px;
+    padding: 8px;
     border-radius: 50%;
     color: #49454f;
-    font-size: 24px;
-    font-weight: bold;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .modal-body {
@@ -785,24 +777,25 @@ body {
 }
 
 .save-btn, .admin-btn, #adminLoginBtn {
-    background: var(--primary-color) !important;
-    color: white !important;
-    border: 2px solid var(--primary-color) !important;
-    padding: 12px 24px;
-    border-radius: 24px;
-    cursor: pointer;
-    font-size: 14px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 8px;
     font-weight: 500;
-    margin-top: 16px;
-    transition: all 0.3s ease;
-    width: 100%;
-    display: block;
+    font-size: 16px;
+    cursor: pointer;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
 }
 
 .save-btn:hover, .admin-btn:hover, #adminLoginBtn:hover {
-    background: var(--primary-dark) !important;
-    border-color: var(--primary-dark) !important;
-    color: white !important;
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(103, 80, 164, 0.3);
 }
 
 .limits-table {
@@ -1370,3 +1363,130 @@ body {
 }
 
 /* CSS duplicado removido - agora unificado acima */
+
+/* Header buttons styles */
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hub-btn {
+    background: var(--surface-variant);
+    border: 1px solid var(--divider-color);
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--text-primary);
+}
+
+.hub-btn:hover {
+    background: var(--hover-color);
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+/* Hub specific styles */
+.hub-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    min-height: calc(100vh - 200px);
+}
+
+.hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 2rem;
+}
+
+.hub-card {
+    background: var(--surface-color);
+    border: 1px solid var(--divider-color);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.hub-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    border-color: var(--primary-color);
+}
+
+.hub-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.hub-card h2 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+    font-size: 1.25rem;
+}
+
+.hub-card p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.hub-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hub-footer .settings-btn {
+    background: var(--surface-variant);
+    border: 1px solid var(--divider-color);
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.hub-footer .settings-btn:hover {
+    background: var(--hover-color);
+    border-color: var(--primary-color);
+}
+
+.toast.error {
+    background: var(--error-color);
+    color: white;
+}
+
+.toast.success {
+    background: var(--success-color);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .hub-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .hub-main {
+        padding: 1rem;
+    }
+}

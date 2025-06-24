@@ -209,6 +209,7 @@ SimuladorEmprestimos/
 - June 24, 2025: RECUPERAÇÃO COMPLETA PÓS-ROLLBACK - todas melhorias restauradas: erro inicialização corrigido, cores botões forçadas com !important, botão expandir funcionando, área administrativa funcional, cache v=20250624090000 (v20250624090000)
 - June 24, 2025: CORREÇÃO CRÍTICA FUNÇÃO PDF - erro de sintaxe na exportarPdf() corrigido, função gerarPdfSimples() restaurada, botão expandir dados completos conectado corretamente ao ID formToggleBtn, sistema funcionando completamente, cache v=20250624092000 (v20250624092000)
 - June 24, 2025: CORREÇÃO DEFINITIVA ERRO INICIALIZAÇÃO - função escurecerCor() implementada corrigindo TypeError crítico, código duplicado nas funções PDF removido, sistema inicializando corretamente, todas funcionalidades restauradas e funcionando, cache v=20250624093000 (v20250624093000)
+- June 24, 2025: RESTAURAÇÃO COMPLETA DO BACKUP GITHUB - sistema totalmente restaurado usando backup original, removido apenas botão hub, todas funcionalidades originais preservadas: nome/CPF na tela principal, informativo de limites, configurações completas, formatação de erros, sistema funcionando perfeitamente, cache v=20250624093500 (v20250624093500)
 
 ## User Preferences
 

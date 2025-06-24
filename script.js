@@ -1,7 +1,7 @@
 /**
  * ME EMPREENDIMENTOS - Simulador de Empréstimos
- * Sistema COMPLETAMENTE LIMPO - apenas simulador de empréstimos
- * Updated: 2025-06-24 08:30 - VARREDURA COMPLETA: todos resíduos removidos
+ * Implementa cálculo com pró-rata, IGPM e área administrativa
+ * Updated: 2025-06-21 13:33 - Real-time percentage formatting
  */
 
 class SimuladorEmprestimos {
@@ -31,12 +31,6 @@ class SimuladorEmprestimos {
         this.initializeElements();
         this.setupEventListeners();
         this.focusInitialField();
-        
-        // Garantir que o modal está fechado na inicialização
-        const configModal = document.getElementById('configModal');
-        if (configModal) {
-            configModal.style.display = 'none';
-        }
     }
 
     carregarConfiguracoes() {
@@ -245,7 +239,6 @@ class SimuladorEmprestimos {
             });
         }
 
-        // Botão de login administrativo
         const adminLoginBtn = document.getElementById('adminLoginBtn');
         if (adminLoginBtn) {
             adminLoginBtn.addEventListener('click', () => {
@@ -309,7 +302,7 @@ class SimuladorEmprestimos {
         });
 
         // Event listener para formulário completo
-        const toggleFormBtn = document.getElementById('formToggleBtn');
+        const toggleFormBtn = document.getElementById('toggleFormCompleto');
         if (toggleFormBtn) {
             toggleFormBtn.addEventListener('click', () => this.toggleFormularioCompleto());
         }
@@ -327,8 +320,9 @@ class SimuladorEmprestimos {
 
     // Função para toggle do formulário completo
     toggleFormularioCompleto() {
-        const container = document.getElementById('formCompletoSection');
-        const toggleBtn = document.getElementById('formToggleBtn');
+        const container = document.getElementById('formCompletoContainer');
+        const toggleBtn = document.getElementById('toggleFormCompleto');
+        const icon = toggleBtn ? toggleBtn.querySelector('.toggle-icon') : null;
         
         if (!container || !toggleBtn) {
             console.error('Elementos do formulário completo não encontrados');
@@ -338,11 +332,11 @@ class SimuladorEmprestimos {
         if (container.style.display === 'none' || container.style.display === '') {
             container.style.display = 'block';
             toggleBtn.classList.add('expanded');
-            toggleBtn.textContent = 'Ocultar dados completos do cliente';
+            if (icon) icon.textContent = '▲';
         } else {
             container.style.display = 'none';
             toggleBtn.classList.remove('expanded');
-            toggleBtn.textContent = 'Dados completos do cliente';
+            if (icon) icon.textContent = '▼';
         }
     }
 
@@ -1208,7 +1202,7 @@ class SimuladorEmprestimos {
         modal.setAttribute('data-theme', this.configuracoes.themeMode);
         modal.setAttribute('data-color-theme', this.configuracoes.colorTheme);
         
-
+        console.log('Debug - Configurações abertas, painel admin oculto, login obrigatório');
     }
 
     fecharModal() {
@@ -1240,7 +1234,7 @@ class SimuladorEmprestimos {
         // IMPORTANTE: Aplicar configurações administrativas na página principal
         this.atualizarClassesModoLivre();
         
-
+        console.log('Debug - Modal fechado, configurações preservadas, UI resetada');
     }
 
 
@@ -1315,12 +1309,10 @@ class SimuladorEmprestimos {
     }
 
     fazerLoginAdmin() {
-        const usuario = document.getElementById('adminUser').value.trim();
-        const senha = document.getElementById('adminPass').value.trim();
+        const usuario = document.getElementById('adminUser').value;
+        const senha = document.getElementById('adminPass').value;
         
-        // Verificar credenciais padrão diretamente primeiro
-        if ((usuario === 'admin' && senha === 'admin123') || 
-            (usuario === this.configuracoes.adminUser && senha === this.configuracoes.adminPassword)) {
+        if (usuario === this.configuracoes.adminUser && senha === this.configuracoes.adminPassword) {
             // Ativar estado administrativo
             this.configuracoes.isAdmin = true;
             
@@ -1340,273 +1332,75 @@ class SimuladorEmprestimos {
             // Aplicar modo livre imediatamente se configurado
             this.atualizarClassesModoLivre();
             
+            console.log('Debug - Login admin realizado, painel temporário exibido');
         } else {
-            alert('Usuário ou senha incorretos. Use: admin / admin123');
+            alert('Usuário ou senha incorretos');
         }
     }
 
     mostrarPainelAdmin() {
-        const adminPanel = document.getElementById('adminPanel');
-        const loginSection = document.getElementById('adminLoginSection');
+        const panel = document.getElementById('adminPanel');
+        const table = document.getElementById('limitsTable');
         
-        if (adminPanel) {
-            adminPanel.style.display = 'block';
+        // REFATORAÇÃO: Formato unificado boolean consistente
+        document.getElementById('desabilitarRegras').value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
+        
+        let html = '<div class="limits-table">';
+        for (let parcelas = 1; parcelas <= 15; parcelas++) {
+            const limite = this.configuracoes.limitesPersonalizados?.[parcelas] || this.limitesJuros[parcelas];
+            html += `
+                <div class="limit-row">
+                    <label>${parcelas}p:</label>
+                    <input type="text" id="min_${parcelas}" value="${limite.min.toFixed(2).replace('.', ',')}" placeholder="Mínimo">
+                    <input type="text" id="max_${parcelas}" value="${limite.max.toFixed(2).replace('.', ',')}" placeholder="Máximo">
+                </div>
+            `;
         }
-        if (loginSection) {
-            loginSection.style.display = 'none';
-        }
+        html += '</div>';
         
-        // Carregar valores administrativos nos campos com verificação
-        const igpmField = document.getElementById('igpmAnual');
-        const regrasField = document.getElementById('desabilitarRegras');
-        const jurosField = document.getElementById('sistemaJuros');
+        table.innerHTML = html;
+        panel.style.display = 'block';
         
-        if (igpmField) igpmField.value = this.configuracoes.igpmAnual || '0';
-        if (regrasField) regrasField.value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
-        if (jurosField) jurosField.value = this.configuracoes.sistemaJuros || 'compostos-mensal';
-        
-        // Preencher tabela de limites com verificação
-        const table = document.querySelector('#customLimitsTable tbody');
-        if (table) {
-            let html = '';
-            for (let parcelas = 1; parcelas <= 15; parcelas++) {
-                const limite = this.limitesJuros[parcelas] || { min: 0, max: 0 };
-                html += `
-                    <tr>
-                        <td>${parcelas}</td>
-                        <td><input type="text" id="min_${parcelas}" value="${limite.min.toFixed(2).replace('.', ',')}" class="limit-input"></td>
-                        <td><input type="text" id="max_${parcelas}" value="${limite.max.toFixed(2).replace('.', ',')}" class="limit-input"></td>
-                    </tr>
-                `;
-            }
-            table.innerHTML = html;
-        }
+        // Aplicar tema atual ao painel admin
+        panel.setAttribute('data-theme', this.configuracoes.themeMode);
+        panel.setAttribute('data-color-theme', this.configuracoes.colorTheme);
     }
 
 
 
     obterDadosCompletosPdf() {
         const dadosCompletos = {
-            nomeCompleto: this.getFieldValue('nomeCompleto'),
-            cpf: this.getFieldValue('cpf'),
-            dataNascimento: this.getFieldValue('dataNascimento'),
-            estadoCivil: this.getFieldValue('estadoCivil'),
-            cep: this.getFieldValue('cep'),
-            endereco: this.getFieldValue('endereco'),
-            bairro: this.getFieldValue('bairro'),
-            cidade: this.getFieldValue('cidade'),
-            profissao: this.getFieldValue('profissao'),
-            rendaMensal: this.getFieldValue('rendaMensal'),
-            empresa: this.getFieldValue('empresa'),
-            telefone: this.getFieldValue('telefone'),
-            nomeReferencia1: this.getFieldValue('nomeReferencia1'),
-            telefoneReferencia1: this.getFieldValue('telefoneReferencia1'),
-            bairroReferencia1: this.getFieldValue('bairroReferencia1'),
-            nomeReferencia2: this.getFieldValue('nomeReferencia2'),
-            telefoneReferencia2: this.getFieldValue('telefoneReferencia2'),
-            bairroReferencia2: this.getFieldValue('bairroReferencia2')
+            temDados: false,
+            pessoais: [],
+            profissionais: [],
+            referencias: []
         };
-        
-        return dadosCompletos;
-    }
-    
-    getFieldValue(fieldId) {
-        const field = document.getElementById(fieldId);
-        return field ? field.value : '';
-    }
-    
-    exportarPdf() {
-        try {
-            const { jsPDF } = window.jspdf;
-            if (!jsPDF) {
-                alert('Biblioteca jsPDF não carregada. Tente recarregar a página.');
-                return;
-            }
 
-            const valor = this.obterValorNumerico(this.valorEmprestimoField.value);
-            const nParcelas = parseInt(this.numeroParcelasField.value);
-            const juros = this.obterPercentualNumerico(this.taxaJurosField.value);
+        // Verificar se há dados no formulário completo (independente se está visível)
+        const formCompleto = document.getElementById('formCompleto');
+        // Remover verificação de display para capturar dados sempre que preenchidos
 
-            if (!valor || !nParcelas || !juros) {
-                alert('Preencha todos os campos antes de exportar o PDF.');
-                return;
-            }
+        // Dados pessoais - incluindo nome e CPF aqui
+        const pessoais = [];
+        const nomeCompletoField = document.getElementById('nomeCompleto');
+        const cpfCompletoField = document.getElementById('cpfCompleto');
+        const nomeCompleto = nomeCompletoField?.value?.trim() || '';
+        const cpfCompleto = cpfCompletoField?.value?.trim() || '';
+        const dataNascimento = document.getElementById('dataNascimento')?.value;
+        const estadoCivil = document.getElementById('estadoCivil')?.value;
+        const endereco = document.getElementById('endereco')?.value;
+        const numero = document.getElementById('numero')?.value;
+        const complemento = document.getElementById('complemento')?.value;
+        const bairro = document.getElementById('bairro')?.value;
+        const cidade = document.getElementById('cidade')?.value;
+        const estado = document.getElementById('estado')?.value;
+        const cep = document.getElementById('cep')?.value;
+        const telefone = document.getElementById('telefoneCompleto')?.value;
 
-            // Recarregar configurações antes de calcular
-            this.recarregarConfiguracoesSemReset();
-
-            const diasExtra = this.calcularDiasExtras();
-            const igpmMensal = this.configuracoes.igpmAnual ? this.configuracoes.igpmAnual / 12 : 0;
-            const metodo = this.obterMetodoDiasExtras();
-            const sistemaJuros = this.configuracoes.sistemaJuros || 'compostos-mensal';
-
-            const resultadoCalculo = this.calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal, metodo, sistemaJuros);
-
-            this.gerarPdfSimples(valor, nParcelas, juros, resultadoCalculo);
-
-        } catch (error) {
-            console.error('Erro ao exportar PDF:', error);
-            alert('Erro ao gerar PDF. Tente novamente.');
-        }
-    }
-
-    gerarPdfSimples(valor, nParcelas, juros, resultadoCalculo) {
-        try {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            // Cabeçalho
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(16);
-            doc.text('ME EMPREENDIMENTOS', 105, 20, { align: 'center' });
-            
-            doc.setFontSize(14);
-            doc.text('Simulação de Empréstimo', 105, 30, { align: 'center' });
-
-            // Dados do simulador
-            const nomeUsuario = this.configuracoes.nomeUsuario || 'Não informado';
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(10);
-            doc.text(`Simulado por: ${nomeUsuario}`, 20, 45);
-
-            // Dados completos do cliente
-            const dadosCompletos = this.obterDadosCompletosPdf();
-            let yPos = 55;
-
-            // Nome e CPF dos campos principais
-            const nomeField = document.getElementById('nome');
-            const cpfField = document.getElementById('cpf');
-            
-            if (nomeField?.value) {
-                doc.text(`Cliente: ${nomeField.value}`, 20, yPos);
-                yPos += 7;
-            }
-            
-            if (cpfField?.value) {
-                doc.text(`CPF: ${cpfField.value}`, 20, yPos);
-                yPos += 7;
-            }
-
-            // Adicionar dados completos se existirem
-            if (dadosCompletos.dataNascimento) {
-                doc.text(`Data de Nascimento: ${dadosCompletos.dataNascimento}`, 20, yPos);
-                yPos += 7;
-            }
-
-            // Pular linha
-            yPos += 10;
-
-            // Dados da simulação
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(12);
-            doc.text('Dados da Simulação:', 20, yPos);
-            yPos += 10;
-
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(10);
-            doc.text(`Valor do Empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yPos);
-            yPos += 7;
-            doc.text(`Número de Parcelas: ${nParcelas}`, 20, yPos);
-            yPos += 7;
-
-            if (this.configuracoes.mostrarJurosRelatorio) {
-                doc.text(`Taxa de Juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, yPos);
-                yPos += 7;
-            }
-
-            // Sistema de juros usado
-            const sistemaJurosTexto = {
-                'simples': 'Juros Simples',
-                'compostos-diarios': 'Juros Compostos Diários',
-                'compostos-mensal': 'Juros Compostos Mensais',
-                'pro-rata-real': 'Pro-rata Real'
-            };
-            
-            doc.text(`Sistema: ${sistemaJurosTexto[this.configuracoes.sistemaJuros] || 'Juros Compostos Mensais'}`, 20, yPos);
-            yPos += 10;
-
-            // Resultado
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(12);
-            
-            if (resultadoCalculo.primeiraParcela && resultadoCalculo.parcelaNormal && resultadoCalculo.primeiraParcela !== resultadoCalculo.parcelaNormal) {
-                doc.text(`1ª Parcela: R$ ${resultadoCalculo.primeiraParcela.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yPos);
-                yPos += 7;
-                
-                if (nParcelas > 1) {
-                    doc.text(`Demais ${nParcelas - 1} parcela(s): R$ ${resultadoCalculo.parcelaNormal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yPos);
-                    yPos += 7;
-                }
-            } else {
-                doc.text(`Valor da Parcela: R$ ${(resultadoCalculo.parcelaNormal || resultadoCalculo.primeiraParcela).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yPos);
-                yPos += 7;
-            }
-
-            // Cronograma de pagamentos
-            yPos += 10;
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(12);
-            doc.text('Cronograma de Pagamentos:', 20, yPos);
-            yPos += 10;
-
-            // Cabeçalho da tabela
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10);
-            doc.text('Parcela', 35, yPos, { align: 'center' });
-            doc.text('Vencimento', 105, yPos, { align: 'center' });
-            doc.text('Valor', 165, yPos, { align: 'center' });
-            yPos += 10;
-
-            // Linhas da tabela
-            doc.setFont('helvetica', 'normal');
-            
-            const dataInicial = this.parseData(this.dataInicialField?.value) || new Date();
-            
-            for (let i = 1; i <= nParcelas; i++) {
-                const dataVencimento = new Date(dataInicial);
-                dataVencimento.setMonth(dataVencimento.getMonth() + i);
-                
-                let valorParcela;
-                if (resultadoCalculo.primeiraParcela && resultadoCalculo.parcelaNormal && 
-                    resultadoCalculo.primeiraParcela !== resultadoCalculo.parcelaNormal) {
-                    if (i === 1) {
-                        valorParcela = resultadoCalculo.primeiraParcela;
-                    } else {
-                        valorParcela = resultadoCalculo.parcelaNormal;
-                    }
-                } else {
-                    valorParcela = resultadoCalculo.parcelaNormal || resultadoCalculo.primeiraParcela;
-                }
-                
-                doc.text(i.toString().padStart(2, '0'), 35, yPos, { align: 'center' });
-                doc.text(dataVencimento.toLocaleDateString('pt-BR'), 105, yPos, { align: 'center' });
-                doc.text(`R$ ${valorParcela.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 165, yPos, { align: 'center' });
-                
-                yPos += 8;
-                
-                // Nova página se necessário
-                if (yPos > 270) {
-                    doc.addPage();
-                    yPos = 20;
-                    // Repetir cabeçalho na nova página
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(10);
-                    doc.text('Parcela', 35, yPos, { align: 'center' });
-                    doc.text('Vencimento', 105, yPos, { align: 'center' });
-                    doc.text('Valor', 165, yPos, { align: 'center' });
-                    yPos += 10;
-                    doc.setFont('helvetica', 'normal');
-                }
-            }
-            
-            // Salvar PDF
-            doc.save(`simulacao_emprestimo_${Date.now()}.pdf`);
-            alert('PDF exportado com sucesso!');
-            
-        } catch (error) {
-            console.error('Erro ao gerar PDF:', error);
-            alert('Erro ao gerar PDF. Tente novamente.');
-        }
+        if (nomeCompleto) pessoais.push(`Nome: ${nomeCompleto}`);
+        if (cpfCompleto) pessoais.push(`CPF: ${cpfCompleto}`);
+        if (dataNascimento) pessoais.push(`Data de Nascimento: ${dataNascimento}`);
+        if (estadoCivil) pessoais.push(`Estado Civil: ${estadoCivil}`);
         if (endereco) pessoais.push(`Endereço: ${endereco}${numero ? `, ${numero}` : ''}${complemento ? `, ${complemento}` : ''}`);
         if (bairro) pessoais.push(`Bairro: ${bairro}`);
         if (cidade && estado) pessoais.push(`Cidade: ${cidade} - ${estado}`);
@@ -1989,29 +1783,10 @@ class SimuladorEmprestimos {
     }
 
     aplicarPaletaCores(colorTheme) {
-        const root = document.documentElement;
-        
-        const cores = {
-            'default': { primary: '#1976d2', secondary: '#03a9f4', accent: '#ff5722' },
-            'purple': { primary: '#7b1fa2', secondary: '#ab47bc', accent: '#e91e63' },
-            'green': { primary: '#388e3c', secondary: '#66bb6a', accent: '#ff9800' },
-            'orange': { primary: '#f57c00', secondary: '#ff9800', accent: '#4caf50' },
-            'red': { primary: '#d32f2f', secondary: '#f44336', accent: '#2196f3' },
-            'teal': { primary: '#00796b', secondary: '#26a69a', accent: '#ff5722' }
-        };
-        
-        const paletaSelecionada = cores[colorTheme] || cores.default;
-        
-        root.style.setProperty('--primary-color', paletaSelecionada.primary);
-        root.style.setProperty('--primary-dark', this.escurecerCor(paletaSelecionada.primary, 20));
-        root.style.setProperty('--secondary-color', paletaSelecionada.secondary);
-        root.style.setProperty('--accent-color', paletaSelecionada.accent);
-        
-        // Atualizar atributos
         document.documentElement.setAttribute('data-color-theme', colorTheme);
         document.body.setAttribute('data-color-theme', colorTheme);
         
-        // Aplicar cores nos elementos específicos
+        // Aplicar tema aos modais e botão expandir
         const modal = document.getElementById('configModal');
         const adminPanel = document.getElementById('adminPanel');
         const formToggleBtn = document.querySelector('.form-toggle-btn');
@@ -2026,25 +1801,6 @@ class SimuladorEmprestimos {
         
         if (formToggleBtn) {
             formToggleBtn.setAttribute('data-color-theme', colorTheme);
-            formToggleBtn.style.backgroundColor = paletaSelecionada.primary;
-            formToggleBtn.style.borderColor = paletaSelecionada.primary;
-            formToggleBtn.style.color = 'white';
-        }
-        
-        // Aplicar cores nos botões do modal
-        const modalButtons = document.querySelectorAll('.save-btn, .admin-btn, #adminLoginBtn');
-        modalButtons.forEach(btn => {
-            if (btn) {
-                btn.style.backgroundColor = paletaSelecionada.primary;
-                btn.style.borderColor = paletaSelecionada.primary;
-                btn.style.color = 'white';
-            }
-        });
-        
-        // Aplicar cor no botão de fechar
-        const closeBtn = document.querySelector('.close-btn');
-        if (closeBtn) {
-            closeBtn.style.color = paletaSelecionada.primary;
         }
         
         // Salvar a preferência
@@ -2064,30 +1820,6 @@ class SimuladorEmprestimos {
             style: 'currency',
             currency: 'BRL'
         }).format(valor);
-    }
-
-    escurecerCor(cor, porcentagem) {
-        // Remove o # se presente
-        cor = cor.replace('#', '');
-        
-        // Converte hex para RGB
-        const r = parseInt(cor.substring(0, 2), 16);
-        const g = parseInt(cor.substring(2, 4), 16);
-        const b = parseInt(cor.substring(4, 6), 16);
-        
-        // Escurece cada componente
-        const fator = (100 - porcentagem) / 100;
-        const newR = Math.round(r * fator);
-        const newG = Math.round(g * fator);
-        const newB = Math.round(b * fator);
-        
-        // Converte de volta para hex
-        const toHex = (n) => {
-            const hex = n.toString(16);
-            return hex.length === 1 ? '0' + hex : hex;
-        };
-        
-        return `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
     }
 
     toggleMetodoDiasExtras() {
@@ -2121,27 +1853,13 @@ class SimuladorEmprestimos {
 let simulator;
 
 function initializeApp() {
-    // Garantir que só inicializa uma vez
-    if (window.simuladorInstance) {
-        return;
-    }
-    
-    // Garantir que o modal está fechado antes da inicialização
-    const configModal = document.getElementById('configModal');
-    if (configModal) {
-        configModal.style.display = 'none';
-    }
-    
     try {
-        window.simuladorInstance = new SimuladorEmprestimos();
+        simulator = new SimuladorEmprestimos();
         console.log('Simulador inicializado com sucesso');
     } catch (error) {
         console.error('Erro ao inicializar simulador:', error);
-        setTimeout(() => {
-            if (!window.simuladorInstance) {
-                initializeApp();
-            }
-        }, 1000);
+        // Tentar novamente após 500ms
+        setTimeout(initializeApp, 500);
     }
 }
 
