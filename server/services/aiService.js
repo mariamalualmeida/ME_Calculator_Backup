@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 import { GoogleGenAI } from '@google/genai';
 import { db } from '../db.js';
-import { aiConfigs } from '../../shared/schema.js';
+import * as schema from '../../shared/schema.js';
 import { eq, and } from 'drizzle-orm';
 
 export class AIService {
@@ -36,7 +36,7 @@ export class AIService {
 
   async getUserConfigs(userId) {
     try {
-      const configs = await db.select().from(aiConfigs).where(eq(aiConfigs.userId, parseInt(userId)));
+      const configs = await db.select().from(schema.aiConfigs).where(eq(schema.aiConfigs.userId, parseInt(userId)));
       return configs;
     } catch (error) {
       throw new Error(`Erro ao buscar configurações: ${error.message}`);
@@ -46,8 +46,8 @@ export class AIService {
   async getActiveConfig(userId) {
     try {
       const [config] = await db.select()
-        .from(aiConfigs)
-        .where(and(eq(aiConfigs.userId, parseInt(userId)), eq(aiConfigs.isActive, true)));
+        .from(schema.aiConfigs)
+        .where(and(eq(schema.aiConfigs.userId, parseInt(userId)), eq(schema.aiConfigs.isActive, true)));
       return config;
     } catch (error) {
       throw new Error(`Erro ao buscar configuração ativa: ${error.message}`);
@@ -58,12 +58,12 @@ export class AIService {
     try {
       // Se esta configuração deve ser ativa, desativar as outras
       if (configData.isActive) {
-        await db.update(aiConfigs)
+        await db.update(schema.aiConfigs)
           .set({ isActive: false })
-          .where(eq(aiConfigs.userId, configData.userId));
+          .where(eq(schema.aiConfigs.userId, configData.userId));
       }
 
-      const [config] = await db.insert(aiConfigs)
+      const [config] = await db.insert(schema.aiConfigs)
         .values({
           ...configData,
           createdAt: new Date(),
@@ -81,17 +81,17 @@ export class AIService {
     try {
       // Se esta configuração deve ser ativa, desativar as outras
       if (updateData.isActive) {
-        const [config] = await db.select().from(aiConfigs).where(eq(aiConfigs.id, parseInt(id)));
+        const [config] = await db.select().from(schema.aiConfigs).where(eq(schema.aiConfigs.id, parseInt(id)));
         if (config) {
-          await db.update(aiConfigs)
+          await db.update(schema.aiConfigs)
             .set({ isActive: false })
-            .where(eq(aiConfigs.userId, config.userId));
+            .where(eq(schema.aiConfigs.userId, config.userId));
         }
       }
 
-      const [updatedConfig] = await db.update(aiConfigs)
+      const [updatedConfig] = await db.update(schema.aiConfigs)
         .set({ ...updateData, updatedAt: new Date() })
-        .where(eq(aiConfigs.id, parseInt(id)))
+        .where(eq(schema.aiConfigs.id, parseInt(id)))
         .returning();
       
       return updatedConfig;
@@ -102,7 +102,7 @@ export class AIService {
 
   async deleteConfig(id) {
     try {
-      await db.delete(aiConfigs).where(eq(aiConfigs.id, parseInt(id)));
+      await db.delete(schema.aiConfigs).where(eq(schema.aiConfigs.id, parseInt(id)));
     } catch (error) {
       throw new Error(`Erro ao deletar configuração: ${error.message}`);
     }

@@ -5,7 +5,7 @@ import mammoth from 'mammoth';
 import XLSX from 'xlsx';
 import sharp from 'sharp';
 import { db } from '../db.js';
-import { uploadedFiles, financialAnalyses } from '../../shared/schema.js';
+import * as schema from '../../shared/schema.js';
 
 export class FileService {
   constructor() {

@@ -124,15 +124,4 @@ export const financialAnalysesRelations = relations(financialAnalyses, ({ one })
 }));
 
 // Tipos TypeScript
-export type User = typeof users.$inferSelect;
-export type InsertUser = typeof users.$inferInsert;
-export type AiConfig = typeof aiConfigs.$inferSelect;
-export type InsertAiConfig = typeof aiConfigs.$inferInsert;
-export type Conversation = typeof conversations.$inferSelect;
-export type InsertConversation = typeof conversations.$inferInsert;
-export type Message = typeof messages.$inferSelect;
-export type InsertMessage = typeof messages.$inferInsert;
-export type UploadedFile = typeof uploadedFiles.$inferSelect;
-export type InsertUploadedFile = typeof uploadedFiles.$inferInsert;
-export type FinancialAnalysis = typeof financialAnalyses.$inferSelect;
-export type InsertFinancialAnalysis = typeof financialAnalyses.$inferInsert;
+// Tipos TypeScript removidos para compatibilidade CommonJS

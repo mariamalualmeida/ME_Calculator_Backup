@@ -1,11 +1,11 @@
 import { db } from '../db.js';
-import { conversations, messages } from '../../shared/schema.js';
+import * as schema from '../../shared/schema.js';
 import { eq, desc } from 'drizzle-orm';
 
 export class ChatService {
   async createConversation(userId, title, aiConfigId = null) {
     try {
-      const [conversation] = await db.insert(conversations)
+      const [conversation] = await db.insert(schema.conversations)
         .values({
           userId: parseInt(userId),
           title: title || 'Nova Conversa',
@@ -24,9 +24,9 @@ export class ChatService {
   async getUserConversations(userId) {
     try {
       const userConversations = await db.select()
-        .from(conversations)
-        .where(eq(conversations.userId, parseInt(userId)))
-        .orderBy(desc(conversations.updatedAt));
+        .from(schema.conversations)
+        .where(eq(schema.conversations.userId, parseInt(userId)))
+        .orderBy(desc(schema.conversations.updatedAt));
       
       return userConversations;
     } catch (error) {
@@ -37,9 +37,9 @@ export class ChatService {
   async getConversationMessages(conversationId) {
     try {
       const conversationMessages = await db.select()
-        .from(messages)
-        .where(eq(messages.conversationId, parseInt(conversationId)))
-        .orderBy(messages.createdAt);
+        .from(schema.messages)
+        .where(eq(schema.messages.conversationId, parseInt(conversationId)))
+        .orderBy(schema.messages.createdAt);
       
       return conversationMessages;
     } catch (error) {
@@ -49,7 +49,7 @@ export class ChatService {
 
   async saveMessage(conversationId, role, content, metadata = null) {
     try {
-      const [message] = await db.insert(messages)
+      const [message] = await db.insert(schema.messages)
         .values({
           conversationId: parseInt(conversationId),
           role,
@@ -60,9 +60,9 @@ export class ChatService {
         .returning();
 
       // Atualizar timestamp da conversa
-      await db.update(conversations)
+      await db.update(schema.conversations)
         .set({ updatedAt: new Date() })
-        .where(eq(conversations.id, parseInt(conversationId)));
+        .where(eq(schema.conversations.id, parseInt(conversationId)));
       
       return message;
     } catch (error) {
@@ -72,12 +72,12 @@ export class ChatService {
 
   async updateConversationTitle(conversationId, title) {
     try {
-      const [conversation] = await db.update(conversations)
+      const [conversation] = await db.update(schema.conversations)
         .set({ 
           title,
           updatedAt: new Date()
         })
-        .where(eq(conversations.id, parseInt(conversationId)))
+        .where(eq(schema.conversations.id, parseInt(conversationId)))
         .returning();
       
       return conversation;
@@ -89,12 +89,12 @@ export class ChatService {
   async deleteConversation(conversationId) {
     try {
       // Primeiro deletar todas as mensagens da conversa
-      await db.delete(messages)
-        .where(eq(messages.conversationId, parseInt(conversationId)));
+      await db.delete(schema.messages)
+        .where(eq(schema.messages.conversationId, parseInt(conversationId)));
       
       // Depois deletar a conversa
-      await db.delete(conversations)
-        .where(eq(conversations.id, parseInt(conversationId)));
+      await db.delete(schema.conversations)
+        .where(eq(schema.conversations.id, parseInt(conversationId)));
     } catch (error) {
       throw new Error(`Erro ao deletar conversa: ${error.message}`);
     }

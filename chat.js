@@ -55,7 +55,12 @@ class ChatSystem {
 
     connectSocket() {
         try {
-            this.socket = io('http://localhost:3001');
+            // Detectar se estamos em desenvolvimento ou produção
+            const socketUrl = window.location.hostname === 'localhost' ? 
+                'http://localhost:3001' : 
+                `${window.location.protocol}//${window.location.hostname}:3001`;
+            
+            this.socket = io(socketUrl);
             
             this.socket.on('connect', () => {
                 console.log('Conectado ao servidor');

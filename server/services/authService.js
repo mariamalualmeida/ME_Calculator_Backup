@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { db } from '../db.js';
-import { users } from '../../shared/schema.js';
+import * as schema from '../../shared/schema.js';
 import { eq } from 'drizzle-orm';
 
 export class AuthService {
@@ -13,8 +13,8 @@ export class AuthService {
     try {
       // Verificar se usuário já existe
       const [existingUser] = await db.select()
-        .from(users)
-        .where(eq(users.username, username));
+        .from(schema.users)
+        .where(eq(schema.users.username, username));
 
       if (existingUser) {
         throw new Error('Usuário já existe');
@@ -24,7 +24,7 @@ export class AuthService {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Criar usuário
-      const [user] = await db.insert(users)
+      const [user] = await db.insert(schema.users)
         .values({
           username,
           password: hashedPassword,
@@ -32,10 +32,10 @@ export class AuthService {
           createdAt: new Date()
         })
         .returning({
-          id: users.id,
-          username: users.username,
-          email: users.email,
-          createdAt: users.createdAt
+          id: schema.users.id,
+          username: schema.users.username,
+          email: schema.users.email,
+          createdAt: schema.users.createdAt
         });
 
       // Gerar token
@@ -59,8 +59,8 @@ export class AuthService {
     try {
       // Buscar usuário
       const [user] = await db.select()
-        .from(users)
-        .where(eq(users.username, username));
+        .from(schema.users)
+        .where(eq(schema.users.username, username));
 
       if (!user) {
         throw new Error('Credenciais inválidas');
