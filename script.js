@@ -2279,40 +2279,7 @@ if (document.readyState === 'loading') {
     tryInitialize();
 }
 
-// Funções globais para onclick handlers - REPLIT PREVIEW COMPATIBILITY
-window.togglePassword = function(fieldId) {
-    if (window.simulator) {
-        const field = document.getElementById(fieldId);
-        const toggle = field.nextElementSibling;
-        
-        if (field.type === 'password') {
-            field.type = 'text';
-            toggle.textContent = '○';
-        } else {
-            field.type = 'password';
-            toggle.textContent = '●';
-        }
-    }
-}
 
-window.toggleSection = function(sectionId) {
-    if (window.simulator) {
-        const section = document.getElementById(sectionId);
-        const isVisible = section.style.display !== 'none';
-        section.style.display = isVisible ? 'none' : 'block';
-        
-        // Atualizar texto do botão
-        const button = document.querySelector(`[onclick="toggleSection('${sectionId}')"]`);
-        if (button) {
-            const text = button.textContent;
-            if (text.includes('▼')) {
-                button.textContent = text.replace('▼', '▶');
-            } else if (text.includes('▶')) {
-                button.textContent = text.replace('▶', '▼');
-            }
-        }
-    }
-}
 
 
 
