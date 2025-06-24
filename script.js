@@ -1309,6 +1309,23 @@ class SimuladorEmprestimos {
         if (this.configuracoes.isAdmin) {
             // IGPM movido para área administrativa
             this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
+            
+            // Novas configurações
+            this.configuracoes.diasExtrasConfigurado = parseInt(document.getElementById('diasExtrasConfigurado').value) || 0;
+            this.configuracoes.ajusteAutomaticoMeses = document.getElementById('ajusteAutomaticoMeses').value === 'true';
+            
+            // Dados do credor
+            this.configuracoes.dadosCredor = {
+                nome: document.getElementById('credorNome').value || '',
+                cpfCnpj: document.getElementById('credorCpfCnpj').value || '',
+                endereco: document.getElementById('credorEndereco').value || '',
+                rgOrgao: document.getElementById('credorRgOrgao').value || ''
+            };
+            
+            // Configurações de contratos
+            this.configuracoes.promissoriasColoridas = document.getElementById('promissoriasColoridas').value === 'true';
+            this.configuracoes.promissoriasPorFolha = parseInt(document.getElementById('promissoriasPorFolha').value) || 2;
+            this.configuracoes.templateContrato = document.getElementById('templateContrato').value || '';
             this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').value === 'desabilitar';
             this.configuracoes.sistemaJuros = document.getElementById('sistemaJuros').value;
             
