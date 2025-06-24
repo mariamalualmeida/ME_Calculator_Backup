@@ -25,16 +25,25 @@ class SimuladorEmprestimos {
             15: { min: 11.43, max: 11.80 }
         };
 
+        // Cache de elementos DOM
+        this.elements = {};
+        
         this.configuracoes = this.carregarConfiguracoes();
-        // Forçar reset do estado administrativo na inicialização
         this.configuracoes.isAdmin = false;
+        
         this.initializeElements();
         this.setupEventListeners();
+        this.setupNotificationSystem();
         this.focusInitialField();
     }
 
     carregarConfiguracoes() {
-        const config = localStorage.getItem('simulador_config');
+        let config = null;
+        try {
+            config = localStorage.getItem('simulador_config');
+        } catch (error) {
+            // localStorage não disponível ou erro ao acessar
+        }
         const defaultConfig = {
             nomeUsuario: '',
             igpmAnual: 0.0,
@@ -89,8 +98,87 @@ class SimuladorEmprestimos {
         return loadedConfig;
     }
 
+    configurarSelects(config) {
+        const sistemaJurosSelect = document.getElementById('sistemaJuros');
+        if (sistemaJurosSelect) {
+            sistemaJurosSelect.value = config.sistemaJuros || 'compostos-mensal';
+        }
+        
+        const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
+        if (desabilitarRegrasSelect) {
+            desabilitarRegrasSelect.value = config.desabilitarRegras ? 'desabilitar' : 'habilitar';
+        }
+    }
+
+    setupNotificationSystem() {
+        // Criar container de notificações se não existir
+        if (!document.getElementById('notification-container')) {
+            const container = document.createElement('div');
+            container.id = 'notification-container';
+            container.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                pointer-events: none;
+            `;
+            document.body.appendChild(container);
+        }
+    }
+
+    showNotification(message, type = 'info', duration = 3000) {
+        const container = document.getElementById('notification-container');
+        const notification = document.createElement('div');
+        
+        const colors = {
+            success: '#4caf50',
+            error: '#f44336',
+            info: '#2196f3',
+            warning: '#ff9800'
+        };
+        
+        notification.style.cssText = `
+            background: ${colors[type] || colors.info};
+            color: white;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            pointer-events: auto;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            max-width: 300px;
+            word-wrap: break-word;
+        `;
+        
+        notification.textContent = message;
+        container.appendChild(notification);
+        
+        // Animar entrada
+        setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateX(0)';
+        }, 10);
+        
+        // Remover após duração especificada
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, duration);
+    }
+
     salvarConfiguracoes() {
-        localStorage.setItem('simulador_config', JSON.stringify(this.configuracoes));
+        try {
+            localStorage.setItem('simulador_config', JSON.stringify(this.configuracoes));
+        } catch (error) {
+            this.showNotification('Erro ao salvar configurações. Verifique o armazenamento do navegador.', 'error');
+        }
     }
 
     initializeElements() {
@@ -1394,7 +1482,7 @@ class SimuladorEmprestimos {
         
         // Fechar modal automaticamente após salvar
         this.fecharModal();
-        alert('Todas as configurações foram salvas com sucesso!');
+        this.showNotification('Todas as configurações foram salvas com sucesso!', 'success');
         
 
     }
@@ -1425,7 +1513,7 @@ class SimuladorEmprestimos {
             
             // Login admin realizado com sucesso
         } else {
-            alert('Usuário ou senha incorretos');
+            this.showNotification('Usuário ou senha incorretos', 'error');
         }
     }
 
@@ -1868,11 +1956,11 @@ class SimuladorEmprestimos {
             const nomeArquivo = `${nomeClientePdf}_${cpfClientePdf}_${timestamp}.pdf`;
             
             doc.save(nomeArquivo);
-            alert('PDF exportado com sucesso!');
+            this.showNotification('PDF exportado com sucesso!', 'success');
             
         } catch (error) {
             // Erro na geração de PDF
-            alert('Erro ao gerar PDF. Tente novamente.');
+            this.showNotification('Erro ao gerar PDF. Tente novamente.', 'error');
         }
     }
 
@@ -2034,7 +2122,7 @@ Testemunha 2: _____________________________________ CPF: _______________________
         if (!arquivo) return;
         
         if (arquivo.type === 'application/pdf') {
-            alert('Funcionalidade de importação de PDF em desenvolvimento. Use arquivos JSON exportados pelo sistema.');
+            this.showNotification('Funcionalidade de importação de PDF em desenvolvimento. Use arquivos JSON exportados pelo sistema.', 'warning', 4000);
             return;
         }
         
@@ -2063,7 +2151,7 @@ Testemunha 2: _____________________________________ CPF: _______________________
                 }
                 
                 this.esconderErro();
-                alert('Dados importados com sucesso!');
+                this.showNotification('Dados importados com sucesso!', 'success');
             } catch (error) {
                 this.mostrarErro('ERRO AO IMPORTAR ARQUIVO. FORMATO INVÁLIDO.');
             }
@@ -2072,34 +2160,44 @@ Testemunha 2: _____________________________________ CPF: _______________________
     }
 }
 
-// Inicializar aplicação com fallback
+// Inicialização robusta sem timeouts desnecessários
 let simulator;
 
 function initializeApp() {
     try {
         simulator = new SimuladorEmprestimos();
-        // Simulador inicializado com sucesso
+        return true;
     } catch (error) {
-        // Erro na inicialização - tentando novamente
-        // Tentar novamente após 500ms
-        setTimeout(initializeApp, 500);
+        // Log do erro para depuração
+        if (error.message.includes('Campo taxa de juros não encontrado')) {
+            // DOM ainda não está pronto, aguardar um pouco mais
+            if (document.readyState !== 'complete') {
+                return false;
+            }
+        }
+        throw error;
     }
 }
 
-// Múltiplas estratégias de inicialização
+function tryInitialize() {
+    try {
+        const success = initializeApp();
+        if (!success && document.readyState !== 'complete') {
+            // Aguardar DOM completar se ainda não está pronto
+            window.addEventListener('load', tryInitialize, { once: true });
+        }
+    } catch (error) {
+        // Erro crítico na inicialização
+        console.error('Erro crítico na inicialização:', error);
+    }
+}
+
+// Estratégia de inicialização otimizada
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeApp);
+    document.addEventListener('DOMContentLoaded', tryInitialize);
 } else {
-    initializeApp();
+    tryInitialize();
 }
-
-// Fallback adicional
-setTimeout(() => {
-    if (!simulator) {
-        // Forçando inicialização após timeout
-        initializeApp();
-    }
-}, 1000);
 
 
 
