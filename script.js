@@ -1257,8 +1257,7 @@ class SimuladorEmprestimos {
         // Aplicar configurações de validação ao inicializar
         this.aplicarValidacaoConfiguracoes();
         
-        // Validar campos na inicialização para aplicar regras corretas
-        this.validarTodosOsCampos();
+
     }
 
     atualizarClassesModoLivre() {
@@ -1282,8 +1281,7 @@ class SimuladorEmprestimos {
             }
         });
         
-            // Validar todos os campos após mudança de modo
-        this.validarTodosOsCampos();
+
     }
 
     limparErrosVisuais() {
