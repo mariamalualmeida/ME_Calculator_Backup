@@ -3,7 +3,7 @@
   "short_name": "Simulador ME",
   "description": "Simulador de Empréstimos ME EMPREENDIMENTOS",
   "version": "2.0.4",
-  "start_url": "/?v=20250624082000",
+  "start_url": "/?v=20250624083000",
   "display": "standalone",
   "background_color": "#1976d2",
   "theme_color": "#1976d2",
