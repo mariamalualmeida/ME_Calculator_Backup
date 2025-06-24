@@ -1992,13 +1992,13 @@ class SimuladorEmprestimos {
                              agora.getSeconds().toString().padStart(2, '0');
             
             // Verificar se nome e CPF estão preenchidos para nomear arquivo
-            const nomeCliente = this.nomeClienteField?.value?.trim();
-            const cpfCliente = this.cpfClienteField?.value?.trim();
+            const nomeClienteValue = this.nomeClienteField?.value?.trim();
+            const cpfClienteValue = this.cpfClienteField?.value?.trim();
             
             let nomeArquivo;
-            if (nomeCliente && cpfCliente) {
-                const nomeClientePdf = nomeCliente.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
-                const cpfClientePdf = cpfCliente.replace(/[^0-9]/g, '');
+            if (nomeClienteValue && cpfClienteValue) {
+                const nomeClientePdf = nomeClienteValue.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+                const cpfClientePdf = cpfClienteValue.replace(/[^0-9]/g, '');
                 nomeArquivo = `${nomeClientePdf}_${cpfClientePdf}_${timestamp}.pdf`;
             } else {
                 nomeArquivo = `Simulacao_Emprestimos_${timestamp}.pdf`;
