@@ -299,21 +299,20 @@ Características:
     }
 
     async saveAiConfig() {
-        if (!this.currentUser) {
-            this.showToast('Faça login primeiro', 'error');
-            return;
-        }
+        // Remover verificação de login - acesso livre
 
         const config = {
+            id: 'config_' + Date.now(),
             userId: this.currentUser.id,
-            name: this.elements.configName.value.trim(),
+            name: this.elements.configName.value.trim() || 'Configuração Padrão',
             provider: this.elements.aiProvider.value,
             apiKey: this.elements.apiKey.value.trim(),
             model: this.elements.aiModel.value,
-            systemPrompt: this.elements.systemPrompt.value.trim(),
-            temperature: this.elements.temperature.value,
-            maxTokens: parseInt(this.elements.maxTokens.value),
-            isActive: this.elements.isActive.checked
+            systemPrompt: this.elements.systemPrompt.value.trim() || 'Você é uma assistente financeira prestativa.',
+            temperature: this.elements.temperature.value || '0.7',
+            maxTokens: parseInt(this.elements.maxTokens.value) || 2000,
+            isActive: this.elements.isActive.checked,
+            createdAt: new Date().toISOString()
         };
 
         // Validações
