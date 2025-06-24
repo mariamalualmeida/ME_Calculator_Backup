@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-title" content="Simulador ME">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=20250624360000">
+    <link rel="stylesheet" href="style.css?v=20250624370000">
 </head>
 <body>
     <div class="container">
@@ -545,18 +545,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script>
-        // Garantir carregamento jsPDF antes do script principal
-        function waitForJsPDF() {
-            if (typeof window.jspdf !== 'undefined' || typeof jsPDF !== 'undefined') {
-                const script = document.createElement('script');
-                script.src = 'script.js?v=20250624360000';
-                document.body.appendChild(script);
-            } else {
-                setTimeout(waitForJsPDF, 100);
-            }
-        }
-        waitForJsPDF();
-    </script>
+    <script src="script.js?v=20250624370000"></script>
 </body>
 </html>

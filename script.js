@@ -304,8 +304,6 @@ class SimuladorEmprestimos {
                 this.limparResultado();
                 this.toggleMetodoDiasExtras();
                 this.atualizarInformacaoLimites(); // Atualizar limites de juros
-                // CORREÇÃO: Recarregar configurações antes da validação
-                this.configuracoes = this.carregarConfiguracoes();
                 // Re-validar juros apenas se não estiver em modo livre
                 if (!(this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin)) {
                     this.validarCampoJuros();
@@ -941,8 +939,8 @@ class SimuladorEmprestimos {
     }
 
     calcular() {
-        // Recarregar configurações mais recentes antes do cálculo
-        this.carregarConfiguracoes();
+        // Recarregar configurações antes de cada cálculo
+        this.configuracoes = this.carregarConfiguracoes();
         
         // Verificar campos obrigatórios
         const valor = this.obterValorNumerico(this.valorEmprestimoField.value);
@@ -1260,9 +1258,6 @@ class SimuladorEmprestimos {
     }
 
     atualizarClassesModoLivre() {
-        // CORREÇÃO CRÍTICA: Recarregar configurações sempre antes de aplicar
-        this.configuracoes = this.carregarConfiguracoes();
-        
         // CORREÇÃO: Verificar se admin está ativo E regras estão desabilitadas
         const modoLivreAtivo = this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras;
         
@@ -1283,10 +1278,8 @@ class SimuladorEmprestimos {
             }
         });
         
-        // Re-validar campo de juros após mudança de modo APENAS se não estiver em modo livre
-        if (!modoLivreAtivo) {
-            this.validarCampoJuros();
-        }
+        // Re-validar campo de juros após mudança de modo
+        this.validarCampoJuros();
     }
 
     limparErrosVisuais() {
@@ -1302,9 +1295,6 @@ class SimuladorEmprestimos {
 
     validarCampoJuros() {
         this.limparErrosVisuais();
-        
-        // CORREÇÃO CRÍTICA: Recarregar configurações antes da validação
-        this.configuracoes = this.carregarConfiguracoes();
         
         const modoLivreAtivo = this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras;
         if (modoLivreAtivo || !this.taxaJurosField.value || !this.numeroParcelasField.value) {
@@ -1702,36 +1692,23 @@ class SimuladorEmprestimos {
             };
             
             if (!checkJsPDF()) {
-                this.showNotification('Biblioteca jsPDF não carregada. Aguarde...', 'warning', 2000);
                 // Aguardar um pouco para biblioteca carregar
                 setTimeout(() => {
                     if (checkJsPDF()) {
-                        this.gerarPdfSimples(valor, nParcelas, juros, resultadoCalculo);
+                        this.exportarPdf();
                     } else {
-                        this.showNotification('Erro: Biblioteca jsPDF não disponível. Recarregue a página.', 'error', 5000);
+                        throw new Error('Biblioteca jsPDF não carregada. Recarregue a página.');
                     }
-                }, 1500);
+                }, 1000);
                 return;
             }
             
-            // Garantir que jsPDF está acessível
-            if (typeof window.jspdf === 'undefined' && typeof jsPDF === 'undefined') {
-                this.showNotification('Biblioteca jsPDF não disponível. Recarregue a página.', 'error', 5000);
-                return;
+            if (typeof window.jspdf === 'undefined') {
+                throw new Error('Biblioteca jsPDF não carregada. Recarregue a página.');
             }
             
-            // Acessar jsPDF de forma robusta
-            let jsPDFConstructor;
-            if (window.jspdf && window.jspdf.jsPDF) {
-                jsPDFConstructor = window.jspdf.jsPDF;
-            } else if (typeof jsPDF !== 'undefined') {
-                jsPDFConstructor = jsPDF;
-            } else {
-                this.showNotification('Erro crítico: jsPDF não acessível', 'error', 5000);
-                return;
-            }
-            
-            const doc = new jsPDFConstructor();
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
             
             const dataSimulacao = new Date().toLocaleDateString('pt-BR');
             const nomeUsuario = this.configuracoes.nomeUsuario || '';
@@ -2016,17 +1993,8 @@ class SimuladorEmprestimos {
             this.exportarDadosJSON();
             
         } catch (error) {
-            let errorMessage = 'Erro desconhecido ao gerar PDF';
-            
-            if (error.message.includes('Cannot read properties of undefined')) {
-                errorMessage = 'Erro de dados: Verifique se todos os campos estão preenchidos corretamente';
-            } else if (error.message.includes('jsPDF')) {
-                errorMessage = 'Biblioteca PDF não carregada. Recarregue a página';
-            } else {
-                errorMessage = error.message;
-            }
-            
-            this.showNotification('Erro ao gerar PDF: ' + errorMessage, 'error', 6000);
+            console.error('Erro detalhado na geração de PDF:', error);
+            alert('Erro ao gerar PDF: ' + error.message);
         }
     }
 
@@ -2296,46 +2264,19 @@ function tryInitialize() {
         if (!success && document.readyState !== 'complete') {
             // Aguardar DOM completar se ainda não está pronto
             window.addEventListener('load', tryInitialize, { once: true });
-        } else if (window.simulator) {
-            // Garantir event listeners para preview Replit
-            setTimeout(() => {
-                if (window.simulator) {
-                    window.simulator.setupEventListeners();
-                }
-            }, 100);
         }
     } catch (error) {
-        // Tentar novamente após timeout (necessário para preview Replit)
-        setTimeout(() => {
-            if (!window.simulator) {
-                tryInitialize();
-            }
-        }, 800);
+        // Tentar novamente após timeout se necessário
+        setTimeout(tryInitialize, 500);
     }
 }
 
-// Estratégia de inicialização robusta para preview e navegador direto
-function forceInitialize() {
-    // Tentativa mais agressiva para preview Replit
-    const attempts = [50, 150, 300, 500, 1000, 2000];
-    attempts.forEach(delay => {
-        setTimeout(() => {
-            if (!window.simulator) {
-                tryInitialize();
-            }
-        }, delay);
-    });
-}
-
+// Estratégia de inicialização simples e eficiente
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        tryInitialize();
-        forceInitialize();
-    });
+    document.addEventListener('DOMContentLoaded', tryInitialize);
 } else {
-    // DOM já carregado, tentar imediatamente e com fallbacks múltiplos
+    // DOM já carregado, tentar imediatamente
     tryInitialize();
-    forceInitialize();
 }
 
 // Funções globais para onclick handlers - REPLIT PREVIEW COMPATIBILITY
