@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ME EMPREENDIMENTOS - Configurações</title>
+    <link rel="stylesheet" href="style.css?v=20250624051500">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgo8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNjM2NmYxO3N0b3Atb3BhY2l0eToxIiAvPgo8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM4YjVjZjY7c3RvcC1vcGFjaXR5OjEiIC8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPHRleHQgeD0iMTYiIHk9IjIyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iU2Vnb2UgVUksIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0idXJsKCNncmFkaWVudCkiPlIkPC90ZXh0Pgo8L3N2Zz4K">
+</head>
+<body class="config-page">
+    <div class="config-container">
+        <div class="config-header">
+            <button class="back-btn" onclick="goBack()">← Voltar</button>
+            <div class="header-title">
+                <h1>Configurações do Sistema</h1>
+                <p>ME EMPREENDIMENTOS</p>
+            </div>
+        </div>
+
+        <div class="config-tabs">
+            <button class="tab-btn active" onclick="switchTab('simulador')">Simulador</button>
+            <button class="tab-btn" onclick="switchTab('chat')">Chat IA</button>
+            <button class="tab-btn" onclick="switchTab('interface')">Interface</button>
+        </div>
+
+        <!-- Aba Simulador -->
+        <div id="tab-simulador" class="tab-content active">
+            <div class="config-section">
+                <h3>Sistema de Juros</h3>
+                <div class="input-group">
+                    <label for="sistemaJuros">Sistema Padrão:</label>
+                    <select id="sistemaJuros" name="sistemaJuros">
+                        <option value="simples">Juros Simples</option>
+                        <option value="compostos-diarios">Juros Compostos Diários</option>
+                        <option value="compostos-mensais" selected>Juros Compostos Mensais</option>
+                        <option value="pro-rata-real">Pro-rata Real</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>Limites de Parcelas e Juros</h3>
+                <div class="input-group">
+                    <label for="regraLimites">Aplicar Regras de Limite:</label>
+                    <select id="regraLimites" name="regraLimites">
+                        <option value="habilitar" selected>Habilitar regras</option>
+                        <option value="desabilitar">Desabilitar regras (Modo Livre)</option>
+                    </select>
+                </div>
+
+                <div class="limits-table">
+                    <h4>Limites por Número de Parcelas:</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parcelas</th>
+                                <th>Juros Mínimo (%)</th>
+                                <th>Juros Máximo (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1 a 3</td>
+                                <td><input type="text" id="min1-3" value="15,00" class="percentage-input"></td>
+                                <td><input type="text" id="max1-3" value="30,00" class="percentage-input"></td>
+                            </tr>
+                            <tr>
+                                <td>4 a 15</td>
+                                <td><input type="text" id="min4-15" value="15,00" class="percentage-input"></td>
+                                <td><input type="text" id="max4-15" value="24,00" class="percentage-input"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>Correção IGPM</h3>
+                <div class="input-group">
+                    <label for="igpmMensal">IGPM Mensal (%):</label>
+                    <input type="text" id="igpmMensal" name="igpmMensal" value="0,00" class="percentage-input">
+                    <small>Correção monetária aplicada mensalmente sobre as parcelas</small>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>Relatórios PDF</h3>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="mostrarJurosPdf" checked>
+                        Mostrar taxa de juros nos relatórios PDF
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba Chat IA -->
+        <div id="tab-chat" class="tab-content">
+            <div class="config-section">
+                <h3>API Keys das LLMs</h3>
+                
+                <div class="input-group">
+                    <label for="openaiKey">OpenAI API Key:</label>
+                    <div class="password-container">
+                        <input type="password" id="openaiKey" placeholder="sk-...">
+                        <button type="button" class="password-toggle" onclick="togglePassword('openaiKey')">
+                            <span class="password-icon">●</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="claudeKey">Anthropic Claude API Key:</label>
+                    <div class="password-container">
+                        <input type="password" id="claudeKey" placeholder="sk-ant-...">
+                        <button type="button" class="password-toggle" onclick="togglePassword('claudeKey')">
+                            <span class="password-icon">●</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="geminiKey">Google Gemini API Key:</label>
+                    <div class="password-container">
+                        <input type="password" id="geminiKey" placeholder="AIza...">
+                        <button type="button" class="password-toggle" onclick="togglePassword('geminiKey')">
+                            <span class="password-icon">●</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="grokKey">xAI Grok API Key:</label>
+                    <div class="password-container">
+                        <input type="password" id="grokKey" placeholder="xai-...">
+                        <button type="button" class="password-toggle" onclick="togglePassword('grokKey')">
+                            <span class="password-icon">●</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>Configuração da IA</h3>
+                
+                <div class="input-group">
+                    <label for="defaultProvider">Provider Padrão:</label>
+                    <select id="defaultProvider">
+                        <option value="openai">OpenAI</option>
+                        <option value="claude">Anthropic Claude</option>
+                        <option value="gemini">Google Gemini</option>
+                        <option value="grok">xAI Grok</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="systemPrompt">Prompt do Sistema (Personalidade da IA):</label>
+                    <textarea id="systemPrompt" rows="8" placeholder="Defina como a IA deve se comportar, sua personalidade, expertise e diretrizes...">Você é uma assistente financeira especializada da ME EMPREENDIMENTOS. Sua função é ajudar com análises financeiras, simulações de empréstimos e consultoria especializada.
+
+Características da sua personalidade:
+- Profissional e experiente em finanças
+- Comunicação clara e direta
+- Foco em soluções práticas
+- Sempre contextualizar respostas para o negócio
+- Usar linguagem acessível evitando jargões desnecessários
+
+Áreas de expertise:
+- Análise de documentos financeiros (extratos, faturas)
+- Simulação e cálculo de empréstimos
+- Avaliação de risco de crédito
+- Consultoria em gestão financeira empresarial
+- Identificação de padrões financeiros
+
+Sempre manter o foco nos objetivos da ME EMPREENDIMENTOS e fornecer insights que agreguem valor ao negócio.</textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba Interface -->
+        <div id="tab-interface" class="tab-content">
+            <div class="config-section">
+                <h3>Tema da Interface</h3>
+                <div class="theme-options">
+                    <label class="theme-option">
+                        <input type="radio" name="theme" value="light" checked>
+                        <span class="theme-preview light-theme"></span>
+                        Claro
+                    </label>
+                    <label class="theme-option">
+                        <input type="radio" name="theme" value="dark">
+                        <span class="theme-preview dark-theme"></span>
+                        Escuro
+                    </label>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>Paleta de Cores</h3>
+                <div class="color-options">
+                    <label class="color-option">
+                        <input type="radio" name="colorTheme" value="blue" checked>
+                        <span class="color-preview blue-theme"></span>
+                        Azul
+                    </label>
+                    <label class="color-option">
+                        <input type="radio" name="colorTheme" value="purple">
+                        <span class="color-preview purple-theme"></span>
+                        Roxo
+                    </label>
+                    <label class="color-option">
+                        <input type="radio" name="colorTheme" value="green">
+                        <span class="color-preview green-theme"></span>
+                        Verde
+                    </label>
+                    <label class="color-option">
+                        <input type="radio" name="colorTheme" value="orange">
+                        <span class="color-preview orange-theme"></span>
+                        Laranja
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-actions">
+            <button class="save-btn" onclick="saveConfiguracoes()">SALVAR CONFIGURAÇÕES</button>
+        </div>
+    </div>
+
+    <script src="configuracoes.js?v=20250624051500"></script>
+</body>
+</html>
