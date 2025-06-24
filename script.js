@@ -309,7 +309,7 @@ class SimuladorEmprestimos {
         });
 
         // Event listener para formulário completo
-        const toggleFormBtn = document.getElementById('toggleFormCompleto');
+        const toggleFormBtn = document.getElementById('formToggleBtn');
         if (toggleFormBtn) {
             toggleFormBtn.addEventListener('click', () => this.toggleFormularioCompleto());
         }
@@ -327,9 +327,8 @@ class SimuladorEmprestimos {
 
     // Função para toggle do formulário completo
     toggleFormularioCompleto() {
-        const container = document.getElementById('formCompletoContainer');
-        const toggleBtn = document.getElementById('toggleFormCompleto');
-        const icon = toggleBtn ? toggleBtn.querySelector('.toggle-icon') : null;
+        const container = document.getElementById('formCompletoSection');
+        const toggleBtn = document.getElementById('formToggleBtn');
         
         if (!container || !toggleBtn) {
             console.error('Elementos do formulário completo não encontrados');
@@ -340,12 +339,10 @@ class SimuladorEmprestimos {
             container.style.display = 'block';
             toggleBtn.classList.add('expanded');
             toggleBtn.textContent = 'Ocultar dados completos do cliente';
-            if (icon) icon.textContent = '▲';
         } else {
             container.style.display = 'none';
             toggleBtn.classList.remove('expanded');
             toggleBtn.textContent = 'Dados completos do cliente';
-            if (icon) icon.textContent = '▼';
         }
     }
 
@@ -1349,37 +1346,76 @@ class SimuladorEmprestimos {
     }
 
     mostrarPainelAdmin() {
-        const panel = document.getElementById('adminPanel');
-        const table = document.getElementById('limitsTable');
+        const adminPanel = document.getElementById('adminPanel');
+        const loginSection = document.getElementById('adminLoginSection');
         
-        // REFATORAÇÃO: Formato unificado boolean consistente
-        document.getElementById('desabilitarRegras').value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
-        
-        let html = '<div class="limits-table">';
-        for (let parcelas = 1; parcelas <= 15; parcelas++) {
-            const limite = this.configuracoes.limitesPersonalizados?.[parcelas] || this.limitesJuros[parcelas];
-            html += `
-                <div class="limit-row">
-                    <label>${parcelas}p:</label>
-                    <input type="text" id="min_${parcelas}" value="${limite.min.toFixed(2).replace('.', ',')}" placeholder="Mínimo">
-                    <input type="text" id="max_${parcelas}" value="${limite.max.toFixed(2).replace('.', ',')}" placeholder="Máximo">
-                </div>
-            `;
+        if (adminPanel) {
+            adminPanel.style.display = 'block';
         }
-        html += '</div>';
+        if (loginSection) {
+            loginSection.style.display = 'none';
+        }
         
-        table.innerHTML = html;
-        panel.style.display = 'block';
+        // Carregar valores administrativos nos campos com verificação
+        const igpmField = document.getElementById('igpmAnual');
+        const regrasField = document.getElementById('desabilitarRegras');
+        const jurosField = document.getElementById('sistemaJuros');
         
-        // Aplicar tema atual ao painel admin
-        panel.setAttribute('data-theme', this.configuracoes.themeMode);
-        panel.setAttribute('data-color-theme', this.configuracoes.colorTheme);
+        if (igpmField) igpmField.value = this.configuracoes.igpmAnual || '0';
+        if (regrasField) regrasField.value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
+        if (jurosField) jurosField.value = this.configuracoes.sistemaJuros || 'compostos-mensal';
+        
+        // Preencher tabela de limites com verificação
+        const table = document.querySelector('#customLimitsTable tbody');
+        if (table) {
+            let html = '';
+            for (let parcelas = 1; parcelas <= 15; parcelas++) {
+                const limite = this.limitesJuros[parcelas] || { min: 0, max: 0 };
+                html += `
+                    <tr>
+                        <td>${parcelas}</td>
+                        <td><input type="text" id="min_${parcelas}" value="${limite.min.toFixed(2).replace('.', ',')}" class="limit-input"></td>
+                        <td><input type="text" id="max_${parcelas}" value="${limite.max.toFixed(2).replace('.', ',')}" class="limit-input"></td>
+                    </tr>
+                `;
+            }
+            table.innerHTML = html;
+        }
     }
 
 
 
     obterDadosCompletosPdf() {
         const dadosCompletos = {
+            nomeCompleto: this.getFieldValue('nomeCompleto'),
+            cpf: this.getFieldValue('cpf'),
+            dataNascimento: this.getFieldValue('dataNascimento'),
+            estadoCivil: this.getFieldValue('estadoCivil'),
+            cep: this.getFieldValue('cep'),
+            endereco: this.getFieldValue('endereco'),
+            bairro: this.getFieldValue('bairro'),
+            cidade: this.getFieldValue('cidade'),
+            profissao: this.getFieldValue('profissao'),
+            rendaMensal: this.getFieldValue('rendaMensal'),
+            empresa: this.getFieldValue('empresa'),
+            telefone: this.getFieldValue('telefone'),
+            nomeReferencia1: this.getFieldValue('nomeReferencia1'),
+            telefoneReferencia1: this.getFieldValue('telefoneReferencia1'),
+            bairroReferencia1: this.getFieldValue('bairroReferencia1'),
+            nomeReferencia2: this.getFieldValue('nomeReferencia2'),
+            telefoneReferencia2: this.getFieldValue('telefoneReferencia2'),
+            bairroReferencia2: this.getFieldValue('bairroReferencia2')
+        };
+        
+        return dadosCompletos;
+    }
+    
+    getFieldValue(fieldId) {
+        const field = document.getElementById(fieldId);
+        return field ? field.value : '';
+    }
+    
+    exportarPdf() {
             temDados: false,
             pessoais: [],
             profissionais: [],
@@ -1901,11 +1937,7 @@ class SimuladorEmprestimos {
 let simulator;
 
 function initializeApp() {
-    console.log('Inicializando elementos...');
-    const taxaField = document.getElementById('taxaJuros');
-    console.log('Taxa de juros field encontrado:', !!taxaField);
-    console.log('ID do campo:', taxaField ? taxaField.id : 'não encontrado');
-    
+    // Garantir que só inicializa uma vez
     if (window.simuladorInstance) {
         return;
     }
@@ -1921,6 +1953,11 @@ function initializeApp() {
         console.log('Simulador inicializado com sucesso');
     } catch (error) {
         console.error('Erro ao inicializar simulador:', error);
+        setTimeout(() => {
+            if (!window.simuladorInstance) {
+                initializeApp();
+            }
+        }, 1000);
     }
 }
 

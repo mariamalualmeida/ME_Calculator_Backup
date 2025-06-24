@@ -785,25 +785,24 @@ body {
 }
 
 .save-btn, .admin-btn, #adminLoginBtn {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 14px 32px;
-    border-radius: 8px;
-    font-weight: 500;
-    font-size: 16px;
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: 2px solid var(--primary-color) !important;
+    padding: 12px 24px;
+    border-radius: 24px;
     cursor: pointer;
-    min-width: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 16px;
+    transition: all 0.3s ease;
+    width: 100%;
+    display: block;
 }
 
 .save-btn:hover, .admin-btn:hover, #adminLoginBtn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(103, 80, 164, 0.3);
+    background: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
+    color: white !important;
 }
 
 .limits-table {
