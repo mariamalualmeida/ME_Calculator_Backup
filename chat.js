@@ -797,71 +797,7 @@ Características:
     }
 
     goBack() {
-        window.location.href = 'dashboard.html';
-    }
-
-    toggleSidebar() {
-        const sidebar = document.getElementById('chatSidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        
-        this.sidebarOpen = !this.sidebarOpen;
-        
-        if (this.sidebarOpen) {
-            sidebar.classList.add('open');
-            overlay.classList.add('active');
-        } else {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
-        }
-    }
-
-    loadConversations() {
-        // Carregar conversas do localStorage ou API
-        const conversations = JSON.parse(localStorage.getItem('conversations') || '[]');
-        this.displayConversations(conversations);
-    }
-
-    displayConversations(conversations) {
-        const conversationsList = document.getElementById('conversationsList');
-        
-        if (conversations.length === 0) {
-            conversationsList.innerHTML = '<div class="no-conversations">Nenhuma conversa ainda</div>';
-            return;
-        }
-
-        conversationsList.innerHTML = conversations.map(conv => `
-            <div class="conversation-item ${conv.id === this.currentConversationId ? 'active' : ''}" 
-                 onclick="selectConversation('${conv.id}')">
-                <div class="conversation-title">${conv.title || 'Nova Conversa'}</div>
-                <div class="conversation-date">${new Date(conv.createdAt).toLocaleDateString('pt-BR')}</div>
-                <button class="delete-conversation" onclick="deleteConversation('${conv.id}')" title="Excluir">×</button>
-            </div>
-        `).join('');
-    }
-
-    selectConversation(conversationId) {
-        this.currentConversationId = conversationId;
-        this.loadMessages(conversationId);
-        this.loadConversations(); // Atualizar lista para mostrar conversa ativa
-        
-        // Fechar sidebar no mobile
-        if (window.innerWidth <= 768) {
-            this.toggleSidebar();
-        }
-    }
-
-    deleteConversation(conversationId) {
-        const conversations = JSON.parse(localStorage.getItem('conversations') || '[]');
-        const filteredConversations = conversations.filter(conv => conv.id !== conversationId);
-        localStorage.setItem('conversations', JSON.stringify(filteredConversations));
-        
-        // Se a conversa deletada estava ativa, limpar chat
-        if (this.currentConversationId === conversationId) {
-            this.currentConversationId = null;
-            document.getElementById('messages').innerHTML = '';
-        }
-        
-        this.loadConversations();
+        window.location.href = 'hub.html';
     }
 }
 
@@ -888,21 +824,6 @@ function closeAiConfigModal() {
 
 function goBack() {
     chatController.goBack();
-}
-
-function toggleSidebar() {
-    chatController.toggleSidebar();
-}
-
-function selectConversation(conversationId) {
-    chatController.selectConversation(conversationId);
-}
-
-function deleteConversation(conversationId) {
-    event.stopPropagation();
-    if (confirm('Tem certeza que deseja excluir esta conversa?')) {
-        chatController.deleteConversation(conversationId);
-    }
 }
 
 function selectFiles() {
