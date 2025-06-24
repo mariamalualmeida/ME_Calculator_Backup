@@ -2198,7 +2198,8 @@ let simulator;
 
 function initializeApp() {
     try {
-        simulator = new SimuladorEmprestimos();
+        window.simulator = new SimuladorEmprestimos();
+        simulator = window.simulator; // Para compatibilidade
         return true;
     } catch (error) {
         // Log do erro para depuração

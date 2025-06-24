@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-title" content="Simulador ME">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=20250624310000">
+    <link rel="stylesheet" href="style.css?v=20250624320000">
 </head>
 <body>
     <div class="container">
@@ -404,7 +404,7 @@
                         <div id="adminPanel" style="display: none;">
                             <!-- Seção Financeira Expansível -->
                             <div class="expandable-section">
-                                <h4 class="section-header" onclick="toggleSection('financialSection')" style="cursor: pointer; padding: 12px; background: #f5f5f5; border-radius: 8px; margin: 8px 0; font-weight: 500; display: flex; justify-content: space-between; align-items: center;">
+                                <h4 class="section-header" onclick="if(window.toggleSection) toggleSection('financialSection')" style="cursor: pointer; padding: 12px; background: #f5f5f5; border-radius: 8px; margin: 8px 0; font-weight: 500; display: flex; justify-content: space-between; align-items: center;">
                                     <span>📊 CONFIGURAÇÕES FINANCEIRAS</span>
                                     <span class="toggle-icon" id="financialToggle">▼</span>
                                 </h4>
@@ -460,7 +460,7 @@
 
                                     <!-- Tabela de limites no final, oculta com opção de expandir -->
                                     <div class="limits-toggle-section">
-                                        <h5 class="limits-toggle-header" onclick="toggleSection('limitsTableSection')" style="cursor: pointer; padding: 8px; background: #e8e8e8; border-radius: 4px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center;">
+                                        <h5 class="limits-toggle-header" onclick="if(window.toggleSection) toggleSection('limitsTableSection')" style="cursor: pointer; padding: 8px; background: #e8e8e8; border-radius: 4px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center;">
                                             <span>Tabela de Limites de Juros por Parcela</span>
                                             <span class="toggle-icon" id="limitsTableToggle">▶</span>
                                         </h5>
@@ -473,7 +473,7 @@
 
                             <!-- Seção Contratos Expansível -->
                             <div class="expandable-section">
-                                <h4 class="section-header" onclick="toggleSection('contractsSection')" style="cursor: pointer; padding: 12px; background: #f5f5f5; border-radius: 8px; margin: 8px 0; font-weight: 500; display: flex; justify-content: space-between; align-items: center;">
+                                <h4 class="section-header" onclick="if(window.toggleSection) toggleSection('contractsSection')" style="cursor: pointer; padding: 12px; background: #f5f5f5; border-radius: 8px; margin: 8px 0; font-weight: 500; display: flex; justify-content: space-between; align-items: center;">
                                     <span>📄 CONFIGURAÇÕES DE CONTRATOS</span>
                                     <span class="toggle-icon" id="contractsToggle">▼</span>
                                 </h4>
@@ -545,6 +545,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js?v=20250624310000"></script>
+    <script src="script.js?v=20250624320000"></script>
 </body>
 </html>
