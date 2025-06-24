@@ -2036,3 +2036,19 @@ function togglePassword(fieldId) {
         button.textContent = '●';
     }
 }
+
+// Função para alternar seções expansíveis
+function toggleSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    const toggle = document.getElementById(sectionId.replace('Section', 'Toggle'));
+    
+    if (section && toggle) {
+        if (section.style.display === 'none') {
+            section.style.display = 'block';
+            toggle.textContent = '▼';
+        } else {
+            section.style.display = 'none';
+            toggle.textContent = '▶';
+        }
+    }
+}

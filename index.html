@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-title" content="Simulador ME">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=20250624220000">
+    <link rel="stylesheet" href="style.css?v=20250624230000">
 </head>
 <body>
     <div class="container">
@@ -34,6 +34,14 @@
         </header>
 
         <main class="main-content">
+            <!-- Botão de importar dados no topo -->
+            <div class="import-section" style="margin-bottom: 20px;">
+                <button id="importarDadosBtn" style="width: 100%; padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; font-size: 14px;">
+                    📥 IMPORTAR DADOS DE SIMULAÇÃO
+                </button>
+                <input type="file" id="importFileInput" accept=".json" style="display: none;">
+            </div>
+            
             <div class="input-section">
                 <div class="input-group">
                     <label for="valorEmprestimo" class="input-label">Valor do empréstimo</label>
@@ -394,126 +402,130 @@
                             <button id="adminLoginBtn">LOGIN</button>
                         </div>
                         <div id="adminPanel" style="display: none;">
-                            <h5>Editar Credenciais de Acesso</h5>
-                            <div class="admin-credentials">
-                                <div class="config-group">
-                                    <label for="newAdminUser">Novo usuário</label>
-                                    <input type="text" id="newAdminUser" placeholder="Nome do usuário">
+                            <!-- Seção Financeira Expansível -->
+                            <div class="expandable-section">
+                                <h4 class="section-header" onclick="toggleSection('financialSection')" style="cursor: pointer; padding: 12px; background: #f5f5f5; border-radius: 8px; margin: 8px 0; font-weight: 500; display: flex; justify-content: space-between; align-items: center;">
+                                    <span>📊 CONFIGURAÇÕES FINANCEIRAS</span>
+                                    <span class="toggle-icon" id="financialToggle">▼</span>
+                                </h4>
+                                <div class="section-content" id="financialSection" style="display: block; padding: 0 12px;">
+                                    <!-- Regras de limite no início -->
+                                    <div class="config-group">
+                                        <label for="desabilitarRegras">Regras de limite de juros</label>
+                                        <select id="desabilitarRegras">
+                                            <option value="habilitar" selected>Habilitar regras</option>
+                                            <option value="desabilitar">Desabilitar regras (modo livre)</option>
+                                        </select>
+                                        <small style="color: #666; display: block; margin-top: 4px;">
+                                            Remove todos os limites de parcelas e juros quando desabilitado
+                                        </small>
+                                    </div>
+
+                                    <div class="config-group">
+                                        <label for="sistemaJuros">Sistema de juros</label>
+                                        <select id="sistemaJuros">
+                                            <option value="simples">Juros Simples</option>
+                                            <option value="compostos-diarios">Juros Compostos Diários</option>
+                                            <option value="compostos-mensal" selected>Juros Compostos Mensais</option>
+                                            <option value="compostos-prorata">Juros Compostos Pro-rata Real</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="config-group">
+                                        <label for="igpmAnual">Índice IGPM anual (%)</label>
+                                        <input type="text" id="igpmAnual" placeholder="0,00">
+                                        <small style="color: #666; display: block; margin-top: 4px;">
+                                            Correção aplicada mensalmente sobre as parcelas
+                                        </small>
+                                    </div>
+
+                                    <div class="config-group">
+                                        <label for="diasExtrasConfigurado">Dias extras configuráveis</label>
+                                        <input type="number" id="diasExtrasConfigurado" placeholder="0" min="0" max="365">
+                                        <small style="color: #666; display: block; margin-top: 4px;">
+                                            Dias extras padrão aplicados automaticamente aos cálculos
+                                        </small>
+                                    </div>
+
+                                    <div class="config-group">
+                                        <label for="ajusteAutomaticoMeses">Ajuste automático para meses com 31 dias</label>
+                                        <select id="ajusteAutomaticoMeses">
+                                            <option value="true">Habilitado</option>
+                                            <option value="false">Desabilitado</option>
+                                        </select>
+                                        <small style="color: #666; display: block; margin-top: 4px;">
+                                            Ajusta automaticamente datas para meses com 31 dias
+                                        </small>
+                                    </div>
+
+                                    <!-- Tabela de limites no final -->
+                                    <h5>Tabela de Limites de Juros por Parcela</h5>
+                                    <div id="limitsTable"></div>
                                 </div>
-                                <div class="config-group">
-                                    <label for="newAdminPass">Nova senha</label>
-                                    <div class="password-wrapper">
-                                        <input type="password" id="newAdminPass" placeholder="Nova senha">
-                                        <button type="button" class="password-toggle" onclick="togglePassword('newAdminPass')">●</button>
+                            </div>
+
+                            <!-- Seção Contratos Expansível -->
+                            <div class="expandable-section">
+                                <h4 class="section-header" onclick="toggleSection('contractsSection')" style="cursor: pointer; padding: 12px; background: #f5f5f5; border-radius: 8px; margin: 8px 0; font-weight: 500; display: flex; justify-content: space-between; align-items: center;">
+                                    <span>📄 CONFIGURAÇÕES DE CONTRATOS</span>
+                                    <span class="toggle-icon" id="contractsToggle">▼</span>
+                                </h4>
+                                <div class="section-content" id="contractsSection" style="display: block; padding: 0 12px;">
+                                    <h5>Dados do Credor</h5>
+                                    <div class="config-group">
+                                        <label for="credorNome">Nome do credor</label>
+                                        <input type="text" id="credorNome" placeholder="Nome completo ou razão social">
+                                    </div>
+                                    <div class="config-group">
+                                        <label for="credorCpfCnpj">CPF/CNPJ do credor</label>
+                                        <input type="text" id="credorCpfCnpj" placeholder="000.000.000-00 ou 00.000.000/0001-00">
+                                    </div>
+                                    <div class="config-group">
+                                        <label for="credorEndereco">Endereço do credor</label>
+                                        <input type="text" id="credorEndereco" placeholder="Endereço completo">
+                                    </div>
+                                    <div class="config-group">
+                                        <label for="credorRgOrgao">RG/Órgão Expedidor</label>
+                                        <input type="text" id="credorRgOrgao" placeholder="12.345.678-9 SSP/SP">
+                                    </div>
+
+                                    <h5>Configurações de Promissórias</h5>
+                                    <div class="config-group">
+                                        <label for="promissoriasColoridas">Promissórias coloridas</label>
+                                        <select id="promissoriasColoridas">
+                                            <option value="false">Não (Preto e branco)</option>
+                                            <option value="true">Sim (Coloridas)</option>
+                                        </select>
+                                    </div>
+                                    <div class="config-group">
+                                        <label for="promissoriasPorFolha">Promissórias por folha</label>
+                                        <select id="promissoriasPorFolha">
+                                            <option value="1">1 promissória por folha</option>
+                                            <option value="2" selected>2 promissórias por folha</option>
+                                            <option value="3">3 promissórias por folha</option>
+                                            <option value="4">4 promissórias por folha</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="config-group">
+                                        <label for="templateContrato">Template do contrato</label>
+                                        <textarea id="templateContrato" rows="8" placeholder="Cole aqui o template do contrato com variáveis {{NOME_DEVEDOR}}, {{VALOR_EMPRESTIMO}}, etc."></textarea>
+                                        <small style="color: #666; display: block; margin-top: 4px;">
+                                            Use variáveis: {{NOME_DEVEDOR}}, {{CPF_DEVEDOR}}, {{VALOR_EMPRESTIMO}}, {{NUMERO_PARCELAS}}, {{VALOR_PARCELA}}, {{DATA_CONTRATO}}, {{NOME_CREDOR}}, {{CPF_CREDOR}}, {{ENDERECO_CREDOR}}
+                                        </small>
                                     </div>
                                 </div>
-
-                            </div>
-                            
-                            <h5>Sistema de Juros</h5>
-                            <div class="config-group">
-                                <label for="sistemaJuros">Método de cálculo de juros</label>
-                                <select id="sistemaJuros">
-                                    <option value="compostos-mensal">Juros Compostos Mensais (Padrão)</option>
-                                    <option value="simples">Juros Simples</option>
-                                    <option value="compostos-diario">Juros Compostos Diários</option>
-                                    <option value="compostos-prorata-real">Juros Compostos + Pro-rata Real</option>
-                                </select>
-                                <small style="color: #666; display: block; margin-top: 4px;">
-                                    Escolha o sistema de cálculo para empréstimos e pro-rata
-                                </small>
-                            </div>
-                            
-                            <div class="config-group">
-                                <label for="igpmAnual">Índice IGPM anual (%)</label>
-                                <input type="text" id="igpmAnual" placeholder="0,00">
-                                <small style="color: #666; display: block; margin-top: 4px;">
-                                    Taxa IGPM aplicada aos cálculos de empréstimos
-                                </small>
                             </div>
 
-                            <h5>Controle de Regras</h5>
+                            <!-- Credenciais sempre visíveis -->
+                            <h4 style="margin: 20px 0 10px 0;">🔧 CREDENCIAIS DE ACESSO</h4>
                             <div class="config-group">
-                                <label for="desabilitarRegras">Regras de limite</label>
-                                <select id="desabilitarRegras">
-                                    <option value="habilitar" selected>Habilitar regras</option>
-                                    <option value="desabilitar">Desabilitar regras (modo livre)</option>
-                                </select>
-                                <small style="color: #666; display: block; margin-top: 4px;">
-                                    Remove todos os limites de parcelas e juros quando desabilitado
-                                </small>
-                            </div>
-
-                            <h5>Configurações Avançadas</h5>
-                            <div class="config-group">
-                                <label for="diasExtrasConfigurado">Dias extras configuráveis</label>
-                                <input type="number" id="diasExtrasConfigurado" placeholder="0" min="0" max="365">
-                                <small style="color: #666; display: block; margin-top: 4px;">
-                                    Dias extras padrão aplicados automaticamente aos cálculos
-                                </small>
-                            </div>
-
-                            <div class="config-group">
-                                <label for="ajusteAutomaticoMeses">Ajuste automático para meses com 31 dias</label>
-                                <select id="ajusteAutomaticoMeses">
-                                    <option value="true">Habilitado</option>
-                                    <option value="false">Desabilitado</option>
-                                </select>
-                                <small style="color: #666; display: block; margin-top: 4px;">
-                                    Ajusta automaticamente datas para meses com 31 dias
-                                </small>
-                            </div>
-
-                            <h5>Dados do Credor</h5>
-                            <div class="config-group">
-                                <label for="credorNome">Nome do credor</label>
-                                <input type="text" id="credorNome" placeholder="Nome completo ou razão social">
+                                <label for="newAdminUser">Novo usuário</label>
+                                <input type="text" id="newAdminUser" placeholder="Deixe em branco para manter atual">
                             </div>
                             <div class="config-group">
-                                <label for="credorCpfCnpj">CPF/CNPJ do credor</label>
-                                <input type="text" id="credorCpfCnpj" placeholder="000.000.000-00 ou 00.000.000/0001-00">
-                            </div>
-                            <div class="config-group">
-                                <label for="credorEndereco">Endereço do credor</label>
-                                <input type="text" id="credorEndereco" placeholder="Endereço completo">
-                            </div>
-                            <div class="config-group">
-                                <label for="credorRgOrgao">RG/Órgão Expedidor</label>
-                                <input type="text" id="credorRgOrgao" placeholder="12.345.678-9 SSP/SP">
-                            </div>
-
-                            <h5>Configurações de Contratos e Promissórias</h5>
-                            <div class="config-group">
-                                <label for="promissoriasColoridas">Promissórias coloridas</label>
-                                <select id="promissoriasColoridas">
-                                    <option value="false">Não (Preto e branco)</option>
-                                    <option value="true">Sim (Coloridas)</option>
-                                </select>
-                            </div>
-                            <div class="config-group">
-                                <label for="promissoriasPorFolha">Promissórias por folha</label>
-                                <select id="promissoriasPorFolha">
-                                    <option value="1">1 promissória por folha</option>
-                                    <option value="2" selected>2 promissórias por folha</option>
-                                    <option value="3">3 promissórias por folha</option>
-                                    <option value="4">4 promissórias por folha</option>
-                                </select>
-                            </div>
-                            
-                            <div class="config-group">
-                                <label for="templateContrato">Template do contrato</label>
-                                <textarea id="templateContrato" rows="8" placeholder="Cole aqui o template do contrato com variáveis {{NOME_DEVEDOR}}, {{VALOR_EMPRESTIMO}}, etc."></textarea>
-                                <small style="color: #666; display: block; margin-top: 4px;">
-                                    Use variáveis: {{NOME_DEVEDOR}}, {{CPF_DEVEDOR}}, {{VALOR_EMPRESTIMO}}, {{NUMERO_PARCELAS}}, {{VALOR_PARCELA}}, {{DATA_CONTRATO}}, {{NOME_CREDOR}}, {{CPF_CREDOR}}, {{ENDERECO_CREDOR}}
-                                </small>
-                            </div>
-                            
-                            <div class="limits-section">
-                                <h5 class="limits-header" id="limitsToggle">
-                                    <span>Editar Limites de Juros</span>
-                                    <span class="toggle-icon">▼</span>
-                                </h5>
-                                <div id="limitsTable" class="limits-content" style="display: none;"></div>
+                                <label for="newAdminPass">Nova senha</label>
+                                <input type="password" id="newAdminPass" placeholder="Deixe em branco para manter atual">
                             </div>
                         </div>
                     </div>
@@ -526,6 +538,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js?v=20250624220000"></script>
+    <script src="script.js?v=20250624230000"></script>
 </body>
 </html>
