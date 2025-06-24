@@ -1254,6 +1254,9 @@ class SimuladorEmprestimos {
         // Atualizar classes CSS baseado no modo livre administrativo
         this.atualizarClassesModoLivre();
         
+        // Aplicar configurações de validação ao inicializar
+        this.aplicarValidacaoConfiguracoes();
+        
         // Validar campos na inicialização para aplicar regras corretas
         this.validarTodosOsCampos();
     }
