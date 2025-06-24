@@ -75,25 +75,13 @@ class SimuladorEmprestimos {
         this.aplicarTema(loadedConfig.themeMode);
         this.aplicarPaletaCores(loadedConfig.colorTheme);
         
-        // Configurar sistema de juros e regras de limite
-        setTimeout(() => {
-            const sistemaJurosSelect = document.getElementById('sistemaJuros');
-            if (sistemaJurosSelect) {
-                sistemaJurosSelect.value = loadedConfig.sistemaJuros || 'compostos-mensal';
-            }
-            
-            const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
-            if (desabilitarRegrasSelect) {
-                desabilitarRegrasSelect.value = loadedConfig.desabilitarRegras ? 'desabilitar' : 'habilitar';
-            }
-        }, 100);
+        // Configurar selects de sistema de juros e regras
+        this.configurarSelects(loadedConfig);
         
-        // Aplicar classes de modo livre após carregar configurações
-        setTimeout(() => {
-            if (this.atualizarClassesModoLivre) {
-                this.atualizarClassesModoLivre();
-            }
-        }, 100);
+        // Aplicar classes de modo livre
+        if (this.atualizarClassesModoLivre) {
+            this.atualizarClassesModoLivre();
+        }
         
         return loadedConfig;
     }
@@ -554,9 +542,10 @@ class SimuladorEmprestimos {
     }
 
     focusInitialField() {
-        setTimeout(() => {
+        // Focar no campo inicial quando DOM estiver pronto
+        if (this.valorEmprestimoField) {
             this.valorEmprestimoField.focus();
-        }, 100);
+        }
     }
 
     formatarMoeda(input) {
@@ -2188,7 +2177,7 @@ function tryInitialize() {
         }
     } catch (error) {
         // Erro crítico na inicialização
-        console.error('Erro crítico na inicialização:', error);
+        // Erro crítico na inicialização
     }
 }
 
