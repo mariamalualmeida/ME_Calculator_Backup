@@ -1989,8 +1989,8 @@ class SimuladorEmprestimos {
             doc.save(nomeArquivo);
             this.showNotification('PDF exportado com sucesso!', 'success');
             
-            // Gerar também arquivo JSON para importação
-            this.exportarDadosJSON();
+            // Gerar automaticamente arquivo JSON para importação
+            setTimeout(() => this.exportarDadosJSON(), 100);
             
         } catch (error) {
             console.error('Erro detalhado na geração de PDF:', error);
