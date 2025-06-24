@@ -42,11 +42,6 @@ fun SimuladorEmprestimosScreen(
     
     var showConfigModal by remember { mutableStateOf(false) }
     
-    // Garantir que o modal não abre automaticamente
-    LaunchedEffect(Unit) {
-        showConfigModal = false
-    }
-    
     // Auto-focus no campo de valor quando a tela carrega
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
