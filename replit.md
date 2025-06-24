@@ -205,6 +205,7 @@ SimuladorEmprestimos/
 - June 22, 2025: NOVA LÓGICA PRO-RATA REAL PARA MÚLTIPLAS PARCELAS - sistema agora calcula juros extras mensalmente sobre cada parcela individual (em vez de distribuir valor total), resultando em valores substancialmente maiores para múltiplas parcelas, primeira parcela mantém cálculo linear, select "Habilitar regras" configurado como padrão selecionado no HTML, correções aplicadas nas versões Web/PWA e Android (v20250622150500)
 - June 24, 2025: LIMPEZA COMPLETA DO SISTEMA - removidos TODOS os resíduos do módulo de chat/hub em todas as versões (Web/PWA/Android), botão configurações funciona corretamente abrindo apenas modal de configurações, credenciais admin/admin123 funcionando, cache forçado v=20250624082000 para eliminar interferências (v20250624082000)
 - June 24, 2025: VARREDURA SISTEMÁTICA FINAL - análise linha por linha de todos arquivos, eliminação total de qualquer código relacionado a chat/hub, credenciais administrativas testadas e funcionando, sistema completamente dedicado ao simulador ME EMPREENDIMENTOS, cache v=20250624083000 (v20250624083000)
+- June 24, 2025: CORREÇÕES CRÍTICAS IMPLEMENTADAS - modal configurações não abre mais automaticamente na inicialização, área administrativa funciona corretamente após login admin/admin123, botão X de fechar modal aumentado (48px), botões seguem paleta de cores definida, botão expandir dados completos funcionando, cache v=20250624085000 (v20250624085000)
 
 ## User Preferences
 

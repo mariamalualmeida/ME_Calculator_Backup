@@ -1791,10 +1791,29 @@ class SimuladorEmprestimos {
     }
 
     aplicarPaletaCores(colorTheme) {
+        const root = document.documentElement;
+        
+        const cores = {
+            'default': { primary: '#1976d2', secondary: '#03a9f4', accent: '#ff5722' },
+            'purple': { primary: '#7b1fa2', secondary: '#ab47bc', accent: '#e91e63' },
+            'green': { primary: '#388e3c', secondary: '#66bb6a', accent: '#ff9800' },
+            'orange': { primary: '#f57c00', secondary: '#ff9800', accent: '#4caf50' },
+            'red': { primary: '#d32f2f', secondary: '#f44336', accent: '#2196f3' },
+            'teal': { primary: '#00796b', secondary: '#26a69a', accent: '#ff5722' }
+        };
+        
+        const paletaSelecionada = cores[colorTheme] || cores.default;
+        
+        root.style.setProperty('--primary-color', paletaSelecionada.primary);
+        root.style.setProperty('--primary-dark', this.escurecerCor(paletaSelecionada.primary, 20));
+        root.style.setProperty('--secondary-color', paletaSelecionada.secondary);
+        root.style.setProperty('--accent-color', paletaSelecionada.accent);
+        
+        // Atualizar atributos
         document.documentElement.setAttribute('data-color-theme', colorTheme);
         document.body.setAttribute('data-color-theme', colorTheme);
         
-        // Aplicar tema aos modais e botão expandir
+        // Aplicar cores nos elementos específicos
         const modal = document.getElementById('configModal');
         const adminPanel = document.getElementById('adminPanel');
         const formToggleBtn = document.querySelector('.form-toggle-btn');
@@ -1809,6 +1828,25 @@ class SimuladorEmprestimos {
         
         if (formToggleBtn) {
             formToggleBtn.setAttribute('data-color-theme', colorTheme);
+            formToggleBtn.style.backgroundColor = paletaSelecionada.primary;
+            formToggleBtn.style.borderColor = paletaSelecionada.primary;
+            formToggleBtn.style.color = 'white';
+        }
+        
+        // Aplicar cores nos botões do modal
+        const modalButtons = document.querySelectorAll('.save-btn, .admin-btn, #adminLoginBtn');
+        modalButtons.forEach(btn => {
+            if (btn) {
+                btn.style.backgroundColor = paletaSelecionada.primary;
+                btn.style.borderColor = paletaSelecionada.primary;
+                btn.style.color = 'white';
+            }
+        });
+        
+        // Aplicar cor no botão de fechar
+        const closeBtn = document.querySelector('.close-btn');
+        if (closeBtn) {
+            closeBtn.style.color = paletaSelecionada.primary;
         }
         
         // Salvar a preferência
