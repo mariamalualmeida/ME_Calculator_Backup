@@ -247,13 +247,6 @@ class SimuladorEmprestimos {
             });
         }
 
-        const adminLoginBtn = document.getElementById('adminLoginBtn');
-        if (adminLoginBtn) {
-            adminLoginBtn.addEventListener('click', () => {
-                this.fazerLoginAdmin();
-            });
-        }
-
         const saveCredentialsBtn = document.getElementById('saveCredentialsBtn');
         if (saveCredentialsBtn) {
             saveCredentialsBtn.addEventListener('click', () => {
