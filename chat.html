@@ -3,55 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ME EMPREENDIMENTOS - Assistente Financeira</title>
+    <title>Assistente Financeira - ME EMPREENDIMENTOS</title>
     <meta name="theme-color" content="#1976d2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Chat ME">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20250624051500">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgo8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNjM2NmYxO3N0b3Atb3BhY2l0eToxIiAvPgo8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM4YjVjZjY7c3RvcC1vcGFjaXR5OjEiIC8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPHRleHQgeD0iMTYiIHk9IjIyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iU2Vnb2UgVUksIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0idXJsKCNncmFkaWVudCkiPlIkPC90ZXh0Pgo8L3N2Zz4K">
+    <link rel="stylesheet" href="style.css?v=20250624052500">
+    <link rel="stylesheet" href="chat.css?v=20250624063000">
 </head>
-<body class="chat-page">
-    <!-- Sidebar para histórico de conversas -->
-    <div class="chat-sidebar" id="chatSidebar">
-        <div class="sidebar-header">
-            <h3>Conversas</h3>
-            <button class="sidebar-close" onclick="toggleSidebar()">×</button>
-        </div>
-        <div class="sidebar-content">
-            <button class="new-chat-btn" onclick="createNewConversation()">+ Nova Conversa</button>
-            <div class="conversations-list" id="conversationsList">
-                <!-- Lista de conversas será carregada aqui -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Overlay para mobile -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
+<body>
     <div class="chat-container">
         <!-- Header -->
         <header class="chat-header">
             <div class="header-left">
-                <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-                <button class="back-btn" onclick="goBack()">←</button>
-                <div class="header-title">
-                    <h1>ME EMPREENDIMENTOS</h1>
-                    <span>Assistente Financeira</span>
+                <button class="home-btn" onclick="goToHub()" title="Voltar ao Hub">🏠</button>
+                <button class="sidebar-toggle" onclick="toggleSidebar()" title="Expandir/Ocultar Menu">☰</button>
+                <div class="chat-title">
+                    <h2>Miguelita</h2>
+                    <span class="subtitle">Assistente Financeira</span>
                 </div>
             </div>
         </header>
 
-        <!-- Sidebar com conversas (desktop) -->
+        <!-- Sidebar com conversas -->
         <aside class="conversations-sidebar" id="conversationsSidebar">
             <div class="sidebar-header">
-                <h3>Conversas</h3>
-                <button class="new-chat-btn" onclick="createNewConversation()">+</button>
+                <button class="hub-btn-sidebar" onclick="goToHub()">🏠 Hub</button>
+                <button class="new-chat-btn" onclick="createNewConversation()">+ Nova Conversa</button>
             </div>
             <div class="conversations-list" id="conversationsList">
-                <!-- Conversas serão carregadas aqui -->
+                <div class="conversation-item">
+                    <div class="conversation-content">
+                        <div class="conversation-title">Conversa de Exemplo</div>
+                        <div class="conversation-preview">Análise de extrato bancário...</div>
+                        <div class="conversation-time">Hoje às 14:30</div>
+                    </div>
+                    <button class="delete-conversation-btn" onclick="deleteConversation(1)">🗑️</button>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <button class="settings-btn" onclick="openChatSettings()">⚙️ Configurações</button>
             </div>
         </aside>
 
@@ -184,6 +176,6 @@
 
     <!-- Scripts -->
     <script src="/socket.io/socket.io.js"></script>
-    <script src="chat.js?v=20250622160500"></script>
+    <script src="chat.js?v=20250624063000"></script>
 </body>
 </html>
