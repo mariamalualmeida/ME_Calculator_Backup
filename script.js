@@ -31,6 +31,10 @@ class SimuladorEmprestimos {
         this.configuracoes = this.carregarConfiguracoes();
         this.configuracoes.isAdmin = false;
         
+        // Inicializar sistema de debounce de notificações
+        this.lastNotification = '';
+        this.lastNotificationTime = 0;
+        
         this.initializeElements();
         this.setupEventListeners();
         this.setupNotificationSystem();
@@ -1128,11 +1132,11 @@ class SimuladorEmprestimos {
             const margemLucro = (lucroLiquido / valorEmprestimo) * 100;
             
             analiseFinanceira = `
-                <div class="analise-financeira-box" style="margin-top: 16px; padding: 16px; background: var(--surface-variant); border-radius: 12px; border: 1px solid var(--outline-variant);">
-                    <div style="font-weight: 600; color: var(--on-surface-variant); margin-bottom: 8px; display: flex; align-items: center;">
+                <div class="analise-financeira-box" style="margin-top: 16px; padding: 16px; background: var(--surface-container-low); border-radius: 12px; border: 1px solid var(--outline-variant); max-width: 400px; margin-left: auto; margin-right: auto; text-align: center;">
+                    <div style="font-weight: 600; color: var(--on-surface); margin-bottom: 8px; display: flex; align-items: center; justify-content: center;">
                         ANÁLISE FINANCEIRA (Modo Livre)
                     </div>
-                    <div style="font-size: 14px; color: var(--on-surface-variant); line-height: 1.4;">
+                    <div style="font-size: 14px; color: var(--on-surface); line-height: 1.4;">
                         <div style="margin-bottom: 4px;"><strong>Capital emprestado:</strong> ${formatarMoeda(valorEmprestimo)}</div>
                         <div style="margin-bottom: 4px;"><strong>Total a receber:</strong> ${formatarMoeda(totalReceber)}</div>
                         <div style="margin-bottom: 4px; color: var(--primary);"><strong>✅ Lucro líquido:</strong> ${formatarMoeda(lucroLiquido)}</div>
@@ -1469,8 +1473,13 @@ class SimuladorEmprestimos {
     }
 
     fazerLoginAdmin() {
-        const usuario = document.getElementById('adminUser').value;
-        const senha = document.getElementById('adminPass').value;
+        const usuario = document.getElementById('adminUser')?.value;
+        const senha = document.getElementById('adminPass')?.value;
+        
+        if (!usuario || !senha) {
+            this.showNotification('Preencha usuário e senha', 'warning');
+            return;
+        }
         
         if (usuario === this.configuracoes.adminUser && senha === this.configuracoes.adminPassword) {
             // Ativar estado administrativo
@@ -1492,7 +1501,7 @@ class SimuladorEmprestimos {
             // Aplicar modo livre imediatamente se configurado
             this.atualizarClassesModoLivre();
             
-            // Login admin realizado com sucesso
+            this.showNotification('Login administrativo realizado com sucesso', 'success');
         } else {
             this.showNotification('Usuário ou senha incorretos', 'error');
         }
@@ -2111,7 +2120,7 @@ Testemunha 2: _____________________________________ CPF: _______________________
         if (!arquivo) return;
         
         if (arquivo.type === 'application/pdf') {
-            this.showNotification('Para importar dados, use o botão "EXPORTAR DADOS JSON" após fazer uma simulação, depois importe o arquivo .json gerado.', 'warning', 6000);
+            this.showNotification('Selecione um arquivo .json válido para importar os dados da simulação.', 'warning', 4000);
             return;
         }
         
