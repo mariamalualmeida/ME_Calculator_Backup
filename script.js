@@ -41,7 +41,7 @@ class SimuladorEmprestimos {
             isAdmin: false,
             limitesPersonalizados: null,
             themeMode: 'light',
-            mostrarJurosRelatorio: false,
+            exibirDadosJuros: true,
             desabilitarRegras: false,
             colorTheme: 'default',
             sistemaJuros: 'compostos-mensal',
@@ -70,7 +70,7 @@ class SimuladorEmprestimos {
         setTimeout(() => {
             const sistemaJurosSelect = document.getElementById('sistemaJuros');
             if (sistemaJurosSelect) {
-                sistemaJurosSelect.value = loadedConfig.sistemaJuros;
+                sistemaJurosSelect.value = loadedConfig.sistemaJuros || 'compostos-mensal';
             }
             
             const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
@@ -249,7 +249,10 @@ class SimuladorEmprestimos {
 
         if (this.importFileInput) {
             this.importFileInput.addEventListener('change', (e) => {
-                this.importarDados(e.target.files[0]);
+                const arquivo = e.target.files[0];
+                if (arquivo) {
+                    this.importarDados(arquivo);
+                }
                 // Limpar input para permitir selecionar o mesmo arquivo novamente
                 e.target.value = '';
             });
@@ -1453,6 +1456,8 @@ class SimuladorEmprestimos {
         
         // Carregar configurações nos campos
         document.getElementById('igpmAnual').value = this.configuracoes.igpmAnual || 0;
+        document.getElementById('sistemaJuros').value = this.configuracoes.sistemaJuros || 'compostos-mensal';
+        document.getElementById('desabilitarRegras').value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
         
         // Carregar novas configurações
         document.getElementById('diasExtrasConfigurado').value = this.configuracoes.diasExtrasConfigurado || 0;
@@ -1955,6 +1960,47 @@ class SimuladorEmprestimos {
         if (dataNascimentoField) {
             dataNascimentoField.addEventListener('input', (e) => this.formatarData(e.target));
         }
+    }
+
+    importarDados(arquivo) {
+        if (!arquivo) return;
+        
+        if (arquivo.type === 'application/pdf') {
+            alert('Funcionalidade de importação de PDF em desenvolvimento. Use arquivos JSON exportados pelo sistema.');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const dados = JSON.parse(e.target.result);
+                
+                // Preencher campos básicos
+                if (dados.valor) this.valorField.value = this.formatarMoeda(dados.valor);
+                if (dados.parcelas) this.parcelasField.value = dados.parcelas;
+                if (dados.juros) this.taxaField.value = dados.juros.toFixed(2).replace('.', ',');
+                if (dados.dataInicial) this.dataInicialField.value = dados.dataInicial;
+                
+                // Preencher dados cadastrais se existirem
+                if (dados.nomeCliente) this.nomeClienteField.value = dados.nomeCliente;
+                if (dados.cpfCliente) this.cpfClienteField.value = dados.cpfCliente;
+                
+                // Expandir automaticamente a área de dados completos
+                const toggleBtn = document.getElementById('formToggleBtn');
+                const formSection = document.getElementById('formCompleto');
+                
+                if (toggleBtn && formSection && dados.nomeCliente) {
+                    formSection.style.display = 'block';
+                    toggleBtn.textContent = '▲ DADOS COMPLETOS DO CLIENTE';
+                }
+                
+                this.esconderErro();
+                alert('Dados importados com sucesso!');
+            } catch (error) {
+                this.mostrarErro('ERRO AO IMPORTAR ARQUIVO. FORMATO INVÁLIDO.');
+            }
+        };
+        reader.readAsText(arquivo);
     }
 }
 
