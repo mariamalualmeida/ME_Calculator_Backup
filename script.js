@@ -1463,7 +1463,7 @@ class SimuladorEmprestimos {
         // Configurações de contratos
         document.getElementById('promissoriasColoridas').value = this.configuracoes.promissoriasColoridas ? 'true' : 'false';
         document.getElementById('promissoriasPorFolha').value = this.configuracoes.promissoriasPorFolha || 2;
-        document.getElementById('templateContrato').value = this.configuracoes.templateContrato || this.getTemplateContratoDefault();
+        document.getElementById('templateContrato').value = this.configuracoes.templateContrato || getTemplateContratoDefault();
     }
 
 
