@@ -94,7 +94,7 @@ class SimuladorEmprestimos {
     }
 
     initializeElements() {
-        console.log('Inicializando elementos...');
+        // Inicializando elementos DOM
         this.valorEmprestimoField = document.getElementById('valorEmprestimo');
         this.numeroParcelasField = document.getElementById('numeroParcelas');
         this.taxaJurosField = document.getElementById('taxaJuros');
@@ -111,8 +111,10 @@ class SimuladorEmprestimos {
         this.importarDadosBtn = document.getElementById('importarDadosBtn');
         this.importFileInput = document.getElementById('importFileInput');
         
-        console.log('Taxa de juros field encontrado:', !!this.taxaJurosField);
-        console.log('ID do campo:', this.taxaJurosField?.id);
+        // Validação de elementos críticos
+        if (!this.taxaJurosField) {
+            throw new Error('Campo taxa de juros não encontrado');
+        }
     }
 
     setupEventListeners() {
@@ -367,7 +369,7 @@ class SimuladorEmprestimos {
         const icon = toggleBtn ? toggleBtn.querySelector('.toggle-icon') : null;
         
         if (!container || !toggleBtn) {
-            console.error('Elementos do formulário completo não encontrados');
+            // Formulário completo não encontrado - modo básico
             return;
         }
         
@@ -388,7 +390,7 @@ class SimuladorEmprestimos {
         const limitsHeader = document.getElementById('limitsToggle');
         
         if (!limitsContent || !limitsHeader) {
-            console.error('Elementos da seção de limites não encontrados');
+            // Seção de limites não encontrada
             return;
         }
         
@@ -986,7 +988,7 @@ class SimuladorEmprestimos {
             return { sucesso: true };
         }
         
-        console.log('Debug - Modo normal, aplicando validações');
+        // Aplicando validações do modo normal
         
         // Modo normal - remover classe para permitir borda vermelha
         this.numeroParcelasField.classList.remove('admin-free-mode');
@@ -1272,7 +1274,7 @@ class SimuladorEmprestimos {
         modal.setAttribute('data-theme', this.configuracoes.themeMode);
         modal.setAttribute('data-color-theme', this.configuracoes.colorTheme);
         
-        console.log('Debug - Configurações abertas, painel admin oculto, login obrigatório');
+        // Configurações abertas - painel admin oculto por segurança
     }
 
     fecharModal() {
@@ -1304,7 +1306,7 @@ class SimuladorEmprestimos {
         // IMPORTANTE: Aplicar configurações administrativas na página principal
         this.atualizarClassesModoLivre();
         
-        console.log('Debug - Modal fechado, configurações preservadas, UI resetada');
+        // Modal fechado - configurações preservadas
     }
 
 
@@ -1421,7 +1423,7 @@ class SimuladorEmprestimos {
             // Aplicar modo livre imediatamente se configurado
             this.atualizarClassesModoLivre();
             
-            console.log('Debug - Login admin realizado, painel temporário exibido');
+            // Login admin realizado com sucesso
         } else {
             alert('Usuário ou senha incorretos');
         }
@@ -1869,7 +1871,7 @@ class SimuladorEmprestimos {
             alert('PDF exportado com sucesso!');
             
         } catch (error) {
-            console.error('Erro ao gerar PDF:', error);
+            // Erro na geração de PDF
             alert('Erro ao gerar PDF. Tente novamente.');
         }
     }
@@ -2076,9 +2078,9 @@ let simulator;
 function initializeApp() {
     try {
         simulator = new SimuladorEmprestimos();
-        console.log('Simulador inicializado com sucesso');
+        // Simulador inicializado com sucesso
     } catch (error) {
-        console.error('Erro ao inicializar simulador:', error);
+        // Erro na inicialização - tentando novamente
         // Tentar novamente após 500ms
         setTimeout(initializeApp, 500);
     }
@@ -2094,7 +2096,7 @@ if (document.readyState === 'loading') {
 // Fallback adicional
 setTimeout(() => {
     if (!simulator) {
-        console.log('Forçando inicialização...');
+        // Forçando inicialização após timeout
         initializeApp();
     }
 }, 1000);
