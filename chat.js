@@ -7,18 +7,17 @@
 class ChatController {
     constructor() {
         this.socket = null;
-        this.currentUser = { id: 'user', name: 'Usuário' }; // Auto-login sem autenticação
+        this.currentUser = null;
         this.currentConversation = null;
         this.selectedFiles = [];
         this.isConnected = false;
         this.messageHistory = [];
-        this.sidebarOpen = false;
         
         this.initializeElements();
         this.setupEventListeners();
+        this.loadStoredAuth();
         this.initializeSocket();
         this.loadThemeSettings();
-        this.loadConversations();
     }
 
     initializeElements() {
@@ -29,11 +28,12 @@ class ChatController {
             fileInput: document.getElementById('fileInput'),
             filePreview: document.getElementById('filePreview'),
             conversationsList: document.getElementById('conversationsList'),
-            sidebar: document.getElementById('conversationsSidebar'),
-            chatMain: document.querySelector('.chat-main'),
             
-            // Config elements
+            // Auth elements
+            authSection: document.getElementById('authSection'),
             configSection: document.getElementById('configSection'),
+            username: document.getElementById('username'),
+            password: document.getElementById('password'),
             
             // AI Config elements
             aiProvider: document.getElementById('aiProvider'),
@@ -88,13 +88,6 @@ class ChatController {
 
         // System prompt templates
         this.setupSystemPromptTemplates();
-
-        // Sidebar overlay click
-        document.addEventListener('click', (e) => {
-            if (this.sidebarOpen && !this.elements.sidebar.contains(e.target) && !e.target.closest('.sidebar-toggle')) {
-                this.toggleSidebar();
-            }
-        });
     }
 
     initializeSocket() {
@@ -139,36 +132,20 @@ class ChatController {
         }
     }
 
-    toggleSidebar() {
-        this.sidebarOpen = !this.sidebarOpen;
-        if (this.sidebarOpen) {
-            this.elements.sidebar.classList.add('open');
-            this.elements.chatMain.classList.add('sidebar-open');
-        } else {
-            this.elements.sidebar.classList.remove('open');
-            this.elements.chatMain.classList.remove('sidebar-open');
-        }
-    }
-
-    deleteConversation(conversationId) {
-        if (confirm('Tem certeza que deseja excluir esta conversa?')) {
-            // Remove do localStorage
-            const conversations = JSON.parse(localStorage.getItem('chatConversations') || '[]');
-            const filtered = conversations.filter(conv => conv.id !== conversationId);
-            localStorage.setItem('chatConversations', JSON.stringify(filtered));
-            
-            // Recarrega a lista
-            this.loadConversations();
-            
-            // Se era a conversa atual, limpa
-            if (this.currentConversation && this.currentConversation.id === conversationId) {
-                this.createNewConversation();
+    loadStoredAuth() {
+        const stored = localStorage.getItem('chatAuth');
+        if (stored) {
+            try {
+                const authData = JSON.parse(stored);
+                this.currentUser = authData.user;
+                this.showConfigSection();
+                this.loadConversations();
+                this.loadAiConfigs();
+            } catch (error) {
+                console.error('Erro ao carregar autenticação:', error);
+                localStorage.removeItem('chatAuth');
             }
         }
-    }
-
-    goToHub() {
-        window.location.href = 'hub.html';
     }
 
     loadThemeSettings() {
@@ -185,11 +162,84 @@ class ChatController {
     }
 
     // Authentication methods
-    // Função removida - acesso direto sem login
+    async login() {
+        const username = this.elements.username.value.trim();
+        const password = this.elements.password.value.trim();
 
-    // Função removida - acesso direto sem registro
+        if (!username || !password) {
+            this.showToast('Preencha usuário e senha', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.currentUser = data.user;
+                localStorage.setItem('chatAuth', JSON.stringify(data));
+                this.showConfigSection();
+                this.loadConversations();
+                this.loadAiConfigs();
+                this.showToast('Login realizado com sucesso!', 'success');
+            } else {
+                this.showToast(data.error || 'Erro no login', 'error');
+            }
+        } catch (error) {
+            console.error('Erro no login:', error);
+            this.showToast('Erro de conexão', 'error');
+        }
+    }
+
+    async register() {
+        const username = this.elements.username.value.trim();
+        const password = this.elements.password.value.trim();
+
+        if (!username || !password) {
+            this.showToast('Preencha usuário e senha', 'error');
+            return;
+        }
+
+        if (password.length < 6) {
+            this.showToast('Senha deve ter pelo menos 6 caracteres', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.currentUser = data.user;
+                localStorage.setItem('chatAuth', JSON.stringify(data));
+                this.showConfigSection();
+                this.loadConversations();
+                this.showToast('Conta criada com sucesso!', 'success');
+            } else {
+                this.showToast(data.error || 'Erro no registro', 'error');
+            }
+        } catch (error) {
+            console.error('Erro no registro:', error);
+            this.showToast('Erro de conexão', 'error');
+        }
+    }
 
     showConfigSection() {
+        if (this.elements.authSection) this.elements.authSection.style.display = 'none';
         if (this.elements.configSection) this.elements.configSection.style.display = 'block';
     }
 
@@ -299,20 +349,21 @@ Características:
     }
 
     async saveAiConfig() {
-        // Remover verificação de login - acesso livre
+        if (!this.currentUser) {
+            this.showToast('Faça login primeiro', 'error');
+            return;
+        }
 
         const config = {
-            id: 'config_' + Date.now(),
             userId: this.currentUser.id,
-            name: this.elements.configName.value.trim() || 'Configuração Padrão',
+            name: this.elements.configName.value.trim(),
             provider: this.elements.aiProvider.value,
             apiKey: this.elements.apiKey.value.trim(),
             model: this.elements.aiModel.value,
-            systemPrompt: this.elements.systemPrompt.value.trim() || 'Você é uma assistente financeira prestativa.',
-            temperature: this.elements.temperature.value || '0.7',
-            maxTokens: parseInt(this.elements.maxTokens.value) || 2000,
-            isActive: this.elements.isActive.checked,
-            createdAt: new Date().toISOString()
+            systemPrompt: this.elements.systemPrompt.value.trim(),
+            temperature: this.elements.temperature.value,
+            maxTokens: parseInt(this.elements.maxTokens.value),
+            isActive: this.elements.isActive.checked
         };
 
         // Validações
@@ -751,48 +802,48 @@ Características:
 }
 
 // Global functions for onclick handlers
+function login() {
+    chatController.login();
+}
+
+function register() {
+    chatController.register();
+}
+
 function saveAiConfig() {
-    if (window.chatController) window.chatController.saveAiConfig();
+    chatController.saveAiConfig();
 }
 
 function openChatSettings() {
-    if (window.chatController) window.chatController.openChatSettings();
+    chatController.openChatSettings();
 }
 
 function closeAiConfigModal() {
-    if (window.chatController) window.chatController.closeAiConfigModal();
+    chatController.closeAiConfigModal();
 }
 
-function goToHub() {
-    window.location.href = 'hub.html';
-}
-
-function toggleSidebar() {
-    if (window.chatController) window.chatController.toggleSidebar();
-}
-
-function deleteConversation(conversationId) {
-    if (window.chatController) window.chatController.deleteConversation(conversationId);
+function goBack() {
+    chatController.goBack();
 }
 
 function selectFiles() {
-    if (window.chatController) window.chatController.selectFiles();
+    chatController.selectFiles();
 }
 
 function sendMessage() {
-    if (window.chatController) window.chatController.sendMessage();
+    chatController.sendMessage();
 }
 
 function sendQuickMessage(command) {
-    if (window.chatController) window.chatController.sendQuickMessage(command);
+    chatController.sendQuickMessage(command);
 }
 
 function createNewConversation() {
-    if (window.chatController) window.chatController.createNewConversation();
+    chatController.createNewConversation();
 }
 
 function updateModelOptions() {
-    if (window.chatController) window.chatController.updateModelOptions();
+    chatController.updateModelOptions();
 }
 
 // Initialize when DOM is loaded

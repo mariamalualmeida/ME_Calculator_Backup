@@ -33,16 +33,6 @@ class SimuladorEmprestimos {
         this.focusInitialField();
     }
 
-    // Função para alternar tema
-    toggleTheme() {
-        const currentTheme = this.configuracoes.tema || 'light';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        this.configuracoes.tema = newTheme;
-        this.salvarConfiguracoes();
-        this.aplicarTema(newTheme);
-    }
-    }
-
     carregarConfiguracoes() {
         const config = localStorage.getItem('simulador_config');
         const defaultConfig = {
