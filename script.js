@@ -31,6 +31,12 @@ class SimuladorEmprestimos {
         this.initializeElements();
         this.setupEventListeners();
         this.focusInitialField();
+        
+        // Garantir que o modal está fechado na inicialização
+        const configModal = document.getElementById('configModal');
+        if (configModal) {
+            configModal.style.display = 'none';
+        }
     }
 
     carregarConfiguracoes() {
@@ -1855,13 +1861,26 @@ class SimuladorEmprestimos {
 let simulator;
 
 function initializeApp() {
+    console.log('Inicializando elementos...');
+    const taxaField = document.getElementById('taxaJuros');
+    console.log('Taxa de juros field encontrado:', !!taxaField);
+    console.log('ID do campo:', taxaField ? taxaField.id : 'não encontrado');
+    
+    if (window.simuladorInstance) {
+        return;
+    }
+    
+    // Garantir que o modal está fechado antes da inicialização
+    const configModal = document.getElementById('configModal');
+    if (configModal) {
+        configModal.style.display = 'none';
+    }
+    
     try {
-        simulator = new SimuladorEmprestimos();
+        window.simuladorInstance = new SimuladorEmprestimos();
         console.log('Simulador inicializado com sucesso');
     } catch (error) {
         console.error('Erro ao inicializar simulador:', error);
-        // Tentar novamente após 500ms
-        setTimeout(initializeApp, 500);
     }
 }
 
