@@ -306,6 +306,8 @@ fun ConfiguracoesModal(
                                                 // Limpar campos de login
                                                 adminUser = ""
                                                 adminPassword = ""
+                                            } else {
+                                                // Mostrar erro de credenciais
                                             }
                                         },
                                         modifier = Modifier.height(56.dp),

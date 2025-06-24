@@ -1,7 +1,7 @@
 /**
  * ME EMPREENDIMENTOS - Simulador de Empréstimos
- * Sistema LIMPO sem módulos de chat/hub - apenas simulador
- * Updated: 2025-06-24 08:20 - Todas as interferências removidas
+ * Sistema COMPLETAMENTE LIMPO - apenas simulador de empréstimos
+ * Updated: 2025-06-24 08:30 - VARREDURA COMPLETA: todos resíduos removidos
  */
 
 class SimuladorEmprestimos {
@@ -1203,7 +1203,7 @@ class SimuladorEmprestimos {
         modal.setAttribute('data-theme', this.configuracoes.themeMode);
         modal.setAttribute('data-color-theme', this.configuracoes.colorTheme);
         
-        console.log('Debug - Configurações abertas, painel admin oculto, login obrigatório');
+
     }
 
     fecharModal() {
@@ -1235,7 +1235,7 @@ class SimuladorEmprestimos {
         // IMPORTANTE: Aplicar configurações administrativas na página principal
         this.atualizarClassesModoLivre();
         
-        console.log('Debug - Modal fechado, configurações preservadas, UI resetada');
+
     }
 
 
@@ -1313,10 +1313,6 @@ class SimuladorEmprestimos {
         const usuario = document.getElementById('adminUser').value.trim();
         const senha = document.getElementById('adminPass').value.trim();
         
-        // Debug das credenciais
-        console.log('Tentativa de login:', { usuario, senha });
-        console.log('Credenciais esperadas:', { adminUser: this.configuracoes.adminUser, adminPassword: this.configuracoes.adminPassword });
-        
         // Verificar credenciais padrão diretamente primeiro
         if ((usuario === 'admin' && senha === 'admin123') || 
             (usuario === this.configuracoes.adminUser && senha === this.configuracoes.adminPassword)) {
@@ -1339,9 +1335,7 @@ class SimuladorEmprestimos {
             // Aplicar modo livre imediatamente se configurado
             this.atualizarClassesModoLivre();
             
-            console.log('Debug - Login admin realizado, painel temporário exibido');
         } else {
-            console.log('Credenciais incorretas');
             alert('Usuário ou senha incorretos. Use: admin / admin123');
         }
     }
