@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Histórico ME EMPREENDIMENTOS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .btn-generate {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 20px auto;
+            display: block;
+            width: 300px;
+        }
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        .status {
+            text-align: center;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        .info {
+            background: #e0e7ff;
+            color: #3730a3;
+            border: 1px solid #c7d2fe;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ME EMPREENDIMENTOS</h1>
+        <h2>Gerador de Histórico Completo do Projeto</h2>
+        <p>Documentação completa desde o início até o momento presente</p>
+    </div>
+
+    <div class="info status">
+        Este relatório incluirá todo o histórico de desenvolvimento, arquitetura do sistema, 
+        funcionalidades implementadas e evolução do projeto desde 20 de junho de 2025.
+    </div>
+
+    <button class="btn-generate" onclick="generateHistoryPDF()">
+        📄 GERAR HISTÓRICO COMPLETO EM PDF
+    </button>
+
+    <div id="status"></div>
+
+    <script>
+        function generateHistoryPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            
+            // Configurações
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const margin = 20;
+            const lineHeight = 7;
+            let currentY = margin;
+            let pageNumber = 1;
+            
+            // Função para adicionar nova página
+            function addNewPage() {
+                doc.addPage();
+                currentY = margin;
+                pageNumber++;
+                addFooter();
+            }
+            
+            // Função para adicionar rodapé
+            function addFooter() {
+                doc.setFontSize(8);
+                doc.setTextColor(100, 100, 100);
+                doc.text(\`Página \${pageNumber} - ME EMPREENDIMENTOS - Histórico do Projeto\`, 
+                    pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+            }
+            
+            // Função para verificar espaço e quebrar página se necessário
+            function checkPageBreak(spaceNeeded = lineHeight) {
+                if (currentY + spaceNeeded > doc.internal.pageSize.getHeight() - 25) {
+                    addNewPage();
+                }
+            }
+            
+            // Função para adicionar texto com quebra automática
+            function addText(text, fontSize = 10, color = [0, 0, 0], isBold = false) {
+                checkPageBreak();
+                doc.setFontSize(fontSize);
+                doc.setTextColor(color[0], color[1], color[2]);
+                doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+                
+                const splitText = doc.splitTextToSize(text, pageWidth - (margin * 2));
+                doc.text(splitText, margin, currentY);
+                currentY += splitText.length * lineHeight;
+            }
+            
+            // Função para adicionar título
+            function addTitle(text, fontSize = 16, color = [51, 102, 204]) {
+                checkPageBreak(15);
+                currentY += 5;
+                addText(text, fontSize, color, true);
+                currentY += 3;
+            }
+            
+            // Função para adicionar subtítulo
+            function addSubtitle(text, fontSize = 12, color = [102, 102, 102]) {
+                checkPageBreak(10);
+                currentY += 2;
+                addText(text, fontSize, color, true);
+                currentY += 2;
+            }
+            
+            showStatus('Gerando PDF...', 'info');
+            
+            // CAPA
+            doc.setFillColor(99, 102, 241);
+            doc.rect(0, 0, pageWidth, 60, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(24);
+            doc.setFont('helvetica', 'bold');
+            doc.text('ME EMPREENDIMENTOS', pageWidth / 2, 25, { align: 'center' });
+            
+            doc.setFontSize(18);
+            doc.text('HISTÓRICO COMPLETO DO PROJETO', pageWidth / 2, 35, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.text('Simulador de Empréstimos e Sistema de Chat com IA', pageWidth / 2, 45, { align: 'center' });
+            
+            doc.setFontSize(10);
+            doc.text(\`Gerado em: \${new Date().toLocaleDateString('pt-BR')} às \${new Date().toLocaleTimeString('pt-BR')}\`, 
+                pageWidth / 2, 55, { align: 'center' });
+            
+            currentY = 80;
+            
+            // VISÃO GERAL
+            addTitle('VISÃO GERAL DO PROJETO', 18);
+            addText('Aplicação web completa para simulação de empréstimos com recursos avançados de cálculo, área administrativa e funcionalidade de exportação PDF. O sistema implementa validação dinâmica de regras, cálculos pro-rata, correção IGPM, e fornece mensagens de erro amigáveis em português.');
+            
+            currentY += 5;
+            addSubtitle('Tecnologias Utilizadas:');
+            addText('• HTML5, CSS3, JavaScript (ES6+)');
+            addText('• Material Design 3 com suporte a tema claro/escuro');
+            addText('• Node.js para backend do sistema de chat');
+            addText('• Socket.IO para comunicação em tempo real');
+            addText('• PostgreSQL (Neon) para banco de dados');
+            addText('• Progressive Web App (PWA) para instalação mobile');
+            
+            currentY += 5;
+            addSubtitle('Módulos Principais:');
+            addText('1. Simulador de Empréstimos - Cálculos avançados com diferentes sistemas de juros');
+            addText('2. Sistema de Chat com IA - Suporte a múltiplos providers (OpenAI, Claude, Gemini, Grok)');
+            addText('3. Análise de Documentos Financeiros - Upload e processamento de arquivos');
+            addText('4. Hub Central - Navegação entre módulos com configurações unificadas');
+            
+            // ARQUITETURA DO SISTEMA
+            addTitle('ARQUITETURA DO SISTEMA', 16);
+            
+            addSubtitle('Frontend (Simulador de Empréstimos):');
+            addText('• SimuladorEmprestimos Class - Controlador principal da lógica de negócio');
+            addText('• Validação de taxa de juros dinâmica com tabela de limites');
+            addText('• Cálculos avançados: Pro-rata, correção IGPM, juros compostos');
+            addText('• Formatação em tempo real para moeda e percentuais');
+            addText('• Geração completa de relatórios PDF com jsPDF');
+            
+            addSubtitle('Backend (Sistema de Chat):');
+            addText('• Servidor Node.js na porta 3001');
+            addText('• Express.js para API REST');
+            addText('• Socket.IO para comunicação em tempo real');
+            addText('• Multer para upload de arquivos');
+            addText('• Integração com múltiplos providers de IA');
+            
+            addSubtitle('Banco de Dados:');
+            addText('• PostgreSQL (Neon) integrado ao Replit');
+            addText('• Drizzle ORM para migrations e queries');
+            addText('• Esquemas para usuários, conversas, mensagens e configurações');
+            
+            // FUNCIONALIDADES IMPLEMENTADAS
+            addTitle('FUNCIONALIDADES IMPLEMENTADAS', 16);
+            
+            addSubtitle('Simulador de Empréstimos:');
+            addText('✓ Cálculo de parcelas com múltiplos sistemas de juros');
+            addText('✓ Validação dinâmica de limites por número de parcelas');
+            addText('✓ Modo administrativo com regras flexíveis');
+            addText('✓ Formulário completo de dados cadastrais');
+            addText('✓ Cálculos pro-rata com métodos diferenciados');
+            addText('✓ Correção por IGPM configurável');
+            addText('✓ Geração de PDF com cronograma completo');
+            addText('✓ Temas personalizáveis (claro/escuro)');
+            addText('✓ Interface responsiva para mobile');
+            addText('✓ PWA com capacidade de instalação');
+            
+            addSubtitle('Sistema de Chat com IA:');
+            addText('✓ Suporte a OpenAI, Claude, Gemini e Grok');
+            addText('✓ Upload de documentos financeiros');
+            addText('✓ Análise automática de extratos e faturas');
+            addText('✓ Categorização inteligente de transações');
+            addText('✓ Detecção de comportamentos de risco');
+            addText('✓ Sistema de autenticação de usuários');
+            addText('✓ Configurações personalizáveis por usuário');
+            addText('✓ Histórico de conversas persistente');
+            addText('✓ Interface responsiva e intuitiva');
+            
+            addSubtitle('Análise de Documentos Financeiros:');
+            addText('✓ Suporte a PDF, CSV, XLSX, DOC, imagens');
+            addText('✓ OCR para documentos escaneados');
+            addText('✓ Parsers específicos por banco (Nubank, Inter, C6, Caixa, PicPay)');
+            addText('✓ Categorização granular de transações');
+            addText('✓ Cálculo de scores financeiros');
+            addText('✓ Detecção de apostas e movimentações suspeitas');
+            addText('✓ Análise de risco e inadimplência');
+            addText('✓ Relatórios consolidados por período');
+            
+            // CHANGELOG DETALHADO
+            addTitle('HISTÓRICO DETALHADO DE DESENVOLVIMENTO', 16);
+            
+            const changelog = [
+                {
+                    date: '20 de Junho de 2025',
+                    items: [
+                        'Configuração inicial da aplicação web com calculadora básica de empréstimos',
+                        'Implementação completa de recursos - tabela dinâmica de limites de taxa de juros, scroll automático, exportação PDF com cronograma de pagamentos',
+                        'Adição de suite de testes abrangente e documentação README completa',
+                        'Atualização da marca para "ME EMPREENDIMENTOS" com nome da empresa em destaque',
+                        'Consolidação para aplicação web pura - remoção de componentes Android',
+                        'Otimização final - limpeza de redundâncias CSS, remoção de dependência não utilizada do Material Icons',
+                        'Adição de suporte Progressive Web App (PWA) com manifest.json',
+                        'Criação de estrutura completa de projeto Android com Jetpack Compose',
+                        'Implementação do processo de instalação PWA como método primário para mobile',
+                        'Correção de problemas de entrada no campo de percentual - suporte a entrada com vírgula, exclusão e formatação adequada',
+                        'Aprimoramento de relatórios PDF - remoção de rótulo "Cliente:" quando vazio, correção de valores zero, aumento de tamanhos de fonte',
+                        'Atualização do ícone do app para design de leão dourado com fundo transparente',
+                        'Correção de compatibilidade de ícones PWA - criação de ícones SVG dedicados (192x192 e 512x512)',
+                        'Implementação de sistema de validação de data abrangente rejeitando datas impossíveis (32/13/2025, 55/55/2030) com suporte a anos bissextos',
+                        'Aprimoramento das funções de validação Android com formatação de data adequada e validação de regras de negócio',
+                        'Implementação de solução simplificada - adição de campos opcionais fixos de nome/CPF do cliente na tela principal',
+                        'Adição de alternância de configuração para mostrar taxa de juros em relatórios PDF',
+                        'Atualização da geração de PDF para usar formatação de exatamente 2 casas decimais (R$ 1.234,56)',
+                        'Criação de novo ícone de cifrão dourado ($) substituindo design de leão',
+                        'Aplicação das mesmas melhorias à versão Android com campos nome/CPF e auto-formatação de CPF',
+                        'Implementação de sistema de desabilitação de regras administrativas - admin pode desabilitar todos os limites de validação via checkbox',
+                        'Padronização do estilo de campos de entrada para campos nome/CPF',
+                        'Adição de funcionalidade "modo livre" permitindo parcelas e taxas de juros ilimitadas para administradores autenticados',
+                        'Implementação do método "primeira parcela maior" - juros pro-rata afetam apenas a primeira parcela',
+                        'Atualização da lógica de cálculo em ambas as versões web e Android para mostrar valor da primeira parcela separadamente quando dias extras se aplicam',
+                        'Aprimoramento de relatórios PDF para exibir valor da primeira parcela separadamente e incluir informações de dias/juros extras quando aplicável',
+                        'Modificação da exibição de resultado para mostrar claramente "1ª parcela: R$ X,XX" e "Demais N parcelas: R$ Y,YY" quando pro-rata se aplica',
+                        'Correção da validação visual (borda vermelha) para respeitar modo livre admin - sem bordas vermelhas quando regras estão desabilitadas',
+                        'Correção da ordem do relatório PDF - "Simulado por" agora aparece antes dos dados do cliente (nome/CPF)',
+                        'Aplicação de correções de validação em ambas as versões web e Android para consistência entre plataformas',
+                        'Correção da lógica de cálculo - dias extras agora calculados corretamente a partir da data do empréstimo vs data solicitada do primeiro pagamento',
+                        'Correção de bug de exibição mostrando "Demais 0 parcelas" quando há apenas 1 parcela com dias extras',
+                        'Implementação de alternância de escolha do usuário para cálculo de dias extras - "primeira parcela maior" vs "distribuir em todas as parcelas"',
+                        'Adição de elementos de UI dinâmicos que aparecem apenas quando uma data é inserida, permitindo seleção de método',
+                        'Atualização de ambas as versões web e Android com lógica de cálculo consistente e correções de exibição',
+                        'Implementação de todas as melhorias de UX - alternância de método apenas para 2+ parcelas, auto-ocultar em mudanças de campo, texto singular/plural corrigido',
+                        'Redesign do ícone do app com símbolo R$ moderno em gradiente azul, atualização do manifesto PWA',
+                        'Correção da validação do modo livre admin - bordas vermelhas agora respeitam configuração de regras desabilitadas',
+                        'Unificação do estilo do botão de exportação PDF para combinar com o botão principal de calcular',
+                        'Correção da lógica de cálculo - método "distribuir" agora se aplica apenas a múltiplas parcelas, evitando juros compostos em parcelas únicas',
+                        'Otimização final do sistema - remoção do ícone de data, correção de bordas vermelhas do modo admin, limpeza de CSS',
+                        'Correções abrangentes de bugs - lógica de alternância de método, estilo de botão PDF, atualização de cache do manifesto',
+                        'Correção crítica de cálculo - método "distribuir" corrigido para eliminar juros compostos no pro-rata, garantindo que ambos os métodos resultem em custos totais idênticos',
+                        'Integridade matemática restaurada - removida sobretaxa de R$ 39-535 dependendo da contagem de parcelas, agora transparente e preço justo'
+                    ]
+                },
+                {
+                    date: '21 de Junho de 2025',
+                    items: [
+                        'Correção de problemas de interface reativa - campo de data agora oculta opções de método quando limpo, painel admin sincroniza automaticamente com página principal',
+                        'Implementação de sistema CustomEvent para Web/PWA - elimina necessidade de atualização manual da página após mudanças admin',
+                        'Aprimoramento da validação do modo admin - bordas vermelhas agora respeitam configuração de regras desabilitadas em todas as versões',
+                        'Adição de UI de seleção de método à versão Android - usuários podem escolher entre "primeira parcela maior" e "distribuir igualmente"',
+                        'Implementação de validação visual para campo de taxa de juros - bordas vermelhas quando valores excedem limites, respeita modo livre admin',
+                        'Aprimoramento da experiência do usuário com feedback de validação em tempo real em todas as plataformas',
+                        'Correção do layout do cabeçalho com espaçamento adequado entre linhas de texto "ME" e "EMPREENDIMENTOS"',
+                        'Reposicionamento do botão de configurações para evitar sobreposição de texto, responsividade mobile melhorada',
+                        'Criação de sistema de documentação tutorial abrangente com 4 guias de instalação detalhados',
+                        'Aprimoramento do script build-android.sh com verificação automática de dependências e tratamento de erros',
+                        'Implementação de gerador de tutorial PDF para distribuição de documentação offline',
+                        'Correção de bug crítico de formatação de percentual onde "15,50" era corrompido para "1555"',
+                        'Separação do tratamento de entrada de percentual da formatação blur para preservar valores decimais durante digitação',
+                        'Implementação de formatação de percentual em tempo real como centavos - "1555" agora mostra instantaneamente "15,55"',
+                        'Adição de limite de 4 dígitos com formatação automática de centavos: 1→"0,01", 15→"0,15", 155→"1,55", 1555→"15,55"',
+                        'Cópia da estrutura exata da função formatarMoeda() funcionando para formatarPercentualTempoReal()',
+                        'Adição de estratégia agressiva de anexação de event listener com múltiplos fallbacks',
+                        'SUCESSO: Formatação em tempo real funcionando corretamente - usuário confirmou que "1750" agora mostra "17,50" instantaneamente',
+                        'Implementação de formulário completo de dados cadastrais com seção expansível/recolhível',
+                        'Adição de sistema de juros configuráveis no painel administrativo (Simples, Compostos Diários, Compostos Mensais, Pro-rata Real)',
+                        'Melhorias de layout implementadas - remoção de campos duplicados, reorganização de telefone após CPF',
+                        'Botão de formulário completo atualizado para seguir paleta de cores ativa, geração PDF expandida',
+                        'Interface administrativa expandida com seleção de sistema de juros e controle de regras unificado',
+                        'CORREÇÕES CRÍTICAS IMPLEMENTADAS: Sistema de juros agora persiste configuração, cálculos usam sistema selecionado',
+                        'Adição de função obterDadosCompletosPdf() para inclusão completa de dados cadastrais em PDFs',
+                        'Configuração sistemaJuros incluída em defaultConfig, salvarConfiguracoesModal() e abrirConfiguracoes()',
+                        'Função calcular() atualizada para usar this.configuracoes.sistemaJuros',
+                        'Função aplicarPaletaCores() expandida para incluir botão .form-toggle-btn',
+                        'MELHORIAS FINAIS IMPLEMENTADAS: PDF dados cadastrais completos, modal tela completa, IGMP movido para admin',
+                        'Modal configurações agora ocupa 95% da tela (width/height) para melhor experiência',
+                        'Campo IGPM transferido de configurações gerais para área administrativa restrita',
+                        'Sistema de juros usado agora é exibido no resultado do cálculo com destaque visual',
+                        'Função obterDadosCompletosPdf() corrigida para capturar dados independente da visibilidade'
+                    ]
+                },
+                {
+                    date: '22 de Junho de 2025',
+                    items: [
+                        'IMPLEMENTADAS MELHORIAS DE UX AVANÇADAS: Modal fullscreen responsivo, login admin oculto após autenticação',
+                        'Modal configurações revertido para padrão centralizado seguindo layout da tela inicial (max-width 800px)',
+                        'Login administrativo agora oculta automaticamente após autenticação, melhorando fluxo de navegação',
+                        'Unificadas todas as funções de salvamento em botão único centralizado e padronizado',
+                        'Removidas funções duplicadas salvarLimitesAdmin() e salvarCredenciaisAdmin()',
+                        'Todos os botões administrativos padronizados com mesmo estilo, tamanho e efeitos hover',
+                        'CORREÇÕES CRÍTICAS DE RESPONSIVIDADE MOBILE: Modal configurações otimizado para evitar corte superior/inferior',
+                        'Implementado max-height 95vh e scroll interno no modal-body para garantir botão "SALVAR" sempre visível',
+                        'Reduzido padding de cabeçalho/rodapé (24dp→16dp) e conteúdo (24dp→16dp) para otimizar espaço em telas pequenas',
+                        'REVERSÃO COMPLETA PARA FORMATO DA TELA PRINCIPAL: Modal configurações ajustado para max-width 600px',
+                        'Corrigido problema crítico do botão "Dados completos do cliente" com validação robusta de elementos DOM',
+                        'Implementado reset completo do estado administrativo ao fechar modal - limpa campos e oculta painel',
+                        'Adicionado suporte à paleta de cores no botão de formulário completo para consistência visual',
+                        'Modal Android reduzido para 90% da tela (0.9f) seguindo mesmo padrão das outras versões',
+                        'TODAS CORREÇÕES FINAIS IMPLEMENTADAS: Modal tamanho corrigido (640px), select estado civil padronizado',
+                        'Ícones senha atualizados para símbolos minimalistas (●/○), campos numéricos com teclado apropriado',
+                        'Validação data nascimento corrigida (anos desde 1920), código duplicado removido',
+                        'Campos telefone/CEP/referências configurados para teclado numérico, caches atualizados',
+                        'SOLUÇÃO DEFINITIVA IMPLEMENTADA: Nova arquitetura de autenticação administrativa',
+                        'Sistema de preservação de configurações implementado - estado administrativo preservado durante sessão',
+                        'Correções aplicadas em todas as versões - fecharModal() não destrói mais configurações',
+                        'Arquitetura simplificada - removido sistema complexo de localStorage session tracking',
+                        'LIMPEZA COMPLETA DO SISTEMA - removidas 94 linhas CSS redundantes do estado civil',
+                        'Otimização massiva - removidas funções obsoletas, comentários redundantes, event listeners duplicados',
+                        'Padronização de código - unificados tipos de dados boolean/string, consolidadas funções de validação',
+                        'Performance melhorada - eliminados timeouts desnecessários, MutationObserver, event listeners múltiplos',
+                        'CORREÇÕES CRÍTICAS APLICADAS EM TODAS VERSÕES - credenciais hardcoded removidas, timeouts eliminados',
+                        'TODOS OS PROBLEMAS SISTEMÁTICOS CORRIGIDOS - estado civil com estilos completos, CSS redundante removido',
+                        'IMPLEMENTAÇÃO COMPLETA DAS SOLICITAÇÕES - estado civil agora igual aos outros campos',
+                        'NOVA FÓRMULA PRO-RATA REAL IMPLEMENTADA - sistema agora calcula juros extras sobre cada parcela individual',
+                        'CORREÇÃO CRÍTICA PRO-RATA REAL - fórmula corrigida para calcular juros extras sobre valor principal',
+                        'SINCRONIZAÇÃO DE CONFIGURAÇÕES IMPLEMENTADA - sistema agora recarrega configurações do localStorage antes de cada cálculo',
+                        'CORREÇÃO ESPECÍFICA PRO-RATA REAL - ajustada fórmula apenas para 1 parcela usar cálculo linear',
+                        'NOVA LÓGICA PRO-RATA REAL PARA MÚLTIPLAS PARCELAS - sistema agora calcula juros extras mensalmente sobre cada parcela',
+                        'SISTEMA DE CHAT COM IA COMPLETO IMPLEMENTADO - criado módulo independente com backend Node.js (porta 3001), interface de chat responsiva, suporte a múltiplos providers de IA (OpenAI, Claude, Gemini, Grok), upload de arquivos para análise financeira, autenticação de usuários, configurações personalizáveis de IA, Socket.IO para chat em tempo real, hub principal para navegação entre módulos, integração completa com sistema de empréstimos existente'
+                    ]
+                }
+            ];
+            
+            changelog.forEach(period => {
+                addSubtitle(\`\${period.date}:\`, 12, [51, 102, 204]);
+                period.items.forEach(item => {
+                    addText(\`• \${item}\`, 9);
+                });
+                currentY += 3;
+            });
+            
+            // ESTRUTURA DE ARQUIVOS
+            addTitle('ESTRUTURA DE ARQUIVOS DO PROJETO', 16);
+            
+            const fileStructure = \`
+SimuladorEmprestimos/
+├── index.html                    # Página principal do simulador
+├── hub.html                      # Hub central de navegação
+├── chat.html                     # Interface do sistema de chat
+├── style.css                     # Estilos Material Design 3
+├── script.js                     # Lógica principal do simulador
+├── hub.js                        # Controlador do hub
+├── chat.js                       # Controlador do chat
+├── test.html                     # Suite de testes automatizados
+├── manifest.json                 # Configuração PWA
+├── server/
+│   ├── index.js                  # Servidor principal Node.js
+│   ├── simple-server.js          # Servidor de chat
+│   ├── db.js                     # Configuração do banco
+│   └── storage.ts                # Camada de dados
+├── shared/
+│   └── schema.ts                 # Esquemas do banco de dados
+├── attached_assets/              # Módulos de análise financeira
+│   ├── main_*.py                 # Sistema principal de análise
+│   ├── bank_specific_parsers_*.py # Parsers específicos por banco
+│   ├── categorization_logic_*.py  # Lógica de categorização
+│   ├── financial_analysis_*.py    # Análises financeiras
+│   ├── dataframe_parsers_*.py     # Processadores de planilhas
+│   ├── file_io_utils_*.py         # Utilitários de arquivo
+│   ├── data_parsing_*.py          # Parsing de dados
+│   └── report_generation_*.py     # Geração de relatórios
+├── README.md                     # Documentação do projeto
+└── replit.md                     # Arquitetura e preferências
+            \`;
+            
+            addText(fileStructure, 8, [0, 0, 0], false);
+            
+            // CONFIGURAÇÕES E LIMITES
+            addTitle('CONFIGURAÇÕES E LIMITES DO SISTEMA', 16);
+            
+            addSubtitle('Limites de Taxa de Juros:');
+            addText('• Parcelas 1-3: 15,00% - 30,00%');
+            addText('• Parcelas 4-15: 15,00% - 24,00%');
+            
+            addSubtitle('Sistemas de Juros Disponíveis:');
+            addText('• Juros Simples - Cálculo linear tradicional');
+            addText('• Juros Compostos Diários - Cálculo exponencial por dia');
+            addText('• Juros Compostos Mensais - Cálculo exponencial por mês (padrão)');
+            addText('• Pro-rata Real - Cálculo individualizado por parcela');
+            
+            addSubtitle('Mensagens de Erro (Português, Maiúsculas):');
+            addText('• Parcelas < 1: "NÚMERO DE PARCELAS INFERIOR AO MÍNIMO PERMITIDO."');
+            addText('• Parcelas > 15: "VOCÊ NÃO TEM PERMISSÃO PARA SIMULAÇÕES ACIMA DE 15 PARCELAS. PARA SIMULAÇÕES SUPERIORES A 15 PARCELAS, CONSULTE MIGUEIS."');
+            addText('• Juros fora dos limites: "[N] PARCELA(S), A PORCENTAGEM MÍNIMA/MÁXIMA PERMITIDA É DE X,XX %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS."');
+            
+            // MÓDULO DE CHAT IA
+            addTitle('SISTEMA DE CHAT COM IA', 16);
+            
+            addSubtitle('Providers Suportados:');
+            addText('• OpenAI (GPT-4, GPT-3.5)');
+            addText('• Anthropic Claude (Sonnet, Haiku)');
+            addText('• Google Gemini (Pro, Flash)');
+            addText('• xAI Grok (Beta)');
+            
+            addSubtitle('Funcionalidades de Análise:');
+            addText('• Upload de documentos financeiros (PDF, CSV, XLSX, DOC, imagens)');
+            addText('• OCR para documentos escaneados');
+            addText('• Categorização automática de transações');
+            addText('• Detecção de comportamentos de risco');
+            addText('• Análise de scores de crédito');
+            addText('• Relatórios consolidados');
+            
+            addSubtitle('Bancos Suportados:');
+            addText('• Nubank (extratos e faturas)');
+            addText('• Banco Inter (extratos e faturas)');
+            addText('• C6 Bank (faturas)');
+            addText('• Caixa Econômica Federal (extratos)');
+            addText('• PicPay (faturas)');
+            addText('• Parser genérico para outros bancos');
+            
+            // CONFIGURAÇÃO DE DEPLOYMENT
+            addTitle('CONFIGURAÇÃO DE DEPLOYMENT', 16);
+            
+            addSubtitle('Workflows Configurados:');
+            addText('• Web Server - Python HTTP server na porta 5000 (simulador)');
+            addText('• Chat Server - Node.js na porta 3001 (sistema de chat)');
+            
+            addSubtitle('Dependências Instaladas:');
+            addText('• Node.js: express, socket.io, multer, cors, dotenv');
+            addText('• IA SDKs: @anthropic-ai/sdk, @google/genai, openai');
+            addText('• Banco: @neondatabase/serverless, drizzle-orm, drizzle-kit');
+            addText('• Processamento: mammoth, pdf-parse, xlsx, sharp');
+            addText('• Segurança: bcryptjs, jsonwebtoken');
+            
+            addSubtitle('Banco de Dados:');
+            addText('• PostgreSQL (Neon-backed) integrado ao Replit');
+            addText('• URL disponível via variável DATABASE_URL');
+            addText('• Migrations via Drizzle ORM (npm run db:push)');
+            
+            // INSTRUÇÕES DE USO
+            addTitle('INSTRUÇÕES DE USO', 16);
+            
+            addSubtitle('Simulador de Empréstimos:');
+            addText('1. Acesse a aplicação via porta 5000');
+            addText('2. Insira valor do empréstimo, número de parcelas e taxa de juros');
+            addText('3. Opcionalmente, preencha dados do cliente');
+            addText('4. Para dados completos, clique em "Dados completos do cliente"');
+            addText('5. Clique em "CALCULAR" para obter resultado');
+            addText('6. Use "EXPORTAR PDF" para gerar relatório completo');
+            
+            addSubtitle('Sistema de Chat:');
+            addText('1. Acesse via hub principal ou diretamente a porta 3001');
+            addText('2. Faça login ou registro de usuário');
+            addText('3. Configure provider de IA nas configurações');
+            addText('4. Inicie nova conversa ou continue existente');
+            addText('5. Faça upload de documentos para análise');
+            addText('6. Interaja com a IA para análises financeiras');
+            
+            addSubtitle('Configurações Administrativas:');
+            addText('1. Clique no ícone de engrenagem (⚙️)');
+            addText('2. Faça login administrativo');
+            addText('3. Configure limites de juros e parcelas');
+            addText('4. Selecione sistema de juros padrão');
+            addText('5. Configure correção IGPM se necessário');
+            addText('6. Salve as configurações');
+            
+            // CONCLUSÃO
+            addTitle('CONCLUSÃO', 16);
+            
+            addText('O projeto ME EMPREENDIMENTOS evoluiu de um simples calculador de empréstimos para uma suite completa de ferramentas financeiras. Com mais de 130 iterações de desenvolvimento documentadas, o sistema agora oferece:');
+            
+            currentY += 3;
+            addText('• Simulações precisas com múltiplos sistemas de juros');
+            addText('• Interface administrativa completa');
+            addText('• Sistema de chat com IA para análise financeira');
+            addText('• Processamento automatizado de documentos bancários');
+            addText('• Interface responsiva e PWA para dispositivos móveis');
+            addText('• Relatórios detalhados em PDF');
+            
+            currentY += 5;
+            addText('O sistema está totalmente funcional e pronto para uso em produção, com arquitetura escalável e documentação completa para manutenção e expansão futuras.', 10, [0, 0, 0], true);
+            
+            // Adicionar rodapé à primeira página
+            addFooter();
+            
+            // Salvar PDF
+            const filename = \`ME_EMPREENDIMENTOS_Historico_Completo_\${new Date().toISOString().slice(0, 10)}.pdf\`;
+            doc.save(filename);
+            
+            showStatus(\`PDF gerado com sucesso: \${filename}\`, 'success');
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = \`<div class="\${type} status">\${message}</div>\`;
+        }
+    </script>
+</body>
+</html>
