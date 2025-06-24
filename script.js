@@ -304,10 +304,8 @@ class SimuladorEmprestimos {
                 this.limparResultado();
                 this.toggleMetodoDiasExtras();
                 this.atualizarInformacaoLimites(); // Atualizar limites de juros
-                // Re-validar juros apenas se não estiver em modo livre
-                if (!(this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin)) {
-                    this.validarCampoJuros();
-                }
+                // Validar todos os campos para aplicar regras atuais
+                this.validarTodosOsCampos();
             });
         }
 
@@ -1255,6 +1253,9 @@ class SimuladorEmprestimos {
         
         // Atualizar classes CSS baseado no modo livre administrativo
         this.atualizarClassesModoLivre();
+        
+        // Validar campos na inicialização para aplicar regras corretas
+        this.validarTodosOsCampos();
     }
 
     atualizarClassesModoLivre() {
@@ -1278,8 +1279,8 @@ class SimuladorEmprestimos {
             }
         });
         
-        // Re-validar campo de juros após mudança de modo
-        this.validarCampoJuros();
+            // Validar todos os campos após mudança de modo
+        this.validarTodosOsCampos();
     }
 
     limparErrosVisuais() {
@@ -1841,7 +1842,10 @@ class SimuladorEmprestimos {
             
             // Informações do sistema de juros e taxa apenas se habilitado
             if (this.configuracoes.exibirDadosJuros) {
-                const sistemaJurosTexto = this.obterTextoSistemaJuros();
+                const sistemaJurosTexto = this.configuracoes.sistemaJuros === 'simples' ? 'Juros Simples' :
+                                        this.configuracoes.sistemaJuros === 'compostos-diarios' ? 'Juros Compostos Diários' :
+                                        this.configuracoes.sistemaJuros === 'pro-rata-real' ? 'Pro-rata Real' :
+                                        'Juros Compostos Mensais';
                 doc.text(`Sistema de juros: ${sistemaJurosTexto}`, 20, yInicial);
                 yInicial += 12;
                 
