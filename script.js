@@ -1688,23 +1688,36 @@ class SimuladorEmprestimos {
             };
             
             if (!checkJsPDF()) {
+                this.showNotification('Biblioteca jsPDF não carregada. Aguarde...', 'warning', 2000);
                 // Aguardar um pouco para biblioteca carregar
                 setTimeout(() => {
                     if (checkJsPDF()) {
-                        this.exportarPdf();
+                        this.gerarPdfSimples(valor, nParcelas, juros, resultadoCalculo);
                     } else {
-                        throw new Error('Biblioteca jsPDF não carregada. Recarregue a página.');
+                        this.showNotification('Erro: Biblioteca jsPDF não disponível. Recarregue a página.', 'error', 5000);
                     }
-                }, 1000);
+                }, 1500);
                 return;
             }
             
-            if (typeof window.jspdf === 'undefined') {
-                throw new Error('Biblioteca jsPDF não carregada. Recarregue a página.');
+            // Garantir que jsPDF está acessível
+            if (typeof window.jspdf === 'undefined' && typeof jsPDF === 'undefined') {
+                this.showNotification('Biblioteca jsPDF não disponível. Recarregue a página.', 'error', 5000);
+                return;
             }
             
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            // Acessar jsPDF de forma robusta
+            let jsPDFConstructor;
+            if (window.jspdf && window.jspdf.jsPDF) {
+                jsPDFConstructor = window.jspdf.jsPDF;
+            } else if (typeof jsPDF !== 'undefined') {
+                jsPDFConstructor = jsPDF;
+            } else {
+                this.showNotification('Erro crítico: jsPDF não acessível', 'error', 5000);
+                return;
+            }
+            
+            const doc = new jsPDFConstructor();
             
             const dataSimulacao = new Date().toLocaleDateString('pt-BR');
             const nomeUsuario = this.configuracoes.nomeUsuario || '';
@@ -1989,8 +2002,17 @@ class SimuladorEmprestimos {
             this.exportarDadosJSON();
             
         } catch (error) {
-            console.error('Erro detalhado na geração de PDF:', error);
-            this.showNotification('Erro ao gerar PDF: ' + error.message, 'error', 5000);
+            let errorMessage = 'Erro desconhecido ao gerar PDF';
+            
+            if (error.message.includes('Cannot read properties of undefined')) {
+                errorMessage = 'Erro de dados: Verifique se todos os campos estão preenchidos corretamente';
+            } else if (error.message.includes('jsPDF')) {
+                errorMessage = 'Biblioteca PDF não carregada. Recarregue a página';
+            } else {
+                errorMessage = error.message;
+            }
+            
+            this.showNotification('Erro ao gerar PDF: ' + errorMessage, 'error', 6000);
         }
     }
 
@@ -2263,19 +2285,36 @@ function tryInitialize() {
         }
     } catch (error) {
         // Tentar novamente após timeout (necessário para preview Replit)
-        setTimeout(tryInitialize, 500);
+        setTimeout(() => {
+            if (!window.simulator) {
+                tryInitialize();
+            }
+        }, 800);
     }
 }
 
 // Estratégia de inicialização robusta para preview e navegador direto
+function forceInitialize() {
+    // Tentativa mais agressiva para preview Replit
+    const attempts = [50, 150, 300, 500, 1000, 2000];
+    attempts.forEach(delay => {
+        setTimeout(() => {
+            if (!window.simulator) {
+                tryInitialize();
+            }
+        }, delay);
+    });
+}
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(tryInitialize, 100); // Timeout para preview Replit
+        tryInitialize();
+        forceInitialize();
     });
 } else {
-    // DOM já carregado, tentar imediatamente e com fallback
+    // DOM já carregado, tentar imediatamente e com fallbacks múltiplos
     tryInitialize();
-    setTimeout(tryInitialize, 200); // Fallback para garantir funcionamento
+    forceInitialize();
 }
 
 
