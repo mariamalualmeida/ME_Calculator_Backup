@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ME EMPREENDIMENTOS - Login</title>
+    <link rel="stylesheet" href="style.css?v=20250624051500">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgo8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNjM2NmYxO3N0b3Atb3BhY2l0eToxIiAvPgo8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM4YjVjZjY7c3RvcC1vcGFjaXR5OjEiIC8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPHRleHQgeD0iMTYiIHk9IjIyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iU2Vnb2UgVUksIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0idXJsKCNncmFkaWVudCkiPlIkPC90ZXh0Pgo8L3N2Zz4K">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-header">
+            <h1 class="company-name">ME</h1>
+            <h1 class="company-name">EMPREENDIMENTOS</h1>
+            <p class="login-subtitle">Sistema de Gestão Financeira</p>
+        </div>
+
+        <div class="login-form-container">
+            <form id="loginForm" class="login-form">
+                <div class="input-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Senha</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" required autocomplete="current-password">
+                        <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                            <span class="password-icon">●</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn">ENTRAR</button>
+            </form>
+
+            <div id="loginError" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Verificar se já está logado
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            window.location.href = 'hub.html';
+        }
+
+        // Aplicar tema armazenado
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const savedColorTheme = localStorage.getItem('colorTheme') || 'blue';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.documentElement.setAttribute('data-color-theme', savedColorTheme);
+
+        // Form de login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+
+            if (username === 'admin' && password === 'admin') {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('loginTime', Date.now().toString());
+                window.location.href = 'hub.html';
+            } else {
+                errorDiv.textContent = 'USUÁRIO OU SENHA INCORRETOS';
+                errorDiv.style.display = 'block';
+                
+                // Limpar erro após 3 segundos
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 3000);
+            }
+        });
+
+        // Toggle senha
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const icon = field.nextElementSibling.querySelector('.password-icon');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.textContent = '○';
+            } else {
+                field.type = 'password';
+                icon.textContent = '●';
+            }
+        }
+
+        // Auto-focus no campo usuário
+        document.getElementById('username').focus();
+    </script>
+</body>
+</html>

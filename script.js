@@ -6,58 +6,44 @@
 
 class SimuladorEmprestimos {
     constructor() {
-        // Nova tabela de limites conforme prompt
-        this.limitesJuros = {
-            1: { min: 15.00, max: 100.00 },
-            2: { min: 15.00, max: 100.00 },
-            3: { min: 15.00, max: 30.00 },
-            4: { min: 15.00, max: 24.00 },
-            5: { min: 15.00, max: 22.00 },
-            6: { min: 15.00, max: 20.00 },
-            7: { min: 14.75, max: 18.00 },
-            8: { min: 14.36, max: 17.00 },
-            9: { min: 13.92, max: 16.00 },
-            10: { min: 13.47, max: 15.00 },
-            11: { min: 13.03, max: 14.00 },
-            12: { min: 12.60, max: 13.00 },
-            13: { min: 12.19, max: 12.60 },
-            14: { min: 11.80, max: 12.19 },
-            15: { min: 11.43, max: 11.80 }
-        };
-
+        this.checkAuthentication();
         this.configuracoes = this.carregarConfiguracoes();
-        // Forçar reset do estado administrativo na inicialização
-        this.configuracoes.isAdmin = false;
         this.initializeElements();
         this.setupEventListeners();
         this.focusInitialField();
+        this.atualizarInformacaoLimites();
+        this.atualizarClassesModoLivre();
     }
 
-    // Função para alternar tema
-    toggleTheme() {
-        const currentTheme = this.configuracoes.tema || 'light';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        this.configuracoes.tema = newTheme;
-        this.salvarConfiguracoes();
-        this.aplicarTema(newTheme);
-    }
+    checkAuthentication() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if (isLoggedIn !== 'true') {
+            window.location.href = 'login.html';
+            return;
+        }
     }
 
     carregarConfiguracoes() {
-        const config = localStorage.getItem('simulador_config');
-        const defaultConfig = {
-            nomeUsuario: '',
-            igpmAnual: 0.0,
-            isAdmin: false,
-            limitesPersonalizados: null,
-            themeMode: 'light',
-            mostrarJurosRelatorio: false,
-            desabilitarRegras: false,
-            colorTheme: 'default',
-            sistemaJuros: 'compostos-mensal',
-            adminUser: 'admin',
-            adminPassword: 'admin123'
+        // Sempre recarregar configurações do localStorage para sincronizar com página de configurações
+        const savedConfig = localStorage.getItem('simuladorConfig');
+        if (savedConfig) {
+            return JSON.parse(savedConfig);
+        }
+        
+        // Configurações padrão
+        return {
+            sistemaJuros: 'compostos-mensais',
+            regraLimites: 'habilitar',
+            limites: {
+                min1_3: '15,00',
+                max1_3: '30,00',
+                min4_15: '15,00',
+                max4_15: '24,00'
+            },
+            igpmMensal: '0,00',
+            mostrarJurosPdf: true
         };
+    }
         const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
         this.configuracoes = loadedConfig;
         // Aplicar tema e paleta na inicialização
@@ -1932,6 +1918,11 @@ function forceAttachEventListener() {
 setTimeout(forceAttachEventListener, 100);
 setTimeout(forceAttachEventListener, 500);
 setTimeout(forceAttachEventListener, 1500);
+
+// Função para voltar ao dashboard
+function voltarDashboard() {
+    window.location.href = 'dashboard.html';
+}
 
 // Função para toggle de senha
 function togglePassword(fieldId) {

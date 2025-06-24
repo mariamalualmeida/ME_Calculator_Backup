@@ -50,9 +50,7 @@ class HubController {
 
     closeModal() {
         const modal = document.getElementById('configModal');
-        if (modal) {
-            modal.style.display = 'none';
-        }
+        modal.style.display = 'none';
     }
 
     loadCurrentSettings() {
