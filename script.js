@@ -250,6 +250,8 @@ class SimuladorEmprestimos {
         if (this.importFileInput) {
             this.importFileInput.addEventListener('change', (e) => {
                 this.importarDados(e.target.files[0]);
+                // Limpar input para permitir selecionar o mesmo arquivo novamente
+                e.target.value = '';
             });
         }
 
@@ -1389,10 +1391,7 @@ class SimuladorEmprestimos {
         alert('Todas as configurações foram salvas com sucesso!');
         this.fecharModal();
         
-        // Forçar refresh da página para aplicar todas as configurações
-        setTimeout(() => {
-            window.location.reload();
-        }, 100);
+
     }
 
     fazerLoginAdmin() {
@@ -1710,24 +1709,17 @@ class SimuladorEmprestimos {
             doc.text(`Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
             yInicial += 12;
             
-            // Incluir taxa de juros apenas se configurado
-            if (this.configuracoes.mostrarJurosRelatorio) {
-                doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, yInicial);
+            // Informações do sistema de juros e taxa apenas se habilitado
+            if (this.configuracoes.exibirDadosJuros) {
+                const sistemaJurosTexto = this.obterTextoSistemaJuros();
+                doc.text(`Sistema de juros: ${sistemaJurosTexto}`, 20, yInicial);
+                yInicial += 12;
+                
+                doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}% ao mês`, 20, yInicial);
                 yInicial += 12;
             }
-            
+
             doc.text(`Número de parcelas: ${nParcelas}`, 20, yInicial);
-            yInicial += 12;
-            
-            // Mostrar sistema de juros utilizado
-            const sistemasJuros = {
-                'simples': 'Juros Simples',
-                'compostos-diarios': 'Juros Compostos Diários', 
-                'compostos-mensal': 'Juros Compostos Mensais',
-                'pro-rata-real': 'Pro-rata Real'
-            };
-            const sistemaAtual = sistemasJuros[this.configuracoes.sistemaJuros] || 'Juros Compostos Mensais';
-            doc.text(`Sistema de juros: ${sistemaAtual}`, 20, yInicial);
             yInicial += 15;
             
             // Mostrar informações das parcelas conforme o tipo de cálculo
@@ -1860,9 +1852,9 @@ class SimuladorEmprestimos {
                              agora.getMinutes().toString().padStart(2, '0') +
                              agora.getSeconds().toString().padStart(2, '0');
             
-            const nomeCliente = (this.nomeClienteField.value || 'Cliente').replace(/[^a-zA-Z0-9]/g, '_');
-            const cpfCliente = (this.cpfClienteField.value || 'SemCPF').replace(/[^0-9]/g, '');
-            const nomeArquivo = `${nomeCliente}_${cpfCliente}_${timestamp}.pdf`;
+            const nomeClientePdf = (this.nomeClienteField.value || 'Cliente').replace(/[^a-zA-Z0-9]/g, '_');
+            const cpfClientePdf = (this.cpfClienteField.value || 'SemCPF').replace(/[^0-9]/g, '');
+            const nomeArquivo = `${nomeClientePdf}_${cpfClientePdf}_${timestamp}.pdf`;
             
             doc.save(nomeArquivo);
             alert('PDF exportado com sucesso!');
@@ -1995,50 +1987,7 @@ setTimeout(() => {
     }
 }, 1000);
 
-// Estratégia adicional: anexar event listener diretamente
-function forceAttachEventListener() {
-    const taxaField = document.getElementById('taxaJuros');
-    if (taxaField && !taxaField.hasAttribute('data-listener-attached')) {
-        taxaField.addEventListener('input', function(e) {
-            let valor = e.target.value.replace(/\D/g, '');
-            
-            if (valor.length > 4) {
-                valor = valor.substring(0, 4);
-            }
-            
-            if (valor === '' || valor === '0') {
-                e.target.value = '';
-                return;
-            }
 
-            valor = valor.replace(/^0+/, '') || '0';
-
-            if (valor.length === 1) {
-                e.target.value = `0,0${valor}`;
-                return;
-            }
-            if (valor.length === 2) {
-                e.target.value = `0,${valor}`;
-                return;
-            }
-            if (valor.length === 3) {
-                e.target.value = `${valor[0]},${valor.substring(1)}`;
-                return;
-            }
-            if (valor.length === 4) {
-                e.target.value = `${valor.substring(0, 2)},${valor.substring(2)}`;
-                return;
-            }
-        });
-        taxaField.setAttribute('data-listener-attached', 'true');
-        console.log('Event listener anexado diretamente ao campo taxaJuros');
-    }
-}
-
-// Tentar anexar em múltiplos momentos
-setTimeout(forceAttachEventListener, 100);
-setTimeout(forceAttachEventListener, 500);
-setTimeout(forceAttachEventListener, 1500);
 
 // Função para toggle de senha
 function togglePassword(fieldId) {
