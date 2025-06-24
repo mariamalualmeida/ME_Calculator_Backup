@@ -210,6 +210,7 @@ SimuladorEmprestimos/
 - June 24, 2025: CORREÇÃO CRÍTICA FUNÇÃO PDF - erro de sintaxe na exportarPdf() corrigido, função gerarPdfSimples() restaurada, botão expandir dados completos conectado corretamente ao ID formToggleBtn, sistema funcionando completamente, cache v=20250624092000 (v20250624092000)
 - June 24, 2025: CORREÇÃO DEFINITIVA ERRO INICIALIZAÇÃO - função escurecerCor() implementada corrigindo TypeError crítico, código duplicado nas funções PDF removido, sistema inicializando corretamente, todas funcionalidades restauradas e funcionando, cache v=20250624093000 (v20250624093000)
 - June 24, 2025: RESTAURAÇÃO COMPLETA DO BACKUP GITHUB - sistema totalmente restaurado usando backup original, removido apenas botão hub, todas funcionalidades originais preservadas: nome/CPF na tela principal, informativo de limites, configurações completas, formatação de erros, sistema funcionando perfeitamente, cache v=20250624093500 (v20250624093500)
+- June 24, 2025: RESTAURAÇÃO DEFINITIVA USANDO ARQUIVOS ORIGINAIS - sistema completamente restaurado com arquivos funcionais autênticos fornecidos pelo usuário, todas funcionalidades preservadas: calculadora completa, área administrativa, configurações, exportação PDF, formulário de dados cadastrais, cache v=20250624170000 (v20250624170000)
 
 ## User Preferences
 
