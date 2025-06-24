@@ -1416,37 +1416,197 @@ class SimuladorEmprestimos {
     }
     
     exportarPdf() {
-            temDados: false,
-            pessoais: [],
-            profissionais: [],
-            referencias: []
-        };
+        try {
+            const { jsPDF } = window.jspdf;
+            if (!jsPDF) {
+                alert('Biblioteca jsPDF não carregada. Tente recarregar a página.');
+                return;
+            }
 
-        // Verificar se há dados no formulário completo (independente se está visível)
-        const formCompleto = document.getElementById('formCompleto');
-        // Remover verificação de display para capturar dados sempre que preenchidos
+            const valor = this.obterValorNumerico(this.valorEmprestimoField.value);
+            const nParcelas = parseInt(this.numeroParcelasField.value);
+            const juros = this.obterPercentualNumerico(this.taxaJurosField.value);
 
-        // Dados pessoais - incluindo nome e CPF aqui
-        const pessoais = [];
-        const nomeCompletoField = document.getElementById('nomeCompleto');
-        const cpfCompletoField = document.getElementById('cpfCompleto');
-        const nomeCompleto = nomeCompletoField?.value?.trim() || '';
-        const cpfCompleto = cpfCompletoField?.value?.trim() || '';
-        const dataNascimento = document.getElementById('dataNascimento')?.value;
-        const estadoCivil = document.getElementById('estadoCivil')?.value;
-        const endereco = document.getElementById('endereco')?.value;
-        const numero = document.getElementById('numero')?.value;
-        const complemento = document.getElementById('complemento')?.value;
-        const bairro = document.getElementById('bairro')?.value;
-        const cidade = document.getElementById('cidade')?.value;
-        const estado = document.getElementById('estado')?.value;
-        const cep = document.getElementById('cep')?.value;
-        const telefone = document.getElementById('telefoneCompleto')?.value;
+            if (!valor || !nParcelas || !juros) {
+                alert('Preencha todos os campos antes de exportar o PDF.');
+                return;
+            }
 
-        if (nomeCompleto) pessoais.push(`Nome: ${nomeCompleto}`);
-        if (cpfCompleto) pessoais.push(`CPF: ${cpfCompleto}`);
-        if (dataNascimento) pessoais.push(`Data de Nascimento: ${dataNascimento}`);
-        if (estadoCivil) pessoais.push(`Estado Civil: ${estadoCivil}`);
+            // Recarregar configurações antes de calcular
+            this.recarregarConfiguracoesSemReset();
+
+            const diasExtra = this.calcularDiasExtras();
+            const igpmMensal = this.configuracoes.igpmAnual ? this.configuracoes.igpmAnual / 12 : 0;
+            const metodo = this.obterMetodoDiasExtras();
+            const sistemaJuros = this.configuracoes.sistemaJuros || 'compostos-mensal';
+
+            const resultadoCalculo = this.calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal, metodo, sistemaJuros);
+
+            this.gerarPdfSimples(valor, nParcelas, juros, resultadoCalculo);
+
+        } catch (error) {
+            console.error('Erro ao exportar PDF:', error);
+            alert('Erro ao gerar PDF. Tente novamente.');
+        }
+    }
+
+    gerarPdfSimples(valor, nParcelas, juros, resultadoCalculo) {
+        try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Cabeçalho
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.text('ME EMPREENDIMENTOS', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(14);
+            doc.text('Simulação de Empréstimo', 105, 30, { align: 'center' });
+
+            // Dados do simulador
+            const nomeUsuario = this.configuracoes.nomeUsuario || 'Não informado';
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text(`Simulado por: ${nomeUsuario}`, 20, 45);
+
+            // Dados completos do cliente
+            const dadosCompletos = this.obterDadosCompletosPdf();
+            let yPos = 55;
+
+            // Nome e CPF dos campos principais
+            const nomeField = document.getElementById('nome');
+            const cpfField = document.getElementById('cpf');
+            
+            if (nomeField?.value) {
+                doc.text(`Cliente: ${nomeField.value}`, 20, yPos);
+                yPos += 7;
+            }
+            
+            if (cpfField?.value) {
+                doc.text(`CPF: ${cpfField.value}`, 20, yPos);
+                yPos += 7;
+            }
+
+            // Adicionar dados completos se existirem
+            if (dadosCompletos.dataNascimento) {
+                doc.text(`Data de Nascimento: ${dadosCompletos.dataNascimento}`, 20, yPos);
+                yPos += 7;
+            }
+
+            // Pular linha
+            yPos += 10;
+
+            // Dados da simulação
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.text('Dados da Simulação:', 20, yPos);
+            yPos += 10;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text(`Valor do Empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yPos);
+            yPos += 7;
+            doc.text(`Número de Parcelas: ${nParcelas}`, 20, yPos);
+            yPos += 7;
+
+            if (this.configuracoes.mostrarJurosRelatorio) {
+                doc.text(`Taxa de Juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, yPos);
+                yPos += 7;
+            }
+
+            // Sistema de juros usado
+            const sistemaJurosTexto = {
+                'simples': 'Juros Simples',
+                'compostos-diarios': 'Juros Compostos Diários',
+                'compostos-mensal': 'Juros Compostos Mensais',
+                'pro-rata-real': 'Pro-rata Real'
+            };
+            
+            doc.text(`Sistema: ${sistemaJurosTexto[this.configuracoes.sistemaJuros] || 'Juros Compostos Mensais'}`, 20, yPos);
+            yPos += 10;
+
+            // Resultado
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            
+            if (resultadoCalculo.primeiraParcela && resultadoCalculo.parcelaNormal && resultadoCalculo.primeiraParcela !== resultadoCalculo.parcelaNormal) {
+                doc.text(`1ª Parcela: R$ ${resultadoCalculo.primeiraParcela.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yPos);
+                yPos += 7;
+                
+                if (nParcelas > 1) {
+                    doc.text(`Demais ${nParcelas - 1} parcela(s): R$ ${resultadoCalculo.parcelaNormal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yPos);
+                    yPos += 7;
+                }
+            } else {
+                doc.text(`Valor da Parcela: R$ ${(resultadoCalculo.parcelaNormal || resultadoCalculo.primeiraParcela).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yPos);
+                yPos += 7;
+            }
+
+            // Cronograma de pagamentos
+            yPos += 10;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.text('Cronograma de Pagamentos:', 20, yPos);
+            yPos += 10;
+
+            // Cabeçalho da tabela
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.text('Parcela', 35, yPos, { align: 'center' });
+            doc.text('Vencimento', 105, yPos, { align: 'center' });
+            doc.text('Valor', 165, yPos, { align: 'center' });
+            yPos += 10;
+
+            // Linhas da tabela
+            doc.setFont('helvetica', 'normal');
+            
+            const dataInicial = this.parseData(this.dataInicialField?.value) || new Date();
+            
+            for (let i = 1; i <= nParcelas; i++) {
+                const dataVencimento = new Date(dataInicial);
+                dataVencimento.setMonth(dataVencimento.getMonth() + i);
+                
+                let valorParcela;
+                if (resultadoCalculo.primeiraParcela && resultadoCalculo.parcelaNormal && 
+                    resultadoCalculo.primeiraParcela !== resultadoCalculo.parcelaNormal) {
+                    if (i === 1) {
+                        valorParcela = resultadoCalculo.primeiraParcela;
+                    } else {
+                        valorParcela = resultadoCalculo.parcelaNormal;
+                    }
+                } else {
+                    valorParcela = resultadoCalculo.parcelaNormal || resultadoCalculo.primeiraParcela;
+                }
+                
+                doc.text(i.toString().padStart(2, '0'), 35, yPos, { align: 'center' });
+                doc.text(dataVencimento.toLocaleDateString('pt-BR'), 105, yPos, { align: 'center' });
+                doc.text(`R$ ${valorParcela.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 165, yPos, { align: 'center' });
+                
+                yPos += 8;
+                
+                // Nova página se necessário
+                if (yPos > 270) {
+                    doc.addPage();
+                    yPos = 20;
+                    // Repetir cabeçalho na nova página
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(10);
+                    doc.text('Parcela', 35, yPos, { align: 'center' });
+                    doc.text('Vencimento', 105, yPos, { align: 'center' });
+                    doc.text('Valor', 165, yPos, { align: 'center' });
+                    yPos += 10;
+                    doc.setFont('helvetica', 'normal');
+                }
+            }
+            
+            // Salvar PDF
+            doc.save(`simulacao_emprestimo_${Date.now()}.pdf`);
+            alert('PDF exportado com sucesso!');
+            
+        } catch (error) {
+            console.error('Erro ao gerar PDF:', error);
+            alert('Erro ao gerar PDF. Tente novamente.');
+        }
         if (endereco) pessoais.push(`Endereço: ${endereco}${numero ? `, ${numero}` : ''}${complemento ? `, ${complemento}` : ''}`);
         if (bairro) pessoais.push(`Bairro: ${bairro}`);
         if (cidade && estado) pessoais.push(`Cidade: ${cidade} - ${estado}`);
@@ -1904,6 +2064,30 @@ class SimuladorEmprestimos {
             style: 'currency',
             currency: 'BRL'
         }).format(valor);
+    }
+
+    escurecerCor(cor, porcentagem) {
+        // Remove o # se presente
+        cor = cor.replace('#', '');
+        
+        // Converte hex para RGB
+        const r = parseInt(cor.substring(0, 2), 16);
+        const g = parseInt(cor.substring(2, 4), 16);
+        const b = parseInt(cor.substring(4, 6), 16);
+        
+        // Escurece cada componente
+        const fator = (100 - porcentagem) / 100;
+        const newR = Math.round(r * fator);
+        const newG = Math.round(g * fator);
+        const newB = Math.round(b * fator);
+        
+        // Converte de volta para hex
+        const toHex = (n) => {
+            const hex = n.toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        };
+        
+        return `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
     }
 
     toggleMetodoDiasExtras() {
