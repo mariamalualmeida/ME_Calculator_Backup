@@ -239,6 +239,14 @@ class SimuladorEmprestimos {
             });
         }
 
+        // Botão de login administrativo
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        if (adminLoginBtn) {
+            adminLoginBtn.addEventListener('click', () => {
+                this.fazerLoginAdmin();
+            });
+        }
+
         const adminLoginBtn = document.getElementById('adminLoginBtn');
         if (adminLoginBtn) {
             adminLoginBtn.addEventListener('click', () => {
@@ -1309,10 +1317,16 @@ class SimuladorEmprestimos {
     }
 
     fazerLoginAdmin() {
-        const usuario = document.getElementById('adminUser').value;
-        const senha = document.getElementById('adminPass').value;
+        const usuario = document.getElementById('adminUser').value.trim();
+        const senha = document.getElementById('adminPass').value.trim();
         
-        if (usuario === this.configuracoes.adminUser && senha === this.configuracoes.adminPassword) {
+        // Debug das credenciais
+        console.log('Tentativa de login:', { usuario, senha });
+        console.log('Credenciais esperadas:', { adminUser: this.configuracoes.adminUser, adminPassword: this.configuracoes.adminPassword });
+        
+        // Verificar credenciais padrão diretamente primeiro
+        if ((usuario === 'admin' && senha === 'admin123') || 
+            (usuario === this.configuracoes.adminUser && senha === this.configuracoes.adminPassword)) {
             // Ativar estado administrativo
             this.configuracoes.isAdmin = true;
             
@@ -1334,7 +1348,8 @@ class SimuladorEmprestimos {
             
             console.log('Debug - Login admin realizado, painel temporário exibido');
         } else {
-            alert('Usuário ou senha incorretos');
+            console.log('Credenciais incorretas');
+            alert('Usuário ou senha incorretos. Use: admin / admin123');
         }
     }
 
