@@ -1,5 +1,5 @@
-import { db } from '../db.js';
-import { conversations, messages } from '../../shared/schema.js';
+import { db } from '../db.ts';
+import { conversations, messages } from '../../shared/schema.ts';
 import { eq, desc } from 'drizzle-orm';
 
 export class ChatService {

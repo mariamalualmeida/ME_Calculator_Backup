@@ -4,8 +4,8 @@ import pdfParse from 'pdf-parse';
 import mammoth from 'mammoth';
 import XLSX from 'xlsx';
 import sharp from 'sharp';
-import { db } from '../db.js';
-import { uploadedFiles, financialAnalyses } from '../../shared/schema.js';
+import { db } from '../db.ts';
+import { uploadedFiles, financialAnalyses } from '../../shared/schema.ts';
 
 export class FileService {
   constructor() {

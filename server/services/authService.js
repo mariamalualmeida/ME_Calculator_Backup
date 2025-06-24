@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { db } from '../db.js';
-import { users } from '../../shared/schema.js';
+import { db } from '../db.ts';
+import { users } from '../../shared/schema.ts';
 import { eq } from 'drizzle-orm';
 
 export class AuthService {

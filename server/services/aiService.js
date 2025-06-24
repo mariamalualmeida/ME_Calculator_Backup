@@ -1,8 +1,8 @@
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 import { GoogleGenAI } from '@google/genai';
-import { db } from '../db.js';
-import { aiConfigs } from '../../shared/schema.js';
+import { db } from '../db.ts';
+import { aiConfigs } from '../../shared/schema.ts';
 import { eq, and } from 'drizzle-orm';
 
 export class AIService {
