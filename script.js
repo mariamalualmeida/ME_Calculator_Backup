@@ -1057,15 +1057,15 @@ class SimuladorEmprestimos {
             const margemLucro = (lucroLiquido / valorEmprestimo) * 100;
             
             analiseFinanceira = `
-                <div style="margin-top: 16px; padding: 16px; background: linear-gradient(135deg, #e8f5e8, #f0f8f0); border-radius: 12px; border-left: 4px solid #4caf50;">
-                    <div style="font-weight: 600; color: #2e7d32; margin-bottom: 8px; display: flex; align-items: center;">
+                <div class="analise-financeira-box" style="margin-top: 16px; padding: 16px; background: var(--surface-variant); border-radius: 12px; border: 1px solid var(--outline-variant);">
+                    <div style="font-weight: 600; color: var(--on-surface-variant); margin-bottom: 8px; display: flex; align-items: center;">
                         <span style="margin-right: 8px;">💰</span> ANÁLISE FINANCEIRA (Modo Livre)
                     </div>
-                    <div style="font-size: 14px; color: #1b5e20; line-height: 1.4;">
+                    <div style="font-size: 14px; color: var(--on-surface-variant); line-height: 1.4;">
                         <div style="margin-bottom: 4px;"><strong>Capital emprestado:</strong> ${formatarMoeda(valorEmprestimo)}</div>
                         <div style="margin-bottom: 4px;"><strong>Total a receber:</strong> ${formatarMoeda(totalReceber)}</div>
-                        <div style="margin-bottom: 4px; color: #4caf50;"><strong>✅ Lucro líquido:</strong> ${formatarMoeda(lucroLiquido)}</div>
-                        <div style="color: #4caf50;"><strong>📈 Margem de lucro:</strong> ${margemLucro.toFixed(2)}%</div>
+                        <div style="margin-bottom: 4px; color: var(--primary);"><strong>✅ Lucro líquido:</strong> ${formatarMoeda(lucroLiquido)}</div>
+                        <div style="color: var(--primary);"><strong>📈 Margem de lucro:</strong> ${margemLucro.toFixed(2)}%</div>
                     </div>
                 </div>
             `;
@@ -1472,7 +1472,11 @@ class SimuladorEmprestimos {
         // Configurações de contratos
         document.getElementById('promissoriasColoridas').value = this.configuracoes.promissoriasColoridas ? 'true' : 'false';
         document.getElementById('promissoriasPorFolha').value = this.configuracoes.promissoriasPorFolha || 2;
-        document.getElementById('templateContrato').value = this.configuracoes.templateContrato || this.getTemplateContratoDefault();
+        // Template de contrato - usar valor salvo ou padrão
+        const templateField = document.getElementById('templateContrato');
+        if (templateField) {
+            templateField.value = this.configuracoes.templateContrato || this.getTemplateContratoDefault();
+        }
     }
 
 
@@ -1917,6 +1921,12 @@ class SimuladorEmprestimos {
             formToggleBtn.setAttribute('data-color-theme', colorTheme);
         }
         
+        // Aplicar paleta às caixas de análise financeira
+        const analiseBoxes = document.querySelectorAll('.analise-financeira-box');
+        analiseBoxes.forEach(box => {
+            box.setAttribute('data-color-theme', colorTheme);
+        });
+        
         // Salvar a preferência
         localStorage.setItem('app-color-theme', colorTheme);
         
@@ -1960,6 +1970,62 @@ class SimuladorEmprestimos {
         if (dataNascimentoField) {
             dataNascimentoField.addEventListener('input', (e) => this.formatarData(e.target));
         }
+    }
+
+    getTemplateContratoDefault() {
+        return `CONTRATO DE EMPRÉSTIMO
+
+CONTRATO PARTICULAR DE EMPRÉSTIMO DE VALOR
+Pelo presente instrumento particular de contrato de empréstimo, de um lado:
+(1) Nome do CREDOR: {{NOME_CREDOR}}
+CPF/CNPJ: {{CPF_CREDOR}}
+Endereço: {{ENDERECO_CREDOR}}
+
+E de outro:
+(2) Nome do DEVEDOR: {{NOME_DEVEDOR}}
+CPF: {{CPF_DEVEDOR}}
+Endereço: {{ENDERECO_DEVEDOR}}
+
+Têm entre si justo e contratado o seguinte:
+
+CLÁUSULA PRIMEIRA – DO EMPRÉSTIMO
+O CREDOR empresta ao DEVEDOR a quantia de {{VALOR_EMPRESTIMO}} ({{VALOR_EXTENSO}}), neste ato recebida em moeda corrente nacional e para fins pessoais.
+
+CLÁUSULA SEGUNDA – DO PRAZO E PAGAMENTO
+O DEVEDOR se compromete a pagar o valor emprestado em {{NUMERO_PARCELAS}} parcelas mensais de {{VALOR_PARCELA}}, vencendo-se a primeira em {{DATA_PRIMEIRA_PARCELA}}.
+
+CLÁUSULA TERCEIRA – DOS JUROS REMUNERATÓRIOS
+Sobre o valor emprestado incidirão juros remuneratórios de {{TAXA_JUROS}}% ao mês, calculados de forma composta, conforme acordado.
+
+CLÁUSULA QUARTA – DA MORA E MULTA
+Em caso de atraso, incidirão:
+1. Multa de 2%;
+2. Juros de mora de 1% ao mês;
+3. Correção do saldo com os encargos.
+
+CLÁUSULA QUINTA – DAS GARANTIAS (SE APLICÁVEL)
+Se houver garantia, será descrita em anexo.
+
+CLÁUSULA SEXTA – DA NOTA PROMISSÓRIA
+O DEVEDOR assina nota promissória de {{VALOR_EMPRESTIMO}}, vencível em {{DATA_VENCIMENTO}}.
+
+CLÁUSULA SÉTIMA – DA RESCISÃO
+O inadimplemento autoriza vencimento antecipado da dívida.
+
+CLÁUSULA OITAVA – DO FORO
+Fica eleito o foro da comarca de {{COMARCA}}.
+
+{{LOCAL}}, {{DATA_CONTRATO}}.
+
+CREDOR: _________________________________________
+{{NOME_CREDOR}}
+
+DEVEDOR: ________________________________________
+{{NOME_DEVEDOR}}
+
+Testemunha 1: _____________________________________ CPF: _______________________
+
+Testemunha 2: _____________________________________ CPF: _______________________`;
     }
 
     importarDados(arquivo) {
