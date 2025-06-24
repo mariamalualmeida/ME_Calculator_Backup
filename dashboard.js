@@ -40,7 +40,7 @@ class DashboardController {
     openModule(module) {
         switch (module) {
             case 'simulador':
-                window.location.href = 'index.html';
+                window.location.href = 'simulador.html';
                 break;
             case 'chat':
                 window.location.href = 'chat.html';

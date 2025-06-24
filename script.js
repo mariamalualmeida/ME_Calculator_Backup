@@ -1923,6 +1923,11 @@ setTimeout(forceAttachEventListener, 100);
 setTimeout(forceAttachEventListener, 500);
 setTimeout(forceAttachEventListener, 1500);
 
+// Função para voltar ao dashboard
+function voltarDashboard() {
+    window.location.href = 'dashboard.html';
+}
+
 // Função para toggle de senha
 function togglePassword(fieldId) {
     const field = document.getElementById(fieldId);
