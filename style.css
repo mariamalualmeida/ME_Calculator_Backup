@@ -1301,6 +1301,54 @@ body {
     color: var(--primary-light) !important;
 }
 
+/* Estilos para novos componentes */
+.pdf-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.config-group textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid var(--outline);
+    border-radius: 8px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    resize: vertical;
+    background: var(--surface);
+    color: var(--on-surface);
+}
+
+.config-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(103, 80, 164, 0.2);
+}
+
+[data-theme="dark"] .config-group textarea {
+    background: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.form-toggle-btn {
+    background: var(--primary) !important;
+    color: var(--on-primary) !important;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--primary-light) !important;
+}
+
 /* iOS Safari específico para selects e campos */
 @supports (-webkit-touch-callout: none) {
     select {

@@ -211,6 +211,7 @@ SimuladorEmprestimos/
 - June 24, 2025: CORREÇÃO DEFINITIVA ERRO INICIALIZAÇÃO - função escurecerCor() implementada corrigindo TypeError crítico, código duplicado nas funções PDF removido, sistema inicializando corretamente, todas funcionalidades restauradas e funcionando, cache v=20250624093000 (v20250624093000)
 - June 24, 2025: RESTAURAÇÃO COMPLETA DO BACKUP GITHUB - sistema totalmente restaurado usando backup original, removido apenas botão hub, todas funcionalidades originais preservadas: nome/CPF na tela principal, informativo de limites, configurações completas, formatação de erros, sistema funcionando perfeitamente, cache v=20250624093500 (v20250624093500)
 - June 24, 2025: RESTAURAÇÃO DEFINITIVA USANDO ARQUIVOS ORIGINAIS - sistema completamente restaurado com arquivos funcionais autênticos fornecidos pelo usuário, todas funcionalidades preservadas: calculadora completa, área administrativa, configurações, exportação PDF, formulário de dados cadastrais, cache v=20250624170000 (v20250624170000)
+- June 24, 2025: IMPLEMENTAÇÃO COMPLETA DAS NOVAS FUNCIONALIDADES - adicionada exibição de lucro no modo livre, configurações avançadas (dias extras, ajuste automático meses), dados do credor, sistema completo de geração de contratos com templates editáveis, geração automática de promissórias (1-4 por folha) com opção colorida, numeração sequencial, integração total nas versões Web/PWA/Android, cache v=20250624180000 (v20250624180000)
 
 ## User Preferences
 

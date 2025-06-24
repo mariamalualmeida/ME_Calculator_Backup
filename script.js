@@ -232,6 +232,12 @@ class SimuladorEmprestimos {
             });
         }
 
+        if (this.exportContratoBtn) {
+            this.exportContratoBtn.addEventListener('click', () => {
+                this.exportarContrato();
+            });
+        }
+
         if (this.configBtn) {
             this.configBtn.addEventListener('click', () => {
                 this.abrirConfiguracoes();
@@ -1423,6 +1429,24 @@ class SimuladorEmprestimos {
         // Aplicar tema atual ao painel admin
         panel.setAttribute('data-theme', this.configuracoes.themeMode);
         panel.setAttribute('data-color-theme', this.configuracoes.colorTheme);
+        
+        // Carregar configurações nos campos
+        document.getElementById('igpmAnual').value = this.configuracoes.igpmAnual || 0;
+        
+        // Carregar novas configurações
+        document.getElementById('diasExtrasConfigurado').value = this.configuracoes.diasExtrasConfigurado || 0;
+        document.getElementById('ajusteAutomaticoMeses').value = this.configuracoes.ajusteAutomaticoMeses ? 'true' : 'false';
+        
+        // Dados do credor
+        document.getElementById('credorNome').value = this.configuracoes.dadosCredor?.nome || '';
+        document.getElementById('credorCpfCnpj').value = this.configuracoes.dadosCredor?.cpfCnpj || '';
+        document.getElementById('credorEndereco').value = this.configuracoes.dadosCredor?.endereco || '';
+        document.getElementById('credorRgOrgao').value = this.configuracoes.dadosCredor?.rgOrgao || '';
+        
+        // Configurações de contratos
+        document.getElementById('promissoriasColoridas').value = this.configuracoes.promissoriasColoridas ? 'true' : 'false';
+        document.getElementById('promissoriasPorFolha').value = this.configuracoes.promissoriasPorFolha || 2;
+        document.getElementById('templateContrato').value = this.configuracoes.templateContrato || this.getTemplateContratoDefault();
     }
 
 
