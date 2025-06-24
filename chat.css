@@ -177,6 +177,37 @@
   margin-bottom: 0.25rem;
   transition: background-color 0.2s;
   border-left: 3px solid transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.conversation-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.delete-conversation-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 0.2s;
+  margin-left: 0.5rem;
+}
+
+.conversation-item:hover .delete-conversation-btn {
+  opacity: 1;
+}
+
+.delete-conversation-btn:hover {
+  background: var(--error-color);
+  color: white;
 }
 
 .conversation-item:hover {
@@ -213,8 +244,14 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 70px);
+  margin-top: 80px;
+  height: calc(100vh - 80px);
   overflow: hidden;
+  transition: margin-left 0.3s ease;
+}
+
+.chat-main.sidebar-open {
+  margin-left: 300px;
 }
 
 .messages-container {

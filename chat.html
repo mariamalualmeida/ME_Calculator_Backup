@@ -33,7 +33,14 @@
                 <button class="new-chat-btn" onclick="createNewConversation()">+ Nova Conversa</button>
             </div>
             <div class="conversations-list" id="conversationsList">
-                <!-- Conversas serão carregadas aqui -->
+                <div class="conversation-item">
+                    <div class="conversation-content">
+                        <div class="conversation-title">Conversa de Exemplo</div>
+                        <div class="conversation-preview">Análise de extrato bancário...</div>
+                        <div class="conversation-time">Hoje às 14:30</div>
+                    </div>
+                    <button class="delete-conversation-btn" onclick="deleteConversation(1)">🗑️</button>
+                </div>
             </div>
             <div class="sidebar-footer">
                 <button class="settings-btn" onclick="openChatSettings()">⚙️ Configurações</button>
@@ -169,6 +176,6 @@
 
     <!-- Scripts -->
     <script src="/socket.io/socket.io.js"></script>
-    <script src="chat.js?v=20250622160500"></script>
+    <script src="chat.js?v=20250624052500"></script>
 </body>
 </html>

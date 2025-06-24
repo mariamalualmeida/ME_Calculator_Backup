@@ -1393,6 +1393,41 @@ body {
     transform: scale(1.05);
 }
 
+.hub-btn-minimal {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 10;
+}
+
+.hub-btn-minimal:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+/* CSS Variables para cores secundárias e de acento */
+:root {
+    --secondary-color: #6366f1;
+    --secondary-dark: #4f46e5;
+    --accent-color: #10b981;
+    --accent-dark: #059669;
+    --error-color: #ef4444;
+    --success-color: #10b981;
+}
+
 /* Hub specific styles */
 .hub-main {
     flex: 1;

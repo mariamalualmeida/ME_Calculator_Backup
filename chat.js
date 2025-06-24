@@ -7,17 +7,18 @@
 class ChatController {
     constructor() {
         this.socket = null;
-        this.currentUser = null;
+        this.currentUser = { id: 'user', name: 'Usuário' }; // Auto-login sem autenticação
         this.currentConversation = null;
         this.selectedFiles = [];
         this.isConnected = false;
         this.messageHistory = [];
+        this.sidebarOpen = false;
         
         this.initializeElements();
         this.setupEventListeners();
-        this.loadStoredAuth();
         this.initializeSocket();
         this.loadThemeSettings();
+        this.loadConversations();
     }
 
     initializeElements() {
@@ -28,12 +29,11 @@ class ChatController {
             fileInput: document.getElementById('fileInput'),
             filePreview: document.getElementById('filePreview'),
             conversationsList: document.getElementById('conversationsList'),
+            sidebar: document.getElementById('conversationsSidebar'),
+            chatMain: document.querySelector('.chat-main'),
             
-            // Auth elements
-            authSection: document.getElementById('authSection'),
+            // Config elements
             configSection: document.getElementById('configSection'),
-            username: document.getElementById('username'),
-            password: document.getElementById('password'),
             
             // AI Config elements
             aiProvider: document.getElementById('aiProvider'),
