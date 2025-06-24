@@ -314,9 +314,14 @@
                     <div class="result-value" id="resultValue">
                         R$ 0,00
                     </div>
-                    <button id="exportPdfBtn" class="calculate-button" style="display: none;">
-                        EXPORTAR PDF
-                    </button>
+                    <div class="pdf-buttons" style="display: none;" id="pdfButtons">
+                        <button id="exportPdfBtn" class="calculate-button">
+                            EXPORTAR PDF SIMULAÇÃO
+                        </button>
+                        <button id="exportContratoBtn" class="calculate-button" style="margin-top: 8px;">
+                            GERAR CONTRATO + PROMISSÓRIAS
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -436,6 +441,70 @@
                                 </select>
                                 <small style="color: #666; display: block; margin-top: 4px;">
                                     Remove todos os limites de parcelas e juros quando desabilitado
+                                </small>
+                            </div>
+
+                            <h5>Configurações Avançadas</h5>
+                            <div class="config-group">
+                                <label for="diasExtrasConfigurado">Dias extras configuráveis</label>
+                                <input type="number" id="diasExtrasConfigurado" placeholder="0" min="0" max="365">
+                                <small style="color: #666; display: block; margin-top: 4px;">
+                                    Dias extras padrão aplicados automaticamente aos cálculos
+                                </small>
+                            </div>
+
+                            <div class="config-group">
+                                <label for="ajusteAutomaticoMeses">Ajuste automático para meses com 31 dias</label>
+                                <select id="ajusteAutomaticoMeses">
+                                    <option value="true">Habilitado</option>
+                                    <option value="false">Desabilitado</option>
+                                </select>
+                                <small style="color: #666; display: block; margin-top: 4px;">
+                                    Ajusta automaticamente datas para meses com 31 dias
+                                </small>
+                            </div>
+
+                            <h5>Dados do Credor</h5>
+                            <div class="config-group">
+                                <label for="credorNome">Nome do credor</label>
+                                <input type="text" id="credorNome" placeholder="Nome completo ou razão social">
+                            </div>
+                            <div class="config-group">
+                                <label for="credorCpfCnpj">CPF/CNPJ do credor</label>
+                                <input type="text" id="credorCpfCnpj" placeholder="000.000.000-00 ou 00.000.000/0001-00">
+                            </div>
+                            <div class="config-group">
+                                <label for="credorEndereco">Endereço do credor</label>
+                                <input type="text" id="credorEndereco" placeholder="Endereço completo">
+                            </div>
+                            <div class="config-group">
+                                <label for="credorRgOrgao">RG/Órgão Expedidor</label>
+                                <input type="text" id="credorRgOrgao" placeholder="12.345.678-9 SSP/SP">
+                            </div>
+
+                            <h5>Configurações de Contratos e Promissórias</h5>
+                            <div class="config-group">
+                                <label for="promissoriasColoridas">Promissórias coloridas</label>
+                                <select id="promissoriasColoridas">
+                                    <option value="false">Não (Preto e branco)</option>
+                                    <option value="true">Sim (Coloridas)</option>
+                                </select>
+                            </div>
+                            <div class="config-group">
+                                <label for="promissoriasPorFolha">Promissórias por folha</label>
+                                <select id="promissoriasPorFolha">
+                                    <option value="1">1 promissória por folha</option>
+                                    <option value="2" selected>2 promissórias por folha</option>
+                                    <option value="3">3 promissórias por folha</option>
+                                    <option value="4">4 promissórias por folha</option>
+                                </select>
+                            </div>
+                            
+                            <div class="config-group">
+                                <label for="templateContrato">Template do contrato</label>
+                                <textarea id="templateContrato" rows="8" placeholder="Cole aqui o template do contrato com variáveis {{NOME_DEVEDOR}}, {{VALOR_EMPRESTIMO}}, etc."></textarea>
+                                <small style="color: #666; display: block; margin-top: 4px;">
+                                    Use variáveis: {{NOME_DEVEDOR}}, {{CPF_DEVEDOR}}, {{VALOR_EMPRESTIMO}}, {{NUMERO_PARCELAS}}, {{VALOR_PARCELA}}, {{DATA_CONTRATO}}, {{NOME_CREDOR}}, {{CPF_CREDOR}}, {{ENDERECO_CREDOR}}
                                 </small>
                             </div>
                             

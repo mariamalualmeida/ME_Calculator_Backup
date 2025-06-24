@@ -46,7 +46,19 @@ class SimuladorEmprestimos {
             colorTheme: 'default',
             sistemaJuros: 'compostos-mensal',
             adminUser: 'admin',
-            adminPassword: 'admin123'
+            adminPassword: 'admin123',
+            diasExtrasConfigurado: 0,
+            ajusteAutomaticoMeses: true,
+            // Templates para contratos e promissórias
+            dadosCredor: {
+                nome: '',
+                cpfCnpj: '',
+                endereco: '',
+                rgOrgao: ''
+            },
+            templateContrato: '',
+            promissoriasColoridas: false,
+            promissoriasPorFolha: 2
         };
         const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
         this.configuracoes = loadedConfig;
@@ -93,6 +105,8 @@ class SimuladorEmprestimos {
         this.errorSection = document.getElementById('errorSection');
         this.errorMessage = document.getElementById('errorMessage');
         this.exportPdfBtn = document.getElementById('exportPdfBtn');
+        this.exportContratoBtn = document.getElementById('exportContratoBtn');
+        this.pdfButtons = document.getElementById('pdfButtons');
         this.configBtn = document.getElementById('configBtn');
         
         console.log('Taxa de juros field encontrado:', !!this.taxaJurosField);
@@ -1004,6 +1018,31 @@ class SimuladorEmprestimos {
         };
         const nomeSistema = nomesSistemas[sistemaJuros] || 'Juros Compostos Mensais';
 
+        // Calcular análise de lucro se modo livre estiver ativo
+        let analiseFinanceira = '';
+        if (this.configuracoes.desabilitarRegras) {
+            const totalReceber = nParcelas === 1 ? 
+                resultadoCalculo.primeiraParcela : 
+                (resultadoCalculo.primeiraParcela + (resultadoCalculo.parcelaNormal * (nParcelas - 1)));
+            
+            const lucroLiquido = totalReceber - valorEmprestimo;
+            const margemLucro = (lucroLiquido / valorEmprestimo) * 100;
+            
+            analiseFinanceira = `
+                <div style="margin-top: 16px; padding: 16px; background: linear-gradient(135deg, #e8f5e8, #f0f8f0); border-radius: 12px; border-left: 4px solid #4caf50;">
+                    <div style="font-weight: 600; color: #2e7d32; margin-bottom: 8px; display: flex; align-items: center;">
+                        <span style="margin-right: 8px;">💰</span> ANÁLISE FINANCEIRA (Modo Livre)
+                    </div>
+                    <div style="font-size: 14px; color: #1b5e20; line-height: 1.4;">
+                        <div style="margin-bottom: 4px;"><strong>Capital emprestado:</strong> ${formatarMoeda(valorEmprestimo)}</div>
+                        <div style="margin-bottom: 4px;"><strong>Total a receber:</strong> ${formatarMoeda(totalReceber)}</div>
+                        <div style="margin-bottom: 4px; color: #4caf50;"><strong>✅ Lucro líquido:</strong> ${formatarMoeda(lucroLiquido)}</div>
+                        <div style="color: #4caf50;"><strong>📈 Margem de lucro:</strong> ${margemLucro.toFixed(2)}%</div>
+                    </div>
+                </div>
+            `;
+        }
+
         // Verificar se há diferença entre primeira parcela e demais
         if (resultadoCalculo.diasExtra > 0) {
             const metodo = this.obterMetodoDiasExtras();
@@ -1071,6 +1110,9 @@ class SimuladorEmprestimos {
             `;
         }
 
+        // Adicionar análise financeira se modo livre
+        this.resultValue.innerHTML += analiseFinanceira;
+
         // Salvar dados para o PDF
         this.ultimoCalculo = {
             valorEmprestimo,
@@ -1080,7 +1122,7 @@ class SimuladorEmprestimos {
         };
 
         this.resultCard.style.display = 'block';
-        this.exportPdfBtn.style.display = 'flex';
+        this.pdfButtons.style.display = 'block';
         this.esconderErro();
     }
 
@@ -1088,12 +1130,12 @@ class SimuladorEmprestimos {
         this.errorMessage.textContent = mensagem;
         this.errorSection.style.display = 'block';
         this.resultCard.style.display = 'none';
-        this.exportPdfBtn.style.display = 'none';
+        this.pdfButtons.style.display = 'none';
     }
 
     limparResultado() {
         this.resultCard.style.display = 'none';
-        this.exportPdfBtn.style.display = 'none';
+        this.pdfButtons.style.display = 'none';
         this.esconderErro();
     }
 
