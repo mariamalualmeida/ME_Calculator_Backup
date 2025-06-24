@@ -9,33 +9,34 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Chat ME">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20250622160500">
-    <link rel="stylesheet" href="chat.css?v=20250622160500">
+    <link rel="stylesheet" href="style.css?v=20250624052500">
+    <link rel="stylesheet" href="chat.css?v=20250624052500">
 </head>
 <body>
     <div class="chat-container">
         <!-- Header -->
         <header class="chat-header">
             <div class="header-left">
-                <button class="back-btn" onclick="goBack()">←</button>
+                <button class="home-btn" onclick="goToHub()" title="Voltar ao Hub">🏠</button>
+                <button class="sidebar-toggle" onclick="toggleSidebar()" title="Expandir/Ocultar Menu">☰</button>
                 <div class="chat-title">
                     <h2>Miguelita</h2>
                     <span class="subtitle">Assistente Financeira</span>
                 </div>
             </div>
-            <div class="header-right">
-                <button class="settings-btn" onclick="openChatSettings()">⚙️</button>
-            </div>
         </header>
 
-        <!-- Sidebar com conversas (desktop) -->
+        <!-- Sidebar com conversas -->
         <aside class="conversations-sidebar" id="conversationsSidebar">
             <div class="sidebar-header">
-                <h3>Conversas</h3>
-                <button class="new-chat-btn" onclick="createNewConversation()">+</button>
+                <button class="hub-btn-sidebar" onclick="goToHub()">🏠 Hub</button>
+                <button class="new-chat-btn" onclick="createNewConversation()">+ Nova Conversa</button>
             </div>
             <div class="conversations-list" id="conversationsList">
                 <!-- Conversas serão carregadas aqui -->
+            </div>
+            <div class="sidebar-footer">
+                <button class="settings-btn" onclick="openChatSettings()">⚙️ Configurações</button>
             </div>
         </aside>
 
