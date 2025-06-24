@@ -1,7 +1,7 @@
 /**
  * ME EMPREENDIMENTOS - Simulador de Empréstimos
- * Implementa cálculo com pró-rata, IGPM e área administrativa
- * Updated: 2025-06-21 13:33 - Real-time percentage formatting
+ * Sistema LIMPO sem módulos de chat/hub - apenas simulador
+ * Updated: 2025-06-24 08:20 - Todas as interferências removidas
  */
 
 class SimuladorEmprestimos {
