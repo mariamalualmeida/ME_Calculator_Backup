@@ -108,6 +108,8 @@ class SimuladorEmprestimos {
         this.exportContratoBtn = document.getElementById('exportContratoBtn');
         this.pdfButtons = document.getElementById('pdfButtons');
         this.configBtn = document.getElementById('configBtn');
+        this.importarDadosBtn = document.getElementById('importarDadosBtn');
+        this.importFileInput = document.getElementById('importFileInput');
         
         console.log('Taxa de juros field encontrado:', !!this.taxaJurosField);
         console.log('ID do campo:', this.taxaJurosField?.id);
@@ -235,6 +237,19 @@ class SimuladorEmprestimos {
         if (this.exportContratoBtn) {
             this.exportContratoBtn.addEventListener('click', () => {
                 this.exportarContrato();
+            });
+        }
+
+        // Importar dados
+        if (this.importarDadosBtn) {
+            this.importarDadosBtn.addEventListener('click', () => {
+                this.importFileInput.click();
+            });
+        }
+
+        if (this.importFileInput) {
+            this.importFileInput.addEventListener('change', (e) => {
+                this.importarDados(e.target.files[0]);
             });
         }
 
@@ -1309,7 +1324,7 @@ class SimuladorEmprestimos {
         this.configuracoes.nomeUsuario = document.getElementById('nomeUsuario').value;
         this.configuracoes.themeMode = document.getElementById('themeMode').value;
         this.configuracoes.colorTheme = document.getElementById('colorTheme').value;
-        this.configuracoes.mostrarJurosRelatorio = document.getElementById('mostrarJurosRelatorio').value === 'true';
+        this.configuracoes.exibirDadosJuros = document.getElementById('exibirDadosJuros').value === 'true';
         
         // Salvar configurações administrativas se logado
         if (this.configuracoes.isAdmin) {
