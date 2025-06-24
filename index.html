@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-title" content="Simulador ME">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=20250624240000">
+    <link rel="stylesheet" href="style.css?v=20250624250000">
 </head>
 <body>
     <div class="container">
@@ -458,9 +458,16 @@
                                         </small>
                                     </div>
 
-                                    <!-- Tabela de limites no final -->
-                                    <h5>Tabela de Limites de Juros por Parcela</h5>
-                                    <div id="limitsTable"></div>
+                                    <!-- Tabela de limites no final, oculta com opção de expandir -->
+                                    <div class="limits-toggle-section">
+                                        <h5 class="limits-toggle-header" onclick="toggleSection('limitsTableSection')" style="cursor: pointer; padding: 8px; background: #e8e8e8; border-radius: 4px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center;">
+                                            <span>Tabela de Limites de Juros por Parcela</span>
+                                            <span class="toggle-icon" id="limitsTableToggle">▶</span>
+                                        </h5>
+                                        <div id="limitsTableSection" style="display: none; padding: 0 8px;">
+                                            <div id="limitsTable"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -538,6 +545,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js?v=20250624240000"></script>
+    <script src="script.js?v=20250624250000"></script>
 </body>
 </html>

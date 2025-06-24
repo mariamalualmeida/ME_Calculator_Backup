@@ -1388,6 +1388,11 @@ class SimuladorEmprestimos {
         // Fechar modal automaticamente após salvar
         alert('Todas as configurações foram salvas com sucesso!');
         this.fecharModal();
+        
+        // Forçar refresh da página para aplicar todas as configurações
+        setTimeout(() => {
+            window.location.reload();
+        }, 100);
     }
 
     fazerLoginAdmin() {
@@ -1846,8 +1851,20 @@ class SimuladorEmprestimos {
                 }
             }
             
-            // Salvar PDF
-            doc.save(`simulacao_emprestimo_${Date.now()}.pdf`);
+            // Gerar nome do arquivo com dados do cliente
+            const agora = new Date();
+            const timestamp = agora.getFullYear().toString() +
+                             (agora.getMonth() + 1).toString().padStart(2, '0') +
+                             agora.getDate().toString().padStart(2, '0') +
+                             agora.getHours().toString().padStart(2, '0') +
+                             agora.getMinutes().toString().padStart(2, '0') +
+                             agora.getSeconds().toString().padStart(2, '0');
+            
+            const nomeCliente = (this.nomeClienteField.value || 'Cliente').replace(/[^a-zA-Z0-9]/g, '_');
+            const cpfCliente = (this.cpfClienteField.value || 'SemCPF').replace(/[^0-9]/g, '');
+            const nomeArquivo = `${nomeCliente}_${cpfCliente}_${timestamp}.pdf`;
+            
+            doc.save(nomeArquivo);
             alert('PDF exportado com sucesso!');
             
         } catch (error) {
