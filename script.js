@@ -25,53 +25,28 @@ class SimuladorEmprestimos {
             15: { min: 11.43, max: 11.80 }
         };
 
-        // Cache de elementos DOM
-        this.elements = {};
-        
         this.configuracoes = this.carregarConfiguracoes();
+        // Forçar reset do estado administrativo na inicialização
         this.configuracoes.isAdmin = false;
-        
-        // Inicializar sistema de debounce de notificações
-        this.lastNotification = '';
-        this.lastNotificationTime = 0;
-        
         this.initializeElements();
         this.setupEventListeners();
-        this.setupNotificationSystem();
         this.focusInitialField();
     }
 
     carregarConfiguracoes() {
-        let config = null;
-        try {
-            config = localStorage.getItem('simulador_config');
-        } catch (error) {
-            // localStorage não disponível ou erro ao acessar
-        }
+        const config = localStorage.getItem('simulador_config');
         const defaultConfig = {
             nomeUsuario: '',
             igpmAnual: 0.0,
             isAdmin: false,
             limitesPersonalizados: null,
             themeMode: 'light',
-            exibirDadosJuros: true,
+            mostrarJurosRelatorio: false,
             desabilitarRegras: false,
             colorTheme: 'default',
             sistemaJuros: 'compostos-mensal',
             adminUser: 'admin',
-            adminPassword: 'admin123',
-            diasExtrasConfigurado: 0,
-            ajusteAutomaticoMeses: true,
-            // Templates para contratos e promissórias
-            dadosCredor: {
-                nome: '',
-                cpfCnpj: '',
-                endereco: '',
-                rgOrgao: ''
-            },
-            templateContrato: '',
-            promissoriasColoridas: false,
-            promissoriasPorFolha: 2
+            adminPassword: 'admin123'
         };
         const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
         this.configuracoes = loadedConfig;
@@ -79,110 +54,35 @@ class SimuladorEmprestimos {
         this.aplicarTema(loadedConfig.themeMode);
         this.aplicarPaletaCores(loadedConfig.colorTheme);
         
-        // Configurar selects de sistema de juros e regras
-        this.configurarSelects(loadedConfig);
+        // Configurar sistema de juros e regras de limite
+        setTimeout(() => {
+            const sistemaJurosSelect = document.getElementById('sistemaJuros');
+            if (sistemaJurosSelect) {
+                sistemaJurosSelect.value = loadedConfig.sistemaJuros;
+            }
+            
+            const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
+            if (desabilitarRegrasSelect) {
+                desabilitarRegrasSelect.value = loadedConfig.desabilitarRegras ? 'desabilitar' : 'habilitar';
+            }
+        }, 100);
         
-        // Aplicar classes de modo livre
-        if (this.atualizarClassesModoLivre) {
-            this.atualizarClassesModoLivre();
-        }
+        // Aplicar classes de modo livre após carregar configurações
+        setTimeout(() => {
+            if (this.atualizarClassesModoLivre) {
+                this.atualizarClassesModoLivre();
+            }
+        }, 100);
         
         return loadedConfig;
     }
 
-    configurarSelects(config) {
-        const sistemaJurosSelect = document.getElementById('sistemaJuros');
-        if (sistemaJurosSelect) {
-            sistemaJurosSelect.value = config.sistemaJuros || 'compostos-mensal';
-        }
-        
-        const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
-        if (desabilitarRegrasSelect) {
-            desabilitarRegrasSelect.value = config.desabilitarRegras ? 'desabilitar' : 'habilitar';
-        }
-    }
-
-    setupNotificationSystem() {
-        // Criar container de notificações se não existir
-        if (!document.getElementById('notification-container')) {
-            const container = document.createElement('div');
-            container.id = 'notification-container';
-            container.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 10000;
-                pointer-events: none;
-            `;
-            document.body.appendChild(container);
-        }
-    }
-
-    showNotification(message, type = 'info', duration = 3000) {
-        // Debounce para evitar notificações duplicadas
-        const notificationKey = `${type}_${message}`;
-        if (this.lastNotification === notificationKey && Date.now() - this.lastNotificationTime < 1000) {
-            return; // Ignorar notificação duplicada
-        }
-        this.lastNotification = notificationKey;
-        this.lastNotificationTime = Date.now();
-        
-        const container = document.getElementById('notification-container');
-        const notification = document.createElement('div');
-        
-        const colors = {
-            success: '#4caf50',
-            error: '#f44336',
-            info: '#2196f3',
-            warning: '#ff9800'
-        };
-        
-        notification.style.cssText = `
-            background: ${colors[type] || colors.info};
-            color: white;
-            padding: 12px 20px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            pointer-events: auto;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.3s ease;
-            max-width: 300px;
-            word-wrap: break-word;
-        `;
-        
-        notification.textContent = message;
-        container.appendChild(notification);
-        
-        // Animar entrada
-        setTimeout(() => {
-            notification.style.opacity = '1';
-            notification.style.transform = 'translateX(0)';
-        }, 10);
-        
-        // Remover após duração especificada
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }, duration);
-    }
-
     salvarConfiguracoes() {
-        try {
-            localStorage.setItem('simulador_config', JSON.stringify(this.configuracoes));
-        } catch (error) {
-            this.showNotification('Erro ao salvar configurações. Verifique o armazenamento do navegador.', 'error');
-        }
+        localStorage.setItem('simulador_config', JSON.stringify(this.configuracoes));
     }
 
     initializeElements() {
-        // Inicializando elementos DOM
+        console.log('Inicializando elementos...');
         this.valorEmprestimoField = document.getElementById('valorEmprestimo');
         this.numeroParcelasField = document.getElementById('numeroParcelas');
         this.taxaJurosField = document.getElementById('taxaJuros');
@@ -193,14 +93,10 @@ class SimuladorEmprestimos {
         this.errorSection = document.getElementById('errorSection');
         this.errorMessage = document.getElementById('errorMessage');
         this.exportPdfBtn = document.getElementById('exportPdfBtn');
-        this.exportContratoBtn = document.getElementById('exportContratoBtn');
-        this.pdfButtons = document.getElementById('pdfButtons');
         this.configBtn = document.getElementById('configBtn');
         
-        // Validação de elementos críticos
-        if (!this.taxaJurosField) {
-            throw new Error('Campo taxa de juros não encontrado');
-        }
+        console.log('Taxa de juros field encontrado:', !!this.taxaJurosField);
+        console.log('ID do campo:', this.taxaJurosField?.id);
     }
 
     setupEventListeners() {
@@ -302,8 +198,10 @@ class SimuladorEmprestimos {
                 this.limparResultado();
                 this.toggleMetodoDiasExtras();
                 this.atualizarInformacaoLimites(); // Atualizar limites de juros
-                // Validar campo de juros atualmente
-                this.validarCampoJuros();
+                // Re-validar juros apenas se não estiver em modo livre
+                if (!(this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin)) {
+                    this.validarCampoJuros();
+                }
             });
         }
 
@@ -319,32 +217,6 @@ class SimuladorEmprestimos {
                 this.exportarPdf();
             });
         }
-
-        if (this.exportContratoBtn) {
-            this.exportContratoBtn.addEventListener('click', () => {
-                this.exportarContrato();
-            });
-        }
-
-        // Importar dados
-        if (this.importarDadosBtn) {
-            this.importarDadosBtn.addEventListener('click', () => {
-                this.importFileInput.click();
-            });
-        }
-
-        if (this.importFileInput) {
-            this.importFileInput.addEventListener('change', (e) => {
-                const arquivo = e.target.files[0];
-                if (arquivo) {
-                    this.importarDados(arquivo);
-                }
-                // Limpar input para permitir selecionar o mesmo arquivo novamente
-                e.target.value = '';
-            });
-        }
-
-
 
         if (this.configBtn) {
             this.configBtn.addEventListener('click', () => {
@@ -453,7 +325,7 @@ class SimuladorEmprestimos {
         const icon = toggleBtn ? toggleBtn.querySelector('.toggle-icon') : null;
         
         if (!container || !toggleBtn) {
-            // Formulário completo não encontrado - modo básico
+            console.error('Elementos do formulário completo não encontrados');
             return;
         }
         
@@ -474,7 +346,7 @@ class SimuladorEmprestimos {
         const limitsHeader = document.getElementById('limitsToggle');
         
         if (!limitsContent || !limitsHeader) {
-            // Seção de limites não encontrada
+            console.error('Elementos da seção de limites não encontrados');
             return;
         }
         
@@ -550,10 +422,9 @@ class SimuladorEmprestimos {
     }
 
     focusInitialField() {
-        // Focar no campo inicial quando DOM estiver pronto
-        if (this.valorEmprestimoField) {
+        setTimeout(() => {
             this.valorEmprestimoField.focus();
-        }
+        }, 100);
     }
 
     formatarMoeda(input) {
@@ -935,8 +806,8 @@ class SimuladorEmprestimos {
     }
 
     calcular() {
-        // Recarregar configurações antes de cada cálculo
-        this.configuracoes = this.carregarConfiguracoes();
+        // Recarregar configurações mais recentes antes do cálculo
+        this.carregarConfiguracoes();
         
         // Verificar campos obrigatórios
         const valor = this.obterValorNumerico(this.valorEmprestimoField.value);
@@ -1046,10 +917,18 @@ class SimuladorEmprestimos {
     }
 
     validarCampos(valor, nParcelas, juros) {
-        // Verificar se regras estão desabilitadas para admin
-        const modoLivreAtivo = this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin;
+        // Debug: Log das configurações atuais
+        console.log('Debug - validarCampos:', {
+            desabilitarRegras: this.configuracoes.desabilitarRegras,
+            isAdmin: this.configuracoes.isAdmin,
+            valor: valor,
+            nParcelas: nParcelas,
+            juros: juros
+        });
         
-        if (modoLivreAtivo) {
+        // Verificar se regras estão desabilitadas para admin
+        if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
+            console.log('Debug - Modo livre ativo, pulando validações');
             
             // Aplicar classe para desabilitar borda vermelha no modo livre
             this.numeroParcelasField.classList.add('admin-free-mode');
@@ -1065,7 +944,7 @@ class SimuladorEmprestimos {
             return { sucesso: true };
         }
         
-        // Aplicando validações do modo normal
+        console.log('Debug - Modo normal, aplicando validações');
         
         // Modo normal - remover classe para permitir borda vermelha
         this.numeroParcelasField.classList.remove('admin-free-mode');
@@ -1124,31 +1003,6 @@ class SimuladorEmprestimos {
             'compostos-prorata-real': 'Juros Compostos + Pro-rata Real'
         };
         const nomeSistema = nomesSistemas[sistemaJuros] || 'Juros Compostos Mensais';
-
-        // Calcular análise de lucro se modo livre estiver ativo
-        let analiseFinanceira = '';
-        if (this.configuracoes.desabilitarRegras) {
-            const totalReceber = nParcelas === 1 ? 
-                resultadoCalculo.primeiraParcela : 
-                (resultadoCalculo.primeiraParcela + (resultadoCalculo.parcelaNormal * (nParcelas - 1)));
-            
-            const lucroLiquido = totalReceber - valorEmprestimo;
-            const margemLucro = (lucroLiquido / valorEmprestimo) * 100;
-            
-            analiseFinanceira = `
-                <div class="analise-financeira-box" style="margin-top: 16px; padding: 16px; background: var(--surface-container-low); border-radius: 12px; border: 1px solid var(--outline-variant); max-width: 400px; margin-left: auto; margin-right: auto; text-align: center;">
-                    <div style="font-weight: 600; color: var(--on-surface); margin-bottom: 8px; display: flex; align-items: center; justify-content: center;">
-                        ANÁLISE FINANCEIRA (Modo Livre)
-                    </div>
-                    <div style="font-size: 14px; color: var(--on-surface); line-height: 1.4;">
-                        <div style="margin-bottom: 4px;"><strong>Capital emprestado:</strong> ${formatarMoeda(valorEmprestimo)}</div>
-                        <div style="margin-bottom: 4px;"><strong>Total a receber:</strong> ${formatarMoeda(totalReceber)}</div>
-                        <div style="margin-bottom: 4px; color: var(--primary);"><strong>✅ Lucro líquido:</strong> ${formatarMoeda(lucroLiquido)}</div>
-                        <div style="color: var(--primary);"><strong>📈 Margem de lucro:</strong> ${margemLucro.toFixed(2)}%</div>
-                    </div>
-                </div>
-            `;
-        }
 
         // Verificar se há diferença entre primeira parcela e demais
         if (resultadoCalculo.diasExtra > 0) {
@@ -1217,9 +1071,6 @@ class SimuladorEmprestimos {
             `;
         }
 
-        // Adicionar análise financeira se modo livre
-        this.resultValue.innerHTML += analiseFinanceira;
-
         // Salvar dados para o PDF
         this.ultimoCalculo = {
             valorEmprestimo,
@@ -1229,7 +1080,7 @@ class SimuladorEmprestimos {
         };
 
         this.resultCard.style.display = 'block';
-        this.pdfButtons.style.display = 'block';
+        this.exportPdfBtn.style.display = 'flex';
         this.esconderErro();
     }
 
@@ -1237,12 +1088,12 @@ class SimuladorEmprestimos {
         this.errorMessage.textContent = mensagem;
         this.errorSection.style.display = 'block';
         this.resultCard.style.display = 'none';
-        this.pdfButtons.style.display = 'none';
+        this.exportPdfBtn.style.display = 'none';
     }
 
     limparResultado() {
         this.resultCard.style.display = 'none';
-        this.pdfButtons.style.display = 'none';
+        this.exportPdfBtn.style.display = 'none';
         this.esconderErro();
     }
 
@@ -1251,10 +1102,6 @@ class SimuladorEmprestimos {
         
         // Atualizar classes CSS baseado no modo livre administrativo
         this.atualizarClassesModoLivre();
-        
-
-        
-
     }
 
     atualizarClassesModoLivre() {
@@ -1268,17 +1115,14 @@ class SimuladorEmprestimos {
             if (campo) {
                 if (modoLivreAtivo) {
                     campo.classList.add('admin-free-mode');
-                    // Limpar qualquer borda vermelha existente
-                    campo.style.borderColor = '';
-                    campo.style.color = '';
-                    campo.title = '';
                 } else {
                     campo.classList.remove('admin-free-mode');
                 }
             }
         });
         
-
+        // Re-validar campo de juros após mudança de modo
+        this.validarCampoJuros();
     }
 
     limparErrosVisuais() {
@@ -1329,7 +1173,7 @@ class SimuladorEmprestimos {
         document.getElementById('nomeUsuario').value = this.configuracoes.nomeUsuario || '';
         document.getElementById('themeMode').value = this.configuracoes.themeMode || 'light';
         document.getElementById('colorTheme').value = this.configuracoes.colorTheme || 'default';
-        document.getElementById('exibirDadosJuros').value = this.configuracoes.exibirDadosJuros ? 'true' : 'false';
+        document.getElementById('mostrarJurosRelatorio').value = this.configuracoes.mostrarJurosRelatorio ? 'true' : 'false';
         
         // NOVA LÓGICA: Sempre ocultar painel administrativo ao abrir configurações
         const adminPanel = document.getElementById('adminPanel');
@@ -1358,7 +1202,7 @@ class SimuladorEmprestimos {
         modal.setAttribute('data-theme', this.configuracoes.themeMode);
         modal.setAttribute('data-color-theme', this.configuracoes.colorTheme);
         
-        // Configurações abertas - painel admin oculto por segurança
+        console.log('Debug - Configurações abertas, painel admin oculto, login obrigatório');
     }
 
     fecharModal() {
@@ -1390,7 +1234,7 @@ class SimuladorEmprestimos {
         // IMPORTANTE: Aplicar configurações administrativas na página principal
         this.atualizarClassesModoLivre();
         
-        // Modal fechado - configurações preservadas
+        console.log('Debug - Modal fechado, configurações preservadas, UI resetada');
     }
 
 
@@ -1417,29 +1261,12 @@ class SimuladorEmprestimos {
         this.configuracoes.nomeUsuario = document.getElementById('nomeUsuario').value;
         this.configuracoes.themeMode = document.getElementById('themeMode').value;
         this.configuracoes.colorTheme = document.getElementById('colorTheme').value;
-        this.configuracoes.exibirDadosJuros = document.getElementById('exibirDadosJuros').value === 'true';
+        this.configuracoes.mostrarJurosRelatorio = document.getElementById('mostrarJurosRelatorio').value === 'true';
         
         // Salvar configurações administrativas se logado
         if (this.configuracoes.isAdmin) {
             // IGPM movido para área administrativa
             this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
-            
-            // Novas configurações
-            this.configuracoes.diasExtrasConfigurado = parseInt(document.getElementById('diasExtrasConfigurado').value) || 0;
-            this.configuracoes.ajusteAutomaticoMeses = document.getElementById('ajusteAutomaticoMeses').value === 'true';
-            
-            // Dados do credor
-            this.configuracoes.dadosCredor = {
-                nome: document.getElementById('credorNome').value || '',
-                cpfCnpj: document.getElementById('credorCpfCnpj').value || '',
-                endereco: document.getElementById('credorEndereco').value || '',
-                rgOrgao: document.getElementById('credorRgOrgao').value || ''
-            };
-            
-            // Configurações de contratos
-            this.configuracoes.promissoriasColoridas = document.getElementById('promissoriasColoridas').value === 'true';
-            this.configuracoes.promissoriasPorFolha = parseInt(document.getElementById('promissoriasPorFolha').value) || 2;
-            this.configuracoes.templateContrato = document.getElementById('templateContrato').value || '';
             this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').value === 'desabilitar';
             this.configuracoes.sistemaJuros = document.getElementById('sistemaJuros').value;
             
@@ -1477,20 +1304,13 @@ class SimuladorEmprestimos {
         this.atualizarClassesModoLivre();
         
         // Fechar modal automaticamente após salvar
+        alert('Todas as configurações foram salvas com sucesso!');
         this.fecharModal();
-        this.showNotification('Todas as configurações foram salvas com sucesso!', 'success');
-        
-
     }
 
     fazerLoginAdmin() {
-        const usuario = document.getElementById('adminUser')?.value;
-        const senha = document.getElementById('adminPass')?.value;
-        
-        if (!usuario || !senha) {
-            this.showNotification('Preencha usuário e senha', 'warning');
-            return;
-        }
+        const usuario = document.getElementById('adminUser').value;
+        const senha = document.getElementById('adminPass').value;
         
         if (usuario === this.configuracoes.adminUser && senha === this.configuracoes.adminPassword) {
             // Ativar estado administrativo
@@ -1512,9 +1332,9 @@ class SimuladorEmprestimos {
             // Aplicar modo livre imediatamente se configurado
             this.atualizarClassesModoLivre();
             
-            this.showNotification('Login administrativo realizado com sucesso', 'success');
+            console.log('Debug - Login admin realizado, painel temporário exibido');
         } else {
-            this.showNotification('Usuário ou senha incorretos', 'error');
+            alert('Usuário ou senha incorretos');
         }
     }
 
@@ -1544,30 +1364,6 @@ class SimuladorEmprestimos {
         // Aplicar tema atual ao painel admin
         panel.setAttribute('data-theme', this.configuracoes.themeMode);
         panel.setAttribute('data-color-theme', this.configuracoes.colorTheme);
-        
-        // Carregar configurações nos campos
-        document.getElementById('igpmAnual').value = this.configuracoes.igpmAnual || 0;
-        document.getElementById('sistemaJuros').value = this.configuracoes.sistemaJuros || 'compostos-mensal';
-        document.getElementById('desabilitarRegras').value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
-        
-        // Carregar novas configurações
-        document.getElementById('diasExtrasConfigurado').value = this.configuracoes.diasExtrasConfigurado || 0;
-        document.getElementById('ajusteAutomaticoMeses').value = this.configuracoes.ajusteAutomaticoMeses ? 'true' : 'false';
-        
-        // Dados do credor
-        document.getElementById('credorNome').value = this.configuracoes.dadosCredor?.nome || '';
-        document.getElementById('credorCpfCnpj').value = this.configuracoes.dadosCredor?.cpfCnpj || '';
-        document.getElementById('credorEndereco').value = this.configuracoes.dadosCredor?.endereco || '';
-        document.getElementById('credorRgOrgao').value = this.configuracoes.dadosCredor?.rgOrgao || '';
-        
-        // Configurações de contratos
-        document.getElementById('promissoriasColoridas').value = this.configuracoes.promissoriasColoridas ? 'true' : 'false';
-        document.getElementById('promissoriasPorFolha').value = this.configuracoes.promissoriasPorFolha || 2;
-        // Template de contrato - usar valor salvo ou padrão
-        const templateField = document.getElementById('templateContrato');
-        if (templateField) {
-            templateField.value = this.configuracoes.templateContrato || this.getTemplateContratoDefault();
-        }
     }
 
 
@@ -1677,35 +1473,6 @@ class SimuladorEmprestimos {
 
     gerarPdfSimples(valor, nParcelas, juros, resultadoCalculo) {
         try {
-            // Verificar se jsPDF está disponível com timeout para carregamento
-            const checkJsPDF = () => {
-                if (typeof window.jspdf !== 'undefined') {
-                    return true;
-                }
-                // Tentar acessar jsPDF de forma alternativa
-                if (typeof jsPDF !== 'undefined') {
-                    window.jspdf = { jsPDF };
-                    return true;
-                }
-                return false;
-            };
-            
-            if (!checkJsPDF()) {
-                // Aguardar um pouco para biblioteca carregar
-                setTimeout(() => {
-                    if (checkJsPDF()) {
-                        this.exportarPdf();
-                    } else {
-                        throw new Error('Biblioteca jsPDF não carregada. Recarregue a página.');
-                    }
-                }, 1000);
-                return;
-            }
-            
-            if (typeof window.jspdf === 'undefined') {
-                throw new Error('Biblioteca jsPDF não carregada. Recarregue a página.');
-            }
-            
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
@@ -1838,26 +1605,25 @@ class SimuladorEmprestimos {
             doc.text(`Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
             yInicial += 12;
             
-            doc.text(`Número de parcelas: ${nParcelas}`, 20, yInicial);
-            yInicial += 12;
-            
-            // Sistema de juros depois do número de parcelas
-            if (this.configuracoes.exibirDadosJuros) {
-                const sistemaJurosTexto = this.configuracoes.sistemaJuros === 'simples' ? 'Juros Simples' :
-                                        this.configuracoes.sistemaJuros === 'compostos-diarios' ? 'Juros Compostos Diários' :
-                                        this.configuracoes.sistemaJuros === 'pro-rata-real' ? 'Pro-rata Real' :
-                                        'Juros Compostos Mensais';
-                doc.text(`Sistema de juros: ${sistemaJurosTexto}`, 20, yInicial);
-                yInicial += 12;
-            }
-            
-            // Taxa de juros por último
-            if (this.configuracoes.exibirDadosJuros) {
+            // Incluir taxa de juros apenas se configurado
+            if (this.configuracoes.mostrarJurosRelatorio) {
                 doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, yInicial);
                 yInicial += 12;
             }
-
-            yInicial += 3;
+            
+            doc.text(`Número de parcelas: ${nParcelas}`, 20, yInicial);
+            yInicial += 12;
+            
+            // Mostrar sistema de juros utilizado
+            const sistemasJuros = {
+                'simples': 'Juros Simples',
+                'compostos-diarios': 'Juros Compostos Diários', 
+                'compostos-mensal': 'Juros Compostos Mensais',
+                'pro-rata-real': 'Pro-rata Real'
+            };
+            const sistemaAtual = sistemasJuros[this.configuracoes.sistemaJuros] || 'Juros Compostos Mensais';
+            doc.text(`Sistema de juros: ${sistemaAtual}`, 20, yInicial);
+            yInicial += 15;
             
             // Mostrar informações das parcelas conforme o tipo de cálculo
             if (resultadoCalculo.diasExtra > 0) {
@@ -1980,38 +1746,13 @@ class SimuladorEmprestimos {
                 }
             }
             
-            // Gerar nome do arquivo com dados do cliente
-            const agora = new Date();
-            const timestamp = agora.getFullYear().toString() +
-                             (agora.getMonth() + 1).toString().padStart(2, '0') +
-                             agora.getDate().toString().padStart(2, '0') +
-                             agora.getHours().toString().padStart(2, '0') +
-                             agora.getMinutes().toString().padStart(2, '0') +
-                             agora.getSeconds().toString().padStart(2, '0');
-            
-            // Verificar se nome e CPF estão preenchidos para nomear arquivo
-            const nomeClienteValue = this.nomeClienteField?.value?.trim();
-            const cpfClienteValue = this.cpfClienteField?.value?.trim();
-            
-            let nomeArquivo;
-            if (nomeClienteValue && cpfClienteValue) {
-                const nomeClientePdf = nomeClienteValue.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
-                const cpfClientePdf = cpfClienteValue.replace(/[^0-9]/g, '');
-                nomeArquivo = `${nomeClientePdf}_${cpfClientePdf}_${timestamp}.pdf`;
-            } else {
-                nomeArquivo = `Simulacao_Emprestimos_${timestamp}.pdf`;
-            }
-
-            
-            doc.save(nomeArquivo);
-            this.showNotification('PDF exportado com sucesso!', 'success');
-            
-            // Gerar automaticamente arquivo JSON para importação
-            setTimeout(() => this.exportarDadosJSON(), 100);
+            // Salvar PDF
+            doc.save(`simulacao_emprestimo_${Date.now()}.pdf`);
+            alert('PDF exportado com sucesso!');
             
         } catch (error) {
-            console.error('Erro detalhado na geração de PDF:', error);
-            alert('Erro ao gerar PDF: ' + error.message);
+            console.error('Erro ao gerar PDF:', error);
+            alert('Erro ao gerar PDF. Tente novamente.');
         }
     }
 
@@ -2062,12 +1803,6 @@ class SimuladorEmprestimos {
             formToggleBtn.setAttribute('data-color-theme', colorTheme);
         }
         
-        // Aplicar paleta às caixas de análise financeira
-        const analiseBoxes = document.querySelectorAll('.analise-financeira-box');
-        analiseBoxes.forEach(box => {
-            box.setAttribute('data-color-theme', colorTheme);
-        });
-        
         // Salvar a preferência
         localStorage.setItem('app-color-theme', colorTheme);
         
@@ -2112,804 +1847,81 @@ class SimuladorEmprestimos {
             dataNascimentoField.addEventListener('input', (e) => this.formatarData(e.target));
         }
     }
-
-    getTemplateContratoDefault() {
-        return `CONTRATO DE EMPRÉSTIMO
-
-CONTRATO PARTICULAR DE EMPRÉSTIMO DE VALOR
-Pelo presente instrumento particular de contrato de empréstimo, de um lado:
-(1) Nome do CREDOR: {{NOME_CREDOR}}
-CPF/CNPJ: {{CPF_CREDOR}}
-Endereço: {{ENDERECO_CREDOR}}
-
-E de outro:
-(2) Nome do DEVEDOR: {{NOME_DEVEDOR}}
-CPF: {{CPF_DEVEDOR}}
-Endereço: {{ENDERECO_DEVEDOR}}
-
-Têm entre si justo e contratado o seguinte:
-
-CLÁUSULA PRIMEIRA – DO EMPRÉSTIMO
-O CREDOR empresta ao DEVEDOR a quantia de {{VALOR_EMPRESTIMO}} ({{VALOR_EXTENSO}}), neste ato recebida em moeda corrente nacional e para fins pessoais.
-
-CLÁUSULA SEGUNDA – DO PRAZO E PAGAMENTO
-O DEVEDOR se compromete a pagar o valor emprestado em {{NUMERO_PARCELAS}} parcelas mensais de {{VALOR_PARCELA}}, vencendo-se a primeira em {{DATA_PRIMEIRA_PARCELA}}.
-
-CLÁUSULA TERCEIRA – DOS JUROS REMUNERATÓRIOS
-Sobre o valor emprestado incidirão juros remuneratórios de {{TAXA_JUROS}}% ao mês, calculados de forma composta, conforme acordado.
-
-CLÁUSULA QUARTA – DA MORA E MULTA
-Em caso de atraso, incidirão:
-1. Multa de 2%;
-2. Juros de mora de 1% ao mês;
-3. Correção do saldo com os encargos.
-
-CLÁUSULA QUINTA – DAS GARANTIAS (SE APLICÁVEL)
-Se houver garantia, será descrita em anexo.
-
-CLÁUSULA SEXTA – DA NOTA PROMISSÓRIA
-O DEVEDOR assina nota promissória de {{VALOR_EMPRESTIMO}}, vencível em {{DATA_VENCIMENTO}}.
-
-CLÁUSULA SÉTIMA – DA RESCISÃO
-O inadimplemento autoriza vencimento antecipado da dívida.
-
-CLÁUSULA OITAVA – DO FORO
-Fica eleito o foro da comarca de {{COMARCA}}.
-
-{{LOCAL}}, {{DATA_CONTRATO}}.
-
-CREDOR: _________________________________________
-{{NOME_CREDOR}}
-
-DEVEDOR: ________________________________________
-{{NOME_DEVEDOR}}
-
-Testemunha 1: _____________________________________ CPF: _______________________
-
-Testemunha 2: _____________________________________ CPF: _______________________`;
-    }
-
-    // Função principal de importação com JSON intermediário
-    async importarDadosPDF(arquivo) {
-        try {
-            console.log('Iniciando importação do PDF...');
-            const dadosJson = await this.extrairDadosPDF(arquivo);
-            
-            console.log('JSON extraído do PDF:', dadosJson);
-            
-            // Aplicar dados usando JSON estruturado
-            this.aplicarDadosJson(dadosJson);
-            
-            this.fecharModalImportacao();
-            this.esconderErro();
-            this.showNotification('Dados do PDF importados com sucesso!', 'success');
-            
-        } catch (error) {
-            console.error('Erro detalhado ao importar PDF:', error);
-            this.showNotification('Erro ao importar dados do PDF: ' + error.message, 'error');
-        }
-    }
-    
-    // Função unificada para aplicar dados JSON
-    aplicarDadosJson(dadosJson) {
-        console.log('Aplicando dados JSON:', dadosJson);
-        
-        // Preencher campos básicos da simulação
-        if (dadosJson.simulacao) {
-            const sim = dadosJson.simulacao;
-            
-            if (sim.valor) {
-                this.valorField.value = sim.valor;
-                this.formatarMoeda(this.valorField);
-                console.log('Valor aplicado:', sim.valor);
-            }
-            
-            if (sim.parcelas) {
-                this.parcelasField.value = sim.parcelas;
-                console.log('Parcelas aplicadas:', sim.parcelas);
-            }
-            
-            if (sim.juros) {
-                this.taxaField.value = sim.juros;
-                console.log('Taxa aplicada:', sim.juros);
-            }
-            
-            if (sim.dataVencimentoInicial) {
-                this.dataInicialField.value = sim.dataVencimentoInicial;
-                console.log('Data inicial aplicada:', sim.dataVencimentoInicial);
-            }
-        }
-        
-        // Preencher dados do cliente
-        if (dadosJson.cliente) {
-            const cliente = dadosJson.cliente;
-            
-            if (cliente.nome && this.nomeClienteField) {
-                this.nomeClienteField.value = cliente.nome;
-                console.log('Nome aplicado:', cliente.nome);
-            }
-            
-            if (cliente.cpf && this.cpfClienteField) {
-                this.cpfClienteField.value = cliente.cpf;
-                this.formatarCpf(this.cpfClienteField);
-                console.log('CPF aplicado:', cliente.cpf);
-            }
-            
-            // Expandir formulário se há dados cadastrais
-            const temDadosCompletos = cliente.nome || cliente.cpf || cliente.dataNascimento;
-            if (temDadosCompletos) {
-                console.log('Expandindo formulário automaticamente...');
-                const toggleBtn = document.getElementById('formToggleBtn');
-                const formSection = document.getElementById('formCompleto');
-                
-                if (toggleBtn && formSection) {
-                    formSection.style.display = 'block';
-                    toggleBtn.textContent = '▲ DADOS COMPLETOS DO CLIENTE';
-                }
-                
-                // Preencher campos do formulário expandido
-                this.preencherFormularioCompleto(cliente);
-            }
-        }
-    }
-    
-    // Função para preencher formulário completo
-    preencherFormularioCompleto(cliente) {
-        const campos = {
-            'dataNascimento': cliente.dataNascimento,
-            'estadoCivil': cliente.estadoCivil,
-            'endereco': cliente.endereco,
-            'numero': cliente.numero,
-            'complemento': cliente.complemento,
-            'bairro': cliente.bairro,
-            'cidade': cliente.cidade,
-            'estado': cliente.estado,
-            'cep': cliente.cep,
-            'telefone': cliente.telefone,
-            'email': cliente.email,
-            'localTrabalho': cliente.localTrabalho,
-            'profissao': cliente.profissao,
-            'rendaMensal': cliente.rendaMensal,
-            'tempoEmprego': cliente.tempoEmprego,
-            'ref1Nome': cliente.ref1Nome,
-            'ref1Telefone': cliente.ref1Telefone,
-            'ref1Endereco': cliente.ref1Endereco,
-            'ref1Bairro': cliente.ref1Bairro,
-            'ref2Nome': cliente.ref2Nome,
-            'ref2Telefone': cliente.ref2Telefone,
-            'ref2Endereco': cliente.ref2Endereco,
-            'ref2Bairro': cliente.ref2Bairro
-        };
-        
-        Object.keys(campos).forEach(campo => {
-            const elemento = document.getElementById(campo);
-            if (elemento && campos[campo]) {
-                elemento.value = campos[campo];
-                
-                // Aplicar formatação específica se necessário
-                if (campo === 'telefone') {
-                    this.formatarTelefone(elemento);
-                } else if (campo === 'cep') {
-                    this.formatarCep(elemento);
-                } else if (campo === 'rendaMensal') {
-                    this.formatarMoeda(elemento);
-                }
-                
-                console.log(`Campo ${campo} preenchido:`, campos[campo]);
-            }
-        });
-    }
-
-    // Nova função para abrir modal de importação
-    abrirModalImportacao() {
-        const modal = document.getElementById('importModal');
-        if (modal) {
-            modal.style.display = 'flex';
-            // Resetar para aba PDF por padrão
-            this.selecionarAbaImportacao('pdf');
-        }
-    }
-    
-    fecharModalImportacao() {
-        const modal = document.getElementById('importModal');
-        if (modal) {
-            modal.style.display = 'none';
-            // Limpar campos com IDs corretos
-            const textarea = document.getElementById('textoFormulario');
-            const fileInput = document.getElementById('pdfFile');
-            if (textarea) textarea.value = '';
-            if (fileInput) fileInput.value = '';
-        }
-    }
-    
-    selecionarAbaImportacao(tipo) {
-        // Atualizar abas visuais
-        const tabPdf = document.getElementById('tabPdf');
-        const tabTexto = document.getElementById('tabTexto');
-        
-        if (tabPdf) tabPdf.classList.toggle('active', tipo === 'pdf');
-        if (tabTexto) tabTexto.classList.toggle('active', tipo === 'texto');
-        
-        // Mostrar seção correspondente
-        const secaoPdf = document.getElementById('secaoPdf');
-        const secaoTexto = document.getElementById('secaoTexto');
-        
-        if (secaoPdf) secaoPdf.style.display = tipo === 'pdf' ? 'block' : 'none';
-        if (secaoTexto) secaoTexto.style.display = tipo === 'texto' ? 'block' : 'none';
-        
-        // Atualizar texto do botão
-        const btnProcessar = document.getElementById('btnProcessarImportacao');
-        if (btnProcessar) {
-            btnProcessar.textContent = tipo === 'pdf' ? 'PROCESSAR PDF' : 'PROCESSAR TEXTO';
-        }
-    }
-    
-    processarImportacao() {
-        const abaAtiva = document.querySelector('.import-tab.active');
-        const tipo = abaAtiva ? abaAtiva.textContent.includes('PDF') ? 'pdf' : 'texto' : 'pdf';
-        
-        console.log('Processando importação, tipo:', tipo);
-        
-        if (tipo === 'pdf') {
-            const fileInput = document.getElementById('pdfFile');
-            const arquivo = fileInput?.files?.[0];
-            
-            console.log('Arquivo PDF selecionado:', arquivo?.name, arquivo?.type, arquivo?.size);
-            
-            if (!arquivo) {
-                this.showNotification('Selecione um arquivo PDF primeiro', 'error');
-                return;
-            }
-            
-            if (arquivo.type !== 'application/pdf') {
-                console.error('Tipo de arquivo inválido:', arquivo.type);
-                this.showNotification('Arquivo deve ser um PDF', 'error');
-                return;
-            }
-            
-            console.log('Iniciando importação do PDF...');
-            this.importarDadosPDF(arquivo);
-            
-        } else {
-            const textoInput = document.getElementById('textoFormulario');
-            const texto = textoInput?.value?.trim();
-            
-            console.log('Texto para processar:', texto?.substring(0, 100) + '...');
-            
-            if (!texto) {
-                this.showNotification('Cole o texto do formulário primeiro', 'error');
-                return;
-            }
-            
-            this.processarTextoFormulario(texto);
-        }
-    }
-    
-    processarTextoFormulario(texto) {
-        try {
-            console.log('Processando texto do formulário...');
-            
-            // Converter texto para JSON estruturado
-            const dadosJson = this.converterTextoParaJson(texto);
-            console.log('JSON gerado do texto:', dadosJson);
-            
-            // Aplicar dados usando mesma lógica do PDF
-            this.aplicarDadosJson(dadosJson);
-            
-            this.fecharModalImportacao();
-            this.showNotification('Dados do formulário importados com sucesso!', 'success');
-            
-        } catch (error) {
-            console.error('Erro ao processar texto:', error);
-            this.showNotification('Erro ao processar texto. Verifique o formato.', 'error');
-        }
-    }
-    
-    // Nova função para converter texto em JSON estruturado
-    converterTextoParaJson(texto) {
-        const dadosJson = {
-            simulacao: {},
-            cliente: {}
-        };
-        
-        console.log('Convertendo texto para JSON...');
-        
-        // Extrair dados da seção EMPRESTIMO (novo formato)
-        const secaoEmprestimo = texto.match(/EMPRESTIMO([\s\S]*?)(?=DADOS CADASTRAIS|$)/i);
-        if (secaoEmprestimo) {
-            const emprestimoTexto = secaoEmprestimo[1];
-            console.log('Seção empréstimo encontrada:', emprestimoTexto);
-            
-            const valorMatch = emprestimoTexto.match(/Valor:\s*R\$\s*([\d.,]+)/i);
-            if (valorMatch) {
-                dadosJson.simulacao.valor = valorMatch[1];
-                console.log('Valor extraído:', valorMatch[1]);
-            }
-            
-            const parcelasMatch = emprestimoTexto.match(/Parcelas:\s*(\d+)/i);
-            if (parcelasMatch) {
-                dadosJson.simulacao.parcelas = parcelasMatch[1];
-                console.log('Parcelas extraídas:', parcelasMatch[1]);
-            }
-            
-            const dataVencMatch = emprestimoTexto.match(/Data Venc\. Inicial:\s*([\d\/]*)/i);
-            if (dataVencMatch && dataVencMatch[1].trim()) {
-                dadosJson.simulacao.dataVencimentoInicial = dataVencMatch[1].trim();
-                console.log('Data vencimento extraída:', dataVencMatch[1]);
-            }
-        }
-        
-        // Extrair dados cadastrais do cliente
-        const dadosCliente = this.extrairDadosFormulario(texto);
-        dadosJson.cliente = {
-            nome: dadosCliente.nomeCliente,
-            cpf: dadosCliente.cpfCliente,
-            dataNascimento: dadosCliente.dataNascimento,
-            estadoCivil: dadosCliente.estadoCivil,
-            endereco: dadosCliente.endereco,
-            numero: dadosCliente.numero,
-            complemento: dadosCliente.complemento,
-            bairro: dadosCliente.bairro,
-            cidade: dadosCliente.cidade,
-            estado: dadosCliente.estado,
-            cep: dadosCliente.cep,
-            telefone: dadosCliente.telefone,
-            email: dadosCliente.email,
-            localTrabalho: dadosCliente.localTrabalho,
-            profissao: dadosCliente.profissao,
-            rendaMensal: dadosCliente.rendaMensal,
-            tempoEmprego: dadosCliente.tempoEmprego,
-            ref1Nome: dadosCliente.ref1Nome,
-            ref1Telefone: dadosCliente.ref1Telefone,
-            ref1Endereco: dadosCliente.ref1Endereco,
-            ref1Bairro: dadosCliente.ref1Bairro,
-            ref2Nome: dadosCliente.ref2Nome,
-            ref2Telefone: dadosCliente.ref2Telefone,
-            ref2Endereco: dadosCliente.ref2Endereco,
-            ref2Bairro: dadosCliente.ref2Bairro
-        };
-        
-        console.log('JSON final gerado:', dadosJson);
-        return dadosJson;
-    }
-    
-    extrairDadosFormulario(texto) {
-        const dados = {};
-        
-        // Mapeamento de campos do formulário para IDs dos elementos
-        const mapeamento = {
-            'Nome:': 'nomeCliente',
-            'CPF:': 'cpfCliente',
-            'Data nascimento:': 'dataNascimento',
-            'Estado Civil:': 'estadoCivil',
-            'Endereço:': 'endereco',
-            'Número:': 'numero',
-            'Complemento:': 'complemento',
-            'Bairro:': 'bairro',
-            'Cidade:': 'cidade',
-            'Estado:': 'estado',
-            'CEP:': 'cep',
-            'Telefone:': 'telefone',
-            'E-mail:': 'email',
-            'Local de trabalho:': 'localTrabalho',
-            'Profissão:': 'profissao',
-            'Renda Mensal:': 'rendaMensal',
-            'Tempo de emprego:': 'tempoEmprego'
-        };
-        
-        // Extrair dados usando regex
-        Object.keys(mapeamento).forEach(label => {
-            const regex = new RegExp(label.replace(':', ':\\s*') + '([^\\n]+)', 'i');
-            const match = texto.match(regex);
-            if (match && match[1].trim()) {
-                dados[mapeamento[label]] = match[1].trim();
-            }
-        });
-        
-        // Extrair referências (formato especial) - adaptado para novo template
-        const ref1Nome = texto.match(/1º REREFENCIA[\s\S]*?Nome:\s*([^\n]+)/i);
-        const ref1Telefone = texto.match(/1º REREFENCIA[\s\S]*?Telefone:\s*([^\n]+)/i);
-        const ref1Endereco = texto.match(/1º REREFENCIA[\s\S]*?Rua:\s*([^\n]+)/i);
-        const ref1Numero = texto.match(/1º REREFENCIA[\s\S]*?Numero:\s*([^\n]+)/i);
-        const ref1Bairro = texto.match(/1º REREFENCIA[\s\S]*?Bairro:\s*([^\n]+)/i);
-        
-        if (ref1Nome && ref1Nome[1].trim()) dados.ref1Nome = ref1Nome[1].trim();
-        if (ref1Telefone && ref1Telefone[1].trim()) dados.ref1Telefone = ref1Telefone[1].trim();
-        if (ref1Endereco && ref1Endereco[1].trim()) dados.ref1Endereco = ref1Endereco[1].trim();
-        if (ref1Numero && ref1Numero[1].trim()) dados.ref1Numero = ref1Numero[1].trim();
-        if (ref1Bairro && ref1Bairro[1].trim()) dados.ref1Bairro = ref1Bairro[1].trim();
-        
-        const ref2Nome = texto.match(/2º REFERENCIA[\s\S]*?Nome:\s*([^\n]+)/i);
-        const ref2Telefone = texto.match(/2º REFERENCIA[\s\S]*?Telefone:\s*([^\n]+)/i);
-        const ref2Endereco = texto.match(/2º REFERENCIA[\s\S]*?Rua:\s*([^\n]+)/i);
-        const ref2Numero = texto.match(/2º REFERENCIA[\s\S]*?Numero:\s*([^\n]+)/i);
-        const ref2Bairro = texto.match(/2º REFERENCIA[\s\S]*?Bairro:\s*([^\n]+)/i);
-        
-        if (ref2Nome && ref2Nome[1].trim()) dados.ref2Nome = ref2Nome[1].trim();
-        if (ref2Telefone && ref2Telefone[1].trim()) dados.ref2Telefone = ref2Telefone[1].trim();
-        if (ref2Endereco && ref2Endereco[1].trim()) dados.ref2Endereco = ref2Endereco[1].trim();
-        if (ref2Numero && ref2Numero[1].trim()) dados.ref2Numero = ref2Numero[1].trim();
-        if (ref2Bairro && ref2Bairro[1].trim()) dados.ref2Bairro = ref2Bairro[1].trim();
-        
-        // Mapear telefone diretamente
-        const telefoneFormulario = texto.match(/Telefone:\s*([^\n]+)/i);
-        if (telefoneFormulario && telefoneFormulario[1].trim()) {
-            dados.telefone = telefoneFormulario[1].trim();
-        }
-        
-        return dados;
-    }
-
-    // Função para extrair dados de PDF de simulação
-    async extrairDadosPDF(arquivo) {
-        try {
-            console.log('Iniciando extração do PDF...');
-            
-            // Verificar se a biblioteca PDF.js está disponível
-            if (typeof pdfjsLib === 'undefined') {
-                console.error('pdfjsLib não está definido');
-                throw new Error('Biblioteca PDF.js não carregada. Recarregue a página.');
-            }
-            
-            console.log('PDF.js disponível, lendo arquivo...');
-            
-            const arrayBuffer = await arquivo.arrayBuffer();
-            console.log('ArrayBuffer criado, tamanho:', arrayBuffer.byteLength);
-            
-            const loadingTask = pdfjsLib.getDocument({
-                data: arrayBuffer,
-                verbosity: 0 // Reduzir logs da biblioteca
-            });
-            
-            const pdf = await loadingTask.promise;
-            console.log(`PDF carregado com ${pdf.numPages} páginas`);
-            
-            let textoCompleto = '';
-            
-            // Extrair texto de todas as páginas
-            for (let i = 1; i <= pdf.numPages; i++) {
-                console.log(`Processando página ${i}...`);
-                const page = await pdf.getPage(i);
-                const textContent = await page.getTextContent();
-                const pageText = textContent.items.map(item => item.str).join(' ');
-                textoCompleto += pageText + '\n';
-                console.log(`Página ${i} - texto extraído (${pageText.length} caracteres)`);
-            }
-            
-            console.log('Texto completo extraído:', textoCompleto.substring(0, 500) + '...');
-            
-            // Extrair dados usando regex específicos
-            const dadosExtraidos = this.extrairDadosTexto(textoCompleto);
-            console.log('Dados extraídos do texto:', dadosExtraidos);
-            
-            return dadosExtraidos;
-            
-        } catch (error) {
-            console.error('Erro detalhado na extração PDF:', error);
-            throw new Error('Erro ao extrair dados do PDF: ' + error.message);
-        }
-    }
-    
-    extrairDadosTexto(texto) {
-        console.log('Extraindo dados do texto para JSON...');
-        
-        const dadosJson = {
-            simulacao: {},
-            cliente: {}
-        };
-        
-        // Extrair dados básicos de simulação do PDF gerado - ordem corrigida
-        const secaoDadosSimulacao = texto.match(/DADOS DA SIMULAÇÃO([\s\S]*?)(?=TABELA DE PARCELAS|$)/i);
-        
-        if (secaoDadosSimulacao) {
-            const dadosSimulacao = secaoDadosSimulacao[1];
-            console.log('Seção DADOS DA SIMULAÇÃO encontrada:', dadosSimulacao);
-            
-            const valorMatch = dadosSimulacao.match(/Valor do empréstimo:\s*R\$\s*([\d.,]+)/i);
-            if (valorMatch) {
-                dadosJson.simulacao.valor = valorMatch[1];
-                console.log('Valor extraído:', valorMatch[1]);
-            }
-            
-            const parcelasMatch = dadosSimulacao.match(/Número de parcelas:\s*(\d+)/i);
-            if (parcelasMatch) {
-                dadosJson.simulacao.parcelas = parcelasMatch[1];
-                console.log('Parcelas extraídas:', parcelasMatch[1]);
-            }
-            
-            const sistemaMatch = dadosSimulacao.match(/Sistema de juros:\s*([^\n\r]+)/i);
-            if (sistemaMatch) {
-                dadosJson.simulacao.sistemaJuros = sistemaMatch[1].trim();
-                console.log('Sistema de juros extraído:', sistemaMatch[1]);
-            }
-            
-            const taxaMatch = dadosSimulacao.match(/Taxa de juros:\s*([\d,]+)%/i);
-            if (taxaMatch) {
-                dadosJson.simulacao.juros = taxaMatch[1];
-                console.log('Taxa extraída:', taxaMatch[1]);
-            }
-        }
-        
-        // Extrair datas para calcular dias extras - melhorado
-        const dataSimulacaoMatch = texto.match(/Data da simulação:\s*([\d\/]+)/i);
-        
-        // Buscar primeiro vencimento na tabela - formato "01            DD/MM/AAAA"
-        const tabelaMatch = texto.match(/TABELA DE PARCELAS([\s\S]*?)$/i);
-        let primeiroVencimentoMatch = null;
-        
-        if (tabelaMatch) {
-            const tabelaTexto = tabelaMatch[1];
-            primeiroVencimentoMatch = tabelaTexto.match(/01\s+(\d{2}\/\d{2}\/\d{4})/);
-        }
-        
-        if (dataSimulacaoMatch && primeiroVencimentoMatch) {
-            const dataSimulacao = dataSimulacaoMatch[1];
-            const primeiroVencimento = primeiroVencimentoMatch[1];
-            
-            dados.dataEmprestimo = dataSimulacao;
-            dados.dataPrimeiraParcela = primeiroVencimento;
-            
-            // Calcular dias extras usando lógica correta
-            const [diaS, mesS, anoS] = dataSimulacao.split('/').map(Number);
-            const [diaV, mesV, anoV] = primeiroVencimento.split('/').map(Number);
-            
-            const dataSimulacaoObj = new Date(anoS, mesS - 1, diaS);
-            const proximoMes = new Date(anoS, mesS, diaS); // Mesmo dia, próximo mês
-            const primeiroVencimentoObj = new Date(anoV, mesV - 1, diaV);
-            
-            const diasExtras = Math.round((primeiroVencimentoObj - proximoMes) / (1000 * 60 * 60 * 24));
-            
-            if (diasExtras > 0) {
-                dados.diasExtras = diasExtras;
-            }
-        }
-        
-        // Extrair dados cadastrais específicos do PDF - usando estrutura de seções
-        const secaoDadosPessoais = texto.match(/DADOS PESSOAIS:([\s\S]*?)(?=DADOS PROFISSIONAIS:|1ª REFERÊNCIA:|$)/i);
-        const secaoDadosProfissionais = texto.match(/DADOS PROFISSIONAIS:([\s\S]*?)(?=1ª REFERÊNCIA:|$)/i);
-        const secaoRef1 = texto.match(/1ª REFERÊNCIA:([\s\S]*?)(?=2ª REFERÊNCIA:|$)/i);
-        const secaoRef2 = texto.match(/2ª REFERÊNCIA:([\s\S]*?)(?=$)/i);
-        
-        console.log('Seções encontradas:');
-        console.log('- DADOS PESSOAIS:', !!secaoDadosPessoais);
-        console.log('- DADOS PROFISSIONAIS:', !!secaoDadosProfissionais);
-        console.log('- 1ª REFERÊNCIA:', !!secaoRef1);
-        console.log('- 2ª REFERÊNCIA:', !!secaoRef2);
-        
-        if (secaoDadosPessoais) {
-            const dadosPessoais = secaoDadosPessoais[1];
-            console.log('Texto da seção DADOS PESSOAIS:', dadosPessoais);
-            
-            // Nome - regex mais específico
-            const nomeMatch = dadosPessoais.match(/Nome:\s*([^\n\r]+?)(?:\s*CPF:|$)/i);
-            if (nomeMatch) {
-                dadosJson.cliente.nome = nomeMatch[1].trim();
-                console.log('Nome extraído:', dadosJson.cliente.nome);
-            }
-            
-            // CPF - regex mais específico
-            const cpfMatch = dadosPessoais.match(/CPF:\s*([\d\.\-]+)(?:\s|$)/i);
-            if (cpfMatch) {
-                dadosJson.cliente.cpf = cpfMatch[1].trim();
-                console.log('CPF extraído:', dadosJson.cliente.cpf);
-            }
-            
-            // Data de nascimento
-            const nascimentoMatch = dadosPessoais.match(/Data de Nascimento:\s*([\d\/]+)/i);
-            if (nascimentoMatch) {
-                dadosJson.dataNascimento = nascimentoMatch[1].trim();
-                console.log('Data nascimento extraída:', dadosJson.dataNascimento);
-            }
-            
-            // Estado civil
-            const estadoCivilMatch = dadosPessoais.match(/Estado Civil:\s*([^\n\r]+?)(?:\s*Endereço:|$)/i);
-            if (estadoCivilMatch) {
-                dadosJson.estadoCivil = estadoCivilMatch[1].trim();
-                console.log('Estado civil extraído:', dadosJson.estadoCivil);
-            }
-            
-            // Endereço
-            const enderecoMatch = dadosPessoais.match(/Endereço:\s*([^\n\r]+?)(?:\s*Bairro:|$)/i);
-            if (enderecoMatch) {
-                dadosJson.endereco = enderecoMatch[1].trim();
-                console.log('Endereço extraído:', dadosJson.endereco);
-            }
-            
-            // Bairro
-            const bairroMatch = dadosPessoais.match(/Bairro:\s*([^\n\r]+?)(?:\s*Cidade:|$)/i);
-            if (bairroMatch) {
-                dadosJson.bairro = bairroMatch[1].trim();
-                console.log('Bairro extraído:', dadosJson.bairro);
-            }
-            
-            // Cidade
-            const cidadeMatch = dadosPessoais.match(/Cidade:\s*([^\n\r]+?)(?:\s*CEP:|$)/i);
-            if (cidadeMatch) {
-                dadosJson.cidade = cidadeMatch[1].trim();
-                console.log('Cidade extraída:', dadosJson.cidade);
-            }
-            
-            // CEP
-            const cepMatch = dadosPessoais.match(/CEP:\s*([\d\-]+)/i);
-            if (cepMatch) {
-                dadosJson.cep = cepMatch[1].trim();
-                console.log('CEP extraído:', dadosJson.cep);
-            }
-            
-            // Telefone
-            const telefoneMatch = dadosPessoais.match(/Telefone:\s*([^\n\r]+?)(?:\s*E-mail:|$)/i);
-            if (telefoneMatch) {
-                dadosJson.telefone = telefoneMatch[1].trim();
-                console.log('Telefone extraído:', dadosJson.telefone);
-            }
-            
-            // E-mail
-            const emailMatch = dadosPessoais.match(/E-mail:\s*([^\n\r]+)/i);
-            if (emailMatch) {
-                dadosJson.email = emailMatch[1].trim();
-                console.log('E-mail extraído:', dadosJson.email);
-            }
-        }
-        
-        if (secaoDadosProfissionais) {
-            const dadosProfissionais = secaoDadosProfissionais[1];
-            
-            const profissaoMatch = dadosProfissionais.match(/Profissão:\s*([^\n\r]+)/i);
-            if (profissaoMatch) dados.profissao = profissaoMatch[1].trim();
-            
-            const localTrabalhoMatch = dadosProfissionais.match(/Local de Trabalho:\s*([^\n\r]+)/i);
-            if (localTrabalhoMatch) dados.localTrabalho = localTrabalhoMatch[1].trim();
-            
-            const rendaMatch = dadosProfissionais.match(/Renda Mensal:\s*([^\n\r]+)/i);
-            if (rendaMatch) {
-                let rendaTexto = rendaMatch[1].trim();
-                // Remover R$ e espaços, manter apenas números e vírgulas/pontos
-                rendaTexto = rendaTexto.replace(/R\$/g, '').replace(/\s/g, '');
-                // Se tem vírgula como separador decimal, trocar por ponto
-                if (rendaTexto.includes(',') && !rendaTexto.includes('.')) {
-                    rendaTexto = rendaTexto.replace(',', '.');
-                } else if (rendaTexto.includes('.') && rendaTexto.includes(',')) {
-                    // Formato brasileiro: 1.234,56 -> 1234.56
-                    rendaTexto = rendaTexto.replace(/\./g, '').replace(',', '.');
-                }
-                dados.renda = rendaTexto;
-            }
-            
-            const tempoEmpregoMatch = dadosProfissionais.match(/Tempo de Emprego:\s*([^\n\r]+)/i);
-            if (tempoEmpregoMatch) dados.tempoEmprego = tempoEmpregoMatch[1].trim();
-        }
-        
-        if (secaoRef1) {
-            const ref1Texto = secaoRef1[1];
-            
-            const ref1NomeMatch = ref1Texto.match(/Nome:\s*([^\n\r]+)/i);
-            if (ref1NomeMatch) dados.ref1Nome = ref1NomeMatch[1].trim();
-            
-            const ref1TelefoneMatch = ref1Texto.match(/Telefone:\s*([^\n\r]+)/i);
-            if (ref1TelefoneMatch) dados.ref1Telefone = ref1TelefoneMatch[1].trim();
-            
-            const ref1EnderecoMatch = ref1Texto.match(/Endereço:\s*([^\n\r]+)/i);
-            if (ref1EnderecoMatch) dados.ref1Endereco = ref1EnderecoMatch[1].trim();
-            
-            const ref1BairroMatch = ref1Texto.match(/Bairro:\s*([^\n\r]+)/i);
-            if (ref1BairroMatch) dados.ref1Bairro = ref1BairroMatch[1].trim();
-        }
-        
-        if (secaoRef2) {
-            const ref2Texto = secaoRef2[1];
-            
-            const ref2NomeMatch = ref2Texto.match(/Nome:\s*([^\n\r]+)/i);
-            if (ref2NomeMatch) dados.ref2Nome = ref2NomeMatch[1].trim();
-            
-            const ref2TelefoneMatch = ref2Texto.match(/Telefone:\s*([^\n\r]+)/i);
-            if (ref2TelefoneMatch) dados.ref2Telefone = ref2TelefoneMatch[1].trim();
-            
-            const ref2EnderecoMatch = ref2Texto.match(/Endereço:\s*([^\n\r]+)/i);
-            if (ref2EnderecoMatch) dados.ref2Endereco = ref2EnderecoMatch[1].trim();
-            
-            const ref2BairroMatch = ref2Texto.match(/Bairro:\s*([^\n\r]+)/i);
-            if (ref2BairroMatch) dados.ref2Bairro = ref2BairroMatch[1].trim();
-        }
-        
-        console.log('Dados extraídos do texto (estrutura antiga):', dados);
-        
-        // Converter para estrutura JSON nova
-        const jsonFinal = {
-            simulacao: {
-                valor: dados.valor,
-                parcelas: dados.nParcelas,
-                juros: dados.juros,
-                dataVencimentoInicial: dados.dataEmprestimo
-            },
-            cliente: {
-                nome: dados.nomeCliente,
-                cpf: dados.cpfCliente,
-                dataNascimento: dados.dataNascimento,
-                estadoCivil: dados.estadoCivil,
-                endereco: dados.endereco,
-                numero: dados.numero,
-                complemento: dados.complemento,
-                bairro: dados.bairro,
-                cidade: dados.cidade,
-                estado: dados.estado,
-                cep: dados.cep,
-                telefone: dados.telefone,
-                email: dados.email,
-                localTrabalho: dados.localTrabalho,
-                profissao: dados.profissao,
-                rendaMensal: dados.rendaMensal,
-                tempoEmprego: dados.tempoEmprego,
-                ref1Nome: dados.ref1Nome,
-                ref1Telefone: dados.ref1Telefone,
-                ref1Endereco: dados.ref1Endereco,
-                ref1Bairro: dados.ref1Bairro,
-                ref2Nome: dados.ref2Nome,
-                ref2Telefone: dados.ref2Telefone,
-                ref2Endereco: dados.ref2Endereco,
-                ref2Bairro: dados.ref2Bairro
-            }
-        };
-        
-        console.log('JSON final extraído do PDF:', jsonFinal);
-        return jsonFinal;
-    }
-
-
-
-            
-            if (dados.ref2Endereco) {
-
-    aplicarModoLivreCompleto() {
-        if (this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras) {
-            this.limparErrosVisuais();
-        }
-    }
 }
 
-// Inicialização robusta com timeout para compatibilidade Replit preview
+// Inicializar aplicação com fallback
 let simulator;
 
 function initializeApp() {
     try {
-        window.simulator = new SimuladorEmprestimos();
-        simulator = window.simulator; // Para compatibilidade
-        return true;
+        simulator = new SimuladorEmprestimos();
+        console.log('Simulador inicializado com sucesso');
     } catch (error) {
-        // Log do erro para depuração
-        if (error.message.includes('Campo taxa de juros não encontrado')) {
-            // DOM ainda não está pronto, aguardar um pouco mais
-            if (document.readyState !== 'complete') {
-                return false;
-            }
-        }
-        throw error;
+        console.error('Erro ao inicializar simulador:', error);
+        // Tentar novamente após 500ms
+        setTimeout(initializeApp, 500);
     }
 }
 
-function tryInitialize() {
-    try {
-        const success = initializeApp();
-        if (!success && document.readyState !== 'complete') {
-            // Aguardar DOM completar se ainda não está pronto
-            window.addEventListener('load', tryInitialize, { once: true });
-        }
-    } catch (error) {
-        // Tentar novamente após timeout se necessário
-        setTimeout(tryInitialize, 500);
-    }
-}
-
-// Estratégia de inicialização simples e eficiente
+// Múltiplas estratégias de inicialização
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', tryInitialize);
+    document.addEventListener('DOMContentLoaded', initializeApp);
 } else {
-    // DOM já carregado, tentar imediatamente
-    tryInitialize();
+    initializeApp();
 }
 
+// Fallback adicional
+setTimeout(() => {
+    if (!simulator) {
+        console.log('Forçando inicialização...');
+        initializeApp();
+    }
+}, 1000);
 
+// Estratégia adicional: anexar event listener diretamente
+function forceAttachEventListener() {
+    const taxaField = document.getElementById('taxaJuros');
+    if (taxaField && !taxaField.hasAttribute('data-listener-attached')) {
+        taxaField.addEventListener('input', function(e) {
+            let valor = e.target.value.replace(/\D/g, '');
+            
+            if (valor.length > 4) {
+                valor = valor.substring(0, 4);
+            }
+            
+            if (valor === '' || valor === '0') {
+                e.target.value = '';
+                return;
+            }
 
+            valor = valor.replace(/^0+/, '') || '0';
 
+            if (valor.length === 1) {
+                e.target.value = `0,0${valor}`;
+                return;
+            }
+            if (valor.length === 2) {
+                e.target.value = `0,${valor}`;
+                return;
+            }
+            if (valor.length === 3) {
+                e.target.value = `${valor[0]},${valor.substring(1)}`;
+                return;
+            }
+            if (valor.length === 4) {
+                e.target.value = `${valor.substring(0, 2)},${valor.substring(2)}`;
+                return;
+            }
+        });
+        taxaField.setAttribute('data-listener-attached', 'true');
+        console.log('Event listener anexado diretamente ao campo taxaJuros');
+    }
+}
+
+// Tentar anexar em múltiplos momentos
+setTimeout(forceAttachEventListener, 100);
+setTimeout(forceAttachEventListener, 500);
+setTimeout(forceAttachEventListener, 1500);
 
 // Função para toggle de senha
 function togglePassword(fieldId) {
@@ -2922,21 +1934,5 @@ function togglePassword(fieldId) {
     } else {
         field.type = 'password';
         button.textContent = '●';
-    }
-}
-
-// Função para alternar seções expansíveis
-function toggleSection(sectionId) {
-    const section = document.getElementById(sectionId);
-    const toggle = document.getElementById(sectionId.replace('Section', 'Toggle'));
-    
-    if (section && toggle) {
-        if (section.style.display === 'none') {
-            section.style.display = 'block';
-            toggle.textContent = '▼';
-        } else {
-            section.style.display = 'none';
-            toggle.textContent = '▶';
-        }
     }
 }

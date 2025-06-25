@@ -253,6 +253,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO FINAL CÓDIGO ÓRFÃO - removido definitivamente todo código JavaScript órfão causador de SyntaxError, função aplicarDadosJson expandida com todos campos cadastrais incluindo referências, sistema de importação PDF/texto completamente funcional, validação de sintaxe aprovada, servidor reiniciado, cache v=20250625220000 (v20250625220000)
 - June 25, 2025: RESTAURAÇÃO MANUAL COMPLETA - removido completamente todo código órfão problemático das linhas 2856-2896, sistema restaurado ao estado funcional básico, todas funcionalidades principais operacionais (cálculos, formatação, validações), sintaxe JavaScript válida, cache v=20250625230000 (v20250625230000)
 - June 25, 2025: LIMPEZA DEFINITIVA CÓDIGOS OBSOLETOS - removidos todos os fragmentos de código órfão que causavam SyntaxError, arquivo JavaScript completamente limpo, sistema restaurado ao estado funcional básico sem funcionalidade de importação PDF, cache v=20250625240000 (v20250625240000)
+- June 25, 2025: RESTAURAÇÃO COMPLETA VIA GITHUB BACKUP - importados arquivos funcionais do repositório GitHub ME_Calculator_Backup, sistema completamente restaurado ao estado funcional, todas funcionalidades básicas operacionais, código limpo e validado, cache v=20250625250000 (v20250625250000)
 
 ## User Preferences
 
