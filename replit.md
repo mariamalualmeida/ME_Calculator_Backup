@@ -266,6 +266,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO EXIBIÇÃO AGRUPADA - removida exibição duplicada "Dias extras: | Juros extras:" da interface principal, detalhamento separado agora aparece no lugar correto, PDF calcula juros proporcionais apenas para dias extras reais (não soma total), análise financeira limpa sem informações duplicadas, cache v=20250625350000 (v20250625350000)
 - June 25, 2025: CORREÇÃO FINAL BASEADA EM PDF/SCREENSHOT - corrigida exibição principal para usar formatação separada em vez de valores agrupados, PDF agora calcula corretamente juros proporcionais apenas para dias extras (ex: 2 dias = R$ 100,00 de R$ 400,00 total), interface mostra detalhamento completo no local correto, cache v=20250625360000 (v20250625360000)
 - June 25, 2025: CORREÇÕES DEFINITIVAS APLICADAS - substituídas todas as 3 ocorrências de variáveis agrupadas pela função formatarInfoDiasExtras(), corrigidas 2 ocorrências no PDF para cálculo proporcional, removidas variáveis diasExtras/jurosExtras que causavam exibição agrupada, sistema agora funciona conforme especificado, cache v=20250625370000 (v20250625370000)
+- June 25, 2025: CORREÇÃO FINAL PDF JUROS PROPORCIONAIS - corrigidas as 2 ocorrências restantes no PDF que ainda usavam valor total, implementado cálculo proporcional apenas para dias extras reais, removida exibição quando não há dias extras da data, todas as 5 ocorrências da interface agora usam formatação separada, cache v=20250625380000 (v20250625380000)
 
 ## User Preferences
 
