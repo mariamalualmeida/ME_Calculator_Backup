@@ -91,6 +91,9 @@ class SimuladorEmprestimos {
             if (this.atualizarClassesModoLivre) {
                 this.atualizarClassesModoLivre();
             }
+            if (this.atualizarInformacoesParcelas) {
+                this.atualizarInformacoesParcelas();
+            }
         }, 100);
         
         return loadedConfig;
@@ -948,6 +951,33 @@ class SimuladorEmprestimos {
         
         limitesInfo.textContent = `Para ${nParcelas} ${textoParcel}, o juros mínimo é ${minimo}% e máximo ${maximo}%`;
         limitesInfo.style.display = 'block';
+    }
+
+    mostrarInformacaoParcelas() {
+        const parcelasInfo = document.getElementById('parcelasInfo');
+        if (!parcelasInfo) return;
+        
+        // Mostrar apenas se regras estiverem habilitadas
+        if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
+            parcelasInfo.style.display = 'none';
+            return;
+        }
+        
+        parcelasInfo.textContent = 'Você tem permissão para simulação entre 1 e 15 parcelas';
+        parcelasInfo.style.display = 'block';
+    }
+
+    atualizarInformacoesParcelas() {
+        const parcelasInfo = document.getElementById('parcelasInfo');
+        if (!parcelasInfo) return;
+        
+        // Esconder se modo livre está ativo
+        if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
+            parcelasInfo.style.display = 'none';
+        } else {
+            parcelasInfo.textContent = 'Você tem permissão para simulação entre 1 e 15 parcelas';
+            parcelasInfo.style.display = 'block';
+        }
     }
 
     validarCampos(valor, nParcelas, juros) {

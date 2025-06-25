@@ -279,6 +279,7 @@ SimuladorEmprestimos/
 - June 25, 2025: SINCRONIZAÇÃO COMPLETA ENTRE VERSÕES - portadas todas implementações recentes para versão Android (nomenclatura PDF, sistemas de juros configuráveis, cálculo preciso de dias, análise financeira, formulário completo), atualizados tutoriais com avisos de versão atualizada, unificadas funcionalidades entre Web/PWA e Android, cache v=20250625470000 (v20250625470000)
 - June 25, 2025: LIMITES PADRÃO ATUALIZADOS - configurações padrão agora incluem limitesPersonalizados com tabela completa de 1-15 parcelas em vez de null, garantindo que novos dispositivos sempre tenham os limites atuais definidos permanentemente no defaultConfig, cache v=20250625480000 (v20250625480000)
 - June 25, 2025: INFORMAÇÃO DE PARCELAS IMPLEMENTADA - adicionado event listener focus no campo número de parcelas que exibe "Permitidas de 1 a 15 parcelas" quando campo vazio, apenas para usuários com regras de limites habilitadas, função mostrarInformacaoParcelas() criada, cache v=20250625485000 (v20250625485000)
+- June 25, 2025: TEXTO FIXO DE PARCELAS ADICIONADO - criado elemento parcelasInfo abaixo do campo de parcelas exibindo "Você tem permissão para simulação entre 1 e 15 parcelas" para usuários com regras ativadas, integrado com sistema de modo livre, funções mostrarInformacaoParcelas() e atualizarInformacoesParcelas() implementadas, cache v=20250625490000 (v20250625490000)
 
 ## User Preferences
 
