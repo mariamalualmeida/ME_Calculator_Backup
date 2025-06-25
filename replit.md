@@ -234,6 +234,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÕES CRÍTICAS FINAIS - corrigidas funções faltantes (validarTodosOsCampos, exportarDadosJSON), PDF agora aceito corretamente, textarea limpa sem placeholder fixo, modal ajustado para largura adequada (600px), sistema funcionando completamente, cache v=20250625020000 (v20250625020000)
 - June 25, 2025: CORREÇÃO TEXTAREA E EXTRAÇÃO COMPLETA PDF - textarea agora aceita colar texto corretamente (removido "Dicionário"), implementada extração completa de dados cadastrais do PDF (nome, CPF, nascimento, estado civil, endereço, telefone, renda), formulário expande automaticamente quando dados cadastrais são importados, cache v=20250625030000 (v20250625030000)
 - June 25, 2025: CORREÇÃO CRÍTICA EXTRAÇÃO DE DADOS - unificada função extrairDadosTexto para mapear corretamente campos (valor→nParcelas→juros vs valor→parcelas→taxa), corrigida função importarDadosPDF para usar IDs corretos dos elementos DOM, processarTextoFormulario atualizada para preencher campos da tela principal e expandir formulário automaticamente, logs adicionados para debug, cache v=20250625040000 (v20250625040000)
+- June 25, 2025: REGEX OTIMIZADOS COM DADOS REAIS - corrigidos regex baseado nos dados fornecidos pelo usuário (PDF e texto), melhorada captura de campos específicos usando look-ahead para evitar captura excessiva, corrigido erro JavaScript "cpfMatch already declared", mapeamento telefone adicionado para formulário, cache v=20250625060000 (v20250625060000)
 
 ## User Preferences
 

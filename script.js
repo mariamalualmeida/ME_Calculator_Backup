@@ -2362,7 +2362,7 @@ Testemunha 2: _____________________________________ CPF: _______________________
             }
         });
         
-        // Extrair referências (formato especial)
+        // Extrair referências (formato especial) - corrigidos baseado nos dados reais
         const ref1Nome = texto.match(/1º REREFENCIA[\s\S]*?Nome:\s*([^\n]+)/i);
         const ref1Telefone = texto.match(/1º REREFENCIA[\s\S]*?Telefone:\s*([^\n]+)/i);
         const ref1Endereco = texto.match(/1º REREFENCIA[\s\S]*?Rua:\s*([^\n]+)/i);
@@ -2382,6 +2382,12 @@ Testemunha 2: _____________________________________ CPF: _______________________
         if (ref2Telefone && ref2Telefone[1].trim()) dados.ref2Telefone = ref2Telefone[1].trim();
         if (ref2Endereco && ref2Endereco[1].trim()) dados.ref2Endereco = ref2Endereco[1].trim();
         if (ref2Bairro && ref2Bairro[1].trim()) dados.ref2Bairro = ref2Bairro[1].trim();
+        
+        // Mapear telefone diretamente
+        const telefoneFormulario = texto.match(/Telefone:\s*([^\n]+)/i);
+        if (telefoneFormulario && telefoneFormulario[1].trim()) {
+            dados.telefone = telefoneFormulario[1].trim();
+        }
         
         return dados;
     }
@@ -2444,38 +2450,38 @@ Testemunha 2: _____________________________________ CPF: _______________________
             else if (sistema.includes('pro-rata')) dados.sistemaJuros = 'compostos-prorata';
         }
         
-        // Extrair dados cadastrais do cliente
-        const nomeMatch = texto.match(/Nome:?\s*([^\n\r]+)/i);
+        // Extrair dados cadastrais do cliente - melhorados baseado nos dados reais
+        const nomeMatch = texto.match(/Nome:\s*([^\n\r]+?)(?=\s*CPF:|$)/i);
         if (nomeMatch) {
             dados.nomeCliente = nomeMatch[1].trim();
         }
         
-        const cpfMatch = texto.match(/CPF:?\s*([\d.-]+)/i);
+        const cpfMatch = texto.match(/CPF:\s*([\d.-]+)/i);
         if (cpfMatch) {
             dados.cpfCliente = cpfMatch[1].trim();
         }
         
-        const nascimentoMatch = texto.match(/Data\s+nascimento:?\s*([\d\/]+)/i);
+        const nascimentoMatch = texto.match(/Data de? Nascimento:?\s*([\d\/]+)/i);
         if (nascimentoMatch) {
             dados.dataNascimento = nascimentoMatch[1].trim();
         }
         
-        const estadoCivilMatch = texto.match(/Estado\s+Civil:?\s*([^\n\r]+)/i);
+        const estadoCivilMatch = texto.match(/Estado Civil:\s*([^\n\r]+?)(?=\s*Endereço:|$)/i);
         if (estadoCivilMatch) {
             dados.estadoCivil = estadoCivilMatch[1].trim();
         }
         
-        const enderecoMatch = texto.match(/Endereço:?\s*([^\n\r]+)/i);
+        const enderecoMatch = texto.match(/Endereço:\s*([^\n\r]+?)(?=\s*Bairro:|Número:|$)/i);
         if (enderecoMatch) {
             dados.endereco = enderecoMatch[1].trim();
         }
         
-        const telefoneMatch = texto.match(/Telefone:?\s*([\d\s\(\)-]+)/i);
+        const telefoneMatch = texto.match(/Telefone:\s*([\d\s\(\)-]+)/i);
         if (telefoneMatch) {
             dados.telefone = telefoneMatch[1].trim();
         }
         
-        const rendaMatch = texto.match(/Renda:?\s*R?\$?\s*([\d.,]+)/i);
+        const rendaMatch = texto.match(/Renda Mensal:?\s*R?\$?\s*([\d.,]+)/i);
         if (rendaMatch) {
             dados.renda = rendaMatch[1].replace(/\./g, '').replace(',', '.');
         }
