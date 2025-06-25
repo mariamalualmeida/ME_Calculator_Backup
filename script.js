@@ -1875,6 +1875,10 @@ class SimuladorEmprestimos {
         const nomeCliente = document.getElementById('nomeCliente')?.value.trim() || '';
         const cpfCliente = document.getElementById('cpfCliente')?.value.trim() || '';
         
+        // Debug para verificar se está capturando os valores
+        console.log('Debug PDF - Nome capturado:', nomeCliente);
+        console.log('Debug PDF - CPF capturado:', cpfCliente);
+        
         // Limpar caracteres especiais para nome de arquivo (mantém espaços e pontos)
         const limparNome = (texto) => texto.replace(/[<>:"/\\|?*]/g, '_');
         
@@ -1886,12 +1890,16 @@ class SimuladorEmprestimos {
         
         if (nomeCliente && cpfCliente) {
             nomeArquivo = `${limparNome(nomeCliente)}_${limparNome(cpfCliente)}_Simulacao_emprestimo_${timestamp}`;
+            console.log('Debug PDF - Usando formato: nome + cpf');
         } else if (nomeCliente) {
             nomeArquivo = `${limparNome(nomeCliente)}_Simulacao_emprestimo_${timestamp}`;
+            console.log('Debug PDF - Usando formato: apenas nome');
         } else {
             nomeArquivo = `Simulacao_emprestimo_${timestamp}`;
+            console.log('Debug PDF - Usando formato: padrão');
         }
         
+        console.log('Debug PDF - Nome final do arquivo:', `${nomeArquivo}.pdf`);
         return `${nomeArquivo}.pdf`;
     }
 
