@@ -26,11 +26,10 @@ class SimuladorEmprestimos {
         };
 
         this.configuracoes = this.carregarConfiguracoes();
-        // Forçar reset do estado administrativo na inicialização
+        // SEGURANÇA: Forçar reset do estado administrativo na inicialização
         this.configuracoes.isAdmin = false;
+        this.salvarConfiguracoes(); // Persistir estado seguro
         
-        // CORREÇÃO CRÍTICA: Verificar consistência após carregar configurações
-        this.verificarConsistenciaEstado();
         this.initializeElements();
         this.setupEventListeners();
         this.focusInitialField();
@@ -70,46 +69,59 @@ class SimuladorEmprestimos {
             diasExtrasFixos: 0,
             exibirDetalhesModeLivre: true
         };
+        
         const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
         
-        // CORREÇÃO: Se não há admin logado, forçar regras habilitadas para consistência
+        // REFATORAÇÃO: Aplicar regras de consistência DURANTE o carregamento
+        // Garantir que regras só podem estar desabilitadas se admin está logado
         if (!loadedConfig.isAdmin && loadedConfig.desabilitarRegras) {
-            console.log('Debug - Admin não logado mas regras desabilitadas. Corrigindo para manter consistência.');
+            console.log('Debug - Consistência: Corrigindo regras desabilitadas sem admin logado');
             loadedConfig.desabilitarRegras = false;
-            // Salvar correção imediatamente
+            // Salvar correção imediatamente no localStorage
             localStorage.setItem('simulador_config', JSON.stringify(loadedConfig));
         }
         
+        // Configurações agora estão garantidamente consistentes
         this.configuracoes = loadedConfig;
-        // Aplicar tema e paleta na inicialização
+        
+        // Aplicar configurações visuais imediatamente
         this.aplicarTema(loadedConfig.themeMode);
         this.aplicarPaletaCores(loadedConfig.colorTheme);
         
-        // Configurar sistema de juros e regras de limite
-        setTimeout(() => {
-            const sistemaJurosSelect = document.getElementById('sistemaJuros');
-            if (sistemaJurosSelect) {
-                sistemaJurosSelect.value = loadedConfig.sistemaJuros;
-            }
-            
-            const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
-            if (desabilitarRegrasSelect) {
-                desabilitarRegrasSelect.value = loadedConfig.desabilitarRegras ? 'true' : 'false';
-            }
-        }, 100);
-        
-        // Aplicar classes de modo livre após carregar configurações
-        setTimeout(() => {
-            this.verificarConsistenciaEstado(); // Verificar antes de aplicar
-            if (this.atualizarClassesModoLivre) {
-                this.atualizarClassesModoLivre();
-            }
-            if (this.atualizarPlaceholderParcelas) {
-                this.atualizarPlaceholderParcelas();
-            }
-        }, 100);
+        // REFATORAÇÃO: Aplicar estado da UI imediatamente após carregamento
+        this.aplicarEstadoUI();
         
         return loadedConfig;
+    }
+    
+    aplicarEstadoUI() {
+        // Centralizar aplicação de estado visual baseado nas configurações carregadas
+        
+        // 1. Atualizar selects de configuração administrativa (se existirem)
+        const sistemaJurosSelect = document.getElementById('sistemaJuros');
+        if (sistemaJurosSelect) {
+            sistemaJurosSelect.value = this.configuracoes.sistemaJuros;
+        }
+        
+        const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
+        if (desabilitarRegrasSelect) {
+            desabilitarRegrasSelect.value = this.configuracoes.desabilitarRegras ? 'true' : 'false';
+        }
+        
+        // 2. Aplicar classes visuais baseadas no modo livre
+        this.atualizarClassesModoLivre();
+        
+        // 3. Atualizar placeholder baseado nas regras
+        this.atualizarPlaceholderParcelas();
+        
+        // 4. Aplicar validações visuais se necessário
+        this.aplicarValidacaoConfiguracoes();
+        
+        console.log('Debug - Estado UI aplicado baseado em configurações:', {
+            desabilitarRegras: this.configuracoes.desabilitarRegras,
+            isAdmin: this.configuracoes.isAdmin,
+            sistemaJuros: this.configuracoes.sistemaJuros
+        });
     }
 
     salvarConfiguracoes() {
@@ -844,9 +856,6 @@ class SimuladorEmprestimos {
         // Recarregar configurações mais recentes antes do cálculo
         this.carregarConfiguracoes();
         
-        // Verificar consistência após recarregar
-        this.verificarConsistenciaEstado();
-        
         // Verificar campos obrigatórios
         const valor = this.obterValorNumerico(this.valorEmprestimoField.value);
         const nParcelas = parseInt(this.numeroParcelasField.value) || 0;
@@ -1319,21 +1328,24 @@ class SimuladorEmprestimos {
 
 
 
-    // REFATORAÇÃO: Método separado para recarregar sem resetar sessão
-    recarregarConfiguracoesSemReset() {
-        const config = localStorage.getItem('simulador_config');
-        if (config) {
-            const loadedConfig = JSON.parse(config);
-            // Preservar estado de autenticação atual
-            const isAdminAtual = this.configuracoes.isAdmin;
-            this.configuracoes = { ...this.configuracoes, ...loadedConfig };
-            this.configuracoes.isAdmin = isAdminAtual;
-            
-            // Aplicar temas e configurações visuais
-            this.aplicarTema(this.configuracoes.themeMode);
-            this.aplicarPaletaCores(this.configuracoes.colorTheme);
-            this.atualizarClassesModoLivre();
+    atualizarPlaceholderParcelas() {
+        if (!this.numeroParcelasField) return;
+        
+        // Usar configurações já carregadas (não recarregar)
+        const modoLivreAtivo = this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras;
+        
+        if (modoLivreAtivo) {
+            this.numeroParcelasField.placeholder = "Quantidade de parcelas";
+        } else {
+            this.numeroParcelasField.placeholder = "Permitido: 1 a 15 parcelas";
         }
+        
+        console.log('Debug - Placeholder atualizado:', {
+            modoLivre: modoLivreAtivo,
+            placeholder: this.numeroParcelasField.placeholder,
+            isAdmin: this.configuracoes.isAdmin,
+            desabilitarRegras: this.configuracoes.desabilitarRegras
+        });
     }
 
     salvarConfiguracoesModal() {
@@ -1953,43 +1965,11 @@ class SimuladorEmprestimos {
         return `${nomeArquivo}.pdf`;
     }
 
-    verificarConsistenciaEstado() {
-        // CORREÇÃO: Garantir consistência entre regras e autenticação
-        if (!this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras) {
-            console.log('Debug - Corrigindo inconsistência: Admin não logado mas regras desabilitadas');
-            this.configuracoes.desabilitarRegras = false;
-            this.salvarConfiguracoes();
-            
-            // Aplicar correções visuais imediatamente
-            this.atualizarPlaceholderParcelas();
-            this.limparErrosVisuais();
-        }
-    }
-
     aplicarValidacaoConfiguracoes() {
-        // Verificar consistência antes de aplicar validações
-        this.verificarConsistenciaEstado();
-        
         // Limpar bordas vermelhas se modo livre estiver ativo
         if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
             this.limparErrosVisuais();
         }
-    }
-
-    aplicarModoLivreCompleto() {
-        // Verificar consistência primeiro
-        this.verificarConsistenciaEstado();
-        
-        // Aplicar validações
-        this.aplicarValidacaoConfiguracoes();
-        
-        // Depois aplicar classes visuais
-        this.atualizarClassesModoLivre();
-        
-        // Atualizar placeholder após aplicar configurações
-        setTimeout(() => {
-            this.atualizarPlaceholderParcelas();
-        }, 50);
     }
 
     formatarValorMonetario(valor) {

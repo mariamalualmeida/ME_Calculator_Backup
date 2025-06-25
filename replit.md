@@ -290,6 +290,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO COMPLETA PLACEHOLDER DINÂMICO - corrigidos values do HTML para "false/true", adicionadas verificações de elementos DOM, implementados timeouts para sincronização, placeholder agora muda corretamente entre "Permitido: 1 a 15 parcelas" e "Quantidade de parcelas", sincronizado Web/PWA e Android, cache v=20250625530000 (v20250625530000)
 - June 25, 2025: CORREÇÃO CRÍTICA CONSISTÊNCIA DE ESTADO - implementada verificação automática que força regras habilitadas quando admin não está logado, corrigido problema de bordas vermelhas e placeholder incorretos após reload do navegador, função verificarConsistenciaEstado() adicionada, sincronizado Web/PWA e Android, cache v=20250625535000 (v20250625535000)
 - June 25, 2025: CORREÇÃO DEFINITIVA VERIFICAÇÃO CONSISTÊNCIA - função verificarConsistenciaEstado() chamada em todos pontos críticos (inicialização, carregamento configurações, cálculo), reset forçado isAdmin=false na inicialização Android, verificação antes de aplicar validações visuais, problema de estado inconsistente resolvido definitivamente, cache v=20250625540000 (v20250625540000)
+- June 25, 2025: REFATORAÇÃO COMPLETA ARQUITETURA DE CONFIGURAÇÕES - carregarConfiguracoes() reformulado para aplicar consistência DURANTE carregamento, criada função aplicarEstadoUI() centralizada, eliminados timeouts e verificações múltiplas, modal fecha automaticamente e atualiza página após salvar, estado sempre consistente desde inicialização, cache v=20250625545000 (v20250625545000)
 
 ## User Preferences
 
