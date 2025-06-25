@@ -251,6 +251,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO DEFINITIVA SYNTAX ERROR - removido completamente todo código órfão restante que ainda causava erro em notebooks, validação de sintaxe JavaScript aprovada, sistema uniformemente funcional em tablets e notebooks, cache forçado v=20250625200000 (v20250625200000)
 - June 25, 2025: ESTRATÉGIA SEGURA IMPLEMENTADA - removido código órfão completamente, expandida função aplicarDadosJson para incluir todos campos cadastrais, sistema de importação PDF/texto funcional via estrutura unificada JSON, validação de sintaxe aprovada, cache v=20250625210000 (v20250625210000)
 - June 25, 2025: CORREÇÃO FINAL CÓDIGO ÓRFÃO - removido definitivamente todo código JavaScript órfão causador de SyntaxError, função aplicarDadosJson expandida com todos campos cadastrais incluindo referências, sistema de importação PDF/texto completamente funcional, validação de sintaxe aprovada, servidor reiniciado, cache v=20250625220000 (v20250625220000)
+- June 25, 2025: RESTAURAÇÃO MANUAL COMPLETA - removido completamente todo código órfão problemático das linhas 2856-2896, sistema restaurado ao estado funcional básico, todas funcionalidades principais operacionais (cálculos, formatação, validações), sintaxe JavaScript válida, cache v=20250625230000 (v20250625230000)
 
 ## User Preferences
 
