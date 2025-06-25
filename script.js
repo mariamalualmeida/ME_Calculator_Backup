@@ -2482,14 +2482,6 @@ Testemunha 2: _____________________________________ CPF: _______________________
         
         console.log('Dados extraídos do texto:', dados);
         return dados;
-        
-        // Extrair CPF
-        const cpfMatch = texto.match(/CPF:\s*([\d\.-]+)/i);
-        if (cpfMatch) {
-            dados.cpf = cpfMatch[1];
-        }
-        
-        return dados;
     }
     
     async importarDadosPDF(arquivo) {
