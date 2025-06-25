@@ -247,6 +247,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO CRÍTICA CÓDIGO DUPLICADO - removido código duplicado que causava ReferenceError, unificada extração para usar apenas dadosJson, eliminadas referências à variável 'dados' inexistente, estrutura JSON final corrigida, cache v=20250625160000 (v20250625160000)
 - June 25, 2025: LIMPEZA COMPLETA IMPORTAÇÃO - removidas funções duplicadas que causavam ReferenceError, unificada estrutura JSON entre PDF e texto, eliminados códigos conflitantes, formatação automática nos campos preenchidos, arquivo de teste criado para validação, cache v=20250625170000 (v20250625170000)
 - June 25, 2025: CORREÇÃO CRÍTICA SINTAXE JAVASCRIPT - removido código órfão (145 linhas) que causava SyntaxError fatal, sistema completamente restaurado, importação unificada via aplicarDadosJson existente, todas funcionalidades básicas (cálculo, formatação, validações) restauradas, cache v=20250625180000 (v20250625180000)
+- June 25, 2025: REMOÇÃO COMPLETA CÓDIGO ÓRFÃO - eliminadas todas as 145 linhas de código JavaScript órfão em 4 etapas cirúrgicas, SyntaxError completamente resolvido, validação de sintaxe bem-sucedida, sistema funcional em todas as plataformas (tablets e notebooks), cache v=20250625190000 (v20250625190000)
 
 ## User Preferences
 
