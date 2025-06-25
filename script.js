@@ -1272,11 +1272,22 @@ class SimuladorEmprestimos {
             this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
             this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').value === 'desabilitar';
             this.configuracoes.sistemaJuros = document.getElementById('sistemaJuros').value;
-            this.configuracoes.exibirDetalhesModeLivre = document.getElementById('exibirDetalhesModeLivre').value === 'true';
             
-            // Ajustes automáticos
-            this.configuracoes.ajusteMes31Dias = document.getElementById('ajusteMes31Dias').value === 'true';
-            this.configuracoes.diasExtrasFixos = parseInt(document.getElementById('diasExtrasFixos').value) || 0;
+            // Verificar se elementos existem antes de acessar
+            const exibirDetalhesElement = document.getElementById('exibirDetalhesModeLivre');
+            if (exibirDetalhesElement) {
+                this.configuracoes.exibirDetalhesModeLivre = exibirDetalhesElement.value === 'true';
+            }
+            
+            const ajusteMesElement = document.getElementById('ajusteMes31Dias');
+            if (ajusteMesElement) {
+                this.configuracoes.ajusteMes31Dias = ajusteMesElement.value === 'true';
+            }
+            
+            const diasExtrasElement = document.getElementById('diasExtrasFixos');
+            if (diasExtrasElement) {
+                this.configuracoes.diasExtrasFixos = parseInt(diasExtrasElement.value) || 0;
+            }
             
             // Salvar credenciais se alteradas
             const novoUsuario = document.getElementById('newAdminUser').value;
