@@ -2285,38 +2285,47 @@ Testemunha 2: _____________________________________ CPF: _______________________
     processarTextoFormulario(texto) {
         try {
             const dados = this.extrairDadosFormulario(texto);
+            console.log('Dados extraídos do formulário:', dados);
             
-            // Preencher campos se encontrados
-            if (dados.nome && this.nomeClienteField) {
-                this.nomeClienteField.value = dados.nome;
+            // Preencher campos básicos da tela principal
+            if (dados.nomeCliente) {
+                const nomeInput = document.getElementById('nomeCliente');
+                if (nomeInput) {
+                    nomeInput.value = dados.nomeCliente;
+                }
             }
             
-            if (dados.cpf && this.cpfClienteField) {
-                this.cpfClienteField.value = dados.cpf;
+            if (dados.cpfCliente) {
+                const cpfInput = document.getElementById('cpfCliente');
+                if (cpfInput) {
+                    cpfInput.value = dados.cpfCliente;
+                }
             }
             
-            // Expandir formulário completo e preencher dados
-            const toggleBtn = document.getElementById('toggleFormCompleto');
-            const formSection = document.getElementById('dadosCompletoSection');
-            
-            if (toggleBtn && formSection && (dados.nome || dados.cpf)) {
-                formSection.style.display = 'block';
-                toggleBtn.textContent = '▲ DADOS COMPLETOS DO CLIENTE';
+            // Expandir formulário completo se há dados cadastrais
+            if (dados.nomeCliente || dados.cpfCliente || Object.keys(dados).length > 0) {
+                const formToggleBtn = document.getElementById('formToggleBtn');
+                const formCompleto = document.getElementById('formCompleto');
+                
+                if (formToggleBtn && formCompleto && formCompleto.style.display === 'none') {
+                    this.toggleFormularioCompleto();
+                }
                 
                 // Preencher todos os campos encontrados
                 Object.keys(dados).forEach(campo => {
                     const elemento = document.getElementById(campo);
                     if (elemento && dados[campo]) {
+                        console.log(`Preenchendo campo ${campo} com valor:`, dados[campo]);
                         elemento.value = dados[campo];
                     }
                 });
             }
             
-            this.esconderErro();
             this.showNotification('Dados do formulário importados com sucesso!', 'success');
             
         } catch (error) {
-            this.mostrarErro('ERRO AO PROCESSAR TEXTO. VERIFIQUE O FORMATO.');
+            console.error('Erro ao processar texto:', error);
+            this.showNotification('Erro ao processar texto. Verifique o formato.', 'error');
         }
     }
     
@@ -2410,44 +2419,69 @@ Testemunha 2: _____________________________________ CPF: _______________________
     extrairDadosTexto(texto) {
         const dados = {};
         
-        // Extrair valor do empréstimo
-        const valorMatch = texto.match(/Valor do empréstimo:\s*R\$\s*([\d\.,]+)/i);
+        // Extrair dados básicos de simulação
+        const valorMatch = texto.match(/Valor do empréstimo:?\s*R?\$?\s*([\d.,]+)/i);
         if (valorMatch) {
             dados.valor = valorMatch[1].replace(/\./g, '').replace(',', '.');
         }
         
-        // Extrair taxa de juros (sequência corrigida)
-        const taxaMatch = texto.match(/Taxa de juros:\s*([\d,]+)%/i);
+        const taxaMatch = texto.match(/Taxa de juros:?\s*([\d,]+)%?/i);
         if (taxaMatch) {
-            dados.taxa = taxaMatch[1].replace(',', '.');
+            dados.juros = taxaMatch[1];
         }
         
-        // Extrair número de parcelas
-        const parcelasMatch = texto.match(/Número de parcelas:\s*(\d+)/i);
+        const parcelasMatch = texto.match(/Número de parcelas:?\s*(\d+)/i);
         if (parcelasMatch) {
-            dados.parcelas = parcelasMatch[1];
+            dados.nParcelas = parcelasMatch[1];
         }
         
-        // Extrair sistema de juros
-        const sistemaMatch = texto.match(/Sistema de juros:\s*([^\n]+)/i);
+        const sistemaMatch = texto.match(/Sistema de juros:?\s*([^:\n]+)/i);
         if (sistemaMatch) {
-            const sistemaTexto = sistemaMatch[1].trim();
-            if (sistemaTexto.includes('Juros Simples')) {
-                dados.sistema = 'simples';
-            } else if (sistemaTexto.includes('Juros Compostos Diários')) {
-                dados.sistema = 'compostos-diarios';
-            } else if (sistemaTexto.includes('Pro-rata Real')) {
-                dados.sistema = 'pro-rata-real';
-            } else {
-                dados.sistema = 'compostos-mensal';
-            }
+            const sistema = sistemaMatch[1].trim().toLowerCase();
+            if (sistema.includes('simples')) dados.sistemaJuros = 'simples';
+            else if (sistema.includes('diários')) dados.sistemaJuros = 'compostos-diarios';
+            else if (sistema.includes('mensais')) dados.sistemaJuros = 'compostos-mensal';
+            else if (sistema.includes('pro-rata')) dados.sistemaJuros = 'compostos-prorata';
         }
         
-        // Extrair nome do cliente
-        const nomeMatch = texto.match(/Nome:\s*([^\n]+)/i);
+        // Extrair dados cadastrais do cliente
+        const nomeMatch = texto.match(/Nome:?\s*([^\n\r]+)/i);
         if (nomeMatch) {
-            dados.nome = nomeMatch[1].trim();
+            dados.nomeCliente = nomeMatch[1].trim();
         }
+        
+        const cpfMatch = texto.match(/CPF:?\s*([\d.-]+)/i);
+        if (cpfMatch) {
+            dados.cpfCliente = cpfMatch[1].trim();
+        }
+        
+        const nascimentoMatch = texto.match(/Data\s+nascimento:?\s*([\d\/]+)/i);
+        if (nascimentoMatch) {
+            dados.dataNascimento = nascimentoMatch[1].trim();
+        }
+        
+        const estadoCivilMatch = texto.match(/Estado\s+Civil:?\s*([^\n\r]+)/i);
+        if (estadoCivilMatch) {
+            dados.estadoCivil = estadoCivilMatch[1].trim();
+        }
+        
+        const enderecoMatch = texto.match(/Endereço:?\s*([^\n\r]+)/i);
+        if (enderecoMatch) {
+            dados.endereco = enderecoMatch[1].trim();
+        }
+        
+        const telefoneMatch = texto.match(/Telefone:?\s*([\d\s\(\)-]+)/i);
+        if (telefoneMatch) {
+            dados.telefone = telefoneMatch[1].trim();
+        }
+        
+        const rendaMatch = texto.match(/Renda:?\s*R?\$?\s*([\d.,]+)/i);
+        if (rendaMatch) {
+            dados.renda = rendaMatch[1].replace(/\./g, '').replace(',', '.');
+        }
+        
+        console.log('Dados extraídos do texto:', dados);
+        return dados;
         
         // Extrair CPF
         const cpfMatch = texto.match(/CPF:\s*([\d\.-]+)/i);
@@ -2462,45 +2496,111 @@ Testemunha 2: _____________________________________ CPF: _______________________
         try {
             const dados = await this.extrairDadosPDF(arquivo);
             
-            // Preencher campos principais
+            if (Object.keys(dados).length === 0) {
+                this.showNotification('Nenhum dado válido encontrado no PDF.', 'warning');
+                return;
+            }
+            
+            // Preencher campos básicos
             if (dados.valor) {
-                this.valorEmprestimoField.value = this.formatarValorMonetario(parseFloat(dados.valor));
-            }
-            
-            if (dados.parcelas) {
-                this.numeroParcelasField.value = dados.parcelas;
-            }
-            
-            if (dados.taxa) {
-                this.taxaJurosField.value = dados.taxa.replace('.', ',');
-            }
-            
-            // Preencher dados do cliente se disponíveis
-            if (dados.nome && this.nomeClienteField) {
-                this.nomeClienteField.value = dados.nome;
-            }
-            
-            if (dados.cpf && this.cpfClienteField) {
-                this.cpfClienteField.value = dados.cpf;
-            }
-            
-            // Atualizar sistema de juros nas configurações se for admin
-            if (dados.sistema && this.configuracoes.isAdmin) {
-                this.configuracoes.sistemaJuros = dados.sistema;
-                this.salvarConfiguracoes();
-                
-                // Atualizar select se estiver visível
-                const sistemaSelect = document.getElementById('sistemaJuros');
-                if (sistemaSelect) {
-                    sistemaSelect.value = dados.sistema;
+                const valorInput = document.getElementById('valor');
+                if (valorInput) {
+                    valorInput.value = this.formatarValorMonetario(parseFloat(dados.valor));
                 }
             }
             
-            this.esconderErro();
-            this.showNotification('Dados do PDF importados com sucesso!', 'success');
+            if (dados.nParcelas) {
+                const parcelasInput = document.getElementById('nParcelas');
+                if (parcelasInput) {
+                    parcelasInput.value = dados.nParcelas;
+                }
+            }
+            
+            if (dados.juros) {
+                const jurosInput = document.getElementById('juros');
+                if (jurosInput) {
+                    jurosInput.value = dados.juros.replace('.', ',');
+                }
+            }
+            
+            // Preencher dados cadastrais se encontrados
+            if (dados.nomeCliente) {
+                const nomeInput = document.getElementById('nomeCliente');
+                if (nomeInput) {
+                    nomeInput.value = dados.nomeCliente;
+                }
+            }
+            
+            if (dados.cpfCliente) {
+                const cpfInput = document.getElementById('cpfCliente');
+                if (cpfInput) {
+                    cpfInput.value = dados.cpfCliente;
+                }
+            }
+            
+            if (dados.dataNascimento) {
+                const nascimentoInput = document.getElementById('dataNascimento');
+                if (nascimentoInput) {
+                    nascimentoInput.value = dados.dataNascimento;
+                }
+            }
+            
+            if (dados.estadoCivil) {
+                const estadoCivilSelect = document.getElementById('estadoCivil');
+                if (estadoCivilSelect) {
+                    const opcoes = {
+                        'solteiro': 'solteiro',
+                        'solteira': 'solteiro', 
+                        'casado': 'casado',
+                        'casada': 'casado',
+                        'divorciado': 'divorciado',
+                        'divorciada': 'divorciado',
+                        'viúvo': 'viuvo',
+                        'viúva': 'viuvo',
+                        'viuvo': 'viuvo'
+                    };
+                    const estadoLower = dados.estadoCivil.toLowerCase();
+                    if (opcoes[estadoLower]) {
+                        estadoCivilSelect.value = opcoes[estadoLower];
+                    }
+                }
+            }
+            
+            if (dados.endereco) {
+                const enderecoInput = document.getElementById('endereco');
+                if (enderecoInput) {
+                    enderecoInput.value = dados.endereco;
+                }
+            }
+            
+            if (dados.telefone) {
+                const telefoneInput = document.getElementById('telefone');
+                if (telefoneInput) {
+                    telefoneInput.value = dados.telefone;
+                }
+            }
+            
+            if (dados.renda) {
+                const rendaInput = document.getElementById('renda');
+                if (rendaInput) {
+                    rendaInput.value = this.formatarValorMonetario(parseFloat(dados.renda));
+                }
+            }
+            
+            // Se há dados cadastrais, expandir automaticamente o formulário
+            if (dados.nomeCliente || dados.cpfCliente || dados.dataNascimento) {
+                const formToggleBtn = document.getElementById('formToggleBtn');
+                const formCompleto = document.getElementById('formCompleto');
+                if (formToggleBtn && formCompleto && formCompleto.style.display === 'none') {
+                    this.toggleFormularioCompleto();
+                }
+            }
+            
+            this.showNotification('Dados importados com sucesso do PDF!', 'success');
             
         } catch (error) {
-            this.mostrarErro('ERRO AO IMPORTAR PDF. VERIFIQUE SE O ARQUIVO É VÁLIDO.');
+            console.error('Erro na importação PDF:', error);
+            this.showNotification('Erro ao importar dados do PDF.', 'error');
         }
     }
 

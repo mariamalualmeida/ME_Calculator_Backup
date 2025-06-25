@@ -233,6 +233,7 @@ SimuladorEmprestimos/
 - June 25, 2025: IMPLEMENTADO MODAL COMPLETO DE IMPORTAÇÃO - criado sistema de abas (PDF/TEXTO), interface com drag-and-drop para PDF, textarea para colar formulários estruturados, extração automática de dados cadastrais completos incluindo referências, mapeamento inteligente de campos, workflow otimizado para múltiplas fontes de dados, cache v=20250625000000 (v20250625000000)
 - June 25, 2025: CORREÇÕES CRÍTICAS FINAIS - corrigidas funções faltantes (validarTodosOsCampos, exportarDadosJSON), PDF agora aceito corretamente, textarea limpa sem placeholder fixo, modal ajustado para largura adequada (600px), sistema funcionando completamente, cache v=20250625020000 (v20250625020000)
 - June 25, 2025: CORREÇÃO TEXTAREA E EXTRAÇÃO COMPLETA PDF - textarea agora aceita colar texto corretamente (removido "Dicionário"), implementada extração completa de dados cadastrais do PDF (nome, CPF, nascimento, estado civil, endereço, telefone, renda), formulário expande automaticamente quando dados cadastrais são importados, cache v=20250625030000 (v20250625030000)
+- June 25, 2025: CORREÇÃO CRÍTICA EXTRAÇÃO DE DADOS - unificada função extrairDadosTexto para mapear corretamente campos (valor→nParcelas→juros vs valor→parcelas→taxa), corrigida função importarDadosPDF para usar IDs corretos dos elementos DOM, processarTextoFormulario atualizada para preencher campos da tela principal e expandir formulário automaticamente, logs adicionados para debug, cache v=20250625040000 (v20250625040000)
 
 ## User Preferences
 
