@@ -206,7 +206,7 @@ fun SimuladorEmprestimosScreen(
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { 
                             Text(
-                                if (configuracoes.desabilitarRegras && configuracoes.isAdmin) {
+                                if (configuracoes.desabilitarRegras) {
                                     "Quantidade de parcelas"
                                 } else {
                                     "Permitido: 1 a 15 parcelas"

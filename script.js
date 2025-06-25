@@ -312,13 +312,6 @@ class SimuladorEmprestimos {
             });
         }
 
-        const saveCredentialsBtn = document.getElementById('saveCredentialsBtn');
-        if (saveCredentialsBtn) {
-            saveCredentialsBtn.addEventListener('click', () => {
-                this.salvarCredenciaisAdmin();
-            });
-        }
-
         // Listener para detectar mudanças no localStorage (sincronização entre abas)
         window.addEventListener('storage', (e) => {
             if (e.key === 'simulador-configuracoes') {
@@ -1026,8 +1019,8 @@ class SimuladorEmprestimos {
             juros: juros
         });
         
-        // Verificar se regras estão desabilitadas para admin
-        if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
+        // Verificar se regras estão desabilitadas (independente de login)
+        if (this.configuracoes.desabilitarRegras) {
             console.log('Debug - Modo livre ativo, pulando validações');
             
             // Aplicar classe para desabilitar borda vermelha no modo livre
