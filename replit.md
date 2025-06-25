@@ -270,6 +270,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO COMPLETA TODOS OS PROBLEMAS - corrigido cálculo de dias extras (removido Math.abs para calcular corretamente 5 dias), aplicado cálculo proporcional no PDF (juros apenas dos dias extras), substituídas últimas 2 ocorrências agrupadas na interface pela formatação separada, sistema agora funciona corretamente, cache v=20250625390000 (v20250625390000)
 - June 25, 2025: CORREÇÕES APLICADAS COM CONTEXTO ESPECÍFICO - removido Math.abs do cálculo de dias extras (linha 903), corrigidas 2 ocorrências da interface com contexto único (linhas 1060-1064 e 1075-1079), aplicado cálculo proporcional no PDF (linha 1686-1691), forçado cache bust v=20250625400000, sistema corrigido definitivamente (v20250625400000)
 - June 25, 2025: CORREÇÃO CRÍTICA CÁLCULO DIAS EXTRAS - removido Math.abs() e const duplicado da variável diasExtra (linha 863), corrigido cálculo para mostrar 5 dias corretos em vez de 4, testado cenário 25/06→30/07, cache v=20250625410000 (v20250625410000)
+- June 25, 2025: IMPLEMENTAÇÃO CÁLCULO PRECISO DE DIAS - substituído cálculo baseado em milissegundos/horários por cálculo puro de componentes de data (ano/mês/dia), eliminando problemas de timezone e arredondamento, nova função calcularDiferencaDias() garante precisão total, cache v=20250625420000 (v20250625420000)
 
 ## User Preferences
 

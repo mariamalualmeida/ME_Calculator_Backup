@@ -855,9 +855,8 @@ class SimuladorEmprestimos {
             const dataNormalPrimeiraParcela = new Date(dataSimulacao);
             dataNormalPrimeiraParcela.setDate(dataNormalPrimeiraParcela.getDate() + 30);
             
-            // Calcular diferença entre data solicitada e data normal
-            const diffTime = dataInicial.getTime() - dataNormalPrimeiraParcela.getTime();
-            diasExtrasData = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            // Calcular diferença usando apenas componentes de data (sem horário)
+            diasExtrasData = this.calcularDiferencaDias(dataInicial, dataNormalPrimeiraParcela);
         }
         
         // Aplicar ajuste automático para meses de 31 dias
@@ -1970,6 +1969,28 @@ class SimuladorEmprestimos {
     }
 
     // Nova função para formatar informações de dias extras separadamente com juros individuais
+    calcularDiferencaDias(dataFinal, dataInicial) {
+        // Extrair componentes de data sem considerar horário
+        const anoFinal = dataFinal.getFullYear();
+        const mesFinal = dataFinal.getMonth();
+        const diaFinal = dataFinal.getDate();
+        
+        const anoInicial = dataInicial.getFullYear();
+        const mesInicial = dataInicial.getMonth();
+        const diaInicial = dataInicial.getDate();
+        
+        // Criar datas zeradas (sem horário)
+        const dataFinalZerada = new Date(anoFinal, mesFinal, diaFinal);
+        const dataInicialZerada = new Date(anoInicial, mesInicial, diaInicial);
+        
+        // Calcular diferença em milissegundos e converter para dias
+        const diferencaMs = dataFinalZerada.getTime() - dataInicialZerada.getTime();
+        const diferencaDias = diferencaMs / (1000 * 60 * 60 * 24);
+        
+        // Retorna diferença exata em dias (sempre inteiro)
+        return Math.round(diferencaDias);
+    }
+
     formatarInfoDiasExtras(diasExtrasData, diasCompensacao, diasMeses31, resultadoCalculo) {
         const infos = [];
         
