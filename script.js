@@ -2549,7 +2549,19 @@ Testemunha 2: _____________________________________ CPF: _______________________
             if (localTrabalhoMatch) dados.localTrabalho = localTrabalhoMatch[1].trim();
             
             const rendaMatch = dadosProfissionais.match(/Renda Mensal:\s*([^\n\r]+)/i);
-            if (rendaMatch) dados.renda = rendaMatch[1].replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+            if (rendaMatch) {
+                let rendaTexto = rendaMatch[1].trim();
+                // Remover R$ e espaços, manter apenas números e vírgulas/pontos
+                rendaTexto = rendaTexto.replace(/R\$/g, '').replace(/\s/g, '');
+                // Se tem vírgula como separador decimal, trocar por ponto
+                if (rendaTexto.includes(',') && !rendaTexto.includes('.')) {
+                    rendaTexto = rendaTexto.replace(',', '.');
+                } else if (rendaTexto.includes('.') && rendaTexto.includes(',')) {
+                    // Formato brasileiro: 1.234,56 -> 1234.56
+                    rendaTexto = rendaTexto.replace(/\./g, '').replace(',', '.');
+                }
+                dados.renda = rendaTexto;
+            }
             
             const tempoEmpregoMatch = dadosProfissionais.match(/Tempo de Emprego:\s*([^\n\r]+)/i);
             if (tempoEmpregoMatch) dados.tempoEmprego = tempoEmpregoMatch[1].trim();
@@ -2782,6 +2794,9 @@ Testemunha 2: _____________________________________ CPF: _______________________
                 const ref2BairroInput = document.getElementById('ref2Bairro');
                 if (ref2BairroInput) ref2BairroInput.value = dados.ref2Bairro;
             }
+            
+            // Debug: mostrar dados extraídos
+            console.log('Dados extraídos do PDF:', dados);
             
             // Se há dados cadastrais, expandir automaticamente o formulário
             if (dados.nomeCliente || dados.cpfCliente || dados.dataNascimento) {
