@@ -1705,11 +1705,11 @@ class SimuladorEmprestimos {
                     }
                     doc.setFont('helvetica', 'normal');
                     doc.setFontSize(12);
-                    // Mostrar apenas dias extras da data (não compensação nem meses 31)
+                    // Mostrar apenas dias extras da data com juros proporcionais (não compensação nem meses 31)
                     if (resultadoCalculo.diasExtrasData > 0) {
-                        doc.text(`(Dias extras: ${resultadoCalculo.diasExtrasData} | Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
-                    } else {
-                        doc.text(`(Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
+                        const totalDias = (resultadoCalculo.diasExtrasData || 0) + (resultadoCalculo.diasCompensacao || 0) + (resultadoCalculo.diasMeses31 || 0);
+                        const jurosExtrasReais = totalDias > 0 ? (resultadoCalculo.jurosDiasExtras * resultadoCalculo.diasExtrasData) / totalDias : 0;
+                        doc.text(`(Dias extras: ${resultadoCalculo.diasExtrasData} | Juros: R$ ${jurosExtrasReais.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
                     }
                     yInicial += 12;
                     doc.setFont('helvetica', 'bold');
