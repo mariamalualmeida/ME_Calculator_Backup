@@ -846,6 +846,9 @@ class SimuladorEmprestimos {
         const dataSimulacao = new Date();
         const dataInicial = this.parseData(this.dataInicialField.value);
         let diasExtra = 0;
+        
+        // Adicionar dias extras fixos das configurações
+        diasExtra += this.configuracoes.diasExtrasFixos || 0;
 
         if (dataInicial) {
             // Data normal da primeira parcela seria 30 dias após o empréstimo
@@ -854,7 +857,12 @@ class SimuladorEmprestimos {
             
             // Calcular diferença entre data solicitada e data normal
             const diffTime = dataInicial.getTime() - dataNormalPrimeiraParcela.getTime();
-            diasExtra = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            diasExtra += Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        }
+        
+        // Aplicar ajuste automático para meses de 31 dias
+        if (this.configuracoes.ajusteMes31Dias) {
+            diasExtra += this.calcularAjusteMes31Dias(nParcelas);
         }
 
         // IGPM mensal (anual dividido por 12)
@@ -1072,6 +1080,11 @@ class SimuladorEmprestimos {
                 </div>
                 <strong>${nParcelas} ${textoParcel}</strong> ${valorFormatado}
             `;
+        }
+
+        // Exibir detalhes no modo livre se habilitado
+        if (this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras && this.configuracoes.exibirDetalhesModeLivre) {
+            this.exibirDetalhesModeLivre(valorEmprestimo, nParcelas, juros, resultadoCalculo);
         }
 
         // Salvar dados para o PDF

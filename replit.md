@@ -257,6 +257,7 @@ SimuladorEmprestimos/
 - June 25, 2025: IMPLEMENTAÇÃO COMPLETA DAS MELHORIAS SOLICITADAS - adicionadas configurações administrativas para ajuste automático de meses 31 dias, dias extras fixos configuráveis, exibição de detalhes no modo livre com análise financeira (lucro, margem), reorganização do painel administrativo em seções expansíveis, melhorias no PDF exportado com informações detalhadas do modo livre, cache v=20250625260000 (v20250625260000)
 - June 25, 2025: CORREÇÃO CRÍTICA ELEMENTOS FALTANTES - adicionados elementos HTML obrigatórios (exibirDetalhesModeLivre, ajusteMes31Dias, diasExtrasFixos) no painel administrativo, implementadas verificações de segurança para evitar erros null, corrigida integração das novas funcionalidades nos cálculos e resultados, cache v=20250625270000 (v20250625270000)
 - June 25, 2025: CORREÇÃO TEXTO ANÁLISE FINANCEIRA - removido texto "(Modo Livre)" do título da análise financeira conforme solicitado pelo usuário, mantendo apenas "ANÁLISE FINANCEIRA" para interface mais limpa, funcionalidade completamente operacional, cache v=20250625280000 (v20250625280000)
+- June 25, 2025: CORREÇÃO CRÍTICA ANÁLISE FINANCEIRA - corrigida integração da função exibirDetalhesModeLivre na mostrarResultado, implementadas todas as funcionalidades de ajustes automáticos (dias extras fixos, meses 31 dias), análise financeira agora exibe corretamente no modo livre, formatação de valores melhorada, cache v=20250625290000 (v20250625290000)
 
 ## User Preferences
 
