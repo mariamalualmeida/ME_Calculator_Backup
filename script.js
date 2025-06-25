@@ -71,16 +71,8 @@ class SimuladorEmprestimos {
         
         const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
         
-        // REFATORAÇÃO: Aplicar regras de consistência DURANTE o carregamento
-        // Garantir que regras só podem estar desabilitadas se admin está logado
-        if (!loadedConfig.isAdmin && loadedConfig.desabilitarRegras) {
-            console.log('Debug - Consistência: Corrigindo regras desabilitadas sem admin logado');
-            loadedConfig.desabilitarRegras = false;
-            // Salvar correção imediatamente no localStorage
-            localStorage.setItem('simulador_config', JSON.stringify(loadedConfig));
-        }
-        
-        // Configurações agora estão garantidamente consistentes
+        // CORREÇÃO: Remover lógica de "consistência" que sobrescrevia configurações válidas
+        // Configurações administrativas podem existir independente do estado de autenticação
         this.configuracoes = loadedConfig;
         
         // Aplicar configurações visuais imediatamente
