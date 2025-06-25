@@ -2739,39 +2739,6 @@ Testemunha 2: _____________________________________ CPF: _______________________
                 dadosJson.email = emailMatch[1].trim();
                 console.log('E-mail extraído:', dadosJson.email);
             }
-            
-            const nascimentoMatch = dadosPessoais.match(/Data de Nascimento:\s*([\d\/]+)/i);
-            if (nascimentoMatch) dados.dataNascimento = nascimentoMatch[1].trim();
-            
-            const estadoCivilMatch = dadosPessoais.match(/Estado Civil:\s*([^\n\r]+)/i);
-            if (estadoCivilMatch) dados.estadoCivil = estadoCivilMatch[1].trim();
-            
-            const enderecoMatch = dadosPessoais.match(/Endereço:\s*([^\n\r]+)/i);
-            if (enderecoMatch) dados.endereco = enderecoMatch[1].trim();
-            
-            const bairroMatch = dadosPessoais.match(/Bairro:\s*([^\n\r]+)/i);
-            if (bairroMatch) dados.bairro = bairroMatch[1].trim();
-            
-            const cidadeMatch = dadosPessoais.match(/Cidade:\s*([^\n\r]+)/i);
-            if (cidadeMatch) {
-                const cidadeEstado = cidadeMatch[1].trim();
-                const cidadeEstadoMatch = cidadeEstado.match(/^(.+?)\s*-\s*([A-Z]{2})$/);
-                if (cidadeEstadoMatch) {
-                    dados.cidade = cidadeEstadoMatch[1].trim();
-                    dados.estado = cidadeEstadoMatch[2].trim();
-                } else {
-                    dados.cidade = cidadeEstado;
-                }
-            }
-            
-            const cepMatch = dadosPessoais.match(/CEP:\s*([\d-]+)/i);
-            if (cepMatch) dados.cep = cepMatch[1].trim();
-            
-            const telefoneMatch = dadosPessoais.match(/Telefone:\s*([\d\s\(\)-]+)/i);
-            if (telefoneMatch) dados.telefone = telefoneMatch[1].trim();
-            
-            const emailMatch = dadosPessoais.match(/E-mail:\s*([^\n\r]+)/i);
-            if (emailMatch) dados.email = emailMatch[1].trim();
         }
         
         if (secaoDadosProfissionais) {

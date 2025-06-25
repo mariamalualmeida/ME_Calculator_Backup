@@ -1,0 +1,32 @@
+Iniciando extração do PDF...
+PDF.js disponível, lendo arquivo...
+ArrayBuffer criado, tamanho: 11850
+PDF carregado com 3 páginas
+Processando página 1...
+Página 1 - texto extraído (668 caracteres)
+Processando página 2...
+Página 2 - texto extraído (390 caracteres)
+Processando página 3...
+Página 3 - texto extraído (349 caracteres)
+Texto completo extraído: ME EMPREENDIMENTOS  Relatório de Simulação de Empréstimo  Simulado por: Leonardo Data da simulação: 25/06/2025  DADOS CADASTRAIS DO CLIENTE  DADOS PESSOAIS: Nome: Testelandia CPF: 999.999.999-99 Data de Nascimento: 10/04/1990 Estado Civil: Divorciado(a) Endereço: Rua da Mata, 17C, Casa Bairro: Vila brasil Cidade: Sete Lagoas - MG CEP: 35700-130 Telefone: (31) 98897-3275 E-mail: leo_almeida.s@hotmail.com DADOS PROFISSIONAIS: Profissão: Caloteiro Local de Trabalho: Autonomo Renda Mensal: 9.000,00 ...
+Seções encontradas:
+- DADOS PESSOAIS: true
+- DADOS PROFISSIONAIS: true
+- 1ª REFERÊNCIA: true
+- 2ª REFERÊNCIA: true
+Texto da seção DADOS PESSOAIS:  Nome: Testelandia CPF: 999.999.999-99 Data de Nascimento: 10/04/1990 Estado Civil: Divorciado(a) Endereço: Rua da Mata, 17C, Casa Bairro: Vila brasil Cidade: Sete Lagoas - MG CEP: 35700-130 Telefone: (31) 98897-3275 E-mail: leo_almeida.s@hotmail.com 
+Nome extraído: Testelandia
+CPF extraído: 999.999.999-99
+Dados extraídos do texto: 
+Object {valor: "8000.00", nParcelas: "10", sistemaJuros: "compostos-mensal", juros: "15,00", dataEmprestimo: "25/06/2025", …}
+Dados extraídos do texto: 
+Object {valor: "8000.00", nParcelas: "10", sistemaJuros: "compostos-mensal", juros: "15,00", dataEmprestimo: "25/06/2025", …}
+Dados extraídos do PDF: 
+Object {valor: "8000.00", nParcelas: "10", sistemaJuros: "compostos-mensal", juros: "15,00", dataEmprestimo: "25/06/2025", …}
+Erro na importação PDF: 
+ReferenceError {}
+message: "secaoDadosPessoais is not defined"
+stack: "ReferenceError: secaoDadosPessoais is not defined↵ at SimuladorEmprestimos.importarDadosPDF (https://06a7b65a-1494-4975-b3a9-b27215958f80-00-1psgg60bbutbm.riker.replit.dev/script.js?v=20250625130000:2835:63)"
+get stack: ƒ ()
+length: 0
+name: ""
