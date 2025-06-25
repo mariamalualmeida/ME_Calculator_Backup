@@ -243,6 +243,7 @@ SimuladorEmprestimos/
 - June 25, 2025: DEBUG COMPLETO EXTRAÇÃO PDF - logs detalhados adicionados em toda cadeia de extração (PDF→texto→dados→preenchimento), regex nome/CPF melhorados com look-ahead específicos, tratamento de erro robusto com mensagens detalhadas, expansão automática do formulário melhorada, cache v=20250625120000 (v20250625120000)
 - June 25, 2025: CORREÇÃO CRÍTICA BIBLIOTECA PDF.JS - verificação robusta de carregamento da biblioteca, logs detalhados de debugging em todo processo de extração, configuração correta do PDF.js worker, tratamento específico de erros de biblioteca, cache v=20250625130000 (v20250625130000)
 - June 25, 2025: CORREÇÃO COMPLETA SISTEMA IMPORTAÇÃO - corrigidos IDs incompatíveis HTML/JavaScript (pdfFile, textoFormulario), implementado JSON intermediário unificado para PDF e texto, nova estrutura com aplicarDadosJson(), adaptado regex para novo template com dados de empréstimo, fluxo: Texto/PDF→JSON→Preenchimento, cache v=20250625140000 (v20250625140000)
+- June 25, 2025: CORREÇÃO ESTRUTURA JSON PDF - corrigida conversão de dados extraídos para estrutura JSON esperada (simulacao/cliente), implementados regex específicos para todos campos cadastrais do PDF (endereço, telefone, referências), mapeamento correto entre dados antigos e nova estrutura, cache v=20250625150000 (v20250625150000)
 
 ## User Preferences
 

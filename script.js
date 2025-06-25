@@ -2684,6 +2684,62 @@ Testemunha 2: _____________________________________ CPF: _______________________
                 console.log('CPF extraído:', dadosJson.cliente.cpf);
             }
             
+            // Data de nascimento
+            const nascimentoMatch = dadosPessoais.match(/Data de Nascimento:\s*([\d\/]+)/i);
+            if (nascimentoMatch) {
+                dadosJson.dataNascimento = nascimentoMatch[1].trim();
+                console.log('Data nascimento extraída:', dadosJson.dataNascimento);
+            }
+            
+            // Estado civil
+            const estadoCivilMatch = dadosPessoais.match(/Estado Civil:\s*([^\n\r]+?)(?:\s*Endereço:|$)/i);
+            if (estadoCivilMatch) {
+                dadosJson.estadoCivil = estadoCivilMatch[1].trim();
+                console.log('Estado civil extraído:', dadosJson.estadoCivil);
+            }
+            
+            // Endereço
+            const enderecoMatch = dadosPessoais.match(/Endereço:\s*([^\n\r]+?)(?:\s*Bairro:|$)/i);
+            if (enderecoMatch) {
+                dadosJson.endereco = enderecoMatch[1].trim();
+                console.log('Endereço extraído:', dadosJson.endereco);
+            }
+            
+            // Bairro
+            const bairroMatch = dadosPessoais.match(/Bairro:\s*([^\n\r]+?)(?:\s*Cidade:|$)/i);
+            if (bairroMatch) {
+                dadosJson.bairro = bairroMatch[1].trim();
+                console.log('Bairro extraído:', dadosJson.bairro);
+            }
+            
+            // Cidade
+            const cidadeMatch = dadosPessoais.match(/Cidade:\s*([^\n\r]+?)(?:\s*CEP:|$)/i);
+            if (cidadeMatch) {
+                dadosJson.cidade = cidadeMatch[1].trim();
+                console.log('Cidade extraída:', dadosJson.cidade);
+            }
+            
+            // CEP
+            const cepMatch = dadosPessoais.match(/CEP:\s*([\d\-]+)/i);
+            if (cepMatch) {
+                dadosJson.cep = cepMatch[1].trim();
+                console.log('CEP extraído:', dadosJson.cep);
+            }
+            
+            // Telefone
+            const telefoneMatch = dadosPessoais.match(/Telefone:\s*([^\n\r]+?)(?:\s*E-mail:|$)/i);
+            if (telefoneMatch) {
+                dadosJson.telefone = telefoneMatch[1].trim();
+                console.log('Telefone extraído:', dadosJson.telefone);
+            }
+            
+            // E-mail
+            const emailMatch = dadosPessoais.match(/E-mail:\s*([^\n\r]+)/i);
+            if (emailMatch) {
+                dadosJson.email = emailMatch[1].trim();
+                console.log('E-mail extraído:', dadosJson.email);
+            }
+            
             const nascimentoMatch = dadosPessoais.match(/Data de Nascimento:\s*([\d\/]+)/i);
             if (nascimentoMatch) dados.dataNascimento = nascimentoMatch[1].trim();
             

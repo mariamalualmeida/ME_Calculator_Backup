@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-title" content="Simulador ME">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=20250625140000">
+    <link rel="stylesheet" href="style.css?v=20250625150000">
 </head>
 <body>
     <div class="container">
@@ -571,7 +571,7 @@
                         <div class="file-upload-text">CLIQUE PARA SELECIONAR PDF</div>
                         <div class="file-upload-hint">(.pdf até 10MB)</div>
                     </div>
-                    <input type="file" id="importFile" accept=".pdf" style="display: none;">
+                    <input type="file" id="pdfFile" accept=".pdf" style="display: none;">
                 </div>
                 
                 <!-- Seção Texto -->
@@ -580,7 +580,7 @@
                     <p>Ideal para dados recebidos via WhatsApp ou formulários preenchidos</p>
                     
                     <textarea 
-                        id="importTextarea" 
+                        id="textoFormulario" 
                         placeholder="Cole aqui todo o conteúdo do formulário preenchido..."
                         rows="15"
                         style="resize: vertical; width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace; font-size: 14px;"></textarea>
@@ -606,6 +606,6 @@
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         }
     </script>
-    <script src="script.js?v=20250625140000"></script>
+    <script src="script.js?v=20250625150000"></script>
 </body>
 </html>
