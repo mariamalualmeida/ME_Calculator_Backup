@@ -1871,9 +1871,9 @@ class SimuladorEmprestimos {
 
 
     gerarNomeArquivoPdf() {
-        // Capturar dados do cliente
-        const nomeCliente = this.nomeClienteField ? this.nomeClienteField.value.trim() : '';
-        const cpfCliente = this.cpfClienteField ? this.cpfClienteField.value.trim() : '';
+        // Capturar dados do cliente diretamente do DOM
+        const nomeCliente = document.getElementById('nomeCliente')?.value.trim() || '';
+        const cpfCliente = document.getElementById('cpfCliente')?.value.trim() || '';
         
         // Limpar caracteres especiais para nome de arquivo (mantém espaços e pontos)
         const limparNome = (texto) => texto.replace(/[<>:"/\\|?*]/g, '_');
@@ -1881,13 +1881,13 @@ class SimuladorEmprestimos {
         // Gerar timestamp
         const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '').replace('T', '_');
         
-        // Construir nome do arquivo
+        // Construir nome do arquivo com cliente no início
         let nomeArquivo = '';
         
         if (nomeCliente && cpfCliente) {
-            nomeArquivo = `Simulacao_emprestimo_${limparNome(nomeCliente)}_${limparNome(cpfCliente)}_${timestamp}`;
+            nomeArquivo = `${limparNome(nomeCliente)}_${limparNome(cpfCliente)}_Simulacao_emprestimo_${timestamp}`;
         } else if (nomeCliente) {
-            nomeArquivo = `Simulacao_emprestimo_${limparNome(nomeCliente)}_${timestamp}`;
+            nomeArquivo = `${limparNome(nomeCliente)}_Simulacao_emprestimo_${timestamp}`;
         } else {
             nomeArquivo = `Simulacao_emprestimo_${timestamp}`;
         }
