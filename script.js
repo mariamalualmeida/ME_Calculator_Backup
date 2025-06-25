@@ -115,6 +115,12 @@ class SimuladorEmprestimos {
         // 4. Aplicar validações visuais se necessário
         this.aplicarValidacaoConfiguracoes();
         
+        // 5. CORREÇÃO: Garantir que funções de UI sejam executadas após carregamento
+        setTimeout(() => {
+            this.atualizarClassesModoLivre();
+            this.atualizarPlaceholderParcelas();
+        }, 50);
+        
         console.log('Debug - Estado UI aplicado baseado em configurações:', {
             desabilitarRegras: this.configuracoes.desabilitarRegras,
             isAdmin: this.configuracoes.isAdmin,
@@ -1206,8 +1212,8 @@ class SimuladorEmprestimos {
     }
 
     atualizarClassesModoLivre() {
-        // CORREÇÃO: Verificar se admin está ativo E regras estão desabilitadas
-        const modoLivreAtivo = this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras;
+        // CORREÇÃO: Verificar apenas desabilitarRegras (independente de login admin)
+        const modoLivreAtivo = this.configuracoes.desabilitarRegras;
         
         // Adicionar/remover classe admin-free-mode para desabilitar bordas vermelhas
         const campos = [this.valorEmprestimoField, this.numeroParcelasField, this.taxaJurosField];
@@ -1351,17 +1357,15 @@ class SimuladorEmprestimos {
     atualizarPlaceholderParcelas() {
         if (!this.numeroParcelasField) return;
         
-        // Usar configurações já carregadas (não recarregar)
-        const modoLivreAtivo = this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras;
-        
-        if (modoLivreAtivo) {
+        // CORREÇÃO: Verificar apenas desabilitarRegras (independente de login admin)
+        if (this.configuracoes.desabilitarRegras) {
             this.numeroParcelasField.placeholder = "Quantidade de parcelas";
         } else {
             this.numeroParcelasField.placeholder = "Permitido: 1 a 15 parcelas";
         }
         
         console.log('Debug - Placeholder atualizado:', {
-            modoLivre: modoLivreAtivo,
+            modoLivre: this.configuracoes.desabilitarRegras,
             placeholder: this.numeroParcelasField.placeholder,
             isAdmin: this.configuracoes.isAdmin,
             desabilitarRegras: this.configuracoes.desabilitarRegras

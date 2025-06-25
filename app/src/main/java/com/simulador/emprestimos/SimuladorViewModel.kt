@@ -453,8 +453,8 @@ class SimuladorViewModel : ViewModel() {
     }
     
     fun isJurosInvalido(taxaJuros: String, numeroParcelas: String): Boolean {
-        // CORREÇÃO: Verificar modo livre completo (regras desabilitadas E admin logado)
-        if (_configuracoes.value.desabilitarRegras == true && _configuracoes.value.isAdmin == true) {
+        // CORREÇÃO: Verificar apenas desabilitarRegras (independente de login admin)
+        if (_configuracoes.value.desabilitarRegras == true) {
             return false
         }
         
