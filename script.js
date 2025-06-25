@@ -26,9 +26,8 @@ class SimuladorEmprestimos {
         };
 
         this.configuracoes = this.carregarConfiguracoes();
-        // SEGURANÇA: Forçar reset do estado administrativo na inicialização
-        this.configuracoes.isAdmin = false;
-        this.salvarConfiguracoes(); // Persistir estado seguro
+        // SEGURANÇA: Forçar reset do estado administrativo na inicialização (sessão apenas)
+        this.salvarEstadoSessao();
         
         this.initializeElements();
         this.setupEventListeners();
@@ -133,6 +132,23 @@ class SimuladorEmprestimos {
 
     salvarConfiguracoes() {
         localStorage.setItem('simulador_config', JSON.stringify(this.configuracoes));
+    }
+    
+    salvarApenasConfiguracoes() {
+        // Salvar todas as configurações EXCETO estado de autenticação
+        const configParaSalvar = {
+            ...this.configuracoes,
+            isAdmin: false // Sempre salvar como não-logado para segurança
+        };
+        localStorage.setItem('simulador_config', JSON.stringify(configParaSalvar));
+        console.log('Debug - Configurações salvas (sem estado de autenticação)');
+    }
+    
+    salvarEstadoSessao() {
+        // Salvar apenas controle de estado de sessão (não persiste entre reloads)
+        // Esta função reseta apenas o estado na memória, não no localStorage
+        this.configuracoes.isAdmin = false;
+        console.log('Debug - Estado de sessão resetado (memória apenas)');
     }
 
     initializeElements() {
@@ -1316,10 +1332,9 @@ class SimuladorEmprestimos {
             modal.style.display = 'none';
         }
         
-        // REFATORAÇÃO: Reset apenas da interface administrativa
-        // Preservar configurações salvas mas resetar estado de autenticação
-        this.configuracoes.isAdmin = false;
-        this.salvarConfiguracoes(); // Persistir reset de autenticação
+        // REFATORAÇÃO: Usar nova função que reseta apenas estado de sessão
+        // NÃO persiste o reset no localStorage (preserva configurações salvas)
+        this.salvarEstadoSessao();
         
         // Ocultar painel administrativo
         const adminPanel = document.getElementById('adminPanel');
@@ -1340,10 +1355,10 @@ class SimuladorEmprestimos {
         if (adminUserField) adminUserField.value = '';
         if (adminPassField) adminPassField.value = '';
         
-        // REFATORAÇÃO: Aplicar estado completo da UI
+        // Aplicar estado da UI baseado no novo estado de sessão
         this.aplicarEstadoUI();
         
-        console.log('Debug - Modal fechado, estado UI aplicado, autenticação resetada');
+        console.log('Debug - Modal fechado, estado de sessão resetado (configurações preservadas)');
     }
 
 
@@ -1388,52 +1403,52 @@ class SimuladorEmprestimos {
                 this.configuracoes.exibirDetalhesModeLivre = exibirDetalhesElement.value === 'true';
             }
             
-            const ajusteMesElement = document.getElementById('ajusteMes31Dias');
-            if (ajusteMesElement) {
-                this.configuracoes.ajusteMes31Dias = ajusteMesElement.value === 'true';
+            const ajusteMes31Element = document.getElementById('ajusteMes31Dias');
+            if (ajusteMes31Element) {
+                this.configuracoes.ajusteMes31Dias = ajusteMes31Element.value === 'true';
             }
             
-            const diasExtrasElement = document.getElementById('diasExtrasFixos');
-            if (diasExtrasElement) {
-                this.configuracoes.diasExtrasFixos = parseInt(diasExtrasElement.value) || 0;
+            const diasExtrasFixosElement = document.getElementById('diasExtrasFixos');
+            if (diasExtrasFixosElement) {
+                this.configuracoes.diasExtrasFixos = parseInt(diasExtrasFixosElement.value) || 0;
             }
             
-            // Salvar credenciais se alteradas
-            const novoUsuario = document.getElementById('newAdminUser').value;
-            const novaSenha = document.getElementById('newAdminPass').value;
-            if (novoUsuario && novaSenha) {
-                this.configuracoes.adminUser = novoUsuario;
-                this.configuracoes.adminPassword = novaSenha;
-            }
-            
-            // Salvar limites personalizados
-            const novosLimites = {};
+            // Salvar tabela de limites personalizada
             for (let parcelas = 1; parcelas <= 15; parcelas++) {
-                const minField = document.getElementById(`min_${parcelas}`);
-                const maxField = document.getElementById(`max_${parcelas}`);
-                if (minField && maxField) {
-                    const min = parseFloat(minField.value.replace(',', '.'));
-                    const max = parseFloat(maxField.value.replace(',', '.'));
-                    
-                    if (!isNaN(min) && !isNaN(max) && min <= max) {
-                        novosLimites[parcelas] = { min, max };
-                    }
+                const minInput = document.getElementById(`limite_${parcelas}_min`);
+                const maxInput = document.getElementById(`limite_${parcelas}_max`);
+                
+                if (minInput && maxInput) {
+                    this.configuracoes.limitesPersonalizados[parcelas] = {
+                        min: parseFloat(minInput.value) || this.limitesJuros[parcelas].min,
+                        max: parseFloat(maxInput.value) || this.limitesJuros[parcelas].max
+                    };
                 }
             }
-            this.configuracoes.limitesPersonalizados = novosLimites;
+            
+            // Salvar credenciais administrativas
+            this.configuracoes.adminUser = document.getElementById('adminUser').value || 'admin';
+            this.configuracoes.adminPassword = document.getElementById('adminPass').value || 'admin123';
         }
         
+        // Aplicar temas
         this.aplicarTema(this.configuracoes.themeMode);
         this.aplicarPaletaCores(this.configuracoes.colorTheme);
-        this.salvarConfiguracoes();
         
-        // REFATORAÇÃO: Eliminado sistema de sincronização automática
-        // Aplicar mudanças imediatamente sem eventos complexos
-        this.atualizarClassesModoLivre();
+        // REFATORAÇÃO: Usar nova função que não afeta estado de autenticação
+        this.salvarApenasConfiguracoes();
         
-        // Fechar modal automaticamente após salvar
+        // Aplicar estado da UI
+        this.aplicarEstadoUI();
+        
+        // Notificar sucesso e fechar modal automaticamente
         alert('Todas as configurações foram salvas com sucesso!');
         this.fecharModal();
+        
+        // REQUISITO: Atualizar a página principal após fechar modal
+        setTimeout(() => {
+            location.reload();
+        }, 500);
     }
 
     fazerLoginAdmin() {
