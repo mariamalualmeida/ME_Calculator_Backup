@@ -1952,14 +1952,15 @@ class SimuladorEmprestimos {
         
         // Adicionar informações de configurações ativas separadamente
         const configuracoeAtivas = [];
-        if (resultadoCalculo.diasExtrasData > 0) {
-            configuracoeAtivas.push(`Dias extras: ${resultadoCalculo.diasExtrasData}`);
-        }
-        if (resultadoCalculo.diasCompensacao > 0) {
-            configuracoeAtivas.push(`Dias Compensação: ${resultadoCalculo.diasCompensacao}`);
-        }
-        if (resultadoCalculo.diasMeses31 > 0) {
-            configuracoeAtivas.push(`Meses 31 dias: ${resultadoCalculo.diasMeses31}`);
+        // Usar a função de formatação detalhada para análise financeira
+        const infoDetalhada = this.formatarInfoDiasExtras(
+            resultadoCalculo.diasExtrasData || 0, 
+            resultadoCalculo.diasCompensacao || 0, 
+            resultadoCalculo.diasMeses31 || 0, 
+            resultadoCalculo
+        );
+        if (infoDetalhada !== 'Sem dias extras') {
+            configuracoeAtivas.push(infoDetalhada);
         }
         if (this.configuracoes.igpmAnual > 0) {
             configuracoeAtivas.push(`IGPM ${this.configuracoes.igpmAnual}%`);
@@ -1968,7 +1969,7 @@ class SimuladorEmprestimos {
         if (configuracoeAtivas.length > 0) {
             detalhesHtml += `
                 <div style="margin-top: 12px; font-size: 12px; color: var(--on-primary-container); opacity: 0.8;">
-                    <strong>Configurações ativas:</strong> ${configuracoeAtivas.join(', ')}
+                    <strong>Configurações ativas:</strong><br>${configuracoeAtivas.join('<br>')}
                 </div>
             `;
         }
@@ -1978,13 +1979,30 @@ class SimuladorEmprestimos {
         this.resultValue.innerHTML += detalhesHtml;
     }
 
-    // Nova função para formatar informações de dias extras separadamente
-    formatarInfoDiasExtras(diasExtrasData, diasCompensacao, diasMeses31) {
+    // Nova função para formatar informações de dias extras separadamente com juros individuais
+    formatarInfoDiasExtras(diasExtrasData, diasCompensacao, diasMeses31, resultadoCalculo) {
         const infos = [];
-        if (diasExtrasData > 0) infos.push(`Dias extras: ${diasExtrasData}`);
-        if (diasCompensacao > 0) infos.push(`Dias Compensação: ${diasCompensacao}`);
-        if (diasMeses31 > 0) infos.push(`Meses 31 dias: ${diasMeses31}`);
-        return infos.length > 0 ? infos.join(' | ') : 'Sem dias extras';
+        
+        // Calcular juros proporcionais para cada tipo
+        const totalDias = diasExtrasData + diasCompensacao + diasMeses31;
+        const jurosTotal = resultadoCalculo.jurosDiasExtras || 0;
+        
+        if (diasExtrasData > 0) {
+            const jurosExtras = totalDias > 0 ? (jurosTotal * diasExtrasData) / totalDias : 0;
+            infos.push(`Dias extras: ${diasExtrasData} dias | Juros: R$ ${jurosExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`);
+        }
+        
+        if (diasMeses31 > 0) {
+            const jurosMeses31 = totalDias > 0 ? (jurosTotal * diasMeses31) / totalDias : 0;
+            infos.push(`Meses 31 dias: ${diasMeses31} | Juros: R$ ${jurosMeses31.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`);
+        }
+        
+        if (diasCompensacao > 0) {
+            const jurosCompensacao = totalDias > 0 ? (jurosTotal * diasCompensacao) / totalDias : 0;
+            infos.push(`Dias compensação: ${diasCompensacao} | Juros: R$ ${jurosCompensacao.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`);
+        }
+        
+        return infos.length > 0 ? infos.join('<br>') : 'Sem dias extras';
     }
 
     setupDateMaskFormatting() {
