@@ -2169,45 +2169,125 @@ Testemunha 1: _____________________________________ CPF: _______________________
 Testemunha 2: _____________________________________ CPF: _______________________`;
     }
 
-    importarDados(arquivo) {
-        if (!arquivo) return;
+    // Função principal de importação com JSON intermediário
+    async importarDadosPDF(arquivo) {
+        try {
+            console.log('Iniciando importação do PDF...');
+            const dadosJson = await this.extrairDadosPDF(arquivo);
+            
+            console.log('JSON extraído do PDF:', dadosJson);
+            
+            // Aplicar dados usando JSON estruturado
+            this.aplicarDadosJson(dadosJson);
+            
+            this.fecharModalImportacao();
+            this.esconderErro();
+            this.showNotification('Dados do PDF importados com sucesso!', 'success');
+            
+        } catch (error) {
+            console.error('Erro detalhado ao importar PDF:', error);
+            this.showNotification('Erro ao importar dados do PDF: ' + error.message, 'error');
+        }
+    }
+    
+    // Função unificada para aplicar dados JSON
+    aplicarDadosJson(dadosJson) {
+        console.log('Aplicando dados JSON:', dadosJson);
         
-        if (arquivo.type === 'application/pdf') {
-            this.importarDadosPDF(arquivo);
-            return;
+        // Preencher campos básicos da simulação
+        if (dadosJson.simulacao) {
+            const sim = dadosJson.simulacao;
+            
+            if (sim.valor) {
+                this.valorField.value = sim.valor;
+                this.formatarMoeda(this.valorField);
+                console.log('Valor aplicado:', sim.valor);
+            }
+            
+            if (sim.parcelas) {
+                this.parcelasField.value = sim.parcelas;
+                console.log('Parcelas aplicadas:', sim.parcelas);
+            }
+            
+            if (sim.juros) {
+                this.taxaField.value = sim.juros;
+                console.log('Taxa aplicada:', sim.juros);
+            }
+            
+            if (sim.dataVencimentoInicial) {
+                this.dataInicialField.value = sim.dataVencimentoInicial;
+                console.log('Data inicial aplicada:', sim.dataVencimentoInicial);
+            }
         }
         
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const dados = JSON.parse(e.target.result);
-                
-                // Preencher campos básicos
-                if (dados.valor) this.valorField.value = this.formatarMoeda(dados.valor);
-                if (dados.parcelas) this.parcelasField.value = dados.parcelas;
-                if (dados.juros) this.taxaField.value = dados.juros.toFixed(2).replace('.', ',');
-                if (dados.dataInicial) this.dataInicialField.value = dados.dataInicial;
-                
-                // Preencher dados cadastrais se existirem
-                if (dados.nomeCliente) this.nomeClienteField.value = dados.nomeCliente;
-                if (dados.cpfCliente) this.cpfClienteField.value = dados.cpfCliente;
-                
-                // Expandir automaticamente a área de dados completos
+        // Preencher dados do cliente
+        if (dadosJson.cliente) {
+            const cliente = dadosJson.cliente;
+            
+            if (cliente.nome && this.nomeClienteField) {
+                this.nomeClienteField.value = cliente.nome;
+                console.log('Nome aplicado:', cliente.nome);
+            }
+            
+            if (cliente.cpf && this.cpfClienteField) {
+                this.cpfClienteField.value = cliente.cpf;
+                this.formatarCpf(this.cpfClienteField);
+                console.log('CPF aplicado:', cliente.cpf);
+            }
+            
+            // Expandir formulário se há dados cadastrais
+            const temDadosCompletos = cliente.nome || cliente.cpf || cliente.dataNascimento;
+            if (temDadosCompletos) {
+                console.log('Expandindo formulário automaticamente...');
                 const toggleBtn = document.getElementById('formToggleBtn');
                 const formSection = document.getElementById('formCompleto');
                 
-                if (toggleBtn && formSection && dados.nomeCliente) {
+                if (toggleBtn && formSection) {
                     formSection.style.display = 'block';
                     toggleBtn.textContent = '▲ DADOS COMPLETOS DO CLIENTE';
                 }
                 
-                this.esconderErro();
-                this.showNotification('Dados importados com sucesso!', 'success');
-            } catch (error) {
-                this.mostrarErro('ERRO AO IMPORTAR ARQUIVO. FORMATO INVÁLIDO.');
+                // Preencher campos do formulário expandido
+                this.preencherFormularioCompleto(cliente);
             }
+        }
+    }
+    
+    // Função para preencher formulário completo
+    preencherFormularioCompleto(cliente) {
+        const campos = {
+            'dataNascimento': cliente.dataNascimento,
+            'estadoCivil': cliente.estadoCivil,
+            'endereco': cliente.endereco,
+            'numero': cliente.numero,
+            'complemento': cliente.complemento,
+            'bairro': cliente.bairro,
+            'cidade': cliente.cidade,
+            'estado': cliente.estado,
+            'cep': cliente.cep,
+            'telefone': cliente.telefone,
+            'email': cliente.email,
+            'localTrabalho': cliente.localTrabalho,
+            'profissao': cliente.profissao,
+            'rendaMensal': cliente.rendaMensal,
+            'tempoEmprego': cliente.tempoEmprego,
+            'ref1Nome': cliente.ref1Nome,
+            'ref1Telefone': cliente.ref1Telefone,
+            'ref1Endereco': cliente.ref1Endereco,
+            'ref1Bairro': cliente.ref1Bairro,
+            'ref2Nome': cliente.ref2Nome,
+            'ref2Telefone': cliente.ref2Telefone,
+            'ref2Endereco': cliente.ref2Endereco,
+            'ref2Bairro': cliente.ref2Bairro
         };
-        reader.readAsText(arquivo);
+        
+        Object.keys(campos).forEach(campo => {
+            const elemento = document.getElementById(campo);
+            if (elemento && campos[campo]) {
+                elemento.value = campos[campo];
+                console.log(`Campo ${campo} preenchido:`, campos[campo]);
+            }
+        });
     }
 
     // Nova função para abrir modal de importação
@@ -2224,9 +2304,9 @@ Testemunha 2: _____________________________________ CPF: _______________________
         const modal = document.getElementById('importModal');
         if (modal) {
             modal.style.display = 'none';
-            // Limpar campos
-            const textarea = document.getElementById('importTextarea');
-            const fileInput = document.getElementById('importFile');
+            // Limpar campos com IDs corretos
+            const textarea = document.getElementById('textoFormulario');
+            const fileInput = document.getElementById('pdfFile');
             if (textarea) textarea.value = '';
             if (fileInput) fileInput.value = '';
         }
@@ -2255,78 +2335,132 @@ Testemunha 2: _____________________________________ CPF: _______________________
     }
     
     processarImportacao() {
-        const tabPdf = document.getElementById('tabPdf');
-        const abaPdfAtiva = tabPdf && tabPdf.classList.contains('active');
+        const abaAtiva = document.querySelector('.import-tab.active');
+        const tipo = abaAtiva ? abaAtiva.textContent.includes('PDF') ? 'pdf' : 'texto' : 'pdf';
         
-        if (abaPdfAtiva) {
-            // Processar PDF
-            const fileInput = document.getElementById('importFile');
-            if (fileInput && fileInput.files && fileInput.files[0]) {
-                this.importarDados(fileInput.files[0]);
-                this.fecharModalImportacao();
-            } else {
+        console.log('Processando importação, tipo:', tipo);
+        
+        if (tipo === 'pdf') {
+            const fileInput = document.getElementById('pdfFile');
+            const arquivo = fileInput?.files?.[0];
+            
+            console.log('Arquivo PDF selecionado:', arquivo?.name, arquivo?.type, arquivo?.size);
+            
+            if (!arquivo) {
                 this.showNotification('Selecione um arquivo PDF primeiro', 'error');
+                return;
             }
+            
+            if (arquivo.type !== 'application/pdf') {
+                console.error('Tipo de arquivo inválido:', arquivo.type);
+                this.showNotification('Arquivo deve ser um PDF', 'error');
+                return;
+            }
+            
+            console.log('Iniciando importação do PDF...');
+            this.importarDadosPDF(arquivo);
+            
         } else {
-            // Processar texto
-            const textarea = document.getElementById('importTextarea');
-            if (textarea) {
-                const texto = textarea.value.trim();
-                if (texto) {
-                    this.processarTextoFormulario(texto);
-                    this.fecharModalImportacao();
-                } else {
-                    this.showNotification('Cole os dados do formulário primeiro', 'error');
-                }
+            const textoInput = document.getElementById('textoFormulario');
+            const texto = textoInput?.value?.trim();
+            
+            console.log('Texto para processar:', texto?.substring(0, 100) + '...');
+            
+            if (!texto) {
+                this.showNotification('Cole o texto do formulário primeiro', 'error');
+                return;
             }
+            
+            this.processarTextoFormulario(texto);
         }
     }
     
     processarTextoFormulario(texto) {
         try {
-            const dados = this.extrairDadosFormulario(texto);
-            console.log('Dados extraídos do formulário:', dados);
+            console.log('Processando texto do formulário...');
             
-            // Preencher campos básicos da tela principal
-            if (dados.nomeCliente) {
-                const nomeInput = document.getElementById('nomeCliente');
-                if (nomeInput) {
-                    nomeInput.value = dados.nomeCliente;
-                }
-            }
+            // Converter texto para JSON estruturado
+            const dadosJson = this.converterTextoParaJson(texto);
+            console.log('JSON gerado do texto:', dadosJson);
             
-            if (dados.cpfCliente) {
-                const cpfInput = document.getElementById('cpfCliente');
-                if (cpfInput) {
-                    cpfInput.value = dados.cpfCliente;
-                }
-            }
+            // Aplicar dados usando mesma lógica do PDF
+            this.aplicarDadosJson(dadosJson);
             
-            // Expandir formulário completo se há dados cadastrais
-            if (dados.nomeCliente || dados.cpfCliente || Object.keys(dados).length > 0) {
-                const formToggleBtn = document.getElementById('formToggleBtn');
-                const formCompleto = document.getElementById('formCompleto');
-                
-                if (formToggleBtn && formCompleto && formCompleto.style.display === 'none') {
-                    this.toggleFormularioCompleto();
-                }
-                
-                // Preencher todos os campos encontrados
-                Object.keys(dados).forEach(campo => {
-                    const elemento = document.getElementById(campo);
-                    if (elemento && dados[campo]) {
-                        console.log(`Preenchendo campo ${campo} com valor:`, dados[campo]);
-                        elemento.value = dados[campo];
-                    }
-                });
-            }
-            
+            this.fecharModalImportacao();
             this.showNotification('Dados do formulário importados com sucesso!', 'success');
             
         } catch (error) {
             console.error('Erro ao processar texto:', error);
             this.showNotification('Erro ao processar texto. Verifique o formato.', 'error');
         }
+    }
+    
+    // Nova função para converter texto em JSON estruturado
+    converterTextoParaJson(texto) {
+        const dadosJson = {
+            simulacao: {},
+            cliente: {}
+        };
+        
+        console.log('Convertendo texto para JSON...');
+        
+        // Extrair dados da seção EMPRESTIMO (novo formato)
+        const secaoEmprestimo = texto.match(/EMPRESTIMO([\s\S]*?)(?=DADOS CADASTRAIS|$)/i);
+        if (secaoEmprestimo) {
+            const emprestimoTexto = secaoEmprestimo[1];
+            console.log('Seção empréstimo encontrada:', emprestimoTexto);
+            
+            const valorMatch = emprestimoTexto.match(/Valor:\s*R\$\s*([\d.,]+)/i);
+            if (valorMatch) {
+                dadosJson.simulacao.valor = valorMatch[1];
+                console.log('Valor extraído:', valorMatch[1]);
+            }
+            
+            const parcelasMatch = emprestimoTexto.match(/Parcelas:\s*(\d+)/i);
+            if (parcelasMatch) {
+                dadosJson.simulacao.parcelas = parcelasMatch[1];
+                console.log('Parcelas extraídas:', parcelasMatch[1]);
+            }
+            
+            const dataVencMatch = emprestimoTexto.match(/Data Venc\. Inicial:\s*([\d\/]*)/i);
+            if (dataVencMatch && dataVencMatch[1].trim()) {
+                dadosJson.simulacao.dataVencimentoInicial = dataVencMatch[1].trim();
+                console.log('Data vencimento extraída:', dataVencMatch[1]);
+            }
+        }
+        
+        // Extrair dados cadastrais do cliente
+        const dadosCliente = this.extrairDadosFormulario(texto);
+        dadosJson.cliente = {
+            nome: dadosCliente.nomeCliente,
+            cpf: dadosCliente.cpfCliente,
+            dataNascimento: dadosCliente.dataNascimento,
+            estadoCivil: dadosCliente.estadoCivil,
+            endereco: dadosCliente.endereco,
+            numero: dadosCliente.numero,
+            complemento: dadosCliente.complemento,
+            bairro: dadosCliente.bairro,
+            cidade: dadosCliente.cidade,
+            estado: dadosCliente.estado,
+            cep: dadosCliente.cep,
+            telefone: dadosCliente.telefone,
+            email: dadosCliente.email,
+            localTrabalho: dadosCliente.localTrabalho,
+            profissao: dadosCliente.profissao,
+            rendaMensal: dadosCliente.rendaMensal,
+            tempoEmprego: dadosCliente.tempoEmprego,
+            ref1Nome: dadosCliente.ref1Nome,
+            ref1Telefone: dadosCliente.ref1Telefone,
+            ref1Endereco: dadosCliente.ref1Endereco,
+            ref1Bairro: dadosCliente.ref1Bairro,
+            ref2Nome: dadosCliente.ref2Nome,
+            ref2Telefone: dadosCliente.ref2Telefone,
+            ref2Endereco: dadosCliente.ref2Endereco,
+            ref2Bairro: dadosCliente.ref2Bairro
+        };
+        
+        console.log('JSON final gerado:', dadosJson);
+        return dadosJson;
     }
     
     extrairDadosFormulario(texto) {
@@ -2362,25 +2496,29 @@ Testemunha 2: _____________________________________ CPF: _______________________
             }
         });
         
-        // Extrair referências (formato especial) - corrigidos baseado nos dados reais
+        // Extrair referências (formato especial) - adaptado para novo template
         const ref1Nome = texto.match(/1º REREFENCIA[\s\S]*?Nome:\s*([^\n]+)/i);
         const ref1Telefone = texto.match(/1º REREFENCIA[\s\S]*?Telefone:\s*([^\n]+)/i);
         const ref1Endereco = texto.match(/1º REREFENCIA[\s\S]*?Rua:\s*([^\n]+)/i);
+        const ref1Numero = texto.match(/1º REREFENCIA[\s\S]*?Numero:\s*([^\n]+)/i);
         const ref1Bairro = texto.match(/1º REREFENCIA[\s\S]*?Bairro:\s*([^\n]+)/i);
         
         if (ref1Nome && ref1Nome[1].trim()) dados.ref1Nome = ref1Nome[1].trim();
         if (ref1Telefone && ref1Telefone[1].trim()) dados.ref1Telefone = ref1Telefone[1].trim();
         if (ref1Endereco && ref1Endereco[1].trim()) dados.ref1Endereco = ref1Endereco[1].trim();
+        if (ref1Numero && ref1Numero[1].trim()) dados.ref1Numero = ref1Numero[1].trim();
         if (ref1Bairro && ref1Bairro[1].trim()) dados.ref1Bairro = ref1Bairro[1].trim();
         
         const ref2Nome = texto.match(/2º REFERENCIA[\s\S]*?Nome:\s*([^\n]+)/i);
         const ref2Telefone = texto.match(/2º REFERENCIA[\s\S]*?Telefone:\s*([^\n]+)/i);
         const ref2Endereco = texto.match(/2º REFERENCIA[\s\S]*?Rua:\s*([^\n]+)/i);
+        const ref2Numero = texto.match(/2º REFERENCIA[\s\S]*?Numero:\s*([^\n]+)/i);
         const ref2Bairro = texto.match(/2º REFERENCIA[\s\S]*?Bairro:\s*([^\n]+)/i);
         
         if (ref2Nome && ref2Nome[1].trim()) dados.ref2Nome = ref2Nome[1].trim();
         if (ref2Telefone && ref2Telefone[1].trim()) dados.ref2Telefone = ref2Telefone[1].trim();
         if (ref2Endereco && ref2Endereco[1].trim()) dados.ref2Endereco = ref2Endereco[1].trim();
+        if (ref2Numero && ref2Numero[1].trim()) dados.ref2Numero = ref2Numero[1].trim();
         if (ref2Bairro && ref2Bairro[1].trim()) dados.ref2Bairro = ref2Bairro[1].trim();
         
         // Mapear telefone diretamente
@@ -2443,36 +2581,42 @@ Testemunha 2: _____________________________________ CPF: _______________________
     }
     
     extrairDadosTexto(texto) {
-        const dados = {};
+        console.log('Extraindo dados do texto para JSON...');
+        
+        const dadosJson = {
+            simulacao: {},
+            cliente: {}
+        };
         
         // Extrair dados básicos de simulação do PDF gerado - ordem corrigida
         const secaoDadosSimulacao = texto.match(/DADOS DA SIMULAÇÃO([\s\S]*?)(?=TABELA DE PARCELAS|$)/i);
         
         if (secaoDadosSimulacao) {
             const dadosSimulacao = secaoDadosSimulacao[1];
+            console.log('Seção DADOS DA SIMULAÇÃO encontrada:', dadosSimulacao);
             
             const valorMatch = dadosSimulacao.match(/Valor do empréstimo:\s*R\$\s*([\d.,]+)/i);
             if (valorMatch) {
-                dados.valor = valorMatch[1].replace(/\./g, '').replace(',', '.');
+                dadosJson.simulacao.valor = valorMatch[1];
+                console.log('Valor extraído:', valorMatch[1]);
             }
             
             const parcelasMatch = dadosSimulacao.match(/Número de parcelas:\s*(\d+)/i);
             if (parcelasMatch) {
-                dados.nParcelas = parcelasMatch[1];
+                dadosJson.simulacao.parcelas = parcelasMatch[1];
+                console.log('Parcelas extraídas:', parcelasMatch[1]);
             }
             
             const sistemaMatch = dadosSimulacao.match(/Sistema de juros:\s*([^\n\r]+)/i);
             if (sistemaMatch) {
-                const sistema = sistemaMatch[1].trim().toLowerCase();
-                if (sistema.includes('simples')) dados.sistemaJuros = 'simples';
-                else if (sistema.includes('diários')) dados.sistemaJuros = 'compostos-diarios';
-                else if (sistema.includes('mensais')) dados.sistemaJuros = 'compostos-mensal';
-                else if (sistema.includes('pro-rata')) dados.sistemaJuros = 'compostos-prorata';
+                dadosJson.simulacao.sistemaJuros = sistemaMatch[1].trim();
+                console.log('Sistema de juros extraído:', sistemaMatch[1]);
             }
             
             const taxaMatch = dadosSimulacao.match(/Taxa de juros:\s*([\d,]+)%/i);
             if (taxaMatch) {
-                dados.juros = taxaMatch[1];
+                dadosJson.simulacao.juros = taxaMatch[1];
+                console.log('Taxa extraída:', taxaMatch[1]);
             }
         }
         
@@ -2529,15 +2673,15 @@ Testemunha 2: _____________________________________ CPF: _______________________
             // Nome - regex mais específico
             const nomeMatch = dadosPessoais.match(/Nome:\s*([^\n\r]+?)(?:\s*CPF:|$)/i);
             if (nomeMatch) {
-                dados.nomeCliente = nomeMatch[1].trim();
-                console.log('Nome extraído:', dados.nomeCliente);
+                dadosJson.cliente.nome = nomeMatch[1].trim();
+                console.log('Nome extraído:', dadosJson.cliente.nome);
             }
             
             // CPF - regex mais específico
             const cpfMatch = dadosPessoais.match(/CPF:\s*([\d\.\-]+)(?:\s|$)/i);
             if (cpfMatch) {
-                dados.cpfCliente = cpfMatch[1].trim();
-                console.log('CPF extraído:', dados.cpfCliente);
+                dadosJson.cliente.cpf = cpfMatch[1].trim();
+                console.log('CPF extraído:', dadosJson.cliente.cpf);
             }
             
             const nascimentoMatch = dadosPessoais.match(/Data de Nascimento:\s*([\d\/]+)/i);
