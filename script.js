@@ -975,7 +975,7 @@ class SimuladorEmprestimos {
         if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
             parcelasInfo.style.display = 'none';
         } else {
-            parcelasInfo.textContent = 'Você tem permissão para simulação entre 1 e 15 parcelas';
+            parcelasInfo.textContent = 'Você possui permissões para simulações entre 1 e 15 parcelas';
             parcelasInfo.style.display = 'block';
         }
     }
