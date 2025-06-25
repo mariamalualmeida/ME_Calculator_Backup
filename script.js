@@ -92,7 +92,7 @@ class SimuladorEmprestimos {
                 this.atualizarClassesModoLivre();
             }
             if (this.atualizarInformacoesParcelas) {
-                this.atualizarInformacoesParcelas();
+                this.atualizarPlaceholderParcelas();
             }
         }, 100);
         

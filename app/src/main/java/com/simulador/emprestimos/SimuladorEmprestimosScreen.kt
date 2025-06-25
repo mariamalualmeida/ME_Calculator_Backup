@@ -204,7 +204,15 @@ fun SimuladorEmprestimosScreen(
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("1-15") },
+                        placeholder = { 
+                            Text(
+                                if (configuracoes.desabilitarRegras && configuracoes.isAdmin) {
+                                    "Insira a quantidade de parcelas"
+                                } else {
+                                    "Você possui permissões para simulações entre 1 e 15 parcelas"
+                                }
+                            )
+                        },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Next
@@ -217,16 +225,6 @@ fun SimuladorEmprestimosScreen(
                             cursorColor = colorScheme.primary
                         )
                     )
-                    
-                    // Informação de parcelas permitidas
-                    if (!configuracoes.desabilitarRegras || !configuracoes.isAdmin) {
-                        Text(
-                            text = "Você possui permissões para simulações entre 1 e 15 parcelas",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
                 }
                 
                 // Taxa de juros
