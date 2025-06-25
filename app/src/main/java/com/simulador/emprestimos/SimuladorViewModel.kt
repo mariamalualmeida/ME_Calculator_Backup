@@ -79,6 +79,8 @@ class SimuladorViewModel : ViewModel() {
     val configuracoes: StateFlow<Configuracoes> = _configuracoes.asStateFlow()
     
     init {
+        // Sempre forçar isAdmin = false na inicialização para segurança
+        _configuracoes.value = _configuracoes.value.copy(isAdmin = false)
         // Verificar consistência do estado ao inicializar
         verificarConsistenciaEstado()
     }
@@ -430,7 +432,10 @@ class SimuladorViewModel : ViewModel() {
         val config = _configuracoes.value
         // CORREÇÃO: Se não há admin logado, forçar regras habilitadas para consistência
         if (!config.isAdmin && config.desabilitarRegras) {
-            _configuracoes.value = config.copy(desabilitarRegras = false)
+            _configuracoes.value = config.copy(
+                desabilitarRegras = false,
+                isAdmin = false // Garantir que isAdmin seja false
+            )
         }
     }
     

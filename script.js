@@ -28,6 +28,9 @@ class SimuladorEmprestimos {
         this.configuracoes = this.carregarConfiguracoes();
         // Forçar reset do estado administrativo na inicialização
         this.configuracoes.isAdmin = false;
+        
+        // CORREÇÃO CRÍTICA: Verificar consistência após carregar configurações
+        this.verificarConsistenciaEstado();
         this.initializeElements();
         this.setupEventListeners();
         this.focusInitialField();
@@ -68,6 +71,15 @@ class SimuladorEmprestimos {
             exibirDetalhesModeLivre: true
         };
         const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
+        
+        // CORREÇÃO: Se não há admin logado, forçar regras habilitadas para consistência
+        if (!loadedConfig.isAdmin && loadedConfig.desabilitarRegras) {
+            console.log('Debug - Admin não logado mas regras desabilitadas. Corrigindo para manter consistência.');
+            loadedConfig.desabilitarRegras = false;
+            // Salvar correção imediatamente
+            localStorage.setItem('simulador_config', JSON.stringify(loadedConfig));
+        }
+        
         this.configuracoes = loadedConfig;
         // Aplicar tema e paleta na inicialização
         this.aplicarTema(loadedConfig.themeMode);
@@ -88,6 +100,7 @@ class SimuladorEmprestimos {
         
         // Aplicar classes de modo livre após carregar configurações
         setTimeout(() => {
+            this.verificarConsistenciaEstado(); // Verificar antes de aplicar
             if (this.atualizarClassesModoLivre) {
                 this.atualizarClassesModoLivre();
             }
@@ -830,6 +843,9 @@ class SimuladorEmprestimos {
     calcular() {
         // Recarregar configurações mais recentes antes do cálculo
         this.carregarConfiguracoes();
+        
+        // Verificar consistência após recarregar
+        this.verificarConsistenciaEstado();
         
         // Verificar campos obrigatórios
         const valor = this.obterValorNumerico(this.valorEmprestimoField.value);

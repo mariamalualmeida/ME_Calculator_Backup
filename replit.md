@@ -289,6 +289,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO SELECT REGRAS DE LIMITE - corrigido problema onde não era possível desabilitar regras, valores do select alterados de "habilitar/desabilitar" para "false/true" (boolean), sincronizada lógica em todas as funções (carregarConfiguracoes, salvarConfiguracoesModal, mostrarPainelAdmin), cache v=20250625525000 (v20250625525000)
 - June 25, 2025: CORREÇÃO COMPLETA PLACEHOLDER DINÂMICO - corrigidos values do HTML para "false/true", adicionadas verificações de elementos DOM, implementados timeouts para sincronização, placeholder agora muda corretamente entre "Permitido: 1 a 15 parcelas" e "Quantidade de parcelas", sincronizado Web/PWA e Android, cache v=20250625530000 (v20250625530000)
 - June 25, 2025: CORREÇÃO CRÍTICA CONSISTÊNCIA DE ESTADO - implementada verificação automática que força regras habilitadas quando admin não está logado, corrigido problema de bordas vermelhas e placeholder incorretos após reload do navegador, função verificarConsistenciaEstado() adicionada, sincronizado Web/PWA e Android, cache v=20250625535000 (v20250625535000)
+- June 25, 2025: CORREÇÃO DEFINITIVA VERIFICAÇÃO CONSISTÊNCIA - função verificarConsistenciaEstado() chamada em todos pontos críticos (inicialização, carregamento configurações, cálculo), reset forçado isAdmin=false na inicialização Android, verificação antes de aplicar validações visuais, problema de estado inconsistente resolvido definitivamente, cache v=20250625540000 (v20250625540000)
 
 ## User Preferences
 
