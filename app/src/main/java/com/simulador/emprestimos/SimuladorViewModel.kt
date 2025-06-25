@@ -183,7 +183,7 @@ class SimuladorViewModel : ViewModel() {
     }
     
     fun isJurosInvalido(taxaJuros: String, numeroParcelas: String): Boolean {
-        val modoLivreAtivo = _configuracoes.value.isAdmin && _configuracoes.value.desabilitarRegras
+        val modoLivreAtivo = _configuracoes.value.desabilitarRegras
         if (modoLivreAtivo || taxaJuros.isEmpty() || numeroParcelas.isEmpty()) {
             return false
         }
@@ -424,19 +424,6 @@ class SimuladorViewModel : ViewModel() {
     
     fun updateConfiguracoes(novasConfiguracoes: Configuracoes) {
         _configuracoes.value = novasConfiguracoes
-        // Verificar consistência após atualização
-        verificarConsistenciaEstado()
-    }
-    
-    private fun verificarConsistenciaEstado() {
-        val config = _configuracoes.value
-        // CORREÇÃO: Se não há admin logado, forçar regras habilitadas para consistência
-        if (!config.isAdmin && config.desabilitarRegras) {
-            _configuracoes.value = config.copy(
-                desabilitarRegras = false,
-                isAdmin = false // Garantir que isAdmin seja false
-            )
-        }
     }
     
     fun limparResultado() {
