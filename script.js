@@ -2425,23 +2425,23 @@ Testemunha 2: _____________________________________ CPF: _______________________
     extrairDadosTexto(texto) {
         const dados = {};
         
-        // Extrair dados básicos de simulação
-        const valorMatch = texto.match(/Valor do empréstimo:?\s*R?\$?\s*([\d.,]+)/i);
+        // Extrair dados básicos de simulação do PDF gerado
+        const valorMatch = texto.match(/Valor do empréstimo:\s*R\$\s*([\d.,]+)/i);
         if (valorMatch) {
             dados.valor = valorMatch[1].replace(/\./g, '').replace(',', '.');
         }
         
-        const taxaMatch = texto.match(/Taxa de juros:?\s*([\d,]+)%?/i);
+        const taxaMatch = texto.match(/Taxa de juros:\s*([\d,]+)%/i);
         if (taxaMatch) {
             dados.juros = taxaMatch[1];
         }
         
-        const parcelasMatch = texto.match(/Número de parcelas:?\s*(\d+)/i);
+        const parcelasMatch = texto.match(/Número de parcelas:\s*(\d+)/i);
         if (parcelasMatch) {
             dados.nParcelas = parcelasMatch[1];
         }
         
-        const sistemaMatch = texto.match(/Sistema de juros:?\s*([^:\n]+)/i);
+        const sistemaMatch = texto.match(/Sistema de juros:\s*([^\n]+)/i);
         if (sistemaMatch) {
             const sistema = sistemaMatch[1].trim().toLowerCase();
             if (sistema.includes('simples')) dados.sistemaJuros = 'simples';
@@ -2450,7 +2450,33 @@ Testemunha 2: _____________________________________ CPF: _______________________
             else if (sistema.includes('pro-rata')) dados.sistemaJuros = 'compostos-prorata';
         }
         
-        // Extrair dados cadastrais do cliente - melhorados baseado nos dados reais
+        // Extrair datas para calcular dias extras
+        const dataSimulacaoMatch = texto.match(/Data da simulação:\s*([\d\/]+)/i);
+        const primeiroVencimentoMatch = texto.match(/01\s+(\d{2}\/\d{2}\/\d{4})/);
+        
+        if (dataSimulacaoMatch && primeiroVencimentoMatch) {
+            const dataSimulacao = dataSimulacaoMatch[1];
+            const primeiroVencimento = primeiroVencimentoMatch[1];
+            
+            dados.dataEmprestimo = dataSimulacao;
+            dados.dataPrimeiraParcela = primeiroVencimento;
+            
+            // Calcular dias extras
+            const [diaS, mesS, anoS] = dataSimulacao.split('/').map(Number);
+            const [diaV, mesV, anoV] = primeiroVencimento.split('/').map(Number);
+            
+            const dataSimulacaoObj = new Date(anoS, mesS - 1, diaS);
+            const proximoMes = new Date(anoS, mesS, diaS); // Mesmo dia, próximo mês
+            const primeiroVencimentoObj = new Date(anoV, mesV - 1, diaV);
+            
+            const diasExtras = Math.round((primeiroVencimentoObj - proximoMes) / (1000 * 60 * 60 * 24));
+            
+            if (diasExtras > 0) {
+                dados.diasExtras = diasExtras;
+            }
+        }
+        
+        // Extrair dados cadastrais específicos do PDF gerado pelo sistema
         const nomeMatch = texto.match(/Nome:\s*([^\n\r]+?)(?=\s*CPF:|$)/i);
         if (nomeMatch) {
             dados.nomeCliente = nomeMatch[1].trim();
@@ -2461,7 +2487,7 @@ Testemunha 2: _____________________________________ CPF: _______________________
             dados.cpfCliente = cpfMatch[1].trim();
         }
         
-        const nascimentoMatch = texto.match(/Data de? Nascimento:?\s*([\d\/]+)/i);
+        const nascimentoMatch = texto.match(/Data de Nascimento:\s*([\d\/]+)/i);
         if (nascimentoMatch) {
             dados.dataNascimento = nascimentoMatch[1].trim();
         }
@@ -2471,9 +2497,31 @@ Testemunha 2: _____________________________________ CPF: _______________________
             dados.estadoCivil = estadoCivilMatch[1].trim();
         }
         
-        const enderecoMatch = texto.match(/Endereço:\s*([^\n\r]+?)(?=\s*Bairro:|Número:|$)/i);
+        const enderecoMatch = texto.match(/Endereço:\s*([^\n\r]+?)(?=\s*Bairro:|$)/i);
         if (enderecoMatch) {
             dados.endereco = enderecoMatch[1].trim();
+        }
+        
+        const bairroMatch = texto.match(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i);
+        if (bairroMatch) {
+            dados.bairro = bairroMatch[1].trim();
+        }
+        
+        const cidadeMatch = texto.match(/Cidade:\s*([^\n\r]+?)(?=\s*CEP:|$)/i);
+        if (cidadeMatch) {
+            const cidadeEstado = cidadeMatch[1].trim();
+            const cidadeEstadoMatch = cidadeEstado.match(/^(.+?)\s*-\s*([A-Z]{2})$/);
+            if (cidadeEstadoMatch) {
+                dados.cidade = cidadeEstadoMatch[1].trim();
+                dados.estado = cidadeEstadoMatch[2].trim();
+            } else {
+                dados.cidade = cidadeEstado;
+            }
+        }
+        
+        const cepMatch = texto.match(/CEP:\s*([\d-]+)/i);
+        if (cepMatch) {
+            dados.cep = cepMatch[1].trim();
         }
         
         const telefoneMatch = texto.match(/Telefone:\s*([\d\s\(\)-]+)/i);
@@ -2481,10 +2529,55 @@ Testemunha 2: _____________________________________ CPF: _______________________
             dados.telefone = telefoneMatch[1].trim();
         }
         
-        const rendaMatch = texto.match(/Renda Mensal:?\s*R?\$?\s*([\d.,]+)/i);
-        if (rendaMatch) {
-            dados.renda = rendaMatch[1].replace(/\./g, '').replace(',', '.');
+        const emailMatch = texto.match(/E-mail:\s*([^\n\r]+)/i);
+        if (emailMatch) {
+            dados.email = emailMatch[1].trim();
         }
+        
+        const profissaoMatch = texto.match(/Profissão:\s*([^\n\r]+)/i);
+        if (profissaoMatch) {
+            dados.profissao = profissaoMatch[1].trim();
+        }
+        
+        const localTrabalhoMatch = texto.match(/Local de Trabalho:\s*([^\n\r]+)/i);
+        if (localTrabalhoMatch) {
+            dados.localTrabalho = localTrabalhoMatch[1].trim();
+        }
+        
+        const rendaMatch = texto.match(/Renda Mensal:\s*([^\n\r]+)/i);
+        if (rendaMatch) {
+            dados.renda = rendaMatch[1].replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+        }
+        
+        const tempoEmpregoMatch = texto.match(/Tempo de Emprego:\s*([^\n\r]+)/i);
+        if (tempoEmpregoMatch) {
+            dados.tempoEmprego = tempoEmpregoMatch[1].trim();
+        }
+        
+        // Extrair referências do PDF
+        const ref1NomeMatch = texto.match(/1ª REFERÊNCIA:[\s\S]*?Nome:\s*([^\n\r]+)/i);
+        if (ref1NomeMatch) dados.ref1Nome = ref1NomeMatch[1].trim();
+        
+        const ref1TelefoneMatch = texto.match(/1ª REFERÊNCIA:[\s\S]*?Telefone:\s*([^\n\r]+)/i);
+        if (ref1TelefoneMatch) dados.ref1Telefone = ref1TelefoneMatch[1].trim();
+        
+        const ref1EnderecoMatch = texto.match(/1ª REFERÊNCIA:[\s\S]*?Endereço:\s*([^\n\r]+)/i);
+        if (ref1EnderecoMatch) dados.ref1Endereco = ref1EnderecoMatch[1].trim();
+        
+        const ref1BairroMatch = texto.match(/1ª REFERÊNCIA:[\s\S]*?Bairro:\s*([^\n\r]+)/i);
+        if (ref1BairroMatch) dados.ref1Bairro = ref1BairroMatch[1].trim();
+        
+        const ref2NomeMatch = texto.match(/2ª REFERÊNCIA:[\s\S]*?Nome:\s*([^\n\r]+)/i);
+        if (ref2NomeMatch) dados.ref2Nome = ref2NomeMatch[1].trim();
+        
+        const ref2TelefoneMatch = texto.match(/2ª REFERÊNCIA:[\s\S]*?Telefone:\s*([^\n\r]+)/i);
+        if (ref2TelefoneMatch) dados.ref2Telefone = ref2TelefoneMatch[1].trim();
+        
+        const ref2EnderecoMatch = texto.match(/2ª REFERÊNCIA:[\s\S]*?Endereço:\s*([^\n\r]+)/i);
+        if (ref2EnderecoMatch) dados.ref2Endereco = ref2EnderecoMatch[1].trim();
+        
+        const ref2BairroMatch = texto.match(/2ª REFERÊNCIA:[\s\S]*?Bairro:\s*([^\n\r]+)/i);
+        if (ref2BairroMatch) dados.ref2Bairro = ref2BairroMatch[1].trim();
         
         console.log('Dados extraídos do texto:', dados);
         return dados;
@@ -2585,6 +2678,103 @@ Testemunha 2: _____________________________________ CPF: _______________________
                 }
             }
             
+            // Preencher datas e calcular dias extras se existirem
+            if (dados.dataEmprestimo) {
+                const dataEmprestimoInput = document.getElementById('dataEmprestimo');
+                if (dataEmprestimoInput) {
+                    dataEmprestimoInput.value = dados.dataEmprestimo;
+                }
+            }
+            
+            if (dados.dataPrimeiraParcela) {
+                const dataPrimeiraParcelaInput = document.getElementById('dataPrimeiraParcela');
+                if (dataPrimeiraParcelaInput) {
+                    dataPrimeiraParcelaInput.value = dados.dataPrimeiraParcela;
+                }
+            }
+            
+            // Preencher mais campos cadastrais
+            if (dados.bairro) {
+                const bairroInput = document.getElementById('bairro');
+                if (bairroInput) bairroInput.value = dados.bairro;
+            }
+            
+            if (dados.cidade) {
+                const cidadeInput = document.getElementById('cidade');
+                if (cidadeInput) cidadeInput.value = dados.cidade;
+            }
+            
+            if (dados.estado) {
+                const estadoInput = document.getElementById('estado');
+                if (estadoInput) estadoInput.value = dados.estado;
+            }
+            
+            if (dados.cep) {
+                const cepInput = document.getElementById('cep');
+                if (cepInput) cepInput.value = dados.cep;
+            }
+            
+            if (dados.email) {
+                const emailInput = document.getElementById('email');
+                if (emailInput) emailInput.value = dados.email;
+            }
+            
+            if (dados.profissao) {
+                const profissaoInput = document.getElementById('profissao');
+                if (profissaoInput) profissaoInput.value = dados.profissao;
+            }
+            
+            if (dados.localTrabalho) {
+                const localTrabalhoInput = document.getElementById('localTrabalho');
+                if (localTrabalhoInput) localTrabalhoInput.value = dados.localTrabalho;
+            }
+            
+            if (dados.tempoEmprego) {
+                const tempoEmpregoInput = document.getElementById('tempoEmprego');
+                if (tempoEmpregoInput) tempoEmpregoInput.value = dados.tempoEmprego;
+            }
+            
+            // Preencher referências
+            if (dados.ref1Nome) {
+                const ref1NomeInput = document.getElementById('ref1Nome');
+                if (ref1NomeInput) ref1NomeInput.value = dados.ref1Nome;
+            }
+            
+            if (dados.ref1Telefone) {
+                const ref1TelefoneInput = document.getElementById('ref1Telefone');
+                if (ref1TelefoneInput) ref1TelefoneInput.value = dados.ref1Telefone;
+            }
+            
+            if (dados.ref1Endereco) {
+                const ref1EnderecoInput = document.getElementById('ref1Endereco');
+                if (ref1EnderecoInput) ref1EnderecoInput.value = dados.ref1Endereco;
+            }
+            
+            if (dados.ref1Bairro) {
+                const ref1BairroInput = document.getElementById('ref1Bairro');
+                if (ref1BairroInput) ref1BairroInput.value = dados.ref1Bairro;
+            }
+            
+            if (dados.ref2Nome) {
+                const ref2NomeInput = document.getElementById('ref2Nome');
+                if (ref2NomeInput) ref2NomeInput.value = dados.ref2Nome;
+            }
+            
+            if (dados.ref2Telefone) {
+                const ref2TelefoneInput = document.getElementById('ref2Telefone');
+                if (ref2TelefoneInput) ref2TelefoneInput.value = dados.ref2Telefone;
+            }
+            
+            if (dados.ref2Endereco) {
+                const ref2EnderecoInput = document.getElementById('ref2Endereco');
+                if (ref2EnderecoInput) ref2EnderecoInput.value = dados.ref2Endereco;
+            }
+            
+            if (dados.ref2Bairro) {
+                const ref2BairroInput = document.getElementById('ref2Bairro');
+                if (ref2BairroInput) ref2BairroInput.value = dados.ref2Bairro;
+            }
+            
             // Se há dados cadastrais, expandir automaticamente o formulário
             if (dados.nomeCliente || dados.cpfCliente || dados.dataNascimento) {
                 const formToggleBtn = document.getElementById('formToggleBtn');
@@ -2594,7 +2784,11 @@ Testemunha 2: _____________________________________ CPF: _______________________
                 }
             }
             
-            this.showNotification('Dados importados com sucesso do PDF!', 'success');
+            let mensagem = 'Dados importados com sucesso do PDF!';
+            if (dados.diasExtras > 0) {
+                mensagem += ` (${dados.diasExtras} dias extras detectados)`;
+            }
+            this.showNotification(mensagem, 'success');
             
         } catch (error) {
             console.error('Erro na importação PDF:', error);
