@@ -1030,8 +1030,7 @@ class SimuladorEmprestimos {
         // Verificar se há diferença entre primeira parcela e demais
         if (resultadoCalculo.diasExtra > 0) {
             const metodo = this.obterMetodoDiasExtras();
-            const diasExtras = resultadoCalculo.diasExtra;
-            const jurosExtras = formatarMoeda(resultadoCalculo.jurosDiasExtras);
+            // Removidas variáveis agrupadas - usando formatação separada
             
             if (metodo === 'distribuir') {
                 // Método distribuir - todas as parcelas iguais
@@ -1045,7 +1044,7 @@ class SimuladorEmprestimos {
                         <br><small style="color: #666;">(Juros de dias extras distribuídos igualmente)</small>
                     </div>
                     <div style="font-size: 14px; color: #666; margin-top: 8px;">
-                        Dias extras: ${diasExtras} | Juros extras: ${jurosExtras}
+                        ${this.formatarInfoDiasExtras(diasExtrasData, diasCompensacao, diasMeses31, resultadoCalculo)}
                     </div>
                 `;
             } else {
