@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-title" content="Simulador ME">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=20250624420000">
+    <link rel="stylesheet" href="style.css?v=20250625000000">
 </head>
 <body>
     <div class="container">
@@ -544,6 +544,70 @@
         </div>
     </div>
 
+    <!-- Modal de Importação -->
+    <div id="importModal" class="modal" style="display: none;">
+        <div class="modal-content import-modal-content">
+            <div class="modal-header">
+                <h2>IMPORTAR DADOS</h2>
+                <span class="close" onclick="if(window.simulator) window.simulator.fecharModalImportacao()">&times;</span>
+            </div>
+            
+            <div class="import-tabs">
+                <button id="tabPdf" class="import-tab active" onclick="if(window.simulator) window.simulator.selecionarAbaImportacao('pdf')">
+                    📄 PDF
+                </button>
+                <button id="tabTexto" class="import-tab" onclick="if(window.simulator) window.simulator.selecionarAbaImportacao('texto')">
+                    📝 TEXTO
+                </button>
+            </div>
+            
+            <div class="import-content">
+                <!-- Seção PDF -->
+                <div id="secaoPdf" class="import-section">
+                    <h3>📎 Selecione o PDF de simulação</h3>
+                    <p>Ideal para PDFs gerados pelo próprio sistema retornados pelos clientes</p>
+                    
+                    <div class="file-upload-area" onclick="document.getElementById('importFile').click()">
+                        <div class="file-upload-icon">📁</div>
+                        <div class="file-upload-text">CLIQUE PARA SELECIONAR PDF</div>
+                        <div class="file-upload-hint">(.pdf até 10MB)</div>
+                    </div>
+                    <input type="file" id="importFile" accept=".pdf" style="display: none;">
+                </div>
+                
+                <!-- Seção Texto -->
+                <div id="secaoTexto" class="import-section" style="display: none;">
+                    <h3>✏️ Cole os dados do formulário de cadastro</h3>
+                    <p>Ideal para dados recebidos via WhatsApp ou formulários preenchidos</p>
+                    
+                    <textarea 
+                        id="importTextarea" 
+                        placeholder="FORMULÁRIO: ME EMPREENDIMENTOS
+═══════════════════════════════════════════
+DADOS CADASTRAIS DO CLIENTE
+Nome: João Silva
+CPF: 123.456.789-10
+Data nascimento: 01/01/1990
+Estado Civil: Solteiro(a)
+Endereço: Rua das Flores, 123
+...
+
+Cole aqui todo o conteúdo do formulário preenchido"
+                        rows="15"></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="btnProcessarImportacao" class="primary-btn" onclick="if(window.simulator) window.simulator.processarImportacao()">
+                    PROCESSAR PDF
+                </button>
+                <button class="secondary-btn" onclick="if(window.simulator) window.simulator.fecharModalImportacao()">
+                    CANCELAR
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
@@ -552,6 +616,6 @@
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         }
     </script>
-    <script src="script.js?v=20250624420000"></script>
+    <script src="script.js?v=20250625000000"></script>
 </body>
 </html>
