@@ -877,6 +877,11 @@ class SimuladorEmprestimos {
         // Calcular prestação usando o sistema de juros configurado
         const sistemaJuros = this.configuracoes.sistemaJuros || 'compostos-mensal';
         const resultadoCalculo = this.calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal, metodo, sistemaJuros);
+
+        // Adicionar informações separadas dos dias ao resultado
+        resultadoCalculo.diasExtrasData = diasExtrasData;
+        resultadoCalculo.diasCompensacao = diasCompensacao;
+        resultadoCalculo.diasMeses31 = diasMeses31;
         
         // Mostrar resultado
         this.mostrarResultado(resultadoCalculo, valor, nParcelas, juros);
@@ -1692,7 +1697,12 @@ class SimuladorEmprestimos {
                     }
                     doc.setFont('helvetica', 'normal');
                     doc.setFontSize(12);
-                    doc.text(`(Dias extras: ${resultadoCalculo.diasExtra} | Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
+                    // Mostrar apenas dias extras da data (não compensação nem meses 31)
+                    if (resultadoCalculo.diasExtrasData > 0) {
+                        doc.text(`(Dias extras: ${resultadoCalculo.diasExtrasData} | Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
+                    } else {
+                        doc.text(`(Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
+                    }
                     yInicial += 12;
                     doc.setFont('helvetica', 'bold');
                     doc.setFontSize(14);
