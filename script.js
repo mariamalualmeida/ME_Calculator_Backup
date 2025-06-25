@@ -2797,6 +2797,10 @@ Testemunha 2: _____________________________________ CPF: _______________________
             
             // Debug: mostrar dados extraídos
             console.log('Dados extraídos do PDF:', dados);
+            console.log('Seção dados pessoais encontrada:', !!secaoDadosPessoais);
+            if (secaoDadosPessoais) {
+                console.log('Texto da seção dados pessoais:', secaoDadosPessoais[1]);
+            }
             
             // Se há dados cadastrais, expandir automaticamente o formulário
             if (dados.nomeCliente || dados.cpfCliente || dados.dataNascimento) {
