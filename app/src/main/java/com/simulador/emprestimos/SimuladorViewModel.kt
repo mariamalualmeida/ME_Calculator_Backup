@@ -78,6 +78,11 @@ class SimuladorViewModel : ViewModel() {
     private val _configuracoes = MutableStateFlow(Configuracoes())
     val configuracoes: StateFlow<Configuracoes> = _configuracoes.asStateFlow()
     
+    init {
+        // Verificar consistência do estado ao inicializar
+        verificarConsistenciaEstado()
+    }
+    
     // Callback para notificar mudanças de configuração
     private var onConfiguracoesChanged: (() -> Unit)? = null
     
@@ -417,7 +422,16 @@ class SimuladorViewModel : ViewModel() {
     
     fun updateConfiguracoes(novasConfiguracoes: Configuracoes) {
         _configuracoes.value = novasConfiguracoes
-        // Força recomposição da UI para atualizar placeholder
+        // Verificar consistência após atualização
+        verificarConsistenciaEstado()
+    }
+    
+    private fun verificarConsistenciaEstado() {
+        val config = _configuracoes.value
+        // CORREÇÃO: Se não há admin logado, forçar regras habilitadas para consistência
+        if (!config.isAdmin && config.desabilitarRegras) {
+            _configuracoes.value = config.copy(desabilitarRegras = false)
+        }
     }
     
     fun limparResultado() {

@@ -395,7 +395,7 @@ fun ConfiguracoesModal(
                                 colorTheme = colorTheme,
                                 igpmAnual = igpmAnual.replace(',', '.').toDoubleOrNull() ?: 0.0,
                                 isAdmin = isAdmin, // NOVA LÓGICA: Preservar estado administrativo durante sessão
-                                desabilitarRegras = desabilitarRegras == "desabilitar",
+                                desabilitarRegras = desabilitarRegras == "desabilitar" && isAdmin, // Só permitir desabilitar se admin logado
                                 adminUser = if (newAdminUser.isNotEmpty()) newAdminUser else configuracoes.adminUser,
                                 adminPassword = if (newAdminPassword.isNotEmpty()) newAdminPassword else configuracoes.adminPassword
                             )

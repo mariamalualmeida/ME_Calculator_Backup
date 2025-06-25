@@ -288,6 +288,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO PLACEHOLDER MODO LIVRE - corrigido bug onde placeholder não mudava para "Quantidade de parcelas" no modo livre, adicionado recarregamento de configurações e debug logs, atualização automática no fecharModal() e salvarConfiguracoesModal(), sincronizado Web/PWA e Android, cache v=20250625520000 (v20250625520000)
 - June 25, 2025: CORREÇÃO SELECT REGRAS DE LIMITE - corrigido problema onde não era possível desabilitar regras, valores do select alterados de "habilitar/desabilitar" para "false/true" (boolean), sincronizada lógica em todas as funções (carregarConfiguracoes, salvarConfiguracoesModal, mostrarPainelAdmin), cache v=20250625525000 (v20250625525000)
 - June 25, 2025: CORREÇÃO COMPLETA PLACEHOLDER DINÂMICO - corrigidos values do HTML para "false/true", adicionadas verificações de elementos DOM, implementados timeouts para sincronização, placeholder agora muda corretamente entre "Permitido: 1 a 15 parcelas" e "Quantidade de parcelas", sincronizado Web/PWA e Android, cache v=20250625530000 (v20250625530000)
+- June 25, 2025: CORREÇÃO CRÍTICA CONSISTÊNCIA DE ESTADO - implementada verificação automática que força regras habilitadas quando admin não está logado, corrigido problema de bordas vermelhas e placeholder incorretos após reload do navegador, função verificarConsistenciaEstado() adicionada, sincronizado Web/PWA e Android, cache v=20250625535000 (v20250625535000)
 
 ## User Preferences
 
