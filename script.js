@@ -1871,23 +1871,9 @@ class SimuladorEmprestimos {
 
 
     gerarNomeArquivoPdf() {
-        // Debug - verificar se elementos existem no DOM
-        const nomeElement = document.getElementById('nomeCompleto');
-        const cpfElement = document.getElementById('cpfCompleto');
-        
-        console.log('Debug PDF - Elemento nome encontrado:', !!nomeElement);
-        console.log('Debug PDF - Elemento CPF encontrado:', !!cpfElement);
-        
-        if (nomeElement) console.log('Debug PDF - Valor do nome element:', nomeElement.value);
-        if (cpfElement) console.log('Debug PDF - Valor do CPF element:', cpfElement.value);
-        
-        // Capturar dados do cliente diretamente do DOM com IDs corretos
-        const nomeCliente = nomeElement?.value.trim() || '';
-        const cpfCliente = cpfElement?.value.trim() || '';
-        
-        // Debug para verificar se está capturando os valores
-        console.log('Debug PDF - Nome capturado:', nomeCliente);
-        console.log('Debug PDF - CPF capturado:', cpfCliente);
+        // Capturar dados do cliente diretamente do DOM
+        const nomeCliente = document.getElementById('nomeCompleto')?.value.trim() || '';
+        const cpfCliente = document.getElementById('cpfCompleto')?.value.trim() || '';
         
         // Limpar caracteres especiais para nome de arquivo (mantém espaços e pontos)
         const limparNome = (texto) => texto.replace(/[<>:"/\\|?*]/g, '_');
@@ -1900,16 +1886,12 @@ class SimuladorEmprestimos {
         
         if (nomeCliente && cpfCliente) {
             nomeArquivo = `${limparNome(nomeCliente)}_${limparNome(cpfCliente)}_Simulacao_emprestimo_${timestamp}`;
-            console.log('Debug PDF - Usando formato: nome + cpf');
         } else if (nomeCliente) {
             nomeArquivo = `${limparNome(nomeCliente)}_Simulacao_emprestimo_${timestamp}`;
-            console.log('Debug PDF - Usando formato: apenas nome');
         } else {
             nomeArquivo = `Simulacao_emprestimo_${timestamp}`;
-            console.log('Debug PDF - Usando formato: padrão');
         }
         
-        console.log('Debug PDF - Nome final do arquivo:', `${nomeArquivo}.pdf`);
         return `${nomeArquivo}.pdf`;
     }
 
