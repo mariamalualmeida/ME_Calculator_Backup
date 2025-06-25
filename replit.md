@@ -287,6 +287,7 @@ SimuladorEmprestimos/
 - June 25, 2025: PLACEHOLDER OTIMIZADO - corrigido erro JavaScript "atualizarPlaceholderParcelas is not a function", texto reduzido para caber na caixa: "Permitido: 1 a 15 parcelas" (regras ativas) vs "Quantidade de parcelas" (modo livre), sincronizado todas versões, cache v=20250625515000 (v20250625515000)
 - June 25, 2025: CORREÇÃO PLACEHOLDER MODO LIVRE - corrigido bug onde placeholder não mudava para "Quantidade de parcelas" no modo livre, adicionado recarregamento de configurações e debug logs, atualização automática no fecharModal() e salvarConfiguracoesModal(), sincronizado Web/PWA e Android, cache v=20250625520000 (v20250625520000)
 - June 25, 2025: CORREÇÃO SELECT REGRAS DE LIMITE - corrigido problema onde não era possível desabilitar regras, valores do select alterados de "habilitar/desabilitar" para "false/true" (boolean), sincronizada lógica em todas as funções (carregarConfiguracoes, salvarConfiguracoesModal, mostrarPainelAdmin), cache v=20250625525000 (v20250625525000)
+- June 25, 2025: CORREÇÃO COMPLETA PLACEHOLDER DINÂMICO - corrigidos values do HTML para "false/true", adicionadas verificações de elementos DOM, implementados timeouts para sincronização, placeholder agora muda corretamente entre "Permitido: 1 a 15 parcelas" e "Quantidade de parcelas", sincronizado Web/PWA e Android, cache v=20250625530000 (v20250625530000)
 
 ## User Preferences
 

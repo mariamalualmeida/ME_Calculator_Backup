@@ -956,21 +956,19 @@ class SimuladorEmprestimos {
     atualizarPlaceholderParcelas() {
         if (!this.numeroParcelasField) return;
         
-        // Recarregar configurações atuais
-        this.carregarConfiguracoes();
-        
         // Atualizar placeholder baseado no estado das regras
-        console.log('Debug - Atualizando placeholder:', {
+        console.log('Debug - Estado atual das configurações:', {
             desabilitarRegras: this.configuracoes.desabilitarRegras,
-            isAdmin: this.configuracoes.isAdmin
+            isAdmin: this.configuracoes.isAdmin,
+            modoLivre: this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin
         });
         
         if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
             this.numeroParcelasField.placeholder = 'Quantidade de parcelas';
-            console.log('Debug - Placeholder modo livre aplicado');
+            console.log('Debug - Placeholder MODO LIVRE aplicado');
         } else {
             this.numeroParcelasField.placeholder = 'Permitido: 1 a 15 parcelas';
-            console.log('Debug - Placeholder regras aplicado');
+            console.log('Debug - Placeholder REGRAS aplicado');
         }
     }
 
@@ -1425,7 +1423,11 @@ class SimuladorEmprestimos {
         const table = document.getElementById('limitsTable');
         
         // REFATORAÇÃO: Formato unificado boolean consistente
-        document.getElementById('desabilitarRegras').value = this.configuracoes.desabilitarRegras ? 'true' : 'false';
+        const selectRegras = document.getElementById('desabilitarRegras');
+        if (selectRegras) {
+            selectRegras.value = this.configuracoes.desabilitarRegras ? 'true' : 'false';
+            console.log('Debug - Select regras definido para:', selectRegras.value);
+        }
         
         let html = '<div class="limits-table">';
         for (let parcelas = 1; parcelas <= 15; parcelas++) {

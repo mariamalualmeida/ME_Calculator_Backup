@@ -210,7 +210,8 @@ fun SimuladorEmprestimosScreen(
                                     "Quantidade de parcelas"
                                 } else {
                                     "Permitido: 1 a 15 parcelas"
-                                }
+                                },
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         },
                         keyboardOptions = KeyboardOptions(
