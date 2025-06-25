@@ -1873,6 +1873,84 @@ class SimuladorEmprestimos {
         return metodoSelecionado ? metodoSelecionado.value : 'primeira';
     }
 
+    // Nova função para calcular ajuste de meses com 31 dias
+    calcularAjusteMes31Dias(nParcelas) {
+        const diasPorMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        const hoje = new Date();
+        let diasAjuste = 0;
+        
+        for (let i = 0; i < nParcelas; i++) {
+            const mesVencimento = (hoje.getMonth() + i) % 12;
+            if (diasPorMes[mesVencimento] === 31) {
+                diasAjuste += 1;
+            }
+        }
+        
+        return diasAjuste;
+    }
+
+    // Nova função para exibir detalhes no modo livre
+    exibirDetalhesModeLivre(valorEmprestimo, nParcelas, juros, resultadoCalculo) {
+        const valorTotal = resultadoCalculo.parcelaNormal * nParcelas;
+        const lucroTotal = valorTotal - valorEmprestimo;
+        const margemLucro = (lucroTotal / valorEmprestimo) * 100;
+        
+        let detalhesHtml = `
+            <div class="detalhes-modo-livre" style="
+                margin-top: 20px;
+                padding: 16px;
+                background: var(--primary-container);
+                border-radius: 12px;
+                border-left: 4px solid var(--primary);
+            ">
+                <h4 style="margin: 0 0 12px 0; color: var(--on-primary-container); font-size: 16px;">
+                    ANÁLISE FINANCEIRA
+                </h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px;">
+                    <div>
+                        <strong>Capital emprestado:</strong><br>
+                        <span style="color: var(--primary);">R$ ${valorEmprestimo.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    </div>
+                    <div>
+                        <strong>Total a receber:</strong><br>
+                        <span style="color: var(--primary);">R$ ${valorTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    </div>
+                    <div>
+                        <strong>Lucro líquido:</strong><br>
+                        <span style="color: ${lucroTotal > 0 ? '#4CAF50' : '#F44336'};">R$ ${lucroTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    </div>
+                    <div>
+                        <strong>Margem de lucro:</strong><br>
+                        <span style="color: ${margemLucro > 0 ? '#4CAF50' : '#F44336'};">${margemLucro.toFixed(2)}%</span>
+                    </div>
+                </div>
+        `;
+        
+        // Adicionar informações de configurações ativas
+        const configuracoeAtivas = [];
+        if (this.configuracoes.diasExtrasFixos > 0) {
+            configuracoeAtivas.push(`${this.configuracoes.diasExtrasFixos} dias extras fixos`);
+        }
+        if (this.configuracoes.ajusteMes31Dias) {
+            configuracoeAtivas.push('Ajuste meses 31 dias');
+        }
+        if (this.configuracoes.igpmAnual > 0) {
+            configuracoeAtivas.push(`IGPM ${this.configuracoes.igpmAnual}%`);
+        }
+        
+        if (configuracoeAtivas.length > 0) {
+            detalhesHtml += `
+                <div style="margin-top: 12px; font-size: 12px; color: var(--on-primary-container); opacity: 0.8;">
+                    <strong>Configurações ativas:</strong> ${configuracoeAtivas.join(', ')}
+                </div>
+            `;
+        }
+        
+        detalhesHtml += '</div>';
+        
+        this.resultValue.innerHTML += detalhesHtml;
+    }
+
     setupDateMaskFormatting() {
         const dataNascimentoField = document.getElementById('dataNascimento');
         if (dataNascimentoField) {
