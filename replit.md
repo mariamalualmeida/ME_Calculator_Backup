@@ -237,6 +237,7 @@ SimuladorEmprestimos/
 - June 25, 2025: REGEX OTIMIZADOS COM DADOS REAIS - corrigidos regex baseado nos dados fornecidos pelo usuário (PDF e texto), melhorada captura de campos específicos usando look-ahead para evitar captura excessiva, corrigido erro JavaScript "cpfMatch already declared", mapeamento telefone adicionado para formulário, cache v=20250625060000 (v20250625060000)
 - June 25, 2025: EXTRAÇÃO COMPLETA IMPLEMENTADA BASEADA NO PDF REAL - criados regex específicos para PDFs gerados pelo sistema, extração automática de datas para calcular dias extras, preenchimento completo de todos campos cadastrais incluindo referências, nomeação inteligente de arquivos PDF usando nome+CPF do cliente, detecção automática de dias extras com notificação, cache v=20250625070000 (v20250625070000)
 - June 25, 2025: CORREÇÕES CRÍTICAS ORDEM PDF E EXTRAÇÃO BASEADA EM SEÇÕES - ordem PDF corrigida (Valor→Parcelas→Sistema→Taxa), extração reformulada usando seções específicas do PDF (DADOS PESSOAIS, DADOS PROFISSIONAIS, 1ª REFERÊNCIA, 2ª REFERÊNCIA) para capturar campos individuais corretamente, cache v=20250625080000 (v20250625080000)
+- June 25, 2025: CORREÇÃO DEFINITIVA ORDEM PDF E MELHORIA EXTRAÇÃO - ordem PDF agora realmente correta (Valor→Parcelas→Sistema→Taxa), extração melhorada usando seção DADOS DA SIMULAÇÃO específica, busca de primeiro vencimento melhorada na tabela de parcelas, cache v=20250625090000 (v20250625090000)
 
 ## User Preferences
 

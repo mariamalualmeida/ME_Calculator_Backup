@@ -1838,22 +1838,22 @@ class SimuladorEmprestimos {
             doc.text(`Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
             yInicial += 12;
             
-            // Corrigir ordem: Taxa antes do Sistema (como no PDF exemplo)
-            if (this.configuracoes.exibirDadosJuros) {
-                doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, yInicial);
-                yInicial += 12;
-            }
-            
             doc.text(`Número de parcelas: ${nParcelas}`, 20, yInicial);
             yInicial += 12;
             
-            // Sistema de juros depois do número de parcelas (como no PDF exemplo)
+            // Sistema de juros depois do número de parcelas
             if (this.configuracoes.exibirDadosJuros) {
                 const sistemaJurosTexto = this.configuracoes.sistemaJuros === 'simples' ? 'Juros Simples' :
                                         this.configuracoes.sistemaJuros === 'compostos-diarios' ? 'Juros Compostos Diários' :
                                         this.configuracoes.sistemaJuros === 'pro-rata-real' ? 'Pro-rata Real' :
                                         'Juros Compostos Mensais';
                 doc.text(`Sistema de juros: ${sistemaJurosTexto}`, 20, yInicial);
+                yInicial += 12;
+            }
+            
+            // Taxa de juros por último
+            if (this.configuracoes.exibirDadosJuros) {
+                doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, yInicial);
                 yInicial += 12;
             }
 
@@ -2425,34 +2425,48 @@ Testemunha 2: _____________________________________ CPF: _______________________
     extrairDadosTexto(texto) {
         const dados = {};
         
-        // Extrair dados básicos de simulação do PDF gerado
-        const valorMatch = texto.match(/Valor do empréstimo:\s*R\$\s*([\d.,]+)/i);
-        if (valorMatch) {
-            dados.valor = valorMatch[1].replace(/\./g, '').replace(',', '.');
+        // Extrair dados básicos de simulação do PDF gerado - ordem corrigida
+        const secaoDadosSimulacao = texto.match(/DADOS DA SIMULAÇÃO([\s\S]*?)(?=TABELA DE PARCELAS|$)/i);
+        
+        if (secaoDadosSimulacao) {
+            const dadosSimulacao = secaoDadosSimulacao[1];
+            
+            const valorMatch = dadosSimulacao.match(/Valor do empréstimo:\s*R\$\s*([\d.,]+)/i);
+            if (valorMatch) {
+                dados.valor = valorMatch[1].replace(/\./g, '').replace(',', '.');
+            }
+            
+            const parcelasMatch = dadosSimulacao.match(/Número de parcelas:\s*(\d+)/i);
+            if (parcelasMatch) {
+                dados.nParcelas = parcelasMatch[1];
+            }
+            
+            const sistemaMatch = dadosSimulacao.match(/Sistema de juros:\s*([^\n\r]+)/i);
+            if (sistemaMatch) {
+                const sistema = sistemaMatch[1].trim().toLowerCase();
+                if (sistema.includes('simples')) dados.sistemaJuros = 'simples';
+                else if (sistema.includes('diários')) dados.sistemaJuros = 'compostos-diarios';
+                else if (sistema.includes('mensais')) dados.sistemaJuros = 'compostos-mensal';
+                else if (sistema.includes('pro-rata')) dados.sistemaJuros = 'compostos-prorata';
+            }
+            
+            const taxaMatch = dadosSimulacao.match(/Taxa de juros:\s*([\d,]+)%/i);
+            if (taxaMatch) {
+                dados.juros = taxaMatch[1];
+            }
         }
         
-        const parcelasMatch = texto.match(/Número de parcelas:\s*(\d+)/i);
-        if (parcelasMatch) {
-            dados.nParcelas = parcelasMatch[1];
-        }
-        
-        const sistemaMatch = texto.match(/Sistema de juros:\s*([^\n\r]+)/i);
-        if (sistemaMatch) {
-            const sistema = sistemaMatch[1].trim().toLowerCase();
-            if (sistema.includes('simples')) dados.sistemaJuros = 'simples';
-            else if (sistema.includes('diários')) dados.sistemaJuros = 'compostos-diarios';
-            else if (sistema.includes('mensais')) dados.sistemaJuros = 'compostos-mensal';
-            else if (sistema.includes('pro-rata')) dados.sistemaJuros = 'compostos-prorata';
-        }
-        
-        const taxaMatch = texto.match(/Taxa de juros:\s*([\d,]+)%/i);
-        if (taxaMatch) {
-            dados.juros = taxaMatch[1];
-        }
-        
-        // Extrair datas para calcular dias extras
+        // Extrair datas para calcular dias extras - melhorado
         const dataSimulacaoMatch = texto.match(/Data da simulação:\s*([\d\/]+)/i);
-        const primeiroVencimentoMatch = texto.match(/01\s+(\d{2}\/\d{2}\/\d{4})/);
+        
+        // Buscar primeiro vencimento na tabela - formato "01            DD/MM/AAAA"
+        const tabelaMatch = texto.match(/TABELA DE PARCELAS([\s\S]*?)$/i);
+        let primeiroVencimentoMatch = null;
+        
+        if (tabelaMatch) {
+            const tabelaTexto = tabelaMatch[1];
+            primeiroVencimentoMatch = tabelaTexto.match(/01\s+(\d{2}\/\d{2}\/\d{4})/);
+        }
         
         if (dataSimulacaoMatch && primeiroVencimentoMatch) {
             const dataSimulacao = dataSimulacaoMatch[1];
@@ -2461,7 +2475,7 @@ Testemunha 2: _____________________________________ CPF: _______________________
             dados.dataEmprestimo = dataSimulacao;
             dados.dataPrimeiraParcela = primeiroVencimento;
             
-            // Calcular dias extras
+            // Calcular dias extras usando lógica correta
             const [diaS, mesS, anoS] = dataSimulacao.split('/').map(Number);
             const [diaV, mesV, anoV] = primeiroVencimento.split('/').map(Number);
             
