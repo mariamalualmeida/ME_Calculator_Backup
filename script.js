@@ -2431,23 +2431,23 @@ Testemunha 2: _____________________________________ CPF: _______________________
             dados.valor = valorMatch[1].replace(/\./g, '').replace(',', '.');
         }
         
-        const taxaMatch = texto.match(/Taxa de juros:\s*([\d,]+)%/i);
-        if (taxaMatch) {
-            dados.juros = taxaMatch[1];
-        }
-        
         const parcelasMatch = texto.match(/Número de parcelas:\s*(\d+)/i);
         if (parcelasMatch) {
             dados.nParcelas = parcelasMatch[1];
         }
         
-        const sistemaMatch = texto.match(/Sistema de juros:\s*([^\n]+)/i);
+        const sistemaMatch = texto.match(/Sistema de juros:\s*([^\n\r]+)/i);
         if (sistemaMatch) {
             const sistema = sistemaMatch[1].trim().toLowerCase();
             if (sistema.includes('simples')) dados.sistemaJuros = 'simples';
             else if (sistema.includes('diários')) dados.sistemaJuros = 'compostos-diarios';
             else if (sistema.includes('mensais')) dados.sistemaJuros = 'compostos-mensal';
             else if (sistema.includes('pro-rata')) dados.sistemaJuros = 'compostos-prorata';
+        }
+        
+        const taxaMatch = texto.match(/Taxa de juros:\s*([\d,]+)%/i);
+        if (taxaMatch) {
+            dados.juros = taxaMatch[1];
         }
         
         // Extrair datas para calcular dias extras
@@ -2476,108 +2476,102 @@ Testemunha 2: _____________________________________ CPF: _______________________
             }
         }
         
-        // Extrair dados cadastrais específicos do PDF gerado pelo sistema
-        const nomeMatch = texto.match(/Nome:\s*([^\n\r]+?)(?=\s*CPF:|$)/i);
-        if (nomeMatch) {
-            dados.nomeCliente = nomeMatch[1].trim();
-        }
+        // Extrair dados cadastrais específicos do PDF - usando estrutura de seções
+        const secaoDadosPessoais = texto.match(/DADOS PESSOAIS:([\s\S]*?)(?=DADOS PROFISSIONAIS:|1ª REFERÊNCIA:|$)/i);
+        const secaoDadosProfissionais = texto.match(/DADOS PROFISSIONAIS:([\s\S]*?)(?=1ª REFERÊNCIA:|$)/i);
+        const secaoRef1 = texto.match(/1ª REFERÊNCIA:([\s\S]*?)(?=2ª REFERÊNCIA:|$)/i);
+        const secaoRef2 = texto.match(/2ª REFERÊNCIA:([\s\S]*?)(?=$)/i);
         
-        const cpfMatch = texto.match(/CPF:\s*([\d.-]+)/i);
-        if (cpfMatch) {
-            dados.cpfCliente = cpfMatch[1].trim();
-        }
-        
-        const nascimentoMatch = texto.match(/Data de Nascimento:\s*([\d\/]+)/i);
-        if (nascimentoMatch) {
-            dados.dataNascimento = nascimentoMatch[1].trim();
-        }
-        
-        const estadoCivilMatch = texto.match(/Estado Civil:\s*([^\n\r]+?)(?=\s*Endereço:|$)/i);
-        if (estadoCivilMatch) {
-            dados.estadoCivil = estadoCivilMatch[1].trim();
-        }
-        
-        const enderecoMatch = texto.match(/Endereço:\s*([^\n\r]+?)(?=\s*Bairro:|$)/i);
-        if (enderecoMatch) {
-            dados.endereco = enderecoMatch[1].trim();
-        }
-        
-        const bairroMatch = texto.match(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i);
-        if (bairroMatch) {
-            dados.bairro = bairroMatch[1].trim();
-        }
-        
-        const cidadeMatch = texto.match(/Cidade:\s*([^\n\r]+?)(?=\s*CEP:|$)/i);
-        if (cidadeMatch) {
-            const cidadeEstado = cidadeMatch[1].trim();
-            const cidadeEstadoMatch = cidadeEstado.match(/^(.+?)\s*-\s*([A-Z]{2})$/);
-            if (cidadeEstadoMatch) {
-                dados.cidade = cidadeEstadoMatch[1].trim();
-                dados.estado = cidadeEstadoMatch[2].trim();
-            } else {
-                dados.cidade = cidadeEstado;
+        if (secaoDadosPessoais) {
+            const dadosPessoais = secaoDadosPessoais[1];
+            
+            const nomeMatch = dadosPessoais.match(/Nome:\s*([^\n\r]+)/i);
+            if (nomeMatch) dados.nomeCliente = nomeMatch[1].trim();
+            
+            const cpfMatch = dadosPessoais.match(/CPF:\s*([\d.-]+)/i);
+            if (cpfMatch) dados.cpfCliente = cpfMatch[1].trim();
+            
+            const nascimentoMatch = dadosPessoais.match(/Data de Nascimento:\s*([\d\/]+)/i);
+            if (nascimentoMatch) dados.dataNascimento = nascimentoMatch[1].trim();
+            
+            const estadoCivilMatch = dadosPessoais.match(/Estado Civil:\s*([^\n\r]+)/i);
+            if (estadoCivilMatch) dados.estadoCivil = estadoCivilMatch[1].trim();
+            
+            const enderecoMatch = dadosPessoais.match(/Endereço:\s*([^\n\r]+)/i);
+            if (enderecoMatch) dados.endereco = enderecoMatch[1].trim();
+            
+            const bairroMatch = dadosPessoais.match(/Bairro:\s*([^\n\r]+)/i);
+            if (bairroMatch) dados.bairro = bairroMatch[1].trim();
+            
+            const cidadeMatch = dadosPessoais.match(/Cidade:\s*([^\n\r]+)/i);
+            if (cidadeMatch) {
+                const cidadeEstado = cidadeMatch[1].trim();
+                const cidadeEstadoMatch = cidadeEstado.match(/^(.+?)\s*-\s*([A-Z]{2})$/);
+                if (cidadeEstadoMatch) {
+                    dados.cidade = cidadeEstadoMatch[1].trim();
+                    dados.estado = cidadeEstadoMatch[2].trim();
+                } else {
+                    dados.cidade = cidadeEstado;
+                }
             }
+            
+            const cepMatch = dadosPessoais.match(/CEP:\s*([\d-]+)/i);
+            if (cepMatch) dados.cep = cepMatch[1].trim();
+            
+            const telefoneMatch = dadosPessoais.match(/Telefone:\s*([\d\s\(\)-]+)/i);
+            if (telefoneMatch) dados.telefone = telefoneMatch[1].trim();
+            
+            const emailMatch = dadosPessoais.match(/E-mail:\s*([^\n\r]+)/i);
+            if (emailMatch) dados.email = emailMatch[1].trim();
         }
         
-        const cepMatch = texto.match(/CEP:\s*([\d-]+)/i);
-        if (cepMatch) {
-            dados.cep = cepMatch[1].trim();
+        if (secaoDadosProfissionais) {
+            const dadosProfissionais = secaoDadosProfissionais[1];
+            
+            const profissaoMatch = dadosProfissionais.match(/Profissão:\s*([^\n\r]+)/i);
+            if (profissaoMatch) dados.profissao = profissaoMatch[1].trim();
+            
+            const localTrabalhoMatch = dadosProfissionais.match(/Local de Trabalho:\s*([^\n\r]+)/i);
+            if (localTrabalhoMatch) dados.localTrabalho = localTrabalhoMatch[1].trim();
+            
+            const rendaMatch = dadosProfissionais.match(/Renda Mensal:\s*([^\n\r]+)/i);
+            if (rendaMatch) dados.renda = rendaMatch[1].replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+            
+            const tempoEmpregoMatch = dadosProfissionais.match(/Tempo de Emprego:\s*([^\n\r]+)/i);
+            if (tempoEmpregoMatch) dados.tempoEmprego = tempoEmpregoMatch[1].trim();
         }
         
-        const telefoneMatch = texto.match(/Telefone:\s*([\d\s\(\)-]+)/i);
-        if (telefoneMatch) {
-            dados.telefone = telefoneMatch[1].trim();
+        if (secaoRef1) {
+            const ref1Texto = secaoRef1[1];
+            
+            const ref1NomeMatch = ref1Texto.match(/Nome:\s*([^\n\r]+)/i);
+            if (ref1NomeMatch) dados.ref1Nome = ref1NomeMatch[1].trim();
+            
+            const ref1TelefoneMatch = ref1Texto.match(/Telefone:\s*([^\n\r]+)/i);
+            if (ref1TelefoneMatch) dados.ref1Telefone = ref1TelefoneMatch[1].trim();
+            
+            const ref1EnderecoMatch = ref1Texto.match(/Endereço:\s*([^\n\r]+)/i);
+            if (ref1EnderecoMatch) dados.ref1Endereco = ref1EnderecoMatch[1].trim();
+            
+            const ref1BairroMatch = ref1Texto.match(/Bairro:\s*([^\n\r]+)/i);
+            if (ref1BairroMatch) dados.ref1Bairro = ref1BairroMatch[1].trim();
         }
         
-        const emailMatch = texto.match(/E-mail:\s*([^\n\r]+)/i);
-        if (emailMatch) {
-            dados.email = emailMatch[1].trim();
+        if (secaoRef2) {
+            const ref2Texto = secaoRef2[1];
+            
+            const ref2NomeMatch = ref2Texto.match(/Nome:\s*([^\n\r]+)/i);
+            if (ref2NomeMatch) dados.ref2Nome = ref2NomeMatch[1].trim();
+            
+            const ref2TelefoneMatch = ref2Texto.match(/Telefone:\s*([^\n\r]+)/i);
+            if (ref2TelefoneMatch) dados.ref2Telefone = ref2TelefoneMatch[1].trim();
+            
+            const ref2EnderecoMatch = ref2Texto.match(/Endereço:\s*([^\n\r]+)/i);
+            if (ref2EnderecoMatch) dados.ref2Endereco = ref2EnderecoMatch[1].trim();
+            
+            const ref2BairroMatch = ref2Texto.match(/Bairro:\s*([^\n\r]+)/i);
+            if (ref2BairroMatch) dados.ref2Bairro = ref2BairroMatch[1].trim();
         }
-        
-        const profissaoMatch = texto.match(/Profissão:\s*([^\n\r]+)/i);
-        if (profissaoMatch) {
-            dados.profissao = profissaoMatch[1].trim();
-        }
-        
-        const localTrabalhoMatch = texto.match(/Local de Trabalho:\s*([^\n\r]+)/i);
-        if (localTrabalhoMatch) {
-            dados.localTrabalho = localTrabalhoMatch[1].trim();
-        }
-        
-        const rendaMatch = texto.match(/Renda Mensal:\s*([^\n\r]+)/i);
-        if (rendaMatch) {
-            dados.renda = rendaMatch[1].replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
-        }
-        
-        const tempoEmpregoMatch = texto.match(/Tempo de Emprego:\s*([^\n\r]+)/i);
-        if (tempoEmpregoMatch) {
-            dados.tempoEmprego = tempoEmpregoMatch[1].trim();
-        }
-        
-        // Extrair referências do PDF
-        const ref1NomeMatch = texto.match(/1ª REFERÊNCIA:[\s\S]*?Nome:\s*([^\n\r]+)/i);
-        if (ref1NomeMatch) dados.ref1Nome = ref1NomeMatch[1].trim();
-        
-        const ref1TelefoneMatch = texto.match(/1ª REFERÊNCIA:[\s\S]*?Telefone:\s*([^\n\r]+)/i);
-        if (ref1TelefoneMatch) dados.ref1Telefone = ref1TelefoneMatch[1].trim();
-        
-        const ref1EnderecoMatch = texto.match(/1ª REFERÊNCIA:[\s\S]*?Endereço:\s*([^\n\r]+)/i);
-        if (ref1EnderecoMatch) dados.ref1Endereco = ref1EnderecoMatch[1].trim();
-        
-        const ref1BairroMatch = texto.match(/1ª REFERÊNCIA:[\s\S]*?Bairro:\s*([^\n\r]+)/i);
-        if (ref1BairroMatch) dados.ref1Bairro = ref1BairroMatch[1].trim();
-        
-        const ref2NomeMatch = texto.match(/2ª REFERÊNCIA:[\s\S]*?Nome:\s*([^\n\r]+)/i);
-        if (ref2NomeMatch) dados.ref2Nome = ref2NomeMatch[1].trim();
-        
-        const ref2TelefoneMatch = texto.match(/2ª REFERÊNCIA:[\s\S]*?Telefone:\s*([^\n\r]+)/i);
-        if (ref2TelefoneMatch) dados.ref2Telefone = ref2TelefoneMatch[1].trim();
-        
-        const ref2EnderecoMatch = texto.match(/2ª REFERÊNCIA:[\s\S]*?Endereço:\s*([^\n\r]+)/i);
-        if (ref2EnderecoMatch) dados.ref2Endereco = ref2EnderecoMatch[1].trim();
-        
-        const ref2BairroMatch = texto.match(/2ª REFERÊNCIA:[\s\S]*?Bairro:\s*([^\n\r]+)/i);
-        if (ref2BairroMatch) dados.ref2Bairro = ref2BairroMatch[1].trim();
         
         console.log('Dados extraídos do texto:', dados);
         return dados;
