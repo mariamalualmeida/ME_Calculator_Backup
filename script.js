@@ -1800,8 +1800,9 @@ class SimuladorEmprestimos {
                 }
             }
             
-            // Salvar PDF
-            doc.save(`simulacao_emprestimo_${Date.now()}.pdf`);
+            // Gerar nome do arquivo com dados do cliente
+            const nomeArquivo = this.gerarNomeArquivoPdf();
+            doc.save(nomeArquivo);
             alert('PDF exportado com sucesso!');
             
         } catch (error) {
@@ -1874,8 +1875,8 @@ class SimuladorEmprestimos {
         const nomeCliente = this.nomeClienteField ? this.nomeClienteField.value.trim() : '';
         const cpfCliente = this.cpfClienteField ? this.cpfClienteField.value.trim() : '';
         
-        // Limpar caracteres especiais para nome de arquivo
-        const limparNome = (texto) => texto.replace(/[^a-zA-Z0-9]/g, '_');
+        // Limpar caracteres especiais para nome de arquivo (mantém espaços e pontos)
+        const limparNome = (texto) => texto.replace(/[<>:"/\\|?*]/g, '_');
         
         // Gerar timestamp
         const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '').replace('T', '_');
@@ -1884,11 +1885,11 @@ class SimuladorEmprestimos {
         let nomeArquivo = '';
         
         if (nomeCliente && cpfCliente) {
-            nomeArquivo = `${limparNome(nomeCliente)}_${limparNome(cpfCliente)}_Simulacao_${timestamp}`;
+            nomeArquivo = `Simulacao_emprestimo_${limparNome(nomeCliente)}_${limparNome(cpfCliente)}_${timestamp}`;
         } else if (nomeCliente) {
-            nomeArquivo = `${limparNome(nomeCliente)}_Simulacao_${timestamp}`;
+            nomeArquivo = `Simulacao_emprestimo_${limparNome(nomeCliente)}_${timestamp}`;
         } else {
-            nomeArquivo = `Simulacao_Emprestimos_${timestamp}`;
+            nomeArquivo = `Simulacao_emprestimo_${timestamp}`;
         }
         
         return `${nomeArquivo}.pdf`;

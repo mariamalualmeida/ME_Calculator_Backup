@@ -272,6 +272,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO CRÍTICA CÁLCULO DIAS EXTRAS - removido Math.abs() e const duplicado da variável diasExtra (linha 863), corrigido cálculo para mostrar 5 dias corretos em vez de 4, testado cenário 25/06→30/07, cache v=20250625410000 (v20250625410000)
 - June 25, 2025: IMPLEMENTAÇÃO CÁLCULO PRECISO DE DIAS - substituído cálculo baseado em milissegundos/horários por cálculo puro de componentes de data (ano/mês/dia), eliminando problemas de timezone e arredondamento, nova função calcularDiferencaDias() garante precisão total, cache v=20250625420000 (v20250625420000)
 - June 25, 2025: IMPLEMENTADA NOMENCLATURA INTELIGENTE DE PDF - arquivos agora salvos com nome e CPF do cliente quando disponíveis, fallback para nome padrão quando campos vazios, função gerarNomeArquivoPdf() limpa caracteres especiais, exemplos: "João_Silva_12345678901_Simulacao_timestamp.pdf" ou "Simulacao_Emprestimos_timestamp.pdf", cache v=20250625430000 (v20250625430000)
+- June 25, 2025: CORREÇÃO CRÍTICA NOMENCLATURA PDF - corrigida referência aos campos nomeClienteField/cpfClienteField no initializeElements(), corrigida última ocorrência doc.save() que ainda usava nome fixo, ajustada limpeza de caracteres para manter espaços e pontos, formato correto: "Simulacao_emprestimo_Leorado de Almeida Santos_052.085.986-39_timestamp.pdf", cache v=20250625440000 (v20250625440000)
 
 ## User Preferences
 
