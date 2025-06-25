@@ -95,6 +95,13 @@ class SimuladorEmprestimos {
     }
     
     aplicarEstadoUI() {
+        // CORREÇÃO: Verificar se elementos foram inicializados antes de aplicar estado
+        if (!this.numeroParcelasField || !this.taxaJurosField) {
+            // Aguardar inicialização completa dos elementos
+            setTimeout(() => this.aplicarEstadoUI(), 100);
+            return;
+        }
+        
         // Centralizar aplicação de estado visual baseado nas configurações carregadas
         
         // 1. Atualizar selects de configuração administrativa (se existirem)
@@ -173,7 +180,10 @@ class SimuladorEmprestimos {
             this.taxaJurosField.addEventListener('input', (e) => {
                 this.limparErrosVisuais();
                 this.formatarPercentualTempoReal(e.target);
-                this.validarCampoJuros();
+                // Validar campo apenas se elementos estão prontos
+                if (this.numeroParcelasField && this.configuracoes) {
+                    this.validarCampoJuros();
+                }
                 this.limparResultado();
             });
         }
@@ -245,8 +255,9 @@ class SimuladorEmprestimos {
                 this.limparResultado();
                 this.toggleMetodoDiasExtras();
                 this.atualizarInformacaoLimites(); // Atualizar limites de juros
-                // Re-validar juros apenas se não estiver em modo livre
-                if (!(this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin)) {
+                // Re-validar juros apenas se não estiver em modo livre (com verificação de segurança)
+                if (this.taxaJurosField && this.numeroParcelasField && this.configuracoes && 
+                    !(this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin)) {
                     this.validarCampoJuros();
                 }
             });
@@ -1210,8 +1221,10 @@ class SimuladorEmprestimos {
             }
         });
         
-        // Re-validar campo de juros após mudança de modo
-        this.validarCampoJuros();
+        // Re-validar campo de juros após mudança de modo (com verificação de segurança)
+        if (this.taxaJurosField && this.numeroParcelasField && this.configuracoes) {
+            this.validarCampoJuros();
+        }
     }
 
     limparErrosVisuais() {
@@ -1226,6 +1239,9 @@ class SimuladorEmprestimos {
     }
 
     validarCampoJuros() {
+        // CORREÇÃO: Verificação de segurança para evitar erros de DOM
+        if (!this.taxaJurosField || !this.numeroParcelasField || !this.configuracoes) return;
+        
         this.limparErrosVisuais();
         
         const modoLivreAtivo = this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras;
@@ -1295,35 +1311,39 @@ class SimuladorEmprestimos {
     }
 
     fecharModal() {
-        document.getElementById('configModal').style.display = 'none';
+        const modal = document.getElementById('configModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
         
-        // NOVA LÓGICA: Preservar configurações, resetar apenas UI
-        // NÃO destruir this.configuracoes.isAdmin ou configurações salvas
+        // REFATORAÇÃO: Reset apenas da interface administrativa
+        // Preservar configurações salvas mas resetar estado de autenticação
+        this.configuracoes.isAdmin = false;
+        this.salvarConfiguracoes(); // Persistir reset de autenticação
         
+        // Ocultar painel administrativo
         const adminPanel = document.getElementById('adminPanel');
-        const loginSection = document.getElementById('adminLoginSection');
-        
-        // Ocultar painel administrativo (será mostrado novamente após próximo login)
         if (adminPanel) {
             adminPanel.style.display = 'none';
         }
         
-        // Mostrar seção de login para próxima autenticação
+        // Mostrar seção de login novamente
+        const loginSection = document.getElementById('adminLoginSection');
         if (loginSection) {
-            loginSection.style.display = 'flex';
+            loginSection.style.display = 'block';
         }
         
-        // Limpar campos de login para próxima sessão
+        // Limpar campos de login
         const adminUserField = document.getElementById('adminUser');
         const adminPassField = document.getElementById('adminPass');
         
         if (adminUserField) adminUserField.value = '';
         if (adminPassField) adminPassField.value = '';
         
-        // IMPORTANTE: Aplicar configurações administrativas na página principal
-        this.atualizarClassesModoLivre();
+        // REFATORAÇÃO: Aplicar estado completo da UI
+        this.aplicarEstadoUI();
         
-        console.log('Debug - Modal fechado, configurações preservadas, UI resetada');
+        console.log('Debug - Modal fechado, estado UI aplicado, autenticação resetada');
     }
 
 
