@@ -207,9 +207,9 @@ fun SimuladorEmprestimosScreen(
                         placeholder = { 
                             Text(
                                 if (configuracoes.desabilitarRegras && configuracoes.isAdmin) {
-                                    "Insira a quantidade de parcelas"
+                                    "Quantidade de parcelas"
                                 } else {
-                                    "Você possui permissões para simulações entre 1 e 15 parcelas"
+                                    "Permitido: 1 a 15 parcelas"
                                 }
                             )
                         },

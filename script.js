@@ -91,7 +91,7 @@ class SimuladorEmprestimos {
             if (this.atualizarClassesModoLivre) {
                 this.atualizarClassesModoLivre();
             }
-            if (this.atualizarInformacoesParcelas) {
+            if (this.atualizarPlaceholderParcelas) {
                 this.atualizarPlaceholderParcelas();
             }
         }, 100);
@@ -953,30 +953,14 @@ class SimuladorEmprestimos {
         limitesInfo.style.display = 'block';
     }
 
-    mostrarInformacaoParcelas() {
-        const parcelasInfo = document.getElementById('parcelasInfo');
-        if (!parcelasInfo) return;
+    atualizarPlaceholderParcelas() {
+        if (!this.numeroParcelasField) return;
         
-        // Mostrar apenas se regras estiverem habilitadas
+        // Atualizar placeholder baseado no estado das regras
         if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
-            parcelasInfo.style.display = 'none';
-            return;
-        }
-        
-        parcelasInfo.textContent = 'Você tem permissão para simulação entre 1 e 15 parcelas';
-        parcelasInfo.style.display = 'block';
-    }
-
-    atualizarInformacoesParcelas() {
-        const parcelasInfo = document.getElementById('parcelasInfo');
-        if (!parcelasInfo) return;
-        
-        // Esconder se modo livre está ativo
-        if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
-            parcelasInfo.style.display = 'none';
+            this.numeroParcelasField.placeholder = 'Quantidade de parcelas';
         } else {
-            parcelasInfo.textContent = 'Você possui permissões para simulações entre 1 e 15 parcelas';
-            parcelasInfo.style.display = 'block';
+            this.numeroParcelasField.placeholder = 'Permitido: 1 a 15 parcelas';
         }
     }
 
