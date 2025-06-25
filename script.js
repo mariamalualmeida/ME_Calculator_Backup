@@ -302,8 +302,8 @@ class SimuladorEmprestimos {
                 this.limparResultado();
                 this.toggleMetodoDiasExtras();
                 this.atualizarInformacaoLimites(); // Atualizar limites de juros
-                // Validar todos os campos para aplicar regras atuais
-                this.validarTodosOsCampos();
+                // Validar campo de juros atualmente
+                this.validarCampoJuros();
             });
         }
 
@@ -2173,7 +2173,7 @@ Testemunha 2: _____________________________________ CPF: _______________________
         if (!arquivo) return;
         
         if (arquivo.type === 'application/pdf') {
-            this.showNotification('Selecione um arquivo .json válido para importar os dados da simulação.', 'warning', 4000);
+            this.importarDadosPDF(arquivo);
             return;
         }
         

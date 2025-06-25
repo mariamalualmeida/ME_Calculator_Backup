@@ -1421,9 +1421,9 @@ body {
 
 /* Modal de Importação */
 .import-modal-content {
-    max-width: 700px;
-    width: 90%;
-    max-height: 90vh;
+    max-width: 600px;
+    width: 95%;
+    max-height: 85vh;
     overflow-y: auto;
 }
 
