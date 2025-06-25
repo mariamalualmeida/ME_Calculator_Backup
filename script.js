@@ -1174,7 +1174,7 @@ class SimuladorEmprestimos {
         }
 
         // Exibir detalhes no modo livre se habilitado
-        if (this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras && this.configuracoes.exibirDetalhesModeLivre) {
+        if (this.configuracoes.desabilitarRegras && this.configuracoes.exibirDetalhesModeLivre) {
             this.exibirDetalhesModeLivre(valorEmprestimo, nParcelas, juros, resultadoCalculo);
         }
 
@@ -1251,8 +1251,8 @@ class SimuladorEmprestimos {
         
         this.limparErrosVisuais();
         
-        const modoLivreAtivo = this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras;
-        if (modoLivreAtivo || !this.taxaJurosField.value || !this.numeroParcelasField.value) {
+        // CORREÇÃO: Verificar apenas desabilitarRegras (independente de login admin)
+        if (this.configuracoes.desabilitarRegras || !this.taxaJurosField.value || !this.numeroParcelasField.value) {
             return;
         }
 
