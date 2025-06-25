@@ -1871,9 +1871,9 @@ class SimuladorEmprestimos {
 
 
     gerarNomeArquivoPdf() {
-        // Capturar dados do cliente diretamente do DOM
-        const nomeCliente = document.getElementById('nomeCliente')?.value.trim() || '';
-        const cpfCliente = document.getElementById('cpfCliente')?.value.trim() || '';
+        // Capturar dados do cliente diretamente do DOM com IDs corretos
+        const nomeCliente = document.getElementById('nomeCompleto')?.value.trim() || '';
+        const cpfCliente = document.getElementById('cpfCompleto')?.value.trim() || '';
         
         // Debug para verificar se está capturando os valores
         console.log('Debug PDF - Nome capturado:', nomeCliente);
