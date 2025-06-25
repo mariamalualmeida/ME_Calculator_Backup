@@ -1405,22 +1405,32 @@ class SimuladorEmprestimos {
                 this.configuracoes.diasExtrasFixos = parseInt(diasExtrasFixosElement.value) || 0;
             }
             
-            // Salvar tabela de limites personalizada
+            // Salvar tabela de limites personalizada (IDs CORRIGIDOS)
             for (let parcelas = 1; parcelas <= 15; parcelas++) {
-                const minInput = document.getElementById(`limite_${parcelas}_min`);
-                const maxInput = document.getElementById(`limite_${parcelas}_max`);
+                const minInput = document.getElementById(`min_${parcelas}`);
+                const maxInput = document.getElementById(`max_${parcelas}`);
                 
                 if (minInput && maxInput) {
+                    const minVal = parseFloat(minInput.value.replace(',', '.')) || this.limitesJuros[parcelas].min;
+                    const maxVal = parseFloat(maxInput.value.replace(',', '.')) || this.limitesJuros[parcelas].max;
+                    
                     this.configuracoes.limitesPersonalizados[parcelas] = {
-                        min: parseFloat(minInput.value) || this.limitesJuros[parcelas].min,
-                        max: parseFloat(maxInput.value) || this.limitesJuros[parcelas].max
+                        min: minVal,
+                        max: maxVal
                     };
+                    console.log(`Debug - Limite ${parcelas}p salvo: ${minVal}% - ${maxVal}%`);
                 }
             }
             
-            // Salvar credenciais administrativas
-            this.configuracoes.adminUser = document.getElementById('adminUser').value || 'admin';
-            this.configuracoes.adminPassword = document.getElementById('adminPass').value || 'admin123';
+            // Salvar credenciais administrativas (campos corretos)
+            const novoUsuario = document.getElementById('newAdminUser').value;
+            const novaSenha = document.getElementById('newAdminPass').value;
+            
+            if (novoUsuario && novaSenha) {
+                this.configuracoes.adminUser = novoUsuario;
+                this.configuracoes.adminPassword = novaSenha;
+                console.log('Debug - Credenciais administrativas atualizadas');
+            }
         }
         
         // Aplicar temas
@@ -1473,17 +1483,66 @@ class SimuladorEmprestimos {
         }
     }
 
+    carregarCamposAdmin() {
+        // REFATORAÇÃO: Função dedicada para carregamento de todos os campos administrativos
+        console.log('Debug - Carregando campos administrativos com configurações atuais');
+        
+        // 1. Carregar configurações financeiras
+        const selectRegras = document.getElementById('desabilitarRegras');
+        if (selectRegras) {
+            selectRegras.value = this.configuracoes.desabilitarRegras ? 'true' : 'false';
+            console.log('Debug - Regras de limite carregadas:', selectRegras.value);
+        }
+        
+        const sistemaJuros = document.getElementById('sistemaJuros');
+        if (sistemaJuros) {
+            sistemaJuros.value = this.configuracoes.sistemaJuros || 'compostos-mensal';
+            console.log('Debug - Sistema de juros carregado:', sistemaJuros.value);
+        }
+        
+        const igpmAnual = document.getElementById('igpmAnual');
+        if (igpmAnual) {
+            igpmAnual.value = this.configuracoes.igpmAnual ? this.configuracoes.igpmAnual.toString().replace('.', ',') : '0,00';
+            console.log('Debug - IGPM anual carregado:', igpmAnual.value);
+        }
+        
+        // 2. Carregar configurações de detalhes
+        const exibirDetalhes = document.getElementById('exibirDetalhesModeLivre');
+        if (exibirDetalhes) {
+            exibirDetalhes.value = this.configuracoes.exibirDetalhesModeLivre ? 'true' : 'false';
+            console.log('Debug - Exibir detalhes carregado:', exibirDetalhes.value);
+        }
+        
+        // 3. Carregar ajustes automáticos (CAMPOS QUE FALHAVAM)
+        const ajusteMes31 = document.getElementById('ajusteMes31Dias');
+        if (ajusteMes31) {
+            ajusteMes31.value = this.configuracoes.ajusteMes31Dias ? 'true' : 'false';
+            console.log('Debug - Ajuste mês 31 carregado:', ajusteMes31.value);
+        }
+        
+        const diasExtrasFixos = document.getElementById('diasExtrasFixos');
+        if (diasExtrasFixos) {
+            diasExtrasFixos.value = this.configuracoes.diasExtrasFixos || 0;
+            console.log('Debug - Dias extras fixos carregado:', diasExtrasFixos.value);
+        }
+        
+        // 4. Carregar credenciais administrativas
+        const adminUser = document.getElementById('newAdminUser');
+        const adminPass = document.getElementById('newAdminPass');
+        if (adminUser) adminUser.value = this.configuracoes.adminUser || 'admin';
+        if (adminPass) adminPass.value = this.configuracoes.adminPassword || 'admin123';
+        
+        console.log('Debug - Todos os campos administrativos carregados com sucesso');
+    }
+    
     mostrarPainelAdmin() {
         const panel = document.getElementById('adminPanel');
         const table = document.getElementById('limitsTable');
         
-        // REFATORAÇÃO: Formato unificado boolean consistente
-        const selectRegras = document.getElementById('desabilitarRegras');
-        if (selectRegras) {
-            selectRegras.value = this.configuracoes.desabilitarRegras ? 'true' : 'false';
-            console.log('Debug - Select regras definido para:', selectRegras.value);
-        }
+        // REFATORAÇÃO: Usar função dedicada de carregamento
+        this.carregarCamposAdmin();
         
+        // Gerar tabela de limites com IDs CORRETOS
         let html = '<div class="limits-table">';
         for (let parcelas = 1; parcelas <= 15; parcelas++) {
             const limite = this.configuracoes.limitesPersonalizados?.[parcelas] || this.limitesJuros[parcelas];
