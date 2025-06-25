@@ -2212,47 +2212,130 @@ Testemunha 2: _____________________________________ CPF: _______________________
         reader.readAsText(arquivo);
     }
 
-    exportarDadosJSON() {
-        try {
-            const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '').replace('T', '_');
-            const nomeClienteJson = (this.nomeClienteField?.value || 'Cliente').replace(/[^a-zA-Z0-9]/g, '');
-            const cpfClienteJson = (this.cpfClienteField?.value || 'SemCPF').replace(/[^0-9]/g, '');
-            
-            const dadosCompletos = this.obterDadosCompletosPdf();
-            
-            const dadosExportacao = {
-                versao: '1.0',
-                timestamp: timestamp,
-                simulacao: {
-                    valor: this.valorEmprestimoField?.value || '',
-                    parcelas: this.numeroParcelasField?.value || '',
-                    juros: this.taxaJurosField?.value || '',
-                    dataInicial: this.dataInicialField?.value || ''
-                },
-                cliente: {
-                    nome: this.nomeClienteField?.value || '',
-                    cpf: this.cpfClienteField?.value || ''
-                },
-                dadosCompletos: dadosCompletos,
-                configuracoes: this.configuracoes
+    // Função para extrair dados de PDF de simulação
+    async extrairDadosPDF(arquivo) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const typedarray = new Uint8Array(e.target.result);
+                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                    let textoCompleto = '';
+                    
+                    // Extrair texto de todas as páginas
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        const pageText = textContent.items.map(item => item.str).join(' ');
+                        textoCompleto += pageText + '\n';
+                    }
+                    
+                    // Extrair dados usando regex específicos
+                    const dadosExtraidos = this.extrairDadosTexto(textoCompleto);
+                    resolve(dadosExtraidos);
+                } catch (error) {
+                    reject(error);
+                }
             };
+            reader.onerror = () => reject(new Error('Erro ao ler arquivo PDF'));
+            reader.readAsArrayBuffer(arquivo);
+        });
+    }
+    
+    extrairDadosTexto(texto) {
+        const dados = {};
+        
+        // Extrair valor do empréstimo
+        const valorMatch = texto.match(/Valor do empréstimo:\s*R\$\s*([\d\.,]+)/i);
+        if (valorMatch) {
+            dados.valor = valorMatch[1].replace(/\./g, '').replace(',', '.');
+        }
+        
+        // Extrair taxa de juros (sequência corrigida)
+        const taxaMatch = texto.match(/Taxa de juros:\s*([\d,]+)%/i);
+        if (taxaMatch) {
+            dados.taxa = taxaMatch[1].replace(',', '.');
+        }
+        
+        // Extrair número de parcelas
+        const parcelasMatch = texto.match(/Número de parcelas:\s*(\d+)/i);
+        if (parcelasMatch) {
+            dados.parcelas = parcelasMatch[1];
+        }
+        
+        // Extrair sistema de juros
+        const sistemaMatch = texto.match(/Sistema de juros:\s*([^\n]+)/i);
+        if (sistemaMatch) {
+            const sistemaTexto = sistemaMatch[1].trim();
+            if (sistemaTexto.includes('Juros Simples')) {
+                dados.sistema = 'simples';
+            } else if (sistemaTexto.includes('Juros Compostos Diários')) {
+                dados.sistema = 'compostos-diarios';
+            } else if (sistemaTexto.includes('Pro-rata Real')) {
+                dados.sistema = 'pro-rata-real';
+            } else {
+                dados.sistema = 'compostos-mensal';
+            }
+        }
+        
+        // Extrair nome do cliente
+        const nomeMatch = texto.match(/Nome:\s*([^\n]+)/i);
+        if (nomeMatch) {
+            dados.nome = nomeMatch[1].trim();
+        }
+        
+        // Extrair CPF
+        const cpfMatch = texto.match(/CPF:\s*([\d\.-]+)/i);
+        if (cpfMatch) {
+            dados.cpf = cpfMatch[1];
+        }
+        
+        return dados;
+    }
+    
+    async importarDadosPDF(arquivo) {
+        try {
+            const dados = await this.extrairDadosPDF(arquivo);
             
-            const jsonString = JSON.stringify(dadosExportacao, null, 2);
-            const blob = new Blob([jsonString], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
+            // Preencher campos principais
+            if (dados.valor) {
+                this.valorEmprestimoField.value = this.formatarValorMonetario(parseFloat(dados.valor));
+            }
             
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `dados_simulacao_${nomeClienteJson}_${cpfClienteJson}_${timestamp}.json`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+            if (dados.parcelas) {
+                this.numeroParcelasField.value = dados.parcelas;
+            }
             
-            this.showNotification('Arquivo JSON para importação gerado com sucesso!', 'success');
+            if (dados.taxa) {
+                this.taxaJurosField.value = dados.taxa.replace('.', ',');
+            }
+            
+            // Preencher dados do cliente se disponíveis
+            if (dados.nome && this.nomeClienteField) {
+                this.nomeClienteField.value = dados.nome;
+            }
+            
+            if (dados.cpf && this.cpfClienteField) {
+                this.cpfClienteField.value = dados.cpf;
+            }
+            
+            // Atualizar sistema de juros nas configurações se for admin
+            if (dados.sistema && this.configuracoes.isAdmin) {
+                this.configuracoes.sistemaJuros = dados.sistema;
+                this.salvarConfiguracoes();
+                
+                // Atualizar select se estiver visível
+                const sistemaSelect = document.getElementById('sistemaJuros');
+                if (sistemaSelect) {
+                    sistemaSelect.value = dados.sistema;
+                }
+            }
+            
+            this.esconderErro();
+            this.showNotification('Dados do PDF importados com sucesso!', 'success');
+            
         } catch (error) {
-            console.error('Erro ao exportar JSON:', error);
-            this.showNotification('Erro ao gerar arquivo JSON: ' + error.message, 'error');
+            this.mostrarErro('ERRO AO IMPORTAR PDF. VERIFIQUE SE O ARQUIVO É VÁLIDO.');
         }
     }
 

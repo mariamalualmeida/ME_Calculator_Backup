@@ -229,6 +229,7 @@ SimuladorEmprestimos/
 - June 24, 2025: RESTAURAÇÃO APÓS ERRO CRÍTICO - sistema restaurado ao estado funcional anterior (v20250624370000), corrigido apenas erro PDF (obterTextoSistemaJuros inline), implementada função aplicarValidacaoConfiguracoes() que limpa bordas vermelhas quando modo livre ativo, mantidos todos botões e formatação automática funcionais, cache v=20250624395000 (v20250624395000)
 - June 24, 2025: CORREÇÃO TIMING INICIALIZAÇÃO - problema bordas vermelhas modo livre corrigido com setTimeout de 100ms na inicialização para aplicar configurações após event listeners, função fecharModal() corrigida para limpar bordas administrativas, sistema funcional sem quebrar botões/formatação, cache v=20250624405000 (v20250624405000)
 - June 24, 2025: CORREÇÕES CRÍTICAS COMPLETAS - implementada função aplicarModoLivreCompleto() para eliminar bordas vermelhas, corrigida nomeação PDF com fallback "Simulacao_Emprestimos" quando campos vazios, ordem PDF corrigida (Taxa→Parcelas→Sistema), notificação login melhorada, sistema completamente funcional, cache v=20250624410000 (v20250624410000)
+- June 24, 2025: IMPLEMENTADA EXTRAÇÃO COMPLETA DE PDF - sistema agora aceita upload de PDFs gerados para preencher campos automaticamente, removida exportação JSON, adicionada biblioteca PDF.js, regex específicos para extrair dados respeitando sequência corrigida (Valor→Taxa→Parcelas→Sistema), extração de dados cadastrais opcionais, cache v=20250624420000 (v20250624420000)
 
 ## User Preferences
 
