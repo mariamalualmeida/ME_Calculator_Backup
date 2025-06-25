@@ -845,11 +845,11 @@ class SimuladorEmprestimos {
         // Cálculo com data e pró-rata
         const dataSimulacao = new Date();
         const dataInicial = this.parseData(this.dataInicialField.value);
-        let diasExtra = 0;
+        // Separar diferentes tipos de dias extras
+        let diasExtrasData = 0; // Apenas diferença de datas
+        let diasCompensacao = this.configuracoes.diasExtrasFixos || 0; // Dias fixos configurados
+        let diasMeses31 = 0; // Ajuste automático para meses 31 dias
         
-        // Adicionar dias extras fixos das configurações
-        diasExtra += this.configuracoes.diasExtrasFixos || 0;
-
         if (dataInicial) {
             // Data normal da primeira parcela seria 30 dias após o empréstimo
             const dataNormalPrimeiraParcela = new Date(dataSimulacao);
@@ -857,13 +857,16 @@ class SimuladorEmprestimos {
             
             // Calcular diferença entre data solicitada e data normal
             const diffTime = dataInicial.getTime() - dataNormalPrimeiraParcela.getTime();
-            diasExtra += Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            diasExtrasData = Math.floor(diffTime / (1000 * 60 * 60 * 24));
         }
         
         // Aplicar ajuste automático para meses de 31 dias
         if (this.configuracoes.ajusteMes31Dias) {
-            diasExtra += this.calcularAjusteMes31Dias(nParcelas);
+            diasMeses31 = this.calcularAjusteMes31Dias(nParcelas);
         }
+        
+        // Total de dias extras para cálculo (soma todos os tipos)
+        const diasExtra = diasExtrasData + diasCompensacao + diasMeses31;
 
         // IGPM mensal (anual dividido por 12)
         const igpmMensal = this.configuracoes.igpmAnual / 12;
@@ -1634,28 +1637,30 @@ class SimuladorEmprestimos {
             
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(14);
+            // Nova sequência: Valor → Parcelas → Sistema → Taxa (se habilitado)
             doc.text(`Valor do empréstimo: R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 20, yInicial);
             yInicial += 12;
-            
-            // Incluir taxa de juros apenas se configurado
-            if (this.configuracoes.mostrarJurosRelatorio) {
-                doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, yInicial);
-                yInicial += 12;
-            }
             
             doc.text(`Número de parcelas: ${nParcelas}`, 20, yInicial);
             yInicial += 12;
             
-            // Mostrar sistema de juros utilizado
-            const sistemasJuros = {
-                'simples': 'Juros Simples',
-                'compostos-diarios': 'Juros Compostos Diários', 
-                'compostos-mensal': 'Juros Compostos Mensais',
-                'pro-rata-real': 'Pro-rata Real'
-            };
-            const sistemaAtual = sistemasJuros[this.configuracoes.sistemaJuros] || 'Juros Compostos Mensais';
-            doc.text(`Sistema de juros: ${sistemaAtual}`, 20, yInicial);
-            yInicial += 15;
+            // Mostrar informações de juros apenas se configurado
+            if (this.configuracoes.mostrarJurosRelatorio) {
+                const sistemasJuros = {
+                    'simples': 'Juros Simples',
+                    'compostos-diarios': 'Juros Compostos Diários', 
+                    'compostos-mensal': 'Juros Compostos Mensais',
+                    'pro-rata-real': 'Pro-rata Real'
+                };
+                const sistemaAtual = sistemasJuros[this.configuracoes.sistemaJuros] || 'Juros Compostos Mensais';
+                doc.text(`Sistema de juros: ${sistemaAtual}`, 20, yInicial);
+                yInicial += 12;
+                
+                doc.text(`Taxa de juros: ${juros.toFixed(2).replace('.', ',')}%`, 20, yInicial);
+                yInicial += 12;
+            }
+            
+            yInicial += 3;
             
             // Mostrar informações das parcelas conforme o tipo de cálculo
             if (resultadoCalculo.diasExtra > 0) {
@@ -1926,13 +1931,16 @@ class SimuladorEmprestimos {
                 </div>
         `;
         
-        // Adicionar informações de configurações ativas
+        // Adicionar informações de configurações ativas separadamente
         const configuracoeAtivas = [];
-        if (this.configuracoes.diasExtrasFixos > 0) {
-            configuracoeAtivas.push(`${this.configuracoes.diasExtrasFixos} dias extras fixos`);
+        if (resultadoCalculo.diasExtrasData > 0) {
+            configuracoeAtivas.push(`Dias extras: ${resultadoCalculo.diasExtrasData}`);
         }
-        if (this.configuracoes.ajusteMes31Dias) {
-            configuracoeAtivas.push('Ajuste meses 31 dias');
+        if (resultadoCalculo.diasCompensacao > 0) {
+            configuracoeAtivas.push(`Dias Compensação: ${resultadoCalculo.diasCompensacao}`);
+        }
+        if (resultadoCalculo.diasMeses31 > 0) {
+            configuracoeAtivas.push(`Meses 31 dias: ${resultadoCalculo.diasMeses31}`);
         }
         if (this.configuracoes.igpmAnual > 0) {
             configuracoeAtivas.push(`IGPM ${this.configuracoes.igpmAnual}%`);
@@ -1949,6 +1957,15 @@ class SimuladorEmprestimos {
         detalhesHtml += '</div>';
         
         this.resultValue.innerHTML += detalhesHtml;
+    }
+
+    // Nova função para formatar informações de dias extras separadamente
+    formatarInfoDiasExtras(diasExtrasData, diasCompensacao, diasMeses31) {
+        const infos = [];
+        if (diasExtrasData > 0) infos.push(`Dias extras: ${diasExtrasData}`);
+        if (diasCompensacao > 0) infos.push(`Dias Compensação: ${diasCompensacao}`);
+        if (diasMeses31 > 0) infos.push(`Meses 31 dias: ${diasMeses31}`);
+        return infos.length > 0 ? infos.join(' | ') : 'Sem dias extras';
     }
 
     setupDateMaskFormatting() {
