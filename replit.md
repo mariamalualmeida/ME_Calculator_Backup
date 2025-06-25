@@ -276,6 +276,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO FINAL NOMENCLATURA PDF - implementada busca direta dos elementos DOM eliminando dependência de inicialização, formato reorganizado conforme solicitado pelo usuário: "Leorado de Almeida Santos_052.085.986-39_Simulacao_emprestimo_timestamp.pdf" com nome e CPF no início, cache v=20250625450000 (v20250625450000)
 - June 25, 2025: CORREÇÃO CRÍTICA IDS DOS CAMPOS - corrigidos IDs dos campos de nomeCliente/cpfCliente para nomeCompleto/cpfCompleto que são os IDs reais no HTML, debug confirmou que campos estavam sendo capturados como vazios, cache v=20250625452000 (v20250625452000)
 - June 25, 2025: NOMENCLATURA PDF FINALIZADA COM SUCESSO - sistema agora funciona corretamente capturando dados do formulário expandido, formato confirmado pelo usuário: "Leonardo de Almeida Santos_052.085.986-39_Simulacao_emprestimo_timestamp.pdf", removidos logs de debug, cache v=20250625460000 (v20250625460000)
+- June 25, 2025: SINCRONIZAÇÃO COMPLETA ENTRE VERSÕES - portadas todas implementações recentes para versão Android (nomenclatura PDF, sistemas de juros configuráveis, cálculo preciso de dias, análise financeira, formulário completo), atualizados tutoriais com avisos de versão atualizada, unificadas funcionalidades entre Web/PWA e Android, cache v=20250625470000 (v20250625470000)
 
 ## User Preferences
 
