@@ -2285,6 +2285,16 @@ Testemunha 2: _____________________________________ CPF: _______________________
             const elemento = document.getElementById(campo);
             if (elemento && campos[campo]) {
                 elemento.value = campos[campo];
+                
+                // Aplicar formatação específica se necessário
+                if (campo === 'telefone') {
+                    this.formatarTelefone(elemento);
+                } else if (campo === 'cep') {
+                    this.formatarCep(elemento);
+                } else if (campo === 'rendaMensal') {
+                    this.formatarMoeda(elemento);
+                }
+                
                 console.log(`Campo ${campo} preenchido:`, campos[campo]);
             }
         });
@@ -2801,83 +2811,48 @@ Testemunha 2: _____________________________________ CPF: _______________________
             if (ref2BairroMatch) dados.ref2Bairro = ref2BairroMatch[1].trim();
         }
         
-        console.log('Dados extraídos do texto:', dados);
-        return dados;
-    }
-    
-    async importarDadosPDF(arquivo) {
-        try {
-            const dados = await this.extrairDadosPDF(arquivo);
-            
-            if (Object.keys(dados).length === 0) {
-                this.showNotification('Nenhum dado válido encontrado no PDF.', 'warning');
-                return;
+        console.log('Dados extraídos do texto (estrutura antiga):', dados);
+        
+        // Converter para estrutura JSON nova
+        const jsonFinal = {
+            simulacao: {
+                valor: dados.valor,
+                parcelas: dados.nParcelas,
+                juros: dados.juros,
+                dataVencimentoInicial: dados.dataEmprestimo
+            },
+            cliente: {
+                nome: dados.nomeCliente,
+                cpf: dados.cpfCliente,
+                dataNascimento: dados.dataNascimento,
+                estadoCivil: dados.estadoCivil,
+                endereco: dados.endereco,
+                numero: dados.numero,
+                complemento: dados.complemento,
+                bairro: dados.bairro,
+                cidade: dados.cidade,
+                estado: dados.estado,
+                cep: dados.cep,
+                telefone: dados.telefone,
+                email: dados.email,
+                localTrabalho: dados.localTrabalho,
+                profissao: dados.profissao,
+                rendaMensal: dados.rendaMensal,
+                tempoEmprego: dados.tempoEmprego,
+                ref1Nome: dados.ref1Nome,
+                ref1Telefone: dados.ref1Telefone,
+                ref1Endereco: dados.ref1Endereco,
+                ref1Bairro: dados.ref1Bairro,
+                ref2Nome: dados.ref2Nome,
+                ref2Telefone: dados.ref2Telefone,
+                ref2Endereco: dados.ref2Endereco,
+                ref2Bairro: dados.ref2Bairro
             }
-            
-            // Preencher campos básicos
-            if (dados.valor) {
-                const valorInput = document.getElementById('valor');
-                if (valorInput) {
-                    valorInput.value = this.formatarValorMonetario(parseFloat(dados.valor));
-                }
-            }
-            
-            if (dados.nParcelas) {
-                const parcelasInput = document.getElementById('nParcelas');
-                if (parcelasInput) {
-                    parcelasInput.value = dados.nParcelas;
-                }
-            }
-            
-            if (dados.juros) {
-                const jurosInput = document.getElementById('juros');
-                if (jurosInput) {
-                    jurosInput.value = dados.juros.replace('.', ',');
-                }
-            }
-            
-            // Preencher dados cadastrais se encontrados
-            if (dados.nomeCliente) {
-                const nomeInput = document.getElementById('nomeCliente');
-                if (nomeInput) {
-                    nomeInput.value = dados.nomeCliente;
-                }
-            }
-            
-            if (dados.cpfCliente) {
-                const cpfInput = document.getElementById('cpfCliente');
-                if (cpfInput) {
-                    cpfInput.value = dados.cpfCliente;
-                }
-            }
-            
-            if (dados.dataNascimento) {
-                const nascimentoInput = document.getElementById('dataNascimento');
-                if (nascimentoInput) {
-                    nascimentoInput.value = dados.dataNascimento;
-                }
-            }
-            
-            if (dados.estadoCivil) {
-                const estadoCivilSelect = document.getElementById('estadoCivil');
-                if (estadoCivilSelect) {
-                    const opcoes = {
-                        'solteiro': 'solteiro',
-                        'solteira': 'solteiro', 
-                        'casado': 'casado',
-                        'casada': 'casado',
-                        'divorciado': 'divorciado',
-                        'divorciada': 'divorciado',
-                        'viúvo': 'viuvo',
-                        'viúva': 'viuvo',
-                        'viuvo': 'viuvo'
-                    };
-                    const estadoLower = dados.estadoCivil.toLowerCase();
-                    if (opcoes[estadoLower]) {
-                        estadoCivilSelect.value = opcoes[estadoLower];
-                    }
-                }
-            }
+        };
+        
+        console.log('JSON final extraído do PDF:', jsonFinal);
+        return jsonFinal;
+
             
             if (dados.endereco) {
                 const enderecoInput = document.getElementById('endereco');

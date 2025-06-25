@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste de Importação</title>
+</head>
+<body>
+    <h1>Teste de Copy-Paste</h1>
+    <textarea id="textoTeste" rows="10" cols="80">
+-------------------------------------------
+   FORMULÁRIO: ME EMPREENDIMENTOS
+-------------------------------------------
+-------------------------------------------
+EMPRESTIMO
+-------------------------------------------
+Valor: R$4000,00
+Parcelas:6
+Data Venc. Inicial:15/08/2025
+
+-------------------------------------------
+DADOS CADASTRAIS DO CLIENTE
+-------------------------------------------
+Nome:Leonardo de Almeida Santos
+CPF:05208598639
+Data nascimento:10/04/1983
+Estado Civil:Solteiro
+Endereço:Rua da Mata
+Número:464
+Complemento:Casa
+Bairro:Vila brasil
+Cidade:Sete Lagoas
+Estado:MG
+CEP:35700-130
+Telefone:(31)988973275
+E-mail:leo_almeida.s@hotmail.com
+
+-------------------------------------------
+DADOS PROFISSIONAIS
+-------------------------------------------
+Local de trabalho:Autonomo
+Profissão:Caloteiro
+Renda Mensal:R$5000,00
+Tempo de emprego:2 Anos
+
+-------------------------------------------
+REFERENCIAS - 🚫 NÃO PODE SER PARENTE DE PRIMEIRO GRAU E NEN CÔNJUGE 🚫 
+-------------------------------------------
+1º REREFENCIA  
+Nome:Jesica de Souza Melo
+Rua:Rua da Mata
+Numero:464
+Bairro:Vila BRASIL
+Telefone:(31)988983275
+-------------------------------------------
+2º REFERENCIA - NÃO PODE SER PARENTE DE PRIMEIRO GRAU E NEN CÔNJUGE 🚫
+Nome:Elenice Albino
+Rua:Praça Alexandre Lanza
+Numero:140
+Bairro:Centro
+Telefone:(31)988973515
+    </textarea>
+    
+    <button onclick="testarExtracaoTexto()">Testar Extração</button>
+    
+    <div id="resultado"></div>
+    
+    <script>
+        function testarExtracaoTexto() {
+            const texto = document.getElementById('textoTeste').value;
+            console.log('Texto para testar:', texto);
+            
+            // Simular função de extração
+            const dadosJson = {
+                simulacao: {},
+                cliente: {}
+            };
+            
+            // Extrair dados da seção EMPRESTIMO
+            const secaoEmprestimo = texto.match(/EMPRESTIMO([\s\S]*?)(?=DADOS CADASTRAIS|$)/i);
+            if (secaoEmprestimo) {
+                const emprestimoTexto = secaoEmprestimo[1];
+                console.log('Seção empréstimo:', emprestimoTexto);
+                
+                const valorMatch = emprestimoTexto.match(/Valor:\s*R\$\s*([\d.,]+)/i);
+                if (valorMatch) {
+                    dadosJson.simulacao.valor = valorMatch[1];
+                    console.log('Valor:', valorMatch[1]);
+                }
+                
+                const parcelasMatch = emprestimoTexto.match(/Parcelas:\s*(\d+)/i);
+                if (parcelasMatch) {
+                    dadosJson.simulacao.parcelas = parcelasMatch[1];
+                    console.log('Parcelas:', parcelasMatch[1]);
+                }
+                
+                const dataVencMatch = emprestimoTexto.match(/Data Venc\. Inicial:\s*([\d\/]*)/i);
+                if (dataVencMatch && dataVencMatch[1].trim()) {
+                    dadosJson.simulacao.dataVencimentoInicial = dataVencMatch[1].trim();
+                    console.log('Data vencimento:', dataVencMatch[1]);
+                }
+            }
+            
+            // Extrair nome
+            const nomeMatch = texto.match(/Nome:\s*([^\n\r]+?)(?:\s*CPF:|$)/i);
+            if (nomeMatch) {
+                dadosJson.cliente.nome = nomeMatch[1].trim();
+                console.log('Nome:', nomeMatch[1].trim());
+            }
+            
+            // Extrair CPF
+            const cpfMatch = texto.match(/CPF:\s*([\d]+)/i);
+            if (cpfMatch) {
+                dadosJson.cliente.cpf = cpfMatch[1].trim();
+                console.log('CPF:', cpfMatch[1].trim());
+            }
+            
+            console.log('JSON Final:', dadosJson);
+            document.getElementById('resultado').innerHTML = '<pre>' + JSON.stringify(dadosJson, null, 2) + '</pre>';
+        }
+    </script>
+</body>
+</html>
