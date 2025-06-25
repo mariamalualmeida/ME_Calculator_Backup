@@ -246,6 +246,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO ESTRUTURA JSON PDF - corrigida conversão de dados extraídos para estrutura JSON esperada (simulacao/cliente), implementados regex específicos para todos campos cadastrais do PDF (endereço, telefone, referências), mapeamento correto entre dados antigos e nova estrutura, cache v=20250625150000 (v20250625150000)
 - June 25, 2025: CORREÇÃO CRÍTICA CÓDIGO DUPLICADO - removido código duplicado que causava ReferenceError, unificada extração para usar apenas dadosJson, eliminadas referências à variável 'dados' inexistente, estrutura JSON final corrigida, cache v=20250625160000 (v20250625160000)
 - June 25, 2025: LIMPEZA COMPLETA IMPORTAÇÃO - removidas funções duplicadas que causavam ReferenceError, unificada estrutura JSON entre PDF e texto, eliminados códigos conflitantes, formatação automática nos campos preenchidos, arquivo de teste criado para validação, cache v=20250625170000 (v20250625170000)
+- June 25, 2025: CORREÇÃO CRÍTICA SINTAXE JAVASCRIPT - removido código órfão (145 linhas) que causava SyntaxError fatal, sistema completamente restaurado, importação unificada via aplicarDadosJson existente, todas funcionalidades básicas (cálculo, formatação, validações) restauradas, cache v=20250625180000 (v20250625180000)
 
 ## User Preferences
 
