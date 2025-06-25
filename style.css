@@ -1419,6 +1419,118 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+/* Modal de Importação */
+.import-modal-content {
+    max-width: 700px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.import-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 24px;
+}
+
+.import-tab {
+    flex: 1;
+    padding: 12px 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.import-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    background: var(--primary-color-alpha);
+}
+
+.import-tab:hover {
+    background: var(--hover-color);
+}
+
+.import-content {
+    min-height: 300px;
+}
+
+.import-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    font-size: 1.1em;
+}
+
+.import-section p {
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    font-size: 0.9em;
+}
+
+.file-upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--background-secondary);
+}
+
+.file-upload-area:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-color-alpha);
+}
+
+.file-upload-icon {
+    font-size: 3em;
+    margin-bottom: 12px;
+}
+
+.file-upload-text {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+.file-upload-hint {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+#importTextarea {
+    width: 100%;
+    min-height: 300px;
+    padding: 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.9em;
+    line-height: 1.4;
+    resize: vertical;
+    background: var(--background-secondary);
+    color: var(--text-primary);
+}
+
+#importTextarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: var(--background-primary);
+}
+
+.modal-footer {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+}
+
 /* Aplicar paleta de cores ao botão de formulário completo */
 [data-color-theme="blue"] .form-toggle-btn,
 [data-color-theme="green"] .form-toggle-btn,

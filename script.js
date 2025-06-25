@@ -196,8 +196,6 @@ class SimuladorEmprestimos {
         this.exportContratoBtn = document.getElementById('exportContratoBtn');
         this.pdfButtons = document.getElementById('pdfButtons');
         this.configBtn = document.getElementById('configBtn');
-        this.importarDadosBtn = document.getElementById('importarDadosBtn');
-        this.importFileInput = document.getElementById('importFileInput');
         
         // Validação de elementos críticos
         if (!this.taxaJurosField) {
@@ -2210,6 +2208,173 @@ Testemunha 2: _____________________________________ CPF: _______________________
             }
         };
         reader.readAsText(arquivo);
+    }
+
+    // Nova função para abrir modal de importação
+    abrirModalImportacao() {
+        const modal = document.getElementById('importModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            // Resetar para aba PDF por padrão
+            this.selecionarAbaImportacao('pdf');
+        }
+    }
+    
+    fecharModalImportacao() {
+        const modal = document.getElementById('importModal');
+        if (modal) {
+            modal.style.display = 'none';
+            // Limpar campos
+            const textarea = document.getElementById('importTextarea');
+            const fileInput = document.getElementById('importFile');
+            if (textarea) textarea.value = '';
+            if (fileInput) fileInput.value = '';
+        }
+    }
+    
+    selecionarAbaImportacao(tipo) {
+        // Atualizar abas visuais
+        const tabPdf = document.getElementById('tabPdf');
+        const tabTexto = document.getElementById('tabTexto');
+        
+        if (tabPdf) tabPdf.classList.toggle('active', tipo === 'pdf');
+        if (tabTexto) tabTexto.classList.toggle('active', tipo === 'texto');
+        
+        // Mostrar seção correspondente
+        const secaoPdf = document.getElementById('secaoPdf');
+        const secaoTexto = document.getElementById('secaoTexto');
+        
+        if (secaoPdf) secaoPdf.style.display = tipo === 'pdf' ? 'block' : 'none';
+        if (secaoTexto) secaoTexto.style.display = tipo === 'texto' ? 'block' : 'none';
+        
+        // Atualizar texto do botão
+        const btnProcessar = document.getElementById('btnProcessarImportacao');
+        if (btnProcessar) {
+            btnProcessar.textContent = tipo === 'pdf' ? 'PROCESSAR PDF' : 'PROCESSAR TEXTO';
+        }
+    }
+    
+    processarImportacao() {
+        const tabPdf = document.getElementById('tabPdf');
+        const abaPdfAtiva = tabPdf && tabPdf.classList.contains('active');
+        
+        if (abaPdfAtiva) {
+            // Processar PDF
+            const fileInput = document.getElementById('importFile');
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                this.importarDados(fileInput.files[0]);
+                this.fecharModalImportacao();
+            } else {
+                this.showNotification('Selecione um arquivo PDF primeiro', 'error');
+            }
+        } else {
+            // Processar texto
+            const textarea = document.getElementById('importTextarea');
+            if (textarea) {
+                const texto = textarea.value.trim();
+                if (texto) {
+                    this.processarTextoFormulario(texto);
+                    this.fecharModalImportacao();
+                } else {
+                    this.showNotification('Cole os dados do formulário primeiro', 'error');
+                }
+            }
+        }
+    }
+    
+    processarTextoFormulario(texto) {
+        try {
+            const dados = this.extrairDadosFormulario(texto);
+            
+            // Preencher campos se encontrados
+            if (dados.nome && this.nomeClienteField) {
+                this.nomeClienteField.value = dados.nome;
+            }
+            
+            if (dados.cpf && this.cpfClienteField) {
+                this.cpfClienteField.value = dados.cpf;
+            }
+            
+            // Expandir formulário completo e preencher dados
+            const toggleBtn = document.getElementById('toggleFormCompleto');
+            const formSection = document.getElementById('dadosCompletoSection');
+            
+            if (toggleBtn && formSection && (dados.nome || dados.cpf)) {
+                formSection.style.display = 'block';
+                toggleBtn.textContent = '▲ DADOS COMPLETOS DO CLIENTE';
+                
+                // Preencher todos os campos encontrados
+                Object.keys(dados).forEach(campo => {
+                    const elemento = document.getElementById(campo);
+                    if (elemento && dados[campo]) {
+                        elemento.value = dados[campo];
+                    }
+                });
+            }
+            
+            this.esconderErro();
+            this.showNotification('Dados do formulário importados com sucesso!', 'success');
+            
+        } catch (error) {
+            this.mostrarErro('ERRO AO PROCESSAR TEXTO. VERIFIQUE O FORMATO.');
+        }
+    }
+    
+    extrairDadosFormulario(texto) {
+        const dados = {};
+        
+        // Mapeamento de campos do formulário para IDs dos elementos
+        const mapeamento = {
+            'Nome:': 'nomeCliente',
+            'CPF:': 'cpfCliente',
+            'Data nascimento:': 'dataNascimento',
+            'Estado Civil:': 'estadoCivil',
+            'Endereço:': 'endereco',
+            'Número:': 'numero',
+            'Complemento:': 'complemento',
+            'Bairro:': 'bairro',
+            'Cidade:': 'cidade',
+            'Estado:': 'estado',
+            'CEP:': 'cep',
+            'Telefone:': 'telefone',
+            'E-mail:': 'email',
+            'Local de trabalho:': 'localTrabalho',
+            'Profissão:': 'profissao',
+            'Renda Mensal:': 'rendaMensal',
+            'Tempo de emprego:': 'tempoEmprego'
+        };
+        
+        // Extrair dados usando regex
+        Object.keys(mapeamento).forEach(label => {
+            const regex = new RegExp(label.replace(':', ':\\s*') + '([^\\n]+)', 'i');
+            const match = texto.match(regex);
+            if (match && match[1].trim()) {
+                dados[mapeamento[label]] = match[1].trim();
+            }
+        });
+        
+        // Extrair referências (formato especial)
+        const ref1Nome = texto.match(/1º REREFENCIA[\s\S]*?Nome:\s*([^\n]+)/i);
+        const ref1Telefone = texto.match(/1º REREFENCIA[\s\S]*?Telefone:\s*([^\n]+)/i);
+        const ref1Endereco = texto.match(/1º REREFENCIA[\s\S]*?Rua:\s*([^\n]+)/i);
+        const ref1Bairro = texto.match(/1º REREFENCIA[\s\S]*?Bairro:\s*([^\n]+)/i);
+        
+        if (ref1Nome && ref1Nome[1].trim()) dados.ref1Nome = ref1Nome[1].trim();
+        if (ref1Telefone && ref1Telefone[1].trim()) dados.ref1Telefone = ref1Telefone[1].trim();
+        if (ref1Endereco && ref1Endereco[1].trim()) dados.ref1Endereco = ref1Endereco[1].trim();
+        if (ref1Bairro && ref1Bairro[1].trim()) dados.ref1Bairro = ref1Bairro[1].trim();
+        
+        const ref2Nome = texto.match(/2º REFERENCIA[\s\S]*?Nome:\s*([^\n]+)/i);
+        const ref2Telefone = texto.match(/2º REFERENCIA[\s\S]*?Telefone:\s*([^\n]+)/i);
+        const ref2Endereco = texto.match(/2º REFERENCIA[\s\S]*?Rua:\s*([^\n]+)/i);
+        const ref2Bairro = texto.match(/2º REFERENCIA[\s\S]*?Bairro:\s*([^\n]+)/i);
+        
+        if (ref2Nome && ref2Nome[1].trim()) dados.ref2Nome = ref2Nome[1].trim();
+        if (ref2Telefone && ref2Telefone[1].trim()) dados.ref2Telefone = ref2Telefone[1].trim();
+        if (ref2Endereco && ref2Endereco[1].trim()) dados.ref2Endereco = ref2Endereco[1].trim();
+        if (ref2Bairro && ref2Bairro[1].trim()) dados.ref2Bairro = ref2Bairro[1].trim();
+        
+        return dados;
     }
 
     // Função para extrair dados de PDF de simulação

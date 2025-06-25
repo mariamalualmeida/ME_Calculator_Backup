@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-title" content="Simulador ME">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=20250625000000">
+    <link rel="stylesheet" href="style.css?v=20250625010000">
 </head>
 <body>
     <div class="container">
@@ -36,10 +36,9 @@
         <main class="main-content">
             <!-- Botão de importar dados no topo -->
             <div class="import-section" style="margin-bottom: 20px;">
-                <button id="importarDadosBtn" style="width: 100%; padding: 18px; background: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; font-size: 16px; min-height: 56px;">
-                    📥 IMPORTAR DADOS DE SIMULAÇÃO
+                <button class="import-btn" onclick="if(window.simulator) window.simulator.abrirModalImportacao()">
+                    IMPORTAR DADOS DE SIMULAÇÃO
                 </button>
-                <input type="file" id="importFileInput" accept=".json,.pdf" style="display: none;">
             </div>
             
             <div class="input-section">
@@ -616,6 +615,6 @@ Cole aqui todo o conteúdo do formulário preenchido"
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         }
     </script>
-    <script src="script.js?v=20250625000000"></script>
+    <script src="script.js?v=20250625010000"></script>
 </body>
 </html>
