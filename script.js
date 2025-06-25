@@ -82,7 +82,7 @@ class SimuladorEmprestimos {
             
             const desabilitarRegrasSelect = document.getElementById('desabilitarRegras');
             if (desabilitarRegrasSelect) {
-                desabilitarRegrasSelect.value = loadedConfig.desabilitarRegras ? 'desabilitar' : 'habilitar';
+                desabilitarRegrasSelect.value = loadedConfig.desabilitarRegras ? 'true' : 'false';
             }
         }, 100);
         
@@ -1333,7 +1333,7 @@ class SimuladorEmprestimos {
         if (this.configuracoes.isAdmin) {
             // Configurações financeiras
             this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
-            this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').value === 'desabilitar';
+            this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').value === 'true';
             this.configuracoes.sistemaJuros = document.getElementById('sistemaJuros').value;
             
             // Verificar se elementos existem antes de acessar
@@ -1425,7 +1425,7 @@ class SimuladorEmprestimos {
         const table = document.getElementById('limitsTable');
         
         // REFATORAÇÃO: Formato unificado boolean consistente
-        document.getElementById('desabilitarRegras').value = this.configuracoes.desabilitarRegras ? 'desabilitar' : 'habilitar';
+        document.getElementById('desabilitarRegras').value = this.configuracoes.desabilitarRegras ? 'true' : 'false';
         
         let html = '<div class="limits-table">';
         for (let parcelas = 1; parcelas <= 15; parcelas++) {
