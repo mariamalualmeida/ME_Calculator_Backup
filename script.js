@@ -1952,16 +1952,7 @@ class SimuladorEmprestimos {
         
         // Adicionar informações de configurações ativas separadamente
         const configuracoeAtivas = [];
-        // Usar a função de formatação detalhada para análise financeira
-        const infoDetalhada = this.formatarInfoDiasExtras(
-            resultadoCalculo.diasExtrasData || 0, 
-            resultadoCalculo.diasCompensacao || 0, 
-            resultadoCalculo.diasMeses31 || 0, 
-            resultadoCalculo
-        );
-        if (infoDetalhada !== 'Sem dias extras') {
-            configuracoeAtivas.push(infoDetalhada);
-        }
+        // Remover - detalhamento separado já aparece na interface principal
         if (this.configuracoes.igpmAnual > 0) {
             configuracoeAtivas.push(`IGPM ${this.configuracoes.igpmAnual}%`);
         }

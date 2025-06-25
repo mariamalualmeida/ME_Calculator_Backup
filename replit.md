@@ -263,6 +263,7 @@ SimuladorEmprestimos/
 - June 25, 2025: FINALIZAÇÃO COMPLETA DA IMPLEMENTAÇÃO - corrigidas todas as pendências: dados separados adicionados ao resultado do cálculo, interface exibe tipos de dias separadamente, PDF mostra apenas dias extras da data (oculta compensação/meses31), configuração renomeada corretamente, sistema totalmente funcional conforme especificado, cache v=20250625320000 (v20250625320000)
 - June 25, 2025: CORREÇÃO DEFINITIVA SEPARAÇÃO DE DIAS - variáveis separadas agora passadas corretamente para mostrarResultado(), interface exibe tipos individuais (Dias extras/Compensação/Meses 31 dias), PDF mostra apenas dias extras da diferença de datas, corrigida última ocorrência no PDF método distribuir, sistema funcionando conforme especificado, cache v=20250625330000 (v20250625330000)
 - June 25, 2025: IMPLEMENTAÇÃO FINAL SEPARAÇÃO DETALHADA - cada tipo de dia agora exibe juros individuais calculados proporcionalmente, interface mostra linha separada para cada tipo (Dias extras/Meses 31 dias/Dias compensação), análise financeira com formatação detalhada, PDF mantém apenas dias extras conforme especificado, cache v=20250625340000 (v20250625340000)
+- June 25, 2025: CORREÇÃO EXIBIÇÃO AGRUPADA - removida exibição duplicada "Dias extras: | Juros extras:" da interface principal, detalhamento separado agora aparece no lugar correto, PDF calcula juros proporcionais apenas para dias extras reais (não soma total), análise financeira limpa sem informações duplicadas, cache v=20250625350000 (v20250625350000)
 
 ## User Preferences
 
