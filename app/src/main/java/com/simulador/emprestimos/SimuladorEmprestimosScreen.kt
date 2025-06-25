@@ -217,6 +217,16 @@ fun SimuladorEmprestimosScreen(
                             cursorColor = colorScheme.primary
                         )
                     )
+                    
+                    // Informação de parcelas permitidas
+                    if (!configuracoes.desabilitarRegras || !configuracoes.isAdmin) {
+                        Text(
+                            text = "Você possui permissões para simulações entre 1 e 15 parcelas",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
                 
                 // Taxa de juros

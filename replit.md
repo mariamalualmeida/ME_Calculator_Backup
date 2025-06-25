@@ -282,6 +282,7 @@ SimuladorEmprestimos/
 - June 25, 2025: TEXTO FIXO DE PARCELAS ADICIONADO - criado elemento parcelasInfo abaixo do campo de parcelas exibindo "Você tem permissão para simulação entre 1 e 15 parcelas" para usuários com regras ativadas, integrado com sistema de modo livre, funções mostrarInformacaoParcelas() e atualizarInformacoesParcelas() implementadas, cache v=20250625490000 (v20250625490000)
 - June 25, 2025: TEXTO PARCELAS ATUALIZADO - alterado de "Você tem permissão para simulação entre 1 e 15 parcelas" para "Você possui permissões para simulações entre 1 e 15 parcelas" conforme solicitação do usuário, cache v=20250625495000 (v20250625495000)
 - June 25, 2025: SINCRONIZAÇÃO FINAL E CORREÇÃO CRÍTICA - corrigido elemento parcelasInfo ausente no HTML, sincronizada versão Android com limites padrão atualizados, nomenclatura inteligente PDF, texto informativo de parcelas, configurações avançadas, todas funcionalidades portadas entre Web/PWA ↔ Android, cache v=20250625500000 (v20250625500000)
+- June 25, 2025: CORREÇÃO DEFINITIVA TEXTO PARCELAS - elemento parcelasInfo adicionado corretamente no HTML, event listener focus implementado, função mostrarInformacaoParcelas() com logs de debug, texto aparece sempre no focus (simplificado), versão Android atualizada com texto fixo, nomenclatura PDF implementada, cache v=20250625505000 (v20250625505000)
 
 ## User Preferences
 
