@@ -268,6 +268,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÕES DEFINITIVAS APLICADAS - substituídas todas as 3 ocorrências de variáveis agrupadas pela função formatarInfoDiasExtras(), corrigidas 2 ocorrências no PDF para cálculo proporcional, removidas variáveis diasExtras/jurosExtras que causavam exibição agrupada, sistema agora funciona conforme especificado, cache v=20250625370000 (v20250625370000)
 - June 25, 2025: CORREÇÃO FINAL PDF JUROS PROPORCIONAIS - corrigidas as 2 ocorrências restantes no PDF que ainda usavam valor total, implementado cálculo proporcional apenas para dias extras reais, removida exibição quando não há dias extras da data, todas as 5 ocorrências da interface agora usam formatação separada, cache v=20250625380000 (v20250625380000)
 - June 25, 2025: CORREÇÃO COMPLETA TODOS OS PROBLEMAS - corrigido cálculo de dias extras (removido Math.abs para calcular corretamente 5 dias), aplicado cálculo proporcional no PDF (juros apenas dos dias extras), substituídas últimas 2 ocorrências agrupadas na interface pela formatação separada, sistema agora funciona corretamente, cache v=20250625390000 (v20250625390000)
+- June 25, 2025: CORREÇÕES APLICADAS COM CONTEXTO ESPECÍFICO - removido Math.abs do cálculo de dias extras (linha 903), corrigidas 2 ocorrências da interface com contexto único (linhas 1060-1064 e 1075-1079), aplicado cálculo proporcional no PDF (linha 1686-1691), forçado cache bust v=20250625400000, sistema corrigido definitivamente (v20250625400000)
 
 ## User Preferences
 
