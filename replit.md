@@ -241,6 +241,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO FINAL ORDEM PDF E MELHORIAS EXTRAÇÃO - ordem PDF corrigida definitivamente em AMBAS funções de PDF, mapeamento "União Estável" adicionado, extração de renda melhorada para formato R$5000,00, debug logs adicionados para análise, cache v=20250625100000 (v20250625100000)
 - June 25, 2025: CORREÇÃO CRÍTICA EXTRAÇÃO NOME/CPF - regex nome/CPF aprimorados para capturar campos corretamente sem interferência de texto adjacente, debug logs expandidos para análise detalhada da extração, ordem PDF mantida correta (Valor→Parcelas→Sistema→Taxa), cache v=20250625110000 (v20250625110000)
 - June 25, 2025: DEBUG COMPLETO EXTRAÇÃO PDF - logs detalhados adicionados em toda cadeia de extração (PDF→texto→dados→preenchimento), regex nome/CPF melhorados com look-ahead específicos, tratamento de erro robusto com mensagens detalhadas, expansão automática do formulário melhorada, cache v=20250625120000 (v20250625120000)
+- June 25, 2025: CORREÇÃO CRÍTICA BIBLIOTECA PDF.JS - verificação robusta de carregamento da biblioteca, logs detalhados de debugging em todo processo de extração, configuração correta do PDF.js worker, tratamento específico de erros de biblioteca, cache v=20250625130000 (v20250625130000)
 
 ## User Preferences
 

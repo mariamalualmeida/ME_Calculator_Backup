@@ -2394,32 +2394,52 @@ Testemunha 2: _____________________________________ CPF: _______________________
 
     // Função para extrair dados de PDF de simulação
     async extrairDadosPDF(arquivo) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                try {
-                    const typedarray = new Uint8Array(e.target.result);
-                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                    let textoCompleto = '';
-                    
-                    // Extrair texto de todas as páginas
-                    for (let i = 1; i <= pdf.numPages; i++) {
-                        const page = await pdf.getPage(i);
-                        const textContent = await page.getTextContent();
-                        const pageText = textContent.items.map(item => item.str).join(' ');
-                        textoCompleto += pageText + '\n';
-                    }
-                    
-                    // Extrair dados usando regex específicos
-                    const dadosExtraidos = this.extrairDadosTexto(textoCompleto);
-                    resolve(dadosExtraidos);
-                } catch (error) {
-                    reject(error);
-                }
-            };
-            reader.onerror = () => reject(new Error('Erro ao ler arquivo PDF'));
-            reader.readAsArrayBuffer(arquivo);
-        });
+        try {
+            console.log('Iniciando extração do PDF...');
+            
+            // Verificar se a biblioteca PDF.js está disponível
+            if (typeof pdfjsLib === 'undefined') {
+                console.error('pdfjsLib não está definido');
+                throw new Error('Biblioteca PDF.js não carregada. Recarregue a página.');
+            }
+            
+            console.log('PDF.js disponível, lendo arquivo...');
+            
+            const arrayBuffer = await arquivo.arrayBuffer();
+            console.log('ArrayBuffer criado, tamanho:', arrayBuffer.byteLength);
+            
+            const loadingTask = pdfjsLib.getDocument({
+                data: arrayBuffer,
+                verbosity: 0 // Reduzir logs da biblioteca
+            });
+            
+            const pdf = await loadingTask.promise;
+            console.log(`PDF carregado com ${pdf.numPages} páginas`);
+            
+            let textoCompleto = '';
+            
+            // Extrair texto de todas as páginas
+            for (let i = 1; i <= pdf.numPages; i++) {
+                console.log(`Processando página ${i}...`);
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join(' ');
+                textoCompleto += pageText + '\n';
+                console.log(`Página ${i} - texto extraído (${pageText.length} caracteres)`);
+            }
+            
+            console.log('Texto completo extraído:', textoCompleto.substring(0, 500) + '...');
+            
+            // Extrair dados usando regex específicos
+            const dadosExtraidos = this.extrairDadosTexto(textoCompleto);
+            console.log('Dados extraídos do texto:', dadosExtraidos);
+            
+            return dadosExtraidos;
+            
+        } catch (error) {
+            console.error('Erro detalhado na extração PDF:', error);
+            throw new Error('Erro ao extrair dados do PDF: ' + error.message);
+        }
     }
     
     extrairDadosTexto(texto) {
