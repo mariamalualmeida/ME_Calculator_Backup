@@ -1953,6 +1953,45 @@ class SimuladorEmprestimos {
         return `${nomeArquivo}.pdf`;
     }
 
+    verificarConsistenciaEstado() {
+        // CORREÇÃO: Garantir consistência entre regras e autenticação
+        if (!this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras) {
+            console.log('Debug - Corrigindo inconsistência: Admin não logado mas regras desabilitadas');
+            this.configuracoes.desabilitarRegras = false;
+            this.salvarConfiguracoes();
+            
+            // Aplicar correções visuais imediatamente
+            this.atualizarPlaceholderParcelas();
+            this.limparErrosVisuais();
+        }
+    }
+
+    aplicarValidacaoConfiguracoes() {
+        // Verificar consistência antes de aplicar validações
+        this.verificarConsistenciaEstado();
+        
+        // Limpar bordas vermelhas se modo livre estiver ativo
+        if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
+            this.limparErrosVisuais();
+        }
+    }
+
+    aplicarModoLivreCompleto() {
+        // Verificar consistência primeiro
+        this.verificarConsistenciaEstado();
+        
+        // Aplicar validações
+        this.aplicarValidacaoConfiguracoes();
+        
+        // Depois aplicar classes visuais
+        this.atualizarClassesModoLivre();
+        
+        // Atualizar placeholder após aplicar configurações
+        setTimeout(() => {
+            this.atualizarPlaceholderParcelas();
+        }, 50);
+    }
+
     formatarValorMonetario(valor) {
         return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
