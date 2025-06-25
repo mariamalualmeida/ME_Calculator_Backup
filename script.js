@@ -46,7 +46,10 @@ class SimuladorEmprestimos {
             colorTheme: 'default',
             sistemaJuros: 'compostos-mensal',
             adminUser: 'admin',
-            adminPassword: 'admin123'
+            adminPassword: 'admin123',
+            ajusteMes31Dias: false,
+            diasExtrasFixos: 0,
+            exibirDetalhesModeLivre: true
         };
         const loadedConfig = config ? { ...defaultConfig, ...JSON.parse(config) } : defaultConfig;
         this.configuracoes = loadedConfig;
@@ -1265,10 +1268,15 @@ class SimuladorEmprestimos {
         
         // Salvar configurações administrativas se logado
         if (this.configuracoes.isAdmin) {
-            // IGPM movido para área administrativa
+            // Configurações financeiras
             this.configuracoes.igpmAnual = parseFloat(document.getElementById('igpmAnual').value.replace(',', '.')) || 0;
             this.configuracoes.desabilitarRegras = document.getElementById('desabilitarRegras').value === 'desabilitar';
             this.configuracoes.sistemaJuros = document.getElementById('sistemaJuros').value;
+            this.configuracoes.exibirDetalhesModeLivre = document.getElementById('exibirDetalhesModeLivre').value === 'true';
+            
+            // Ajustes automáticos
+            this.configuracoes.ajusteMes31Dias = document.getElementById('ajusteMes31Dias').value === 'true';
+            this.configuracoes.diasExtrasFixos = parseInt(document.getElementById('diasExtrasFixos').value) || 0;
             
             // Salvar credenciais se alteradas
             const novoUsuario = document.getElementById('newAdminUser').value;

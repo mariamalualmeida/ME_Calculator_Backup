@@ -505,6 +505,40 @@ body {
     background: #9e9e9e;
 }
 
+/* Seções do painel administrativo */
+.config-subsection {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--surface-variant);
+    border-radius: 8px;
+    border: 1px solid var(--outline-variant);
+}
+
+.config-subsection h4 {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Detalhes do modo livre */
+.detalhes-modo-livre {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Método de dias extras */
 .metodo-dias-extras {
     margin-top: 16px;
