@@ -2496,14 +2496,29 @@ Testemunha 2: _____________________________________ CPF: _______________________
         const secaoRef1 = texto.match(/1ª REFERÊNCIA:([\s\S]*?)(?=2ª REFERÊNCIA:|$)/i);
         const secaoRef2 = texto.match(/2ª REFERÊNCIA:([\s\S]*?)(?=$)/i);
         
+        console.log('Seções encontradas:');
+        console.log('- DADOS PESSOAIS:', !!secaoDadosPessoais);
+        console.log('- DADOS PROFISSIONAIS:', !!secaoDadosProfissionais);
+        console.log('- 1ª REFERÊNCIA:', !!secaoRef1);
+        console.log('- 2ª REFERÊNCIA:', !!secaoRef2);
+        
         if (secaoDadosPessoais) {
             const dadosPessoais = secaoDadosPessoais[1];
+            console.log('Texto da seção DADOS PESSOAIS:', dadosPessoais);
             
-            const nomeMatch = dadosPessoais.match(/Nome:\s*([^\n\r]+)/i);
-            if (nomeMatch) dados.nomeCliente = nomeMatch[1].trim();
+            // Nome - regex mais específico
+            const nomeMatch = dadosPessoais.match(/Nome:\s*([^\n\r]+?)(?:\s*CPF:|$)/i);
+            if (nomeMatch) {
+                dados.nomeCliente = nomeMatch[1].trim();
+                console.log('Nome extraído:', dados.nomeCliente);
+            }
             
-            const cpfMatch = dadosPessoais.match(/CPF:\s*([\d.-]+)/i);
-            if (cpfMatch) dados.cpfCliente = cpfMatch[1].trim();
+            // CPF - regex mais específico
+            const cpfMatch = dadosPessoais.match(/CPF:\s*([\d\.\-]+)(?:\s|$)/i);
+            if (cpfMatch) {
+                dados.cpfCliente = cpfMatch[1].trim();
+                console.log('CPF extraído:', dados.cpfCliente);
+            }
             
             const nascimentoMatch = dadosPessoais.match(/Data de Nascimento:\s*([\d\/]+)/i);
             if (nascimentoMatch) dados.dataNascimento = nascimentoMatch[1].trim();
