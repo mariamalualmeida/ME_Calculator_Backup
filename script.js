@@ -956,11 +956,21 @@ class SimuladorEmprestimos {
     atualizarPlaceholderParcelas() {
         if (!this.numeroParcelasField) return;
         
+        // Recarregar configurações atuais
+        this.carregarConfiguracoes();
+        
         // Atualizar placeholder baseado no estado das regras
+        console.log('Debug - Atualizando placeholder:', {
+            desabilitarRegras: this.configuracoes.desabilitarRegras,
+            isAdmin: this.configuracoes.isAdmin
+        });
+        
         if (this.configuracoes.desabilitarRegras && this.configuracoes.isAdmin) {
             this.numeroParcelasField.placeholder = 'Quantidade de parcelas';
+            console.log('Debug - Placeholder modo livre aplicado');
         } else {
             this.numeroParcelasField.placeholder = 'Permitido: 1 a 15 parcelas';
+            console.log('Debug - Placeholder regras aplicado');
         }
     }
 

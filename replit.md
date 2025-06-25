@@ -285,6 +285,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO DEFINITIVA TEXTO PARCELAS - elemento parcelasInfo adicionado corretamente no HTML, event listener focus implementado, função mostrarInformacaoParcelas() com logs de debug, texto aparece sempre no focus (simplificado), versão Android atualizada com texto fixo, nomenclatura PDF implementada, cache v=20250625505000 (v20250625505000)
 - June 25, 2025: IMPLEMENTADO PLACEHOLDER DINÂMICO - removido texto externo, placeholder agora muda automaticamente: "Você possui permissões para simulações entre 1 e 15 parcelas" (regras ativas) vs "Insira a quantidade de parcelas" (modo livre), interface mais limpa, sincronizado Web/PWA e Android, cache v=20250625510000 (v20250625510000)
 - June 25, 2025: PLACEHOLDER OTIMIZADO - corrigido erro JavaScript "atualizarPlaceholderParcelas is not a function", texto reduzido para caber na caixa: "Permitido: 1 a 15 parcelas" (regras ativas) vs "Quantidade de parcelas" (modo livre), sincronizado todas versões, cache v=20250625515000 (v20250625515000)
+- June 25, 2025: CORREÇÃO PLACEHOLDER MODO LIVRE - corrigido bug onde placeholder não mudava para "Quantidade de parcelas" no modo livre, adicionado recarregamento de configurações e debug logs, atualização automática no fecharModal() e salvarConfiguracoesModal(), sincronizado Web/PWA e Android, cache v=20250625520000 (v20250625520000)
 
 ## User Preferences
 

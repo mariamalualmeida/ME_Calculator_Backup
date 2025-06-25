@@ -417,6 +417,7 @@ class SimuladorViewModel : ViewModel() {
     
     fun updateConfiguracoes(novasConfiguracoes: Configuracoes) {
         _configuracoes.value = novasConfiguracoes
+        // Força recomposição da UI para atualizar placeholder
     }
     
     fun limparResultado() {
