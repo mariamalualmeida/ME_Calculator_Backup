@@ -1871,9 +1871,19 @@ class SimuladorEmprestimos {
 
 
     gerarNomeArquivoPdf() {
+        // Debug - verificar se elementos existem no DOM
+        const nomeElement = document.getElementById('nomeCompleto');
+        const cpfElement = document.getElementById('cpfCompleto');
+        
+        console.log('Debug PDF - Elemento nome encontrado:', !!nomeElement);
+        console.log('Debug PDF - Elemento CPF encontrado:', !!cpfElement);
+        
+        if (nomeElement) console.log('Debug PDF - Valor do nome element:', nomeElement.value);
+        if (cpfElement) console.log('Debug PDF - Valor do CPF element:', cpfElement.value);
+        
         // Capturar dados do cliente diretamente do DOM com IDs corretos
-        const nomeCliente = document.getElementById('nomeCompleto')?.value.trim() || '';
-        const cpfCliente = document.getElementById('cpfCompleto')?.value.trim() || '';
+        const nomeCliente = nomeElement?.value.trim() || '';
+        const cpfCliente = cpfElement?.value.trim() || '';
         
         // Debug para verificar se está capturando os valores
         console.log('Debug PDF - Nome capturado:', nomeCliente);
