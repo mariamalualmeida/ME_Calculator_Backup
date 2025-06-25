@@ -2858,44 +2858,7 @@ Testemunha 2: _____________________________________ CPF: _______________________
 
             
             if (dados.ref2Endereco) {
-                const ref2EnderecoInput = document.getElementById('ref2Endereco');
-                if (ref2EnderecoInput) ref2EnderecoInput.value = dados.ref2Endereco;
-            }
-            
-            if (dados.ref2Bairro) {
-                const ref2BairroInput = document.getElementById('ref2Bairro');
-                if (ref2BairroInput) ref2BairroInput.value = dados.ref2Bairro;
-            }
-            
-            // Debug: mostrar dados extraídos
-            console.log('Dados extraídos do PDF:', dados);
-            console.log('Seção dados pessoais encontrada:', !!secaoDadosPessoais);
-            if (secaoDadosPessoais) {
-                console.log('Texto da seção dados pessoais:', secaoDadosPessoais[1]);
-            }
-            
-            // Se há dados cadastrais, expandir automaticamente o formulário
-            if (dados.nomeCliente || dados.cpfCliente || dados.dataNascimento) {
-                const formToggleBtn = document.getElementById('formToggleBtn');
-                const formCompleto = document.getElementById('formCompleto');
-                if (formToggleBtn && formCompleto && formCompleto.style.display === 'none') {
-                    this.toggleFormularioCompleto();
-                }
-            }
-            
-            let mensagem = 'Dados importados com sucesso do PDF!';
-            if (dados.diasExtras > 0) {
-                mensagem += ` (${dados.diasExtras} dias extras detectados)`;
-            }
-            this.showNotification(mensagem, 'success');
-            
-        } catch (error) {
-            console.error('Erro na importação PDF:', error);
-            this.showNotification('Erro ao importar dados do PDF.', 'error');
-        }
-    }
 
-    // Função para aplicar modo livre completo após inicialização
     aplicarModoLivreCompleto() {
         if (this.configuracoes.isAdmin && this.configuracoes.desabilitarRegras) {
             this.limparErrosVisuais();
