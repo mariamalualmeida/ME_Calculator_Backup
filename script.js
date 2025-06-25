@@ -1869,6 +1869,31 @@ class SimuladorEmprestimos {
 
 
 
+    gerarNomeArquivoPdf() {
+        // Capturar dados do cliente
+        const nomeCliente = this.nomeClienteField ? this.nomeClienteField.value.trim() : '';
+        const cpfCliente = this.cpfClienteField ? this.cpfClienteField.value.trim() : '';
+        
+        // Limpar caracteres especiais para nome de arquivo
+        const limparNome = (texto) => texto.replace(/[^a-zA-Z0-9]/g, '_');
+        
+        // Gerar timestamp
+        const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '').replace('T', '_');
+        
+        // Construir nome do arquivo
+        let nomeArquivo = '';
+        
+        if (nomeCliente && cpfCliente) {
+            nomeArquivo = `${limparNome(nomeCliente)}_${limparNome(cpfCliente)}_Simulacao_${timestamp}`;
+        } else if (nomeCliente) {
+            nomeArquivo = `${limparNome(nomeCliente)}_Simulacao_${timestamp}`;
+        } else {
+            nomeArquivo = `Simulacao_Emprestimos_${timestamp}`;
+        }
+        
+        return `${nomeArquivo}.pdf`;
+    }
+
     formatarValorMonetario(valor) {
         return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
