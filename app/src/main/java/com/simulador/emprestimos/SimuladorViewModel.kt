@@ -10,7 +10,11 @@ data class ResultadoCalculo(
     val parcelaNormal: Double,
     val primeiraParcela: Double,
     val jurosDiasExtras: Double,
-    val diasExtra: Int
+    val diasExtra: Int,
+    val metodo: String = "primeira",
+    val diasExtrasData: Int = 0,
+    val diasCompensacao: Int = 0,
+    val diasMeses31: Int = 0
 )
 
 data class SimuladorUiState(
@@ -37,9 +41,28 @@ data class Configuracoes(
     val isAdmin: Boolean = false,
     val adminUser: String = "admin",
     val adminPassword: String = "admin123",
-    val limitesPersonalizados: Map<Int, LimiteJuros>? = null,
+    val limitesPersonalizados: Map<Int, LimiteJuros>? = mapOf(
+        1 to LimiteJuros(15.00, 100.00),
+        2 to LimiteJuros(15.00, 100.00),
+        3 to LimiteJuros(15.00, 30.00),
+        4 to LimiteJuros(15.00, 24.00),
+        5 to LimiteJuros(15.00, 22.00),
+        6 to LimiteJuros(15.00, 20.00),
+        7 to LimiteJuros(14.75, 18.00),
+        8 to LimiteJuros(14.36, 17.00),
+        9 to LimiteJuros(13.92, 16.00),
+        10 to LimiteJuros(13.47, 15.00),
+        11 to LimiteJuros(13.03, 14.00),
+        12 to LimiteJuros(12.60, 13.00),
+        13 to LimiteJuros(12.19, 12.60),
+        14 to LimiteJuros(11.80, 12.19),
+        15 to LimiteJuros(11.43, 11.80)
+    ),
     val desabilitarRegras: Boolean = false,
-    val sistemaJuros: String = "compostos-mensal"
+    val sistemaJuros: String = "compostos-mensal",
+    val exibirDetalhesModeLivre: Boolean = true,
+    val ajusteMes31Dias: Boolean = false,
+    val diasExtrasFixos: Int = 0
 )
 
 data class LimiteJuros(
