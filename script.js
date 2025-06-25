@@ -1007,6 +1007,10 @@ class SimuladorEmprestimos {
     }
 
     mostrarResultado(resultadoCalculo, valorEmprestimo, nParcelas, juros) {
+        // Obter variáveis separadas dos dias
+        const diasExtrasData = resultadoCalculo.diasExtrasData || 0;
+        const diasCompensacao = resultadoCalculo.diasCompensacao || 0;
+        const diasMeses31 = resultadoCalculo.diasMeses31 || 0;
         // Formatar valores monetários
         const formatarMoeda = (valor) => new Intl.NumberFormat('pt-BR', {
             style: 'currency',
@@ -1680,7 +1684,12 @@ class SimuladorEmprestimos {
                     doc.setFontSize(12);
                     doc.text(`(Juros de dias extras distribuídos igualmente)`, 20, yInicial);
                     yInicial += 8;
-                    doc.text(`(Dias extras: ${resultadoCalculo.diasExtra} | Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
+                    // Mostrar apenas dias extras da data (não compensação nem meses 31)
+                    if (resultadoCalculo.diasExtrasData > 0) {
+                        doc.text(`(Dias extras: ${resultadoCalculo.diasExtrasData} | Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
+                    } else {
+                        doc.text(`(Juros extras: R$ ${resultadoCalculo.jurosDiasExtras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`, 20, yInicial);
+                    }
                     yInicial += 12;
                     doc.setFont('helvetica', 'bold');
                     doc.setFontSize(14);

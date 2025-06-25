@@ -261,6 +261,7 @@ SimuladorEmprestimos/
 - June 25, 2025: CORREÇÃO DEFINITIVA FUNÇÃO FALTANTE - implementada função exibirDetalhesModeLivre que estava causando erro "is not a function", adicionada função calcularAjusteMes31Dias, corrigido carregamento de configurações no painel administrativo, botão CALCULAR agora funciona corretamente, cache v=20250625300000 (v20250625300000)
 - June 25, 2025: REORGANIZAÇÃO COMPLETA DIAS EXTRAS E PDF - separados tipos de dias (extras/compensação/meses31), nova sequência PDF (Valor→Parcelas→Sistema→Taxa), configuração renomeada para "informações de juros", PDF não exibe mais compensação/meses31, análise financeira mostra tipos separadamente, cache v=20250625310000 (v20250625310000)
 - June 25, 2025: FINALIZAÇÃO COMPLETA DA IMPLEMENTAÇÃO - corrigidas todas as pendências: dados separados adicionados ao resultado do cálculo, interface exibe tipos de dias separadamente, PDF mostra apenas dias extras da data (oculta compensação/meses31), configuração renomeada corretamente, sistema totalmente funcional conforme especificado, cache v=20250625320000 (v20250625320000)
+- June 25, 2025: CORREÇÃO DEFINITIVA SEPARAÇÃO DE DIAS - variáveis separadas agora passadas corretamente para mostrarResultado(), interface exibe tipos individuais (Dias extras/Compensação/Meses 31 dias), PDF mostra apenas dias extras da diferença de datas, corrigida última ocorrência no PDF método distribuir, sistema funcionando conforme especificado, cache v=20250625330000 (v20250625330000)
 
 ## User Preferences
 
