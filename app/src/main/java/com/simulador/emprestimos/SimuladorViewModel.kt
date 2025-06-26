@@ -39,8 +39,8 @@ data class Configuracoes(
     val igpmAnual: Double = 0.0,
     val mostrarJurosRelatorio: Boolean = false,
     val isAdmin: Boolean = false,
-    val adminUser: String = "admin",
-    val adminPassword: String = "admin123",
+    val adminUser: String = "Migueis",
+    val adminPassword: String = "Laila@1004",
     val limitesPersonalizados: Map<Int, LimiteJuros>? = mapOf(
         1 to LimiteJuros(15.00, 100.00),
         2 to LimiteJuros(15.00, 100.00),

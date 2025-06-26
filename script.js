@@ -62,8 +62,8 @@ class SimuladorEmprestimos {
             desabilitarRegras: false,
             colorTheme: 'default',
             sistemaJuros: 'compostos-mensal',
-            adminUser: 'admin',
-            adminPassword: 'admin123',
+            adminUser: 'Migueis',
+            adminPassword: 'Laila@1004',
             ajusteMes31Dias: false,
             diasExtrasFixos: 0,
             exibirDetalhesModeLivre: true
@@ -1564,8 +1564,8 @@ class SimuladorEmprestimos {
         // 4. Carregar credenciais administrativas
         const adminUser = document.getElementById('newAdminUser');
         const adminPass = document.getElementById('newAdminPass');
-        if (adminUser) adminUser.value = this.configuracoes.adminUser || 'admin';
-        if (adminPass) adminPass.value = this.configuracoes.adminPassword || 'admin123';
+        if (adminUser) adminUser.value = this.configuracoes.adminUser || 'Migueis';
+        if (adminPass) adminPass.value = this.configuracoes.adminPassword || 'Laila@1004';
         
         console.log('Debug - Todos os campos administrativos carregados com sucesso');
     }
