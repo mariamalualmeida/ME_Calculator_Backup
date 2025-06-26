@@ -246,7 +246,7 @@ class SimuladorViewModel : ViewModel() {
             _uiState.value = currentState.copy(
                 isLoading = false,
                 showError = true,
-                errorMessage = "Erro ao calcular. Verifique os valores informados."
+                errorMessage = "SIMULAÇÃO NEGADA. Verifique os valores informados."
             )
         }
     }
@@ -265,7 +265,7 @@ class SimuladorViewModel : ViewModel() {
         
         if (modoLivreAtivo) {
             if (valor <= 0) return Pair(false, "Valor do empréstimo deve ser maior que zero.")
-            if (nParcelas < 1) return Pair(false, "NÚMERO DE PARCELAS DEVE SER MAIOR QUE ZERO.")
+            if (nParcelas < 1) return Pair(false, "SIMULAÇÃO NEGADA. NÚMERO DE PARCELAS DEVE SER MAIOR QUE ZERO.")
             if (juros < 0) return Pair(false, "TAXA DE JUROS DEVE SER MAIOR OU IGUAL A ZERO.")
             return Pair(true, null)
         }
@@ -276,25 +276,25 @@ class SimuladorViewModel : ViewModel() {
         }
         
         if (nParcelas < 1) {
-            return Pair(false, "NÚMERO DE PARCELAS INFERIOR AO MÍNIMO PERMITIDO.")
+            return Pair(false, "SIMULAÇÃO NEGADA. NÚMERO DE PARCELAS INFERIOR AO MÍNIMO PERMITIDO.")
         }
         
         if (nParcelas > 15) {
-            return Pair(false, "VOCÊ NÃO TEM PERMISSÃO PARA SIMULAÇÕES ACIMA DE 15 PARCELAS. PARA SIMULAÇÕES SUPERIORES A 15 PARCELAS, CONSULTE MIGUEIS.")
+            return Pair(false, "SIMULAÇÃO NEGADA. VOCÊ NÃO TEM PERMISSÃO PARA SIMULAÇÕES ACIMA DE 15 PARCELAS. PARA SIMULAÇÕES SUPERIORES A 15 PARCELAS, CONSULTE MIGUEIS.")
         }
         
         val limites = _configuracoes.value.limitesPersonalizados?.get(nParcelas) 
             ?: limitesJuros[nParcelas] 
-            ?: return Pair(false, "NÚMERO DE PARCELAS INVÁLIDO.")
+            ?: return Pair(false, "SIMULAÇÃO NEGADA. NÚMERO DE PARCELAS INVÁLIDO.")
         
         if (juros < limites.min) {
             val tipoMensagem = if (nParcelas == 1) "PARCELA" else "PARCELAS"
-            return Pair(false, "[$nParcelas] $tipoMensagem, A PORCENTAGEM MÍNIMA PERMITIDA É DE ${String.format("%.2f", limites.min).replace('.', ',')} %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.")
+            return Pair(false, "SIMULAÇÃO NEGADA. [$nParcelas] $tipoMensagem, A PORCENTAGEM MÍNIMA PERMITIDA É DE ${String.format("%.2f", limites.min).replace('.', ',')} %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.")
         }
         
         if (juros > limites.max) {
             val tipoMensagem = if (nParcelas == 1) "PARCELA" else "PARCELAS"
-            return Pair(false, "[$nParcelas] $tipoMensagem, A PORCENTAGEM MÁXIMA PERMITIDA É DE ${String.format("%.2f", limites.max).replace('.', ',')} %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.")
+            return Pair(false, "SIMULAÇÃO NEGADA. [$nParcelas] $tipoMensagem, A PORCENTAGEM MÁXIMA PERMITIDA É DE ${String.format("%.2f", limites.max).replace('.', ',')} %. PARA EMPRÉSTIMOS COM JUROS FORA DOS LIMITES ESPECIFICADOS, CONSULTE MIGUEIS.")
         }
         
         return Pair(true, null)
