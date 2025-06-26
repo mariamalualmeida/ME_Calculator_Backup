@@ -400,33 +400,35 @@ fun ConfiguracoesModal(
                     }
                 }
                 
-                // Botões de ação
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = {
-                            val novasConfiguracoes = configuracoes.copy(
-                                nomeUsuario = nomeUsuario,
-                                themeMode = themeMode,
-                                colorTheme = colorTheme,
-                                igpmAnual = igpmAnual.replace(',', '.').toDoubleOrNull() ?: 0.0,
-                                isAdmin = isAdmin, // NOVA LÓGICA: Preservar estado administrativo durante sessão
-                                desabilitarRegras = desabilitarRegras == "desabilitar", // Permitir desabilitar independente de login
-                                adminUser = if (newAdminUser.isNotEmpty()) newAdminUser else configuracoes.adminUser,
-                                adminPassword = if (newAdminPassword.isNotEmpty()) newAdminPassword else configuracoes.adminPassword
-                            )
-                            onSave(novasConfiguracoes)
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorScheme.primary
-                        )
+                // Botões de ação - mostrar apenas quando há mudanças (excluindo login administrativo)
+                if (showSaveButton) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Salvar", color = Color.White)
+                        Button(
+                            onClick = {
+                                val novasConfiguracoes = configuracoes.copy(
+                                    nomeUsuario = nomeUsuario,
+                                    themeMode = themeMode,
+                                    colorTheme = colorTheme,
+                                    igpmAnual = igpmAnual.replace(',', '.').toDoubleOrNull() ?: 0.0,
+                                    isAdmin = isAdmin, // NOVA LÓGICA: Preservar estado administrativo durante sessão
+                                    desabilitarRegras = desabilitarRegras == "desabilitar", // Permitir desabilitar independente de login
+                                    adminUser = if (newAdminUser.isNotEmpty()) newAdminUser else configuracoes.adminUser,
+                                    adminPassword = if (newAdminPassword.isNotEmpty()) newAdminPassword else configuracoes.adminPassword
+                                )
+                                onSave(novasConfiguracoes)
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorScheme.primary
+                            )
+                        ) {
+                            Text("SALVAR", color = Color.White)
+                        }
                     }
                 }
             }
