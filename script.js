@@ -2923,7 +2923,8 @@ class SimuladorEmprestimos {
 
     // Nova função para pré-processar texto do PDF e recriar quebras de linha
     preprocessarTextoPdf(texto) {
-        console.log('Pré-processando texto PDF para recriar quebras de linha...');
+        console.log('=== INÍCIO PRÉ-PROCESSAMENTO ===');
+        console.log('Texto original (primeiros 800 chars):', texto.substring(0, 800));
         
         // Padrões de campos que devem ter quebra de linha antes
         const padroesQuebra = [
@@ -2938,13 +2939,21 @@ class SimuladorEmprestimos {
         let textoProcessado = texto;
         padroesQuebra.forEach(padrao => {
             const regex = new RegExp(`(?<!^|\\n)\\s*(${padrao.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            const antes = textoProcessado.length;
             textoProcessado = textoProcessado.replace(regex, '\n$1');
+            const depois = textoProcessado.length;
+            if (depois !== antes) {
+                console.log(`Padrão "${padrao}" encontrado e quebra adicionada`);
+            }
         });
 
         // Limpar quebras de linha múltiplas e espaços extras
         textoProcessado = textoProcessado.replace(/\n\s*\n/g, '\n').trim();
 
-        console.log('Texto após pré-processamento (primeiros 500 chars):', textoProcessado.substring(0, 500));
+        console.log('=== RESULTADO PRÉ-PROCESSAMENTO ===');
+        console.log('Texto processado (primeiros 800 chars):', textoProcessado.substring(0, 800));
+        console.log('=== FIM PRÉ-PROCESSAMENTO ===');
+        
         return textoProcessado;
     }
 
@@ -3129,28 +3138,75 @@ class SimuladorEmprestimos {
     // Extração específica para PDF completo (com taxa de juros)
     extrairDadosPdfCompleto(texto, dados) {
         try {
-            console.log('Extraindo dados de PDF completo com pré-processamento...');
+            console.log('=== EXTRAÇÃO PDF COMPLETO ===');
             
             // Pré-processar texto para recriar quebras de linha
             const textoProcessado = this.preprocessarTextoPdf(texto);
             
+            console.log('=== TESTANDO REGEX DADOS SIMULAÇÃO ===');
+            
             // Dados da simulação com regex melhorados
             const valorMatch = textoProcessado.match(/Valor do empréstimo:\s*R\$\s*([0-9,.]+?)(?=\s*Número de parcelas:|$)/i);
+            console.log('Regex Valor:', '/Valor do empréstimo:\\s*R\\$\\s*([0-9,.]+?)(?=\\s*Número de parcelas:|$)/i');
+            console.log('Resultado Valor:', valorMatch);
+            
             const parcelasMatch = textoProcessado.match(/Número de parcelas:\s*(\d+?)(?=\s*Sistema de juros:|Taxa de juros:|$)/i);
+            console.log('Regex Parcelas:', '/Número de parcelas:\\s*(\\d+?)(?=\\s*Sistema de juros:|Taxa de juros:|$)/i');
+            console.log('Resultado Parcelas:', parcelasMatch);
+            
             const sistemaJurosMatch = textoProcessado.match(/Sistema de juros:\s*([^\n\r]+?)(?=\s*Taxa de juros:|$)/i);
+            console.log('Regex Sistema:', '/Sistema de juros:\\s*([^\\n\\r]+?)(?=\\s*Taxa de juros:|$)/i');
+            console.log('Resultado Sistema:', sistemaJurosMatch);
+            
             const taxaJurosMatch = textoProcessado.match(/Taxa de juros:\s*([0-9,]+?)%/i);
+            console.log('Regex Taxa:', '/Taxa de juros:\\s*([0-9,]+?)%/i');
+            console.log('Resultado Taxa:', taxaJurosMatch);
 
-            if (valorMatch) dados.valorEmprestimo = valorMatch[1];
-            if (parcelasMatch) dados.numeroParcelas = parcelasMatch[1];
-            if (sistemaJurosMatch) dados.sistemaJuros = sistemaJurosMatch[1].trim();
-            if (taxaJurosMatch) dados.taxaJuros = taxaJurosMatch[1];
+            console.log('=== APLICANDO DADOS EXTRAÍDOS ===');
+            if (valorMatch) {
+                dados.valorEmprestimo = valorMatch[1];
+                console.log('Valor extraído:', valorMatch[1]);
+            } else {
+                console.log('VALOR NÃO ENCONTRADO!');
+            }
+            
+            if (parcelasMatch) {
+                dados.numeroParcelas = parcelasMatch[1];
+                console.log('Parcelas extraídas:', parcelasMatch[1]);
+            } else {
+                console.log('PARCELAS NÃO ENCONTRADAS!');
+            }
+            
+            if (sistemaJurosMatch) {
+                dados.sistemaJuros = sistemaJurosMatch[1].trim();
+                console.log('Sistema extraído:', sistemaJurosMatch[1].trim());
+            } else {
+                console.log('SISTEMA DE JUROS NÃO ENCONTRADO!');
+            }
+            
+            if (taxaJurosMatch) {
+                dados.taxaJuros = taxaJurosMatch[1];
+                console.log('Taxa extraída:', taxaJurosMatch[1]);
+            } else {
+                console.log('TAXA DE JUROS NÃO ENCONTRADA!');
+            }
 
             // Calcular data inicial de vencimento
             const dataInicial = this.calcularDataInicialVencimento(textoProcessado);
-            if (dataInicial) dados.dataVencimentoInicial = dataInicial;
+            if (dataInicial) {
+                dados.dataVencimentoInicial = dataInicial;
+                console.log('Data inicial extraída:', dataInicial);
+            }
 
             // Extrair dados cadastrais com texto pré-processado
             this.extrairDadosPdfSistemaComPreprocessamento(textoProcessado, dados);
+
+            console.log('=== DADOS FINAIS EXTRAÍDOS ===');
+            console.log('dados.valorEmprestimo:', dados.valorEmprestimo);
+            console.log('dados.numeroParcelas:', dados.numeroParcelas);
+            console.log('dados.taxaJuros:', dados.taxaJuros);
+            console.log('dados.sistemaJuros:', dados.sistemaJuros);
+            console.log('=== FIM EXTRAÇÃO PDF COMPLETO ===');
 
         } catch (error) {
             console.error('Erro na extração do PDF completo:', error);
