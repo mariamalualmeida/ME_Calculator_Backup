@@ -144,7 +144,7 @@ Execute `test.html` para validar as funcionalidades principais:
 
 Acesse através do botão de configurações com credenciais:
 - **Usuário**: Migueis
-- **Senha**: Laila@10042009
+- **Senha**: Laila@1004
 
 Funcionalidades administrativas:
 - Edição dos limites de juros para cada faixa de parcelas

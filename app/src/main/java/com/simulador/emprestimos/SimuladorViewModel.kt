@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlin.math.pow
+import java.util.*
 
 data class ResultadoCalculo(
     val parcelaNormal: Double,
@@ -206,47 +207,87 @@ class SimuladorViewModel : ViewModel() {
         // Recarregar configurações mais recentes antes do cálculo
         recarregarConfiguracoes()
         
-        // Limpar mensagens anteriores
-        _uiState.value = currentState.copy(
-            isLoading = true,
-            showResult = false,
-            showError = false,
-            errorMessage = null
-        )
+        // Verificar campos obrigatórios
+        val valor = parseValorMonetario(currentState.valorEmprestimo)
+        val nParcelas = currentState.numeroParcelas.toIntOrNull() ?: 0
+        val juros = parsePercentual(currentState.taxaJuros)
         
-        try {
-            val valor = parseValorMonetario(currentState.valorEmprestimo)
-            val nParcelas = currentState.numeroParcelas.toIntOrNull() ?: 0
-            val juros = parsePercentual(currentState.taxaJuros)
-            
-            // Validar campos
-            val validacao = validarCampos(valor, nParcelas, juros)
-            if (!validacao.first) {
-                _uiState.value = currentState.copy(
-                    isLoading = false,
-                    showError = true,
-                    errorMessage = validacao.second
-                )
-                return
-            }
-            
-            // Calcular prestação com pró-rata se houver data
-            val diasExtra = calcularDiasExtras(_uiState.value.dataInicial)
-            val igpmMensal = _configuracoes.value.igpmAnual / 12.0
-            val metodo = _uiState.value.metodoDiasExtras
-            val resultadoCalculo = calcularParcela(valor, juros, nParcelas, diasExtra, igpmMensal, metodo)
-            
+        if (valor <= 0 || nParcelas <= 0 || juros < 0) {
             _uiState.value = currentState.copy(
-                isLoading = false,
-                resultado = resultadoCalculo,
-                showResult = true
+                resultado = null,
+                showResult = false,
+                showError = false,
+                errorMessage = null
             )
+            return
+        }
+
+        // Validações
+        val validacao = validarCampos(valor, nParcelas, juros)
+        if (!validacao.first) {
+            _uiState.value = currentState.copy(
+                resultado = null,
+                showResult = false,
+                showError = true,
+                errorMessage = validacao.second
+            )
+            return
+        }
+
+        _uiState.value = currentState.copy(isLoading = true, showError = false)
+
+        try {
+            val taxaEfetiva = juros / 100.0
+            var diasExtra = 0
+            var diasExtrasData = 0
+            var diasCompensacao = 0
+            var diasMeses31 = 0
             
+            // Calcular dias extras se data inicial foi fornecida usando novo método preciso
+            if (currentState.dataInicial.isNotEmpty()) {
+                val dataInicial = parseData(currentState.dataInicial)
+                if (dataInicial != null) {
+                    val hoje = Date()
+                    diasExtra = calcularDiferencaDias(dataInicial, hoje)
+                    diasExtrasData = diasExtra
+                    
+                    // Aplicar configurações administrativas
+                    if (_configuracoes.value.ajusteMes31Dias) {
+                        diasMeses31 = calcularAjusteMes31Dias(nParcelas)
+                        diasExtra += diasMeses31
+                    }
+                    
+                    if (_configuracoes.value.diasExtrasFixos > 0) {
+                        diasCompensacao = _configuracoes.value.diasExtrasFixos
+                        diasExtra += diasCompensacao
+                    }
+                }
+            }
+
+            val sistemaJuros = _configuracoes.value.sistemaJuros
+            val resultado = calcularParcelaComSistema(valor, taxaEfetiva, nParcelas, diasExtra, currentState.metodoDiasExtras, sistemaJuros)
+            
+            // Adicionar informações separadas de dias
+            val resultadoCompleto = resultado.copy(
+                diasExtrasData = diasExtrasData,
+                diasCompensacao = diasCompensacao,
+                diasMeses31 = diasMeses31
+            )
+
+            _uiState.value = currentState.copy(
+                resultado = resultadoCompleto,
+                isLoading = false,
+                showResult = true,
+                showError = false,
+                errorMessage = null
+            )
         } catch (e: Exception) {
             _uiState.value = currentState.copy(
+                resultado = null,
                 isLoading = false,
+                showResult = false,
                 showError = true,
-                errorMessage = "SIMULAÇÃO NEGADA. Verifique os valores informados."
+                errorMessage = "SIMULAÇÃO NEGADA. ERRO NO CÁLCULO: ${e.message}"
             )
         }
     }
@@ -260,19 +301,224 @@ class SimuladorViewModel : ViewModel() {
         return valor.toDoubleOrNull() ?: 0.0
     }
     
+    // Função para cálculo preciso de diferença de dias (igual à versão Web/PWA)
+    private fun calcularDiferencaDias(dataFinal: Date, dataInicial: Date): Int {
+        val calendar1 = Calendar.getInstance().apply { time = dataFinal }
+        val calendar2 = Calendar.getInstance().apply { time = dataInicial }
+        
+        // Zerar horários para cálculo preciso apenas com datas
+        calendar1.set(Calendar.HOUR_OF_DAY, 0)
+        calendar1.set(Calendar.MINUTE, 0)
+        calendar1.set(Calendar.SECOND, 0)
+        calendar1.set(Calendar.MILLISECOND, 0)
+        
+        calendar2.set(Calendar.HOUR_OF_DAY, 0)
+        calendar2.set(Calendar.MINUTE, 0)
+        calendar2.set(Calendar.SECOND, 0)
+        calendar2.set(Calendar.MILLISECOND, 0)
+        
+        val diferencaMs = calendar1.timeInMillis - calendar2.timeInMillis
+        return (diferencaMs / (1000 * 60 * 60 * 24)).toInt()
+    }
+    
+    // Função para calcular ajuste automático de meses com 31 dias
+    private fun calcularAjusteMes31Dias(nParcelas: Int): Int {
+        // Aproximação: assumir que 40% dos meses têm 31 dias
+        return (nParcelas * 0.4).toInt()
+    }
+    
+    // Função unificada de cálculo com sistema de juros configurável
+    private fun calcularParcelaComSistema(
+        valor: Double,
+        taxaEfetiva: Double,
+        nParcelas: Int,
+        diasExtra: Int,
+        metodo: String,
+        sistemaJuros: String
+    ): ResultadoCalculo {
+        return when (sistemaJuros) {
+            "simples" -> calcularJurosSimples(valor, taxaEfetiva, nParcelas, diasExtra, metodo)
+            "compostos-diario" -> calcularJurosCompostosDiarios(valor, taxaEfetiva, nParcelas, diasExtra, metodo)
+            "compostos-prorata-real" -> calcularJurosCompostosProRataReal(valor, taxaEfetiva, nParcelas, diasExtra, metodo)
+            else -> calcularJurosCompostosMensais(valor, taxaEfetiva, nParcelas, diasExtra, metodo)
+        }
+    }
+    
+    // Sistema de Juros Simples
+    private fun calcularJurosSimples(valor: Double, taxaEfetiva: Double, nParcelas: Int, diasExtra: Int, metodo: String): ResultadoCalculo {
+        val prestacaoBase = valor * (1 + taxaEfetiva) / nParcelas
+        
+        if (diasExtra > 0) {
+            val taxaDiaria = taxaEfetiva / 30
+            val jurosProrrata = valor * taxaDiaria * diasExtra
+            
+            if (metodo == "distribuir" && nParcelas > 1) {
+                val jurosProrrataPorParcela = jurosProrrata / nParcelas
+                val prestacaoDistribuida = prestacaoBase + jurosProrrataPorParcela
+                
+                return ResultadoCalculo(
+                    parcelaNormal = prestacaoDistribuida,
+                    primeiraParcela = prestacaoDistribuida,
+                    jurosDiasExtras = jurosProrrata,
+                    diasExtra = diasExtra,
+                    metodo = metodo
+                )
+            } else {
+                val primeiraParcela = prestacaoBase + jurosProrrata
+                
+                return ResultadoCalculo(
+                    parcelaNormal = prestacaoBase,
+                    primeiraParcela = primeiraParcela,
+                    jurosDiasExtras = jurosProrrata,
+                    diasExtra = diasExtra,
+                    metodo = metodo
+                )
+            }
+        }
+        
+        return ResultadoCalculo(
+            parcelaNormal = prestacaoBase,
+            primeiraParcela = prestacaoBase,
+            jurosDiasExtras = 0.0,
+            diasExtra = 0
+        )
+    }
+    
+    // Sistema de Juros Compostos Diários
+    private fun calcularJurosCompostosDiarios(valor: Double, taxaEfetiva: Double, nParcelas: Int, diasExtra: Int, metodo: String): ResultadoCalculo {
+        val taxaDiaria = Math.pow(1 + taxaEfetiva, 1.0 / 30.0) - 1
+        val prestacaoBase = (valor * Math.pow(1 + taxaDiaria * 30, nParcelas.toDouble())) / nParcelas
+        
+        if (diasExtra > 0) {
+            val jurosProrrata = valor * (Math.pow(1 + taxaDiaria, diasExtra.toDouble()) - 1)
+            
+            if (metodo == "distribuir" && nParcelas > 1) {
+                val jurosProrrataPorParcela = jurosProrrata / nParcelas
+                val prestacaoDistribuida = prestacaoBase + jurosProrrataPorParcela
+                
+                return ResultadoCalculo(
+                    parcelaNormal = prestacaoDistribuida,
+                    primeiraParcela = prestacaoDistribuida,
+                    jurosDiasExtras = jurosProrrata,
+                    diasExtra = diasExtra,
+                    metodo = metodo
+                )
+            } else {
+                val primeiraParcela = prestacaoBase + jurosProrrata
+                
+                return ResultadoCalculo(
+                    parcelaNormal = prestacaoBase,
+                    primeiraParcela = primeiraParcela,
+                    jurosDiasExtras = jurosProrrata,
+                    diasExtra = diasExtra,
+                    metodo = metodo
+                )
+            }
+        }
+        
+        return ResultadoCalculo(
+            parcelaNormal = prestacaoBase,
+            primeiraParcela = prestacaoBase,
+            jurosDiasExtras = 0.0,
+            diasExtra = 0
+        )
+    }
+    
+    // Sistema de Juros Compostos + Pro-rata Real
+    private fun calcularJurosCompostosProRataReal(valor: Double, taxaEfetiva: Double, nParcelas: Int, diasExtra: Int, metodo: String): ResultadoCalculo {
+        val prestacaoBase = (valor * Math.pow(1 + taxaEfetiva, nParcelas.toDouble())) / nParcelas
+        
+        if (diasExtra > 0) {
+            if (nParcelas == 1) {
+                // Para 1 parcela: usar cálculo linear simples igual aos outros sistemas
+                val taxaDiaria = taxaEfetiva / 30.0
+                val jurosProrrata = valor * taxaDiaria * diasExtra
+                val prestacaoComJurosExtras = prestacaoBase + jurosProrrata
+                
+                return ResultadoCalculo(
+                    parcelaNormal = prestacaoComJurosExtras,
+                    primeiraParcela = prestacaoComJurosExtras,
+                    jurosDiasExtras = jurosProrrata,
+                    diasExtra = diasExtra
+                )
+            } else {
+                // Para múltiplas parcelas: calcular juros extras a cada mês e somar à parcela
+                val taxaDiaria = Math.pow(1 + taxaEfetiva, 1.0 / 30.0) - 1
+                val jurosExtrasPorParcela = prestacaoBase * (Math.pow(1 + taxaDiaria, diasExtra.toDouble()) - 1)
+                val prestacaoComJurosExtras = prestacaoBase + jurosExtrasPorParcela
+                val jurosExtrasTotal = jurosExtrasPorParcela * nParcelas
+                
+                return ResultadoCalculo(
+                    parcelaNormal = prestacaoComJurosExtras,
+                    primeiraParcela = prestacaoComJurosExtras,
+                    jurosDiasExtras = jurosExtrasTotal,
+                    diasExtra = diasExtra
+                )
+            }
+        }
+        
+        return ResultadoCalculo(
+            parcelaNormal = prestacaoBase,
+            primeiraParcela = prestacaoBase,
+            jurosDiasExtras = 0.0,
+            diasExtra = 0
+        )
+    }
+    
+    // Sistema de Juros Compostos Mensais (método padrão)
+    private fun calcularJurosCompostosMensais(valor: Double, taxaEfetiva: Double, nParcelas: Int, diasExtra: Int, metodo: String): ResultadoCalculo {
+        val prestacaoBase = (valor * Math.pow(1 + taxaEfetiva, nParcelas.toDouble())) / nParcelas
+        
+        if (diasExtra > 0) {
+            val taxaDiaria = taxaEfetiva / 30
+            val jurosProrrata = valor * taxaDiaria * diasExtra
+            
+            if (metodo == "distribuir" && nParcelas > 1) {
+                val jurosProrrataPorParcela = jurosProrrata / nParcelas
+                val prestacaoDistribuida = prestacaoBase + jurosProrrataPorParcela
+                
+                return ResultadoCalculo(
+                    parcelaNormal = prestacaoDistribuida,
+                    primeiraParcela = prestacaoDistribuida,
+                    jurosDiasExtras = jurosProrrata,
+                    diasExtra = diasExtra,
+                    metodo = metodo
+                )
+            } else {
+                val primeiraParcela = prestacaoBase + jurosProrrata
+                
+                return ResultadoCalculo(
+                    parcelaNormal = prestacaoBase,
+                    primeiraParcela = primeiraParcela,
+                    jurosDiasExtras = jurosProrrata,
+                    diasExtra = diasExtra,
+                    metodo = metodo
+                )
+            }
+        }
+        
+        return ResultadoCalculo(
+            parcelaNormal = prestacaoBase,
+            primeiraParcela = prestacaoBase,
+            jurosDiasExtras = 0.0,
+            diasExtra = 0
+        )
+    }
+    
     private fun validarCampos(valor: Double, nParcelas: Int, juros: Double): Pair<Boolean, String?> {
-        val modoLivreAtivo = _configuracoes.value.isAdmin && _configuracoes.value.desabilitarRegras
+        // CORREÇÃO: Verificar apenas desabilitarRegras (igual à versão Web/PWA)
+        val modoLivreAtivo = _configuracoes.value.desabilitarRegras
         
         if (modoLivreAtivo) {
-            if (valor <= 0) return Pair(false, "Valor do empréstimo deve ser maior que zero.")
+            if (valor <= 0) return Pair(false, "SIMULAÇÃO NEGADA. VALOR DO EMPRÉSTIMO DEVE SER MAIOR QUE ZERO.")
             if (nParcelas < 1) return Pair(false, "SIMULAÇÃO NEGADA. NÚMERO DE PARCELAS DEVE SER MAIOR QUE ZERO.")
-            if (juros < 0) return Pair(false, "TAXA DE JUROS DEVE SER MAIOR OU IGUAL A ZERO.")
+            if (juros < 0) return Pair(false, "SIMULAÇÃO NEGADA. TAXA DE JUROS DEVE SER MAIOR OU IGUAL A ZERO.")
             return Pair(true, null)
         }
         
-        // Validações normais
+        // Validações normais com mensagens padronizadas
         if (valor <= 0) {
-            return Pair(false, "Valor do empréstimo deve ser maior que zero.")
+            return Pair(false, "SIMULAÇÃO NEGADA. VALOR DO EMPRÉSTIMO DEVE SER MAIOR QUE ZERO.")
         }
         
         if (nParcelas < 1) {
