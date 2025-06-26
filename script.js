@@ -3197,16 +3197,17 @@ class SimuladorEmprestimos {
             if (rendaMatch) dados.renda = rendaMatch[1];
             if (tempoEmpregoMatch) dados.tempoEmprego = tempoEmpregoMatch[1].trim();
 
-            // Extrair referências
-            const ref1Match = texto.match(/1º REREFENCIA[\s\S]*?Nome:\s*([^\n]+)[\s\S]*?Rua:\s*([^\n]+)[\s\S]*?Numero:\s*([^\n]+)[\s\S]*?Bairro:\s*([^\n]+)[\s\S]*?Telefone:\s*([^\n]+)/i);
-            const ref2Match = texto.match(/2º REFERENCIA[\s\S]*?Nome:\s*([^\n]+)[\s\S]*?Rua:\s*([^\n]+)[\s\S]*?Numero:\s*([^\n]+)[\s\S]*?Bairro:\s*([^\n]+)[\s\S]*?Telefone:\s*([^\n]+)/i);
+            // Extrair referências (com cidade incluída)
+            const ref1Match = texto.match(/1º REREFENCIA[\s\S]*?Nome:\s*([^\n]+)[\s\S]*?Rua:\s*([^\n]+)[\s\S]*?Numero:\s*([^\n]+)[\s\S]*?Bairro:\s*([^\n]+)[\s\S]*?Cidade:\s*([^\n]+)[\s\S]*?Telefone:\s*([^\n]+)/i);
+            const ref2Match = texto.match(/2º REFERENCIA[\s\S]*?Nome:\s*([^\n]+)[\s\S]*?Rua:\s*([^\n]+)[\s\S]*?Numero:\s*([^\n]+)[\s\S]*?Bairro:\s*([^\n]+)[\s\S]*?Cidade:\s*([^\n]+)[\s\S]*?Telefone:\s*([^\n]+)/i);
 
             if (ref1Match) {
                 dados.referencia1Nome = ref1Match[1].trim();
                 dados.referencia1Rua = ref1Match[2].trim();
                 dados.referencia1Numero = ref1Match[3].trim();
                 dados.referencia1Bairro = ref1Match[4].trim();
-                dados.referencia1Telefone = ref1Match[5].trim();
+                dados.referencia1Cidade = ref1Match[5].trim();
+                dados.referencia1Telefone = ref1Match[6].trim();
             }
 
             if (ref2Match) {
@@ -3214,7 +3215,8 @@ class SimuladorEmprestimos {
                 dados.referencia2Rua = ref2Match[2].trim();
                 dados.referencia2Numero = ref2Match[3].trim();
                 dados.referencia2Bairro = ref2Match[4].trim();
-                dados.referencia2Telefone = ref2Match[5].trim();
+                dados.referencia2Cidade = ref2Match[5].trim();
+                dados.referencia2Telefone = ref2Match[6].trim();
             }
 
         } catch (error) {

@@ -1,0 +1,65 @@
+-------------------------------------------
+   FORMULÁRIO: ME EMPREENDIMENTOS
+-------------------------------------------
+-------------------------------------------
+EMPRESTIMO
+-------------------------------------------
+Valor: R$3000,00
+Parcelas:6
+Data Venc. Inicial: 02/07/2025
+
+-------------------------------------------
+DADOS CADASTRAIS DO CLIENTE
+-------------------------------------------
+Nome: Leonardo de Almeida Santos
+CPF: 05208598639
+Data nascimento: 10/04/1983
+Estado Civil:Solteiro
+Endereço: Rua da Mata
+Número:464
+Complemento:Casa
+Bairro:Vila brasil
+Cidade:Sete Lagoas
+Estado:MG
+CEP:35700-130
+Telefone:(31)988973275
+E-mail:leo_almeida.s@hotmail.com
+
+-------------------------------------------
+DADOS PROFISSIONAIS
+-------------------------------------------
+Local de trabalho:Autonomo
+Profissão:Caloteiro
+Renda Mensal:R$5000,00
+Tempo de emprego:2 Anos
+
+-------------------------------------------
+REFERENCIAS - 🚫 NÃO PODE SER PARENTE DE PRIMEIRO GRAU E NEN CÔNJUGE 🚫 
+-------------------------------------------
+1º REREFENCIA  
+Nome:Jesica de Souza Melo
+Rua:Rua da Mata
+Numero:464
+Bairro:Vila BRASIL
+Cidade: Sete Lagoas
+Telefone:(31)988983275
+-------------------------------------------
+2º REFERENCIA - NÃO PODE SER PARENTE DE PRIMEIRO GRAU E NEN CÔNJUGE 🚫
+Nome:Elenice Albino
+Rua:Praça Alexandre Lanza
+Numero:140
+Bairro:Centro
+Cidade:Sete Lagoas
+Telefone:(31)988973515
+
+-------------------------------------------
+POR GENTILEZA FORNEÇA OS DOCUMENTOS ABAIXO:
+-------------------------------------------
+1 - Copia ou foto de documento com Foto:
+2 - Extrato bancário dos 3 últimos meses:
+3 - Fatura cartão de crédito dos 3 últimos meses:
+4 - Comprovante de endereço:
+
+-------------------------------------------
+⚠️ATENÇÃO TODOS OS DADOS COMO TELEFONE DE CONTATO, TANTO DO TITULAR QUANTO DAS REFERÊNCIAS, PRECISAM ESTAR CORRETO, CASO NÃO ESTEJAM SERÁ CANCELADA A ANÁLISE DA FICHA E AUTOMATICAMENTE O EMPRÉSTIMO, O MESMO VALE PARA A CHAVE PIX QUANDO SOLICITADA⚠️
+-------------------------------------------
