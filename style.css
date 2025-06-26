@@ -1446,8 +1446,8 @@ body {
 }
 
 .import-btn {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-variant));
-    color: white;
+    background: var(--primary);
+    color: var(--on-primary);
     border: none;
     border-radius: 12px;
     padding: 16px 24px;
@@ -1460,13 +1460,14 @@ body {
     gap: 8px;
     min-height: 56px;
     width: 100%;
-    max-width: 300px;
+    max-width: 640px;
     justify-content: center;
     margin: 0 auto;
     position: relative;
 }
 
 .import-btn:hover {
+    background: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }

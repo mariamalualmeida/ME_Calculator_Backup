@@ -2276,58 +2276,116 @@ class SimuladorEmprestimos {
     // =============================================
 
     setupImportEventListeners() {
+        console.log('Configurando event listeners de importação...');
+        
+        // Buscar elementos diretamente para garantir que existem
+        const importBtn = document.getElementById('importDataBtn');
+        const expandArea = document.getElementById('importExpandArea');
+        const pdfInput = document.getElementById('pdfFileInput');
+        const textArea = document.getElementById('importTextArea');
+        const previewBtn = document.getElementById('previewDataBtn');
+        const applyBtn = document.getElementById('applyDataBtn');
+        const clearBtn = document.getElementById('clearImportBtn');
+        
+        console.log('Elementos encontrados:', {
+            importBtn: !!importBtn,
+            expandArea: !!expandArea,
+            pdfInput: !!pdfInput,
+            textArea: !!textArea,
+            previewBtn: !!previewBtn,
+            applyBtn: !!applyBtn,
+            clearBtn: !!clearBtn
+        });
+
         // Botão principal de importação (expansível)
-        if (this.importDataBtn) {
-            this.importDataBtn.addEventListener('click', () => {
+        if (importBtn) {
+            importBtn.addEventListener('click', () => {
+                console.log('Clique no botão de importação detectado');
                 this.toggleImportArea();
             });
+            console.log('Event listener do botão de importação configurado');
+        } else {
+            console.error('Botão de importação não encontrado!');
         }
 
         // Upload de arquivo PDF
-        if (this.pdfFileInput) {
-            this.pdfFileInput.addEventListener('change', (e) => {
+        if (pdfInput) {
+            pdfInput.addEventListener('change', (e) => {
+                console.log('Arquivo PDF selecionado');
                 this.handlePdfUpload(e.target.files[0]);
             });
         }
 
         // Área de texto para colar
-        if (this.importTextArea) {
-            this.importTextArea.addEventListener('input', () => {
+        if (textArea) {
+            textArea.addEventListener('input', () => {
                 this.checkImportData();
             });
         }
 
         // Botões de ação
-        if (this.previewDataBtn) {
-            this.previewDataBtn.addEventListener('click', () => {
+        if (previewBtn) {
+            previewBtn.addEventListener('click', () => {
                 this.previewImportData();
             });
         }
 
-        if (this.applyDataBtn) {
-            this.applyDataBtn.addEventListener('click', () => {
+        if (applyBtn) {
+            applyBtn.addEventListener('click', () => {
                 this.applyImportData();
             });
         }
 
-        if (this.clearImportBtn) {
-            this.clearImportBtn.addEventListener('click', () => {
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
                 this.clearImportData();
             });
         }
+        
+        // Armazenar referências dos elementos
+        this.importDataBtn = importBtn;
+        this.importExpandArea = expandArea;
+        this.pdfFileInput = pdfInput;
+        this.importTextArea = textArea;
+        this.previewDataBtn = previewBtn;
+        this.applyDataBtn = applyBtn;
+        this.clearImportBtn = clearBtn;
     }
 
     toggleImportArea() {
-        const isExpanded = this.importExpandArea.classList.contains('expanded');
+        console.log('toggleImportArea chamada');
+        
+        // Buscar elementos diretamente se não estiverem disponíveis
+        const expandArea = this.importExpandArea || document.getElementById('importExpandArea');
+        const importBtn = this.importDataBtn || document.getElementById('importDataBtn');
+        
+        console.log('Elementos para toggle:', {
+            expandArea: !!expandArea,
+            importBtn: !!importBtn
+        });
+        
+        if (!expandArea || !importBtn) {
+            console.error('Elementos necessários para expansão não encontrados');
+            return;
+        }
+        
+        const isExpanded = expandArea.classList.contains('expanded');
+        console.log('Estado atual - isExpanded:', isExpanded);
         
         if (isExpanded) {
-            this.importExpandArea.classList.remove('expanded');
-            this.importDataBtn.classList.remove('expanded');
+            console.log('Recolhendo área de importação');
+            expandArea.classList.remove('expanded');
+            importBtn.classList.remove('expanded');
             this.clearImportData();
         } else {
-            this.importExpandArea.classList.add('expanded');
-            this.importDataBtn.classList.add('expanded');
+            console.log('Expandindo área de importação');
+            expandArea.classList.add('expanded');
+            importBtn.classList.add('expanded');
         }
+        
+        // Atualizar referências
+        this.importExpandArea = expandArea;
+        this.importDataBtn = importBtn;
     }
 
     async handlePdfUpload(file) {
