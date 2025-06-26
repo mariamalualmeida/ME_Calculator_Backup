@@ -3207,16 +3207,30 @@ class SimuladorEmprestimos {
             console.log('=== APLICANDO DADOS EXTRAÍDOS ===');
             if (valorMatch) {
                 dados.valorEmprestimo = valorMatch[1];
-                console.log('Valor extraído:', valorMatch[1]);
+                console.log('✓ Valor extraído:', valorMatch[1]);
             } else {
-                console.log('VALOR NÃO ENCONTRADO!');
+                console.log('❌ VALOR NÃO ENCONTRADO!');
             }
             
             if (parcelasMatch) {
                 dados.numeroParcelas = parcelasMatch[1];
-                console.log('Parcelas extraídas:', parcelasMatch[1]);
+                console.log('✓ Parcelas extraídas:', parcelasMatch[1]);
             } else {
-                console.log('PARCELAS NÃO ENCONTRADAS!');
+                console.log('❌ PARCELAS NÃO ENCONTRADAS!');
+            }
+            
+            if (taxaJurosMatch) {
+                dados.taxaJuros = taxaJurosMatch[1];
+                console.log('✓ Taxa de juros extraída:', taxaJurosMatch[1]);
+            } else {
+                console.log('❌ TAXA DE JUROS NÃO ENCONTRADA!');
+            }
+            
+            if (sistemaJurosMatch) {
+                dados.sistemaJuros = sistemaJurosMatch[1];
+                console.log('✓ Sistema de juros extraído:', sistemaJurosMatch[1]);
+            } else {
+                console.log('❌ SISTEMA DE JUROS NÃO ENCONTRADO!');
             }
             
             if (sistemaJurosMatch) {
@@ -3283,10 +3297,10 @@ class SimuladorEmprestimos {
             dados.nome = this.extrairMatch(/Nome:\s*([^\n\r]+?)(?=\s*CPF:|$)/i, textoProcessado);
             console.log('Nome extraído:', dados.nome);
             
-            dados.cpf = this.extrairMatch(/CPF:\s*([\d.-]+?)(?=\s*Data de Nascimento:|Estado Civil:|$)/i, textoProcessado);
+            dados.cpf = this.extrairMatch(/CPF:\s*([\d.-]+?)(?=\s*Data de Nascimento:|Estado Civil:|Endereço:|$)/i, textoProcessado);
             console.log('CPF extraído:', dados.cpf);
             
-            dados.dataNascimento = this.extrairMatch(/Data de Nascimento:\s*([\d\/]+?)(?=\s*Estado Civil:|$)/i, textoProcessado);
+            dados.dataNascimento = this.extrairMatch(/Data de Nascimento:\s*([\d\/]+?)(?=\s*Estado Civil:|Endereço:|$)/i, textoProcessado);
             console.log('Data nascimento extraída:', dados.dataNascimento);
             
             dados.estadoCivil = this.extrairMatch(/Estado Civil:\s*([^\n\r]+?)(?=\s*Rua:|$)/i, textoProcessado);
@@ -3329,7 +3343,8 @@ class SimuladorEmprestimos {
                 dados.referencia1Rua = this.extrairMatch(/Rua:\s*([^\n\r]+?)(?=\s*Número:|$)/i, ref1Texto);
                 dados.referencia1Numero = this.extrairMatch(/Número:\s*([^\n\r]+?)(?=\s*Bairro:|$)/i, ref1Texto);
                 dados.referencia1Bairro = this.extrairMatch(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i, ref1Texto);
-                dados.referencia1Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)(?=\s*2ª REFERÊNCIA:|$)/i, ref1Texto);
+                dados.referencia1Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)(?=\s*2ª REFERÊNCIA:|Nome:|$)/i, ref1Texto);
+                console.log('Ref1 - Nome:', dados.referencia1Nome, 'Cidade:', dados.referencia1Cidade);
             }
 
             const ref2Section = textoProcessado.match(/2ª REFERÊNCIA:([\s\S]*?)$/i);
@@ -3341,6 +3356,7 @@ class SimuladorEmprestimos {
                 dados.referencia2Numero = this.extrairMatch(/Número:\s*([^\n\r]+?)(?=\s*Bairro:|$)/i, ref2Texto);
                 dados.referencia2Bairro = this.extrairMatch(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i, ref2Texto);
                 dados.referencia2Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)$/i, ref2Texto);
+                console.log('Ref2 - Nome:', dados.referencia2Nome, 'Cidade:', dados.referencia2Cidade);
             }
 
         } catch (error) {
