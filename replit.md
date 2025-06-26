@@ -304,6 +304,7 @@ SimuladorEmprestimos/
 - June 25, 2025: ESTADO CIVIL ALTERADO PARA INPUT DE TEXTO - removido select dropdown, implementado input de texto com placeholder "Ex: Solteiro(a), Casado(a), Divorciado(a)", maior flexibilidade para entrada de dados, uniformidade com outros campos do formulário
 - June 25, 2025: BOTÃO SALVAR DINÂMICO IMPLEMENTADO - botão "SALVAR" nas configurações agora oculto por padrão, aparece automaticamente quando qualquer campo for alterado, função configurarBotaoSalvarDinamico() com event listeners para todos inputs/selects, melhor experiência de usuário
 - June 25, 2025: SINCRONIZAÇÃO COMPLETA ENTRE VERSÕES - todas melhorias portadas para versões Web/PWA e Android: layout um campo por linha, estado civil como input de texto, botão salvar dinâmico, CSS otimizado sem regras conflitantes, cache v=20250625585000 (v20250625585000)
+- June 26, 2025: MENSAGENS DE ERRO PADRONIZADAS - alteradas todas mensagens de validação para usar "SIMULAÇÃO NEGADA" no início, substituindo textos genéricos como "error" e "ERRO DE VALIDAÇÃO", implementado em versões Web/PWA (HTML + JavaScript) e Android (Kotlin), uniformização completa da comunicação de erros, cache v=20250625590000 (v20250625590000)
 
 ## User Preferences
 
