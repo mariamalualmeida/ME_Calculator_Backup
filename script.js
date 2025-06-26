@@ -3564,9 +3564,9 @@ class SimuladorEmprestimos {
             console.log('=== PREENCHENDO CAMPOS PRINCIPAIS ===');
             if (dados.valorEmprestimo) {
                 console.log('Preenchendo valorEmprestimo com:', dados.valorEmprestimo);
-                // Converter formato: "5000.00" -> "5000,00"
-                const valorFormatado = dados.valorEmprestimo.replace('.', ',');
-                this.preencherCampo('valorEmprestimo', valorFormatado);
+                // Limpar formatação: remover pontos, vírgulas e deixar apenas números
+                const valorLimpo = dados.valorEmprestimo.replace(/[.,]/g, '');
+                this.preencherCampo('valorEmprestimo', valorLimpo);
             }
             if (dados.numeroParcelas) {
                 console.log('Preenchendo numeroParcelas com:', dados.numeroParcelas);
@@ -3574,15 +3574,17 @@ class SimuladorEmprestimos {
             }
             if (dados.taxaJuros) {
                 console.log('Preenchendo taxaJuros com:', dados.taxaJuros);
-                this.preencherCampo('taxaJuros', dados.taxaJuros);
+                // Limpar formatação: remover vírgulas e deixar apenas números
+                const taxaLimpa = dados.taxaJuros.replace(/,/g, '');
+                this.preencherCampo('taxaJuros', taxaLimpa);
             }
 
             // Preencher data de vencimento inicial se disponível
             if (dados.dataVencimentoInicial) {
                 console.log('Preenchendo dataInicial com:', dados.dataVencimentoInicial);
-                // Converter formato de data para apenas números (sistema auto-formata as barras)
-                const dataNumeros = dados.dataVencimentoInicial.replace(/\//g, '');
-                this.preencherCampo('dataInicial', dataNumeros);
+                // Limpar formatação: remover barras e deixar apenas números
+                const dataLimpa = dados.dataVencimentoInicial.replace(/\//g, '');
+                this.preencherCampo('dataInicial', dataLimpa);
             }
 
             // Campos de nome e CPF na tela principal
@@ -3601,9 +3603,9 @@ class SimuladorEmprestimos {
                 // Aguardar expansão antes de preencher
                 setTimeout(() => {
                     // Dados pessoais completos
-                    this.preencherCampo('dataNascimento', dados.dataNascimento || '');
+                    this.preencherCampo('dataNascimento', dados.dataNascimento ? dados.dataNascimento.replace(/\//g, '') : '');
                     this.preencherCampo('estadoCivil', dados.estadoCivil || '');
-                    this.preencherCampo('telefone', dados.telefone || '');
+                    this.preencherCampo('telefone', dados.telefone ? dados.telefone.replace(/[()\ -]/g, '') : '');
                     this.preencherCampo('email', dados.email || '');
                     
                     // Endereço completo
@@ -3613,23 +3615,23 @@ class SimuladorEmprestimos {
                     this.preencherCampo('bairro', dados.bairro || '');
                     this.preencherCampo('cidade', dados.cidade || '');
                     this.preencherCampo('estado', dados.estado || '');
-                    this.preencherCampo('cep', dados.cep || '');
+                    this.preencherCampo('cep', dados.cep ? dados.cep.replace(/[.-]/g, '') : '');
                     
                     // Dados profissionais
                     this.preencherCampo('trabalho', dados.trabalho || '');
                     this.preencherCampo('profissao', dados.profissao || '');
-                    this.preencherCampo('renda', dados.renda || '');
+                    this.preencherCampo('renda', dados.renda ? dados.renda.replace(/[.,]/g, '') : '');
                     this.preencherCampo('tempoEmprego', dados.tempoEmprego || '');
                     
-                    // Referências
+                    // Referências (limpando telefones)
                     this.preencherCampo('referencia1Nome', dados.referencia1Nome || '');
-                    this.preencherCampo('referencia1Telefone', dados.referencia1Telefone || '');
+                    this.preencherCampo('referencia1Telefone', dados.referencia1Telefone ? dados.referencia1Telefone.replace(/[()\ -]/g, '') : '');
                     this.preencherCampo('referencia1Endereco', dados.referencia1Rua || '');
                     this.preencherCampo('referencia1Bairro', dados.referencia1Bairro || '');
                     this.preencherCampo('referencia1Cidade', dados.referencia1Cidade || '');
                     
                     this.preencherCampo('referencia2Nome', dados.referencia2Nome || '');
-                    this.preencherCampo('referencia2Telefone', dados.referencia2Telefone || '');
+                    this.preencherCampo('referencia2Telefone', dados.referencia2Telefone ? dados.referencia2Telefone.replace(/[()\ -]/g, '') : '');
                     this.preencherCampo('referencia2Endereco', dados.referencia2Rua || '');
                     this.preencherCampo('referencia2Bairro', dados.referencia2Bairro || '');
                     this.preencherCampo('referencia2Cidade', dados.referencia2Cidade || '');
