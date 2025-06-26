@@ -2441,9 +2441,14 @@ class SimuladorEmprestimos {
                 this.importTextArea.value = text;
                 this.checkImportData();
                 
-                // Auto-processar se o texto foi extraído
+                // Auto-processar e aplicar dados se o texto foi extraído
                 setTimeout(() => {
                     this.previewImportData();
+                    // Auto-aplicar dados após preview
+                    setTimeout(() => {
+                        console.log('🚀 AUTO-APLICANDO DADOS APÓS EXTRAÇÃO PDF');
+                        this.applyImportData();
+                    }, 1000);
                 }, 500);
             }
 
