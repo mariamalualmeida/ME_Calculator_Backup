@@ -322,7 +322,7 @@ body {
 /* Estilos unificados para todos os campos do formulário completo */
 .form-completo-container input,
 .form-completo-container select {
-    width: 100%;
+    width: 100% !important;
     padding: 16px;
     border: 2px solid #79747e;
     border-radius: 8px;
@@ -332,6 +332,55 @@ body {
     outline: none;
     min-height: 24px;
     box-sizing: border-box;
+    flex: 1 !important;
+    min-width: 200px !important;
+}
+
+/* Força largura completa para todos os input-groups dentro do formulário */
+.form-completo-container .input-group {
+    flex: 1 !important;
+    min-width: 200px !important;
+}
+
+.form-completo-container .input-group.input-small {
+    flex: 1 !important;
+    min-width: 200px !important;
+}
+
+/* Regras específicas para campos individuais em desktop */
+@media (min-width: 769px) {
+    .form-completo-container #numero,
+    .form-completo-container #complemento,
+    .form-completo-container #bairro,
+    .form-completo-container #cidade,
+    .form-completo-container #estado,
+    .form-completo-container #cep,
+    .form-completo-container #localTrabalho,
+    .form-completo-container #profissao,
+    .form-completo-container #rendaMensal,
+    .form-completo-container #tempoEmprego,
+    .form-completo-container #ref1Rua,
+    .form-completo-container #ref1Numero,
+    .form-completo-container #ref1Bairro,
+    .form-completo-container #ref1Cidade,
+    .form-completo-container #ref2Rua,
+    .form-completo-container #ref2Numero,
+    .form-completo-container #ref2Bairro,
+    .form-completo-container #ref2Cidade {
+        width: 100% !important;
+        flex: 1 !important;
+        min-width: 200px !important;
+    }
+    
+    .form-completo-container .input-row .input-group {
+        flex: 1 !important;
+        min-width: 200px !important;
+    }
+    
+    .form-completo-container .input-row .input-group.input-small {
+        flex: 1 !important;
+        min-width: 200px !important;
+    }
 }
 
 .form-completo-container input:focus,
