@@ -2073,6 +2073,12 @@ class SimuladorEmprestimos {
             formToggleBtn.setAttribute('data-color-theme', colorTheme);
         }
         
+        // Aplicar tema ao botão de importação
+        const importBtn = document.querySelector('.import-btn');
+        if (importBtn) {
+            importBtn.setAttribute('data-color-theme', colorTheme);
+        }
+        
         // Salvar a preferência
         localStorage.setItem('app-color-theme', colorTheme);
         
