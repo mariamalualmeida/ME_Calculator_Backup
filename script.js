@@ -2482,48 +2482,107 @@ class SimuladorEmprestimos {
     }
 
     previewImportData() {
+        const pdfFile = this.pdfFileInput?.files[0];
         const text = this.importTextArea?.value.trim() || '';
         
-        if (!text) {
-            alert('Por favor, cole ou anexe dados antes de visualizar.');
+        if (!pdfFile && !text) {
+            this.updateFileStatus('Por favor, anexe um PDF ou cole texto antes de visualizar.', 'error');
             return;
         }
 
-        try {
-            const dadosExtraidos = this.extrairDadosTexto(text);
-            this.exibirPreviewDados(dadosExtraidos);
-        } catch (error) {
-            console.error('Erro ao extrair dados:', error);
-            alert('Erro ao processar dados. Verifique o formato e tente novamente.');
+        if (pdfFile) {
+            this.updateFileStatus('Processando PDF...', 'processing');
+            this.handlePdfUpload(pdfFile);
+        } else {
+            this.updateFileStatus('Extraindo dados do texto...', 'processing');
+            
+            try {
+                const dadosExtraidos = this.extrairDadosTexto(text);
+                console.log('Dados extraídos:', dadosExtraidos);
+                this.exibirPreviewDados(dadosExtraidos);
+                this.updateFileStatus('Dados extraídos com sucesso!', 'success');
+            } catch (error) {
+                console.error('Erro ao extrair dados:', error);
+                this.updateFileStatus('Erro ao processar dados. Verifique o formato.', 'error');
+            }
         }
     }
 
     applyImportData() {
+        const pdfFile = this.pdfFileInput?.files[0];
         const text = this.importTextArea?.value.trim() || '';
         
-        if (!text) {
-            alert('Nenhum dado encontrado para aplicar.');
+        if (!pdfFile && !text) {
+            this.updateFileStatus('Nenhum dado encontrado para aplicar.', 'error');
             return;
         }
 
+        this.updateFileStatus('Aplicando dados aos formulários...', 'processing');
+
         try {
-            const dadosExtraidos = this.extrairDadosTexto(text);
+            let dadosExtraidos;
+            
+            if (pdfFile) {
+                // Para PDF, usar dados já extraídos no preview
+                dadosExtraidos = this.dadosImportados || this.extrairDadosTexto(text);
+            } else {
+                dadosExtraidos = this.extrairDadosTexto(text);
+            }
+            
+            console.log('Aplicando dados:', dadosExtraidos);
+            
+            // Preencher formulário da tela principal
+            if (dadosExtraidos.nome) {
+                const nomeField = document.getElementById('nomeCompleto');
+                if (nomeField) {
+                    nomeField.value = dadosExtraidos.nome;
+                }
+            }
+            
+            if (dadosExtraidos.cpf) {
+                const cpfField = document.getElementById('cpfCompleto');
+                if (cpfField) {
+                    cpfField.value = dadosExtraidos.cpf;
+                }
+            }
+            
+            // Expandir e preencher formulário completo
+            this.expandirFormularioCompleto();
             this.preencherFormularioCompleto(dadosExtraidos);
             
-            alert('Dados aplicados com sucesso!');
-            this.toggleImportArea(); // Fechar área de importação
+            this.updateFileStatus('Dados aplicados com sucesso!', 'success');
+            
+            // Fechar área de importação após 2 segundos
+            setTimeout(() => {
+                this.toggleImportArea();
+            }, 2000);
             
         } catch (error) {
             console.error('Erro ao aplicar dados:', error);
-            alert('Erro ao aplicar dados. Tente novamente.');
+            this.updateFileStatus('Erro ao aplicar dados. Tente novamente.', 'error');
+        }
+    }
+
+    updateFileStatus(message, type = '') {
+        if (this.fileStatus) {
+            this.fileStatus.textContent = message;
+            this.fileStatus.className = `file-status ${type}`;
         }
     }
 
     clearImportData() {
         if (this.pdfFileInput) this.pdfFileInput.value = '';
         if (this.importTextArea) this.importTextArea.value = '';
-        if (this.fileStatus) this.fileStatus.textContent = '';
-        if (this.dataPreviewSection) this.dataPreviewSection.style.display = 'none';
+        
+        this.updateFileStatus('', '');
+        
+        if (this.dataPreviewSection) {
+            this.dataPreviewSection.style.display = 'none';
+        }
+        
+        // Limpar dados importados armazenados
+        this.dadosImportados = null;
+        
         this.checkImportData();
     }
 
