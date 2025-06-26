@@ -1329,7 +1329,7 @@ class SimuladorEmprestimos {
         
         // Selecionar todos os campos do modal, excluindo campos de login administrativo
         const campos = document.querySelectorAll('#configModal input, #configModal select');
-        const camposExcluidos = ['newAdminUser', 'newAdminPass']; // IDs dos campos de login admin
+        const camposExcluidos = ['adminUser', 'adminPass', 'newAdminUser', 'newAdminPass']; // IDs dos campos de login admin
         
         // Filtrar campos para excluir usuário e senha administrativos
         const camposMonitorados = Array.from(campos).filter(campo => 

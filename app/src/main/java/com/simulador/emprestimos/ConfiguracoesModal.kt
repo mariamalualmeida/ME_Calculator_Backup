@@ -55,12 +55,13 @@ fun ConfiguracoesModal(
         )
     }
     
-    // Detectar mudanças nos campos (excluindo login administrativo)
+    // Detectar mudanças nos campos (excluindo TODOS os campos de login administrativo)
     LaunchedEffect(nomeUsuario, themeMode, colorTheme, igpmAnual) {
         showSaveButton = nomeUsuario != initialValues["nomeUsuario"] ||
                 themeMode != initialValues["themeMode"] ||
                 colorTheme != initialValues["colorTheme"] ||
                 igpmAnual != initialValues["igpmAnual"]
+        // Nota: adminUser, adminPassword, newAdminUser, newAdminPassword são intencionalmente excluídos
     }
     
     // Cores do tema baseadas na paleta selecionada
