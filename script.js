@@ -3557,6 +3557,8 @@ class SimuladorEmprestimos {
 
     // Nova função aplicarDadosJson para sistema de importação inteligente
     aplicarDadosJson(dados) {
+        console.log('🚀 FUNÇÃO aplicarDadosJson() CHAMADA');
+        console.log('🔍 Dados recebidos:', dados);
         try {
             console.log('=== INÍCIO APLICAÇÃO DOS DADOS ===');
             console.log('Aplicando dados extraídos pelo sistema inteligente:', dados);
