@@ -1518,18 +1518,23 @@ body {
 }
 
 .import-content {
-    background: var(--surface-variant);
-    border: 1px solid var(--outline-variant);
+    background: var(--surface);
+    border: 1px solid var(--outline);
     border-radius: 12px;
-    padding: 24px;
+    padding: 20px;
     margin-top: 0;
     display: block;
     width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Seção de arquivo */
 .import-file-section {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--surface-variant);
+    border-radius: 8px;
+    border: 1px solid var(--outline-variant);
 }
 
 .file-input-label {
@@ -1585,7 +1590,11 @@ body {
 
 /* Seção de texto */
 .import-text-section {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--surface-variant);
+    border-radius: 8px;
+    border: 1px solid var(--outline-variant);
 }
 
 .text-area-label {
@@ -1632,17 +1641,18 @@ body {
 
 .preview-btn, .apply-btn, .clear-btn {
     flex: 1;
-    min-width: 140px;
-    padding: 12px 20px;
+    min-width: 150px;
+    padding: 14px 24px;
     border: none;
     border-radius: 8px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: 'Roboto', sans-serif;
     gap: 8px;
 }
 
