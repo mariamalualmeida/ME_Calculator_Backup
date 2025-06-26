@@ -3348,7 +3348,7 @@ class SimuladorEmprestimos {
                 console.log('Ref1 - Nome:', dados.referencia1Nome, 'Cidade:', dados.referencia1Cidade, 'Texto ref1:', ref1Texto.trim().substring(0, 200));
             }
 
-            const ref2Section = textoProcessado.match(/2ª REFERÊNCIA:([\s\S]*?)$/i);
+            const ref2Section = textoProcessado.match(/2ª REFERÊNCIA:([\s\S]*?)(?=DADOS DA SIMULAÇÃO|$)/i);
             if (ref2Section) {
                 const ref2Texto = ref2Section[1];
                 dados.referencia2Nome = this.extrairMatch(/Nome:\s*([^\n\r]+?)(?=\s*Telefone:|$)/i, ref2Texto);
@@ -3356,8 +3356,8 @@ class SimuladorEmprestimos {
                 dados.referencia2Rua = this.extrairMatch(/Rua:\s*([^\n\r]+?)(?=\s*Número:|$)/i, ref2Texto);
                 dados.referencia2Numero = this.extrairMatch(/Número:\s*([^\n\r]+?)(?=\s*Bairro:|$)/i, ref2Texto);
                 dados.referencia2Bairro = this.extrairMatch(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i, ref2Texto);
-                dados.referencia2Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)$/i, ref2Texto.trim());
-                console.log('Ref2 - Nome:', dados.referencia2Nome, 'Cidade:', dados.referencia2Cidade, 'Texto ref2:', ref2Texto.trim().substring(0, 200));
+                dados.referencia2Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)(?=\s*DADOS DA SIMULAÇÃO|$)/i, ref2Texto.trim());
+                console.log('Ref2 - Nome:', dados.referencia2Nome, 'Cidade:', dados.referencia2Cidade, 'Texto ref2 completo:', ref2Texto.trim());
             }
 
         } catch (error) {
@@ -3373,9 +3373,12 @@ class SimuladorEmprestimos {
             // Pré-processar texto para recriar quebras de linha
             const textoProcessado = this.preprocessarTextoPdf(texto);
             
-            // Dados da simulação com regex melhorados
+            // Dados da simulação com regex melhorados para PDF simples
             const valorMatch = textoProcessado.match(/Valor do empréstimo:\s*R\$\s*([0-9,.]+?)(?=\s*Número de parcelas:|$)/i);
-            const parcelasMatch = textoProcessado.match(/Número de parcelas:\s*(\d+?)(?=\s*TABELA|$)/i);
+            const parcelasMatch = textoProcessado.match(/Número de parcelas:\s*(\d+?)(?=\s*1ª parcela:|TABELA|$)/i);
+            
+            console.log('PDF Simples - Valor match:', valorMatch);
+            console.log('PDF Simples - Parcelas match:', parcelasMatch);
 
             if (valorMatch) dados.valorEmprestimo = valorMatch[1];
             if (parcelasMatch) dados.numeroParcelas = parcelasMatch[1];
