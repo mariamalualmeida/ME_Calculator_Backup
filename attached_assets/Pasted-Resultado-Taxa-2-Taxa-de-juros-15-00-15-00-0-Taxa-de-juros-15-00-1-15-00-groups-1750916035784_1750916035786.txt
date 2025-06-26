@@ -1,0 +1,158 @@
+Resultado Taxa: 
+(2) ["Taxa de juros: 15,00%", "15,00"]
+0: "Taxa de juros: 15,00%"
+1: "15,00"
+groups: undefined
+index: 933
+input: "ME EMPREENDIMENTOS Relatório de Simulação de Empréstimo Simulado por: Leonardo Data da simulação: 26/06/2025 DADOS CADASTRAIS DO CLIENTE↵DADOS PESSOAIS:↵Nome: LEONARDO DE ALMEIDA SANTOS↵CPF: 052.085.986-39↵Data de Nascimento: 10/04/1983↵Estado Civil: MG↵Endereço: Rua da Mata, 464, Casa↵Bairro: Vila Brasil↵Cidade: Abadia dos Dourados - MG↵CEP: 35700-130↵Telefone: (31) 98897-3275↵E-mail: leo_almeida.s@hotmail.com↵DADOS PROFISSIONAIS:↵Profissão: Vendedor↵Local de Trabalho: Me empreendimentos↵Renda Mensal: 3.000,00↵Tempo de Emprego: 2 anos↵1ª REFERÊNCIA:↵Nome: Elenice albino↵Telefone: (31) 98988-9979↵Endereço: Rua caiapos, 333↵Bairro: Santa luzia↵Cidade: Sete Lagoas↵2ª REFERÊNCIA:↵Nome: Jessica de Souza Melo↵Telefone: (31) 99999-9999↵Endereço: Praça Alexandre Lanza , 140↵Bairro: Centro↵Cidade: Sete Lagoas DADOS DA SIMULAÇÃO↵Valor do empréstimo: R$ 5.000,00↵Número de parcelas: 5↵Sistema de juros: Juros Compostos Mensais↵Taxa de juros: 15,00% 5 parcelas de: R$ 2.066,36 (Juros de dias extras distribuídos igualmente) (Dias extras: 8 | Juros: R$ 200,00)↵TABELA DE PARCELAS Parcela Vencimento Valor 01 03/08/2025 R$ 2.066,36 02 03/09/2025 R$ 2.066,36 03 03/10/2025 R$ 2.066,36 04 03/11/2025 R$ 2.066,36 05 03/12/2025 R$ 2.066,36"
+length: 2
+[[Prototype]]: Array(0)
+at: ƒ at()
+concat: ƒ concat()
+constructor: ƒ Array()
+copyWithin: ƒ copyWithin()
+entries: ƒ entries()
+every: ƒ every()
+fill: ƒ fill()
+filter: ƒ filter()
+find: ƒ find()
+findIndex: ƒ findIndex()
+findLast: ƒ findLast()
+findLastIndex: ƒ findLastIndex()
+flat: ƒ flat()
+flatMap: ƒ flatMap()
+forEach: ƒ forEach()
+includes: ƒ includes()
+indexOf: ƒ indexOf()
+join: ƒ join()
+keys: ƒ keys()
+lastIndexOf: ƒ lastIndexOf()
+length: 2
+map: ƒ map()
+pop: ƒ pop()
+push: ƒ push()
+reduce: ƒ reduce()
+reduceRight: ƒ reduceRight()
+reverse: ƒ reverse()
+shift: ƒ shift()
+slice: ƒ slice()
+some: ƒ some()
+sort: ƒ sort()
+splice: ƒ splice()
+toLocaleString: ƒ toLocaleString()
+toReversed: ƒ toReversed()
+toSorted: ƒ toSorted()
+toSpliced: ƒ toSpliced()
+toString: ƒ toString()
+unshift: ƒ unshift()
+values: ƒ values()
+with: ƒ with()
+Symbol(Symbol.iterator): undefined
+Symbol(Symbol.unscopables): undefined
+[[Prototype]]: Object
+constructor: ƒ Array()
+hasOwnProperty: ƒ hasOwnProperty()
+isPrototypeOf: ƒ isPrototypeOf()
+propertyIsEnumerable: ƒ propertyIsEnumerable()
+toLocaleString: ƒ toLocaleString()
+toString: ƒ toString()
+valueOf: ƒ valueOf()
+__defineGetter__: ƒ __defineGetter__()
+__defineSetter__: ƒ __defineSetter__()
+__lookupGetter__: ƒ __lookupGetter__()
+__lookupSetter__: ƒ __lookupSetter__()
+__proto__: Array(0)
+get __proto__: ƒ get __proto__()
+set __proto__: ƒ set __proto__()
+=== APLICANDO DADOS EXTRAÍDOS ===
+Valor extraído: 5.000,00
+Parcelas extraídas: 5
+Sistema extraído: Juros Compostos Mensais
+Taxa extraída: 15,00
+Data inicial extraída: 03/08/2025
+Extraindo dados cadastrais com texto pré-processado...
+=== DADOS FINAIS EXTRAÍDOS ===
+dados.valorEmprestimo: 5.000,00
+dados.numeroParcelas: 5
+dados.taxaJuros: 15,00
+dados.sistemaJuros: Juros Compostos Mensais
+=== FIM EXTRAÇÃO PDF COMPLETO ===
+Dados extraídos e normalizados: 
+Object {nome: "LEONARDO DE ALMEIDA SANTOS", cpf: "052.085.986-39", dataNascimento: "10/04/1983", estadoCivil: "MG", telefone: "(31) 98897-3275", …}
+bairro: "Vila Brasil"
+cep: "35700-130"
+cidade: "Abadia dos Dourados - MG"
+complemento: "Casa"
+cpf: "052.085.986-39"
+dataNascimento: "10/04/1983"
+dataVencimentoInicial: "03/08/2025"
+email: "leo_almeida.s@hotmail.com"
+estado: "ME"
+estadoCivil: "MG"
+nome: "LEONARDO DE ALMEIDA SANTOS"
+numero: "464"
+numeroParcelas: "5"
+profissao: "Vendedor"
+referencia1Bairro: "Santa luzia"
+referencia1Cidade: ""
+referencia1Nome: "Elenice albino"
+referencia1Numero: ""
+referencia1Rua: ""
+referencia1Telefone: "(31) 98988-9979"
+referencia2Bairro: "Centro"
+referencia2Cidade: ""
+referencia2Nome: "Jessica de Souza Melo"
+referencia2Numero: ""
+referencia2Rua: ""
+referencia2Telefone: "(31) 99999-9999"
+renda: "3000.00"
+rua: "Rua da Mata"
+sistemaJuros: "Juros Compostos Mensais"
+taxaJuros: "15,00"
+telefone: "(31) 98897-3275"
+tempoEmprego: "2 anos"
+trabalho: "Me empreendimentos"
+valorEmprestimo: "5000.00"
+[[Prototype]]: Object
+Aplicando dados: 
+Object {nome: "LEONARDO DE ALMEIDA SANTOS", cpf: "052.085.986-39", dataNascimento: "10/04/1983", estadoCivil: "MG", telefone: "(31) 98897-3275", …}
+bairro: "Vila Brasil"
+cep: "35700-130"
+cidade: "Abadia dos Dourados - MG"
+complemento: "Casa"
+cpf: "052.085.986-39"
+dataNascimento: "10/04/1983"
+dataVencimentoInicial: "03/08/2025"
+email: "leo_almeida.s@hotmail.com"
+estado: "ME"
+estadoCivil: "MG"
+nome: "LEONARDO DE ALMEIDA SANTOS"
+numero: "464"
+numeroParcelas: "5"
+profissao: "Vendedor"
+referencia1Bairro: "Santa luzia"
+referencia1Cidade: ""
+referencia1Nome: "Elenice albino"
+referencia1Numero: ""
+referencia1Rua: ""
+referencia1Telefone: "(31) 98988-9979"
+referencia2Bairro: "Centro"
+referencia2Cidade: ""
+referencia2Nome: "Jessica de Souza Melo"
+referencia2Numero: ""
+referencia2Rua: ""
+referencia2Telefone: "(31) 99999-9999"
+renda: "3000.00"
+rua: "Rua da Mata"
+sistemaJuros: "Juros Compostos Mensais"
+taxaJuros: "15,00"
+telefone: "(31) 98897-3275"
+tempoEmprego: "2 anos"
+trabalho: "Me empreendimentos"
+valorEmprestimo: "5000.00"
+[[Prototype]]: Object
+toggleImportArea chamada
+Elementos para toggle: 
+Object {expandArea: true, importBtn: true}
+Estado atual - isExpanded: true
+Recolhendo área de importação

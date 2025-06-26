@@ -3560,10 +3560,22 @@ class SimuladorEmprestimos {
         try {
             console.log('Aplicando dados extraídos pelo sistema inteligente:', dados);
 
-            // Dados principais da simulação
-            this.preencherCampo('valorEmprestimo', dados.valorEmprestimo || '');
-            this.preencherCampo('nParcelas', dados.numeroParcelas || '');
-            this.preencherCampo('taxaJuros', dados.taxaJuros || '');
+            // Dados principais da simulação (IDs corretos da interface)
+            console.log('=== PREENCHENDO CAMPOS PRINCIPAIS ===');
+            if (dados.valorEmprestimo) {
+                console.log('Preenchendo valorEmprestimo com:', dados.valorEmprestimo);
+                // Converter formato: "5000.00" -> "5000,00"
+                const valorFormatado = dados.valorEmprestimo.replace('.', ',');
+                this.preencherCampo('valorEmprestimo', valorFormatado);
+            }
+            if (dados.numeroParcelas) {
+                console.log('Preenchendo numeroParcelas com:', dados.numeroParcelas);
+                this.preencherCampo('numeroParcelas', dados.numeroParcelas);
+            }
+            if (dados.taxaJuros) {
+                console.log('Preenchendo taxaJuros com:', dados.taxaJuros);
+                this.preencherCampo('taxaJuros', dados.taxaJuros);
+            }
 
             // Preencher data de vencimento inicial se disponível
             if (dados.dataVencimentoInicial) {
