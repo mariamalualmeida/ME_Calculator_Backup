@@ -1779,6 +1779,13 @@ class SimuladorEmprestimos {
 
                 // Dados pessoais
                 if (dadosCompletos.pessoais.length > 0) {
+                    // Verificar espaço para a seção completa (título + dados + margem)
+                    const espacoNecessario = 10 + (dadosCompletos.pessoais.length * 8) + 6;
+                    if (yInicial + espacoNecessario > 260) {
+                        doc.addPage();
+                        yInicial = 20;
+                    }
+                    
                     doc.setFont('helvetica', 'bold');
                     doc.setFontSize(14);
                     doc.text('DADOS PESSOAIS:', 20, yInicial);
@@ -1795,6 +1802,13 @@ class SimuladorEmprestimos {
 
                 // Dados profissionais
                 if (dadosCompletos.profissionais.length > 0) {
+                    // Verificar espaço para a seção completa (título + dados + margem)
+                    const espacoNecessario = 10 + (dadosCompletos.profissionais.length * 8) + 6;
+                    if (yInicial + espacoNecessario > 260) {
+                        doc.addPage();
+                        yInicial = 20;
+                    }
+                    
                     doc.setFont('helvetica', 'bold');
                     doc.setFontSize(14);
                     doc.text('DADOS PROFISSIONAIS:', 20, yInicial);
@@ -1811,6 +1825,13 @@ class SimuladorEmprestimos {
 
                 // 1ª Referência
                 if (dadosCompletos.referencias1.length > 0) {
+                    // Verificar espaço para a seção completa (título + dados + margem)
+                    const espacoNecessario = 10 + (dadosCompletos.referencias1.length * 8) + 6;
+                    if (yInicial + espacoNecessario > 260) {
+                        doc.addPage();
+                        yInicial = 20;
+                    }
+                    
                     doc.setFont('helvetica', 'bold');
                     doc.setFontSize(14);
                     doc.text('1ª REFERÊNCIA:', 20, yInicial);
@@ -1827,8 +1848,9 @@ class SimuladorEmprestimos {
 
                 // 2ª Referência
                 if (dadosCompletos.referencias2.length > 0) {
-                    // Verificar espaço antes de adicionar 2ª referência
-                    if (yInicial > 220) {
+                    // Verificar espaço para a seção completa (título + dados + margem)
+                    const espacoNecessario = 10 + (dadosCompletos.referencias2.length * 8) + 6;
+                    if (yInicial + espacoNecessario > 260) {
                         doc.addPage();
                         yInicial = 20;
                     }
