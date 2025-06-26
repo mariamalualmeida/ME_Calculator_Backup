@@ -1658,9 +1658,12 @@ class SimuladorEmprestimos {
         if (cpfCompleto) pessoais.push(`CPF: ${cpfCompleto}`);
         if (dataNascimento) pessoais.push(`Data de Nascimento: ${dataNascimento}`);
         if (estadoCivil) pessoais.push(`Estado Civil: ${estadoCivil}`);
-        if (endereco) pessoais.push(`Endereço: ${endereco}${numero ? `, ${numero}` : ''}${complemento ? `, ${complemento}` : ''}`);
+        if (endereco) pessoais.push(`Rua: ${endereco}`);
+        if (numero) pessoais.push(`Número: ${numero}`);
+        if (complemento) pessoais.push(`Complemento: ${complemento}`);
         if (bairro) pessoais.push(`Bairro: ${bairro}`);
-        if (cidade && estado) pessoais.push(`Cidade: ${cidade} - ${estado}`);
+        if (cidade) pessoais.push(`Cidade: ${cidade}`);
+        if (estado) pessoais.push(`Estado: ${estado}`);
         if (cep) pessoais.push(`CEP: ${cep}`);
         if (telefone) pessoais.push(`Telefone: ${telefone}`);
         
@@ -1690,7 +1693,8 @@ class SimuladorEmprestimos {
         
         if (ref1Nome) referencias1.push(`Nome: ${ref1Nome}`);
         if (ref1Telefone) referencias1.push(`Telefone: ${ref1Telefone}`);
-        if (ref1Rua) referencias1.push(`Endereço: ${ref1Rua}${ref1Numero ? `, ${ref1Numero}` : ''}`);
+        if (ref1Rua) referencias1.push(`Rua: ${ref1Rua}`);
+        if (ref1Numero) referencias1.push(`Número: ${ref1Numero}`);
         if (ref1Bairro) referencias1.push(`Bairro: ${ref1Bairro}`);
         if (ref1Cidade) referencias1.push(`Cidade: ${ref1Cidade}`);
 
@@ -1704,7 +1708,8 @@ class SimuladorEmprestimos {
         
         if (ref2Nome) referencias2.push(`Nome: ${ref2Nome}`);
         if (ref2Telefone) referencias2.push(`Telefone: ${ref2Telefone}`);
-        if (ref2Rua) referencias2.push(`Endereço: ${ref2Rua}${ref2Numero ? `, ${ref2Numero}` : ''}`);
+        if (ref2Rua) referencias2.push(`Rua: ${ref2Rua}`);
+        if (ref2Numero) referencias2.push(`Número: ${ref2Numero}`);
         if (ref2Bairro) referencias2.push(`Bairro: ${ref2Bairro}`);
         if (ref2Cidade) referencias2.push(`Cidade: ${ref2Cidade}`);
 
@@ -3213,22 +3218,17 @@ class SimuladorEmprestimos {
             dados.nome = this.extrairMatch(/Nome:\s*([^\n\r]+?)(?=\s*CPF:|$)/i, textoProcessado);
             dados.cpf = this.extrairMatch(/CPF:\s*([\d.-]+?)(?=\s*Data de Nascimento:|$)/i, textoProcessado);
             dados.dataNascimento = this.extrairMatch(/Data de Nascimento:\s*([\d\/]+?)(?=\s*Estado Civil:|$)/i, textoProcessado);
-            dados.estadoCivil = this.extrairMatch(/Estado Civil:\s*([^\n\r]+?)(?=\s*Endereço:|Bairro:|$)/i, textoProcessado);
+            dados.estadoCivil = this.extrairMatch(/Estado Civil:\s*([^\n\r]+?)(?=\s*Rua:|$)/i, textoProcessado);
             dados.telefone = this.extrairMatch(/Telefone:\s*([\d\s\(\)-]+?)(?=\s*E-mail:|$)/i, textoProcessado);
             dados.email = this.extrairMatch(/E-mail:\s*([^\n\r]+?)(?=\s*DADOS PROFISSIONAIS:|$)/i, textoProcessado);
 
-            // Endereço com parsing específico para PDF
-            const enderecoCompleto = this.extrairMatch(/Endereço:\s*([^\n\r]+?)(?=\s*Bairro:|$)/i, textoProcessado);
-            if (enderecoCompleto) {
-                const partesEndereco = enderecoCompleto.split(',').map(p => p.trim());
-                dados.rua = partesEndereco[0] || '';
-                dados.numero = partesEndereco[1] || '';
-                dados.complemento = partesEndereco[2] || '';
-            }
-
+            // Endereço agora separado em campos individuais
+            dados.rua = this.extrairMatch(/Rua:\s*([^\n\r]+?)(?=\s*Número:|$)/i, textoProcessado);
+            dados.numero = this.extrairMatch(/Número:\s*([^\n\r]+?)(?=\s*Complemento:|$)/i, textoProcessado);
+            dados.complemento = this.extrairMatch(/Complemento:\s*([^\n\r]+?)(?=\s*Bairro:|$)/i, textoProcessado);
             dados.bairro = this.extrairMatch(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i, textoProcessado);
-            dados.cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)(?=\s*CEP:|$)/i, textoProcessado);
-            dados.estado = this.extrairMatch(/(\b[A-Z]{2}\b)/i, textoProcessado);
+            dados.cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)(?=\s*Estado:|$)/i, textoProcessado);
+            dados.estado = this.extrairMatch(/Estado:\s*([^\n\r]+?)(?=\s*CEP:|$)/i, textoProcessado);
             dados.cep = this.extrairMatch(/CEP:\s*([\d-]+?)(?=\s*Telefone:|$)/i, textoProcessado);
 
             // Dados profissionais
@@ -3237,13 +3237,14 @@ class SimuladorEmprestimos {
             dados.renda = this.extrairMatch(/Renda Mensal:\s*([\d.,]+?)(?=\s*Tempo de Emprego:|$)/i, textoProcessado);
             dados.tempoEmprego = this.extrairMatch(/Tempo de Emprego:\s*([^\n\r]+?)(?=\s*1ª REFERÊNCIA:|$)/i, textoProcessado);
 
-            // Referências com parsing de seções
+            // Referências com parsing de seções usando campos separados
             const ref1Section = textoProcessado.match(/1ª REFERÊNCIA:([\s\S]*?)(?=2ª REFERÊNCIA|$)/i);
             if (ref1Section) {
                 const ref1Texto = ref1Section[1];
                 dados.referencia1Nome = this.extrairMatch(/Nome:\s*([^\n\r]+?)(?=\s*Telefone:|$)/i, ref1Texto);
-                dados.referencia1Telefone = this.extrairMatch(/Telefone:\s*([\d\s\(\)-]+?)(?=\s*Endereço:|$)/i, ref1Texto);
-                dados.referencia1Rua = this.extrairMatch(/Endereço:\s*([^,\n\r]+?)(?=\s*Bairro:|$)/i, ref1Texto);
+                dados.referencia1Telefone = this.extrairMatch(/Telefone:\s*([\d\s\(\)-]+?)(?=\s*Rua:|$)/i, ref1Texto);
+                dados.referencia1Rua = this.extrairMatch(/Rua:\s*([^\n\r]+?)(?=\s*Número:|$)/i, ref1Texto);
+                dados.referencia1Numero = this.extrairMatch(/Número:\s*([^\n\r]+?)(?=\s*Bairro:|$)/i, ref1Texto);
                 dados.referencia1Bairro = this.extrairMatch(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i, ref1Texto);
                 dados.referencia1Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)(?=\s*2ª REFERÊNCIA:|$)/i, ref1Texto);
             }
@@ -3252,8 +3253,9 @@ class SimuladorEmprestimos {
             if (ref2Section) {
                 const ref2Texto = ref2Section[1];
                 dados.referencia2Nome = this.extrairMatch(/Nome:\s*([^\n\r]+?)(?=\s*Telefone:|$)/i, ref2Texto);
-                dados.referencia2Telefone = this.extrairMatch(/Telefone:\s*([\d\s\(\)-]+?)(?=\s*Endereço:|$)/i, ref2Texto);
-                dados.referencia2Rua = this.extrairMatch(/Endereço:\s*([^,\n\r]+?)(?=\s*Bairro:|$)/i, ref2Texto);
+                dados.referencia2Telefone = this.extrairMatch(/Telefone:\s*([\d\s\(\)-]+?)(?=\s*Rua:|$)/i, ref2Texto);
+                dados.referencia2Rua = this.extrairMatch(/Rua:\s*([^\n\r]+?)(?=\s*Número:|$)/i, ref2Texto);
+                dados.referencia2Numero = this.extrairMatch(/Número:\s*([^\n\r]+?)(?=\s*Bairro:|$)/i, ref2Texto);
                 dados.referencia2Bairro = this.extrairMatch(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i, ref2Texto);
                 dados.referencia2Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)$/i, ref2Texto);
             }
