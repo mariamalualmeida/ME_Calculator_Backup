@@ -2611,7 +2611,7 @@ class SimuladorEmprestimos {
             }
         });
         
-        // Campos do formulário completo
+        // Campos do formulário completo (incluindo cidades das referências)
         const camposCompletos = [
             'dataNascimento', 'estadoCivil', 'telefoneCompleto', 'email',
             'endereco', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'cep',
@@ -3101,11 +3101,13 @@ class SimuladorEmprestimos {
             referencia1Rua: '',
             referencia1Numero: '',
             referencia1Bairro: '',
+            referencia1Cidade: '',
             referencia2Nome: '',
             referencia2Telefone: '',
             referencia2Rua: '',
             referencia2Numero: '',
-            referencia2Bairro: ''
+            referencia2Bairro: '',
+            referencia2Cidade: ''
         };
 
         try {
