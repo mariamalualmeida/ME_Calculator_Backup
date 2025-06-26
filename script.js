@@ -3302,6 +3302,7 @@ class SimuladorEmprestimos {
             
             dados.dataNascimento = this.extrairMatch(/Data de Nascimento:\s*([\d\/]+?)(?=\s*Estado Civil:|Endereço:|$)/i, textoProcessado);
             console.log('Data nascimento extraída:', dados.dataNascimento);
+            console.log('PDF simples - Campo Data Nascimento encontrado no texto:', textoProcessado.includes('Data de Nascimento'));
             
             dados.estadoCivil = this.extrairMatch(/Estado Civil:\s*([^\n\r]+?)(?=\s*Rua:|$)/i, textoProcessado);
             console.log('Estado civil extraído:', dados.estadoCivil);
@@ -3343,8 +3344,8 @@ class SimuladorEmprestimos {
                 dados.referencia1Rua = this.extrairMatch(/Rua:\s*([^\n\r]+?)(?=\s*Número:|$)/i, ref1Texto);
                 dados.referencia1Numero = this.extrairMatch(/Número:\s*([^\n\r]+?)(?=\s*Bairro:|$)/i, ref1Texto);
                 dados.referencia1Bairro = this.extrairMatch(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i, ref1Texto);
-                dados.referencia1Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)(?=\s*2ª REFERÊNCIA:|Nome:|$)/i, ref1Texto);
-                console.log('Ref1 - Nome:', dados.referencia1Nome, 'Cidade:', dados.referencia1Cidade);
+                dados.referencia1Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)$/i, ref1Texto.trim());
+                console.log('Ref1 - Nome:', dados.referencia1Nome, 'Cidade:', dados.referencia1Cidade, 'Texto ref1:', ref1Texto.trim().substring(0, 200));
             }
 
             const ref2Section = textoProcessado.match(/2ª REFERÊNCIA:([\s\S]*?)$/i);
@@ -3355,8 +3356,8 @@ class SimuladorEmprestimos {
                 dados.referencia2Rua = this.extrairMatch(/Rua:\s*([^\n\r]+?)(?=\s*Número:|$)/i, ref2Texto);
                 dados.referencia2Numero = this.extrairMatch(/Número:\s*([^\n\r]+?)(?=\s*Bairro:|$)/i, ref2Texto);
                 dados.referencia2Bairro = this.extrairMatch(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i, ref2Texto);
-                dados.referencia2Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)$/i, ref2Texto);
-                console.log('Ref2 - Nome:', dados.referencia2Nome, 'Cidade:', dados.referencia2Cidade);
+                dados.referencia2Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)$/i, ref2Texto.trim());
+                console.log('Ref2 - Nome:', dados.referencia2Nome, 'Cidade:', dados.referencia2Cidade, 'Texto ref2:', ref2Texto.trim().substring(0, 200));
             }
 
         } catch (error) {
