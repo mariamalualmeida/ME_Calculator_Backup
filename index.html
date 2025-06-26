@@ -34,6 +34,20 @@
         </header>
 
         <main class="main-content">
+            <!-- Botão de Importação de Dados -->
+            <div class="import-section">
+                <button id="importDataBtn" class="import-btn">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10 9H9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    IMPORTAR DADOS
+                </button>
+            </div>
+
             <div class="input-section">
                 <div class="input-group">
                     <label for="valorEmprestimo" class="input-label">Valor do empréstimo</label>
@@ -473,7 +487,70 @@
         </div>
     </div>
 
+    <!-- Modal de Importação de Dados -->
+    <div id="importModal" class="modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Importar Dados do Cliente</h3>
+                <button id="closeImportModal" class="close-btn">
+                    <span class="close-symbol">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Abas de Importação -->
+                <div class="import-tabs">
+                    <button id="tabPdf" class="tab-btn active">PDF do Sistema</button>
+                    <button id="tabFormulario" class="tab-btn">Formulário Copiado</button>
+                </div>
+
+                <!-- Conteúdo da Aba PDF -->
+                <div id="contentPdf" class="tab-content active">
+                    <div class="import-instructions">
+                        <p><strong>Instruções para PDF:</strong></p>
+                        <p>1. Abra o PDF gerado pelo sistema</p>
+                        <p>2. Selecione e copie todo o conteúdo (Ctrl+A, Ctrl+C)</p>
+                        <p>3. Cole o texto na área abaixo</p>
+                    </div>
+                    <textarea 
+                        id="pdfTextArea" 
+                        class="import-textarea" 
+                        placeholder="Cole aqui o texto copiado do PDF..."
+                        rows="10"
+                    ></textarea>
+                </div>
+
+                <!-- Conteúdo da Aba Formulário -->
+                <div id="contentFormulario" class="tab-content">
+                    <div class="import-instructions">
+                        <p><strong>Instruções para Formulário:</strong></p>
+                        <p>1. Copie o formulário preenchido</p>
+                        <p>2. Cole o texto completo na área abaixo</p>
+                        <p>3. Mantenha a formatação original</p>
+                    </div>
+                    <textarea 
+                        id="formularioTextArea" 
+                        class="import-textarea" 
+                        placeholder="Cole aqui o formulário preenchido..."
+                        rows="10"
+                    ></textarea>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="import-actions">
+                    <button id="previewBtn" class="preview-btn">VISUALIZAR DADOS</button>
+                    <button id="importBtn" class="import-btn-action">IMPORTAR DADOS</button>
+                </div>
+
+                <!-- Preview dos Dados -->
+                <div id="dataPreview" class="data-preview" style="display: none;">
+                    <h4>Dados Detectados:</h4>
+                    <div id="previewContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js?v=20250626040000"></script>
+    <script src="script.js?v=20250626050000"></script>
 </body>
 </html>

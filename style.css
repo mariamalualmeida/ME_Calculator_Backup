@@ -1435,3 +1435,245 @@ body {
 }
 
 /* CSS duplicado removido - agora unificado acima */
+
+/* =============================================
+   ESTILOS DO SISTEMA DE IMPORTAÇÃO DE DADOS
+   ============================================= */
+
+/* Seção do botão de importação */
+.import-section {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.import-btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-variant));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 56px;
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+}
+
+.import-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.import-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Estilos das abas de importação */
+.import-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    background: white;
+    color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab-btn:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Conteúdo das abas */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Instruções de importação */
+.import-instructions {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.import-instructions p {
+    margin: 0 0 8px 0;
+    color: #495057;
+    font-size: 14px;
+}
+
+.import-instructions p:last-child {
+    margin-bottom: 0;
+}
+
+.import-instructions strong {
+    color: var(--primary-color);
+}
+
+/* Textarea de importação */
+.import-textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color 0.2s ease;
+    background: white;
+}
+
+.import-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.import-textarea::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+/* Botões de ação */
+.import-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    justify-content: center;
+}
+
+.preview-btn,
+.import-btn-action {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 140px;
+}
+
+.preview-btn {
+    background: #f8f9fa;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.preview-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.import-btn-action {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-variant));
+    color: white;
+}
+
+.import-btn-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.import-btn-action:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Preview dos dados */
+.data-preview {
+    margin-top: 24px;
+    padding: 16px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+}
+
+.data-preview h4 {
+    margin: 0 0 12px 0;
+    color: var(--primary-color);
+    font-size: 16px;
+}
+
+.preview-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 14px;
+}
+
+.preview-item:last-child {
+    border-bottom: none;
+}
+
+.preview-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.preview-value {
+    color: #212529;
+    text-align: right;
+}
+
+.preview-empty {
+    color: #999;
+    font-style: italic;
+}
+
+/* Responsividade para importação */
+@media (max-width: 480px) {
+    .import-actions {
+        flex-direction: column;
+    }
+    
+    .preview-btn,
+    .import-btn-action {
+        width: 100%;
+        min-width: unset;
+    }
+    
+    .import-tabs {
+        flex-direction: column;
+        gap: 2px;
+    }
+    
+    .tab-btn {
+        padding: 16px;
+        font-size: 16px;
+    }
+}
