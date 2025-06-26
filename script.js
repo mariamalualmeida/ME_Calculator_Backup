@@ -2862,7 +2862,85 @@ class SimuladorEmprestimos {
         }
     }
 
+    // Sistema de detecção inteligente de formato de documento
+    detectarTipoDocumento(texto) {
+        if (texto.includes("FORMULÁRIO: ME EMPREENDIMENTOS")) return "formulario";
+        if (texto.includes("Sistema de juros:") && texto.includes("Taxa de juros:")) return "pdf_completo";
+        if (texto.includes("DADOS DA SIMULAÇÃO")) return "pdf_simples";
+        return "desconhecido";
+    }
+
+    // Normalização automática de dados
+    normalizarDados(dados) {
+        // Normalizar CPF
+        if (dados.cpf) {
+            dados.cpf = dados.cpf.replace(/\D/g, '');
+            if (dados.cpf.length === 11) {
+                dados.cpf = dados.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            }
+        }
+
+        // Normalizar telefone
+        if (dados.telefone) {
+            dados.telefone = dados.telefone.replace(/\D/g, '');
+            if (dados.telefone.length === 11) {
+                dados.telefone = dados.telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            }
+        }
+
+        // Normalizar valores monetários
+        if (dados.valorEmprestimo) {
+            dados.valorEmprestimo = dados.valorEmprestimo.replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+        }
+        if (dados.renda) {
+            dados.renda = dados.renda.replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+        }
+
+        // Normalizar CEP
+        if (dados.cep) {
+            dados.cep = dados.cep.replace(/\D/g, '');
+            if (dados.cep.length === 8) {
+                dados.cep = dados.cep.replace(/(\d{5})(\d{3})/, '$1-$2');
+            }
+        }
+
+        // Normalizar referências
+        if (dados.referencia1Telefone) {
+            dados.referencia1Telefone = dados.referencia1Telefone.replace(/\D/g, '');
+            if (dados.referencia1Telefone.length === 11) {
+                dados.referencia1Telefone = dados.referencia1Telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            }
+        }
+        if (dados.referencia2Telefone) {
+            dados.referencia2Telefone = dados.referencia2Telefone.replace(/\D/g, '');
+            if (dados.referencia2Telefone.length === 11) {
+                dados.referencia2Telefone = dados.referencia2Telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            }
+        }
+
+        return dados;
+    }
+
+    // Calcular data inicial de vencimento a partir dos PDFs
+    calcularDataInicialVencimento(texto) {
+        try {
+            // Extrair primeira data de vencimento da tabela
+            const primeiraParcelaMatch = texto.match(/01\s+(\d{2}\/\d{2}\/\d{4})/);
+            
+            if (primeiraParcelaMatch) {
+                return primeiraParcelaMatch[1];
+            }
+            
+            return null;
+        } catch (error) {
+            console.error('Erro ao calcular data inicial:', error);
+            return null;
+        }
+    }
+
     extrairDadosTexto(texto, tipoFonte) {
+        console.log('Iniciando extração de dados...');
+        
         const dados = {
             // Dados principais
             nome: '',
@@ -2871,6 +2949,13 @@ class SimuladorEmprestimos {
             estadoCivil: '',
             telefone: '',
             email: '',
+            
+            // Dados do empréstimo
+            valorEmprestimo: '',
+            numeroParcelas: '',
+            taxaJuros: '',
+            sistemaJuros: '',
+            dataVencimentoInicial: '',
             
             // Endereço
             rua: '',
@@ -2901,18 +2986,165 @@ class SimuladorEmprestimos {
         };
 
         try {
-            if (tipoFonte === 'pdf') {
-                // Extração para PDF do sistema
-                this.extrairDadosPdfSistema(texto, dados);
-            } else {
-                // Extração para formulário copiado
-                this.extrairDadosFormulario(texto, dados);
+            // Detectar tipo de documento automaticamente
+            const tipoDetectado = this.detectarTipoDocumento(texto);
+            console.log('Tipo de documento detectado:', tipoDetectado);
+
+            // Aplicar extração específica baseada no tipo
+            switch (tipoDetectado) {
+                case 'formulario':
+                    this.extrairDadosFormularioEstruturado(texto, dados);
+                    break;
+                case 'pdf_completo':
+                    this.extrairDadosPdfCompleto(texto, dados);
+                    break;
+                case 'pdf_simples':
+                    this.extrairDadosPdfSimples(texto, dados);
+                    break;
+                default:
+                    // Usar método original como fallback
+                    if (tipoFonte === 'pdf') {
+                        this.extrairDadosPdfSistema(texto, dados);
+                    } else {
+                        this.extrairDadosFormulario(texto, dados);
+                    }
             }
+
+            // Normalizar dados extraídos
+            const dadosNormalizados = this.normalizarDados(dados);
+            console.log('Dados extraídos e normalizados:', dadosNormalizados);
+            
+            return dadosNormalizados;
+
         } catch (error) {
             console.error('Erro na extração:', error);
+            return dados;
         }
+    }
 
-        return dados;
+    // Extração específica para formulário estruturado
+    extrairDadosFormularioEstruturado(texto, dados) {
+        try {
+            // Dados do empréstimo
+            const valorMatch = texto.match(/Valor:\s*R\$?\s*([0-9,.]+)/i);
+            const parcelasMatch = texto.match(/Parcelas:\s*(\d+)/i);
+            const dataVencMatch = texto.match(/Data Venc\. Inicial:\s*(\d{2}\/\d{2}\/\d{4})/i);
+
+            if (valorMatch) dados.valorEmprestimo = valorMatch[1];
+            if (parcelasMatch) dados.numeroParcelas = parcelasMatch[1];
+            if (dataVencMatch) dados.dataVencimentoInicial = dataVencMatch[1];
+
+            // Dados pessoais
+            const nomeMatch = texto.match(/Nome:\s*([^\n]+)/i);
+            const cpfMatch = texto.match(/CPF:\s*([0-9]+)/i);
+            const nascimentoMatch = texto.match(/Data nascimento:\s*(\d{2}\/\d{2}\/\d{4})/i);
+            const estadoCivilMatch = texto.match(/Estado Civil:\s*([^\n]+)/i);
+            const enderecoMatch = texto.match(/Endereço:\s*([^\n]+)/i);
+            const numeroMatch = texto.match(/Número:\s*([^\n]+)/i);
+            const complementoMatch = texto.match(/Complemento:\s*([^\n]+)/i);
+            const bairroMatch = texto.match(/Bairro:\s*([^\n]+)/i);
+            const cidadeMatch = texto.match(/Cidade:\s*([^\n]+)/i);
+            const estadoMatch = texto.match(/Estado:\s*([^\n]+)/i);
+            const cepMatch = texto.match(/CEP:\s*([0-9-]+)/i);
+            const telefoneMatch = texto.match(/Telefone:\s*\(?\d+\)?\s*[0-9-]+/i);
+            const emailMatch = texto.match(/E-mail:\s*([^\n]+)/i);
+
+            if (nomeMatch) dados.nome = nomeMatch[1].trim();
+            if (cpfMatch) dados.cpf = cpfMatch[1];
+            if (nascimentoMatch) dados.dataNascimento = nascimentoMatch[1];
+            if (estadoCivilMatch) dados.estadoCivil = estadoCivilMatch[1].trim();
+            if (enderecoMatch) dados.rua = enderecoMatch[1].trim();
+            if (numeroMatch) dados.numero = numeroMatch[1].trim();
+            if (complementoMatch) dados.complemento = complementoMatch[1].trim();
+            if (bairroMatch) dados.bairro = bairroMatch[1].trim();
+            if (cidadeMatch) dados.cidade = cidadeMatch[1].trim();
+            if (estadoMatch) dados.estado = estadoMatch[1].trim();
+            if (cepMatch) dados.cep = cepMatch[1];
+            if (telefoneMatch) dados.telefone = telefoneMatch[0].replace('Telefone:', '').trim();
+            if (emailMatch) dados.email = emailMatch[1].trim();
+
+            // Dados profissionais
+            const trabalhoMatch = texto.match(/Local de trabalho:\s*([^\n]+)/i);
+            const profissaoMatch = texto.match(/Profissão:\s*([^\n]+)/i);
+            const rendaMatch = texto.match(/Renda Mensal:\s*R\$?\s*([0-9,.]+)/i);
+            const tempoEmpregoMatch = texto.match(/Tempo de emprego:\s*([^\n]+)/i);
+
+            if (trabalhoMatch) dados.trabalho = trabalhoMatch[1].trim();
+            if (profissaoMatch) dados.profissao = profissaoMatch[1].trim();
+            if (rendaMatch) dados.renda = rendaMatch[1];
+            if (tempoEmpregoMatch) dados.tempoEmprego = tempoEmpregoMatch[1].trim();
+
+            // Extrair referências
+            const ref1Match = texto.match(/1º REREFENCIA[\s\S]*?Nome:\s*([^\n]+)[\s\S]*?Rua:\s*([^\n]+)[\s\S]*?Numero:\s*([^\n]+)[\s\S]*?Bairro:\s*([^\n]+)[\s\S]*?Telefone:\s*([^\n]+)/i);
+            const ref2Match = texto.match(/2º REFERENCIA[\s\S]*?Nome:\s*([^\n]+)[\s\S]*?Rua:\s*([^\n]+)[\s\S]*?Numero:\s*([^\n]+)[\s\S]*?Bairro:\s*([^\n]+)[\s\S]*?Telefone:\s*([^\n]+)/i);
+
+            if (ref1Match) {
+                dados.referencia1Nome = ref1Match[1].trim();
+                dados.referencia1Rua = ref1Match[2].trim();
+                dados.referencia1Numero = ref1Match[3].trim();
+                dados.referencia1Bairro = ref1Match[4].trim();
+                dados.referencia1Telefone = ref1Match[5].trim();
+            }
+
+            if (ref2Match) {
+                dados.referencia2Nome = ref2Match[1].trim();
+                dados.referencia2Rua = ref2Match[2].trim();
+                dados.referencia2Numero = ref2Match[3].trim();
+                dados.referencia2Bairro = ref2Match[4].trim();
+                dados.referencia2Telefone = ref2Match[5].trim();
+            }
+
+        } catch (error) {
+            console.error('Erro na extração do formulário estruturado:', error);
+        }
+    }
+
+    // Extração específica para PDF completo (com taxa de juros)
+    extrairDadosPdfCompleto(texto, dados) {
+        try {
+            // Dados da simulação
+            const valorMatch = texto.match(/Valor do empréstimo:\s*R\$\s*([0-9,.]+)/i);
+            const parcelasMatch = texto.match(/Número de parcelas:\s*(\d+)/i);
+            const sistemaJurosMatch = texto.match(/Sistema de juros:\s*([^\n]+)/i);
+            const taxaJurosMatch = texto.match(/Taxa de juros:\s*([0-9,]+)%/i);
+
+            if (valorMatch) dados.valorEmprestimo = valorMatch[1];
+            if (parcelasMatch) dados.numeroParcelas = parcelasMatch[1];
+            if (sistemaJurosMatch) dados.sistemaJuros = sistemaJurosMatch[1].trim();
+            if (taxaJurosMatch) dados.taxaJuros = taxaJurosMatch[1];
+
+            // Calcular data inicial de vencimento
+            const dataInicial = this.calcularDataInicialVencimento(texto);
+            if (dataInicial) dados.dataVencimentoInicial = dataInicial;
+
+            // Extrair dados cadastrais usando método existente
+            this.extrairDadosPdfSistema(texto, dados);
+
+        } catch (error) {
+            console.error('Erro na extração do PDF completo:', error);
+        }
+    }
+
+    // Extração específica para PDF simples (sem taxa de juros)
+    extrairDadosPdfSimples(texto, dados) {
+        try {
+            // Dados da simulação
+            const valorMatch = texto.match(/Valor do empréstimo:\s*R\$\s*([0-9,.]+)/i);
+            const parcelasMatch = texto.match(/Número de parcelas:\s*(\d+)/i);
+
+            if (valorMatch) dados.valorEmprestimo = valorMatch[1];
+            if (parcelasMatch) dados.numeroParcelas = parcelasMatch[1];
+
+            // Calcular data inicial de vencimento
+            const dataInicial = this.calcularDataInicialVencimento(texto);
+            if (dataInicial) dados.dataVencimentoInicial = dataInicial;
+
+            // Extrair dados cadastrais usando método existente
+            this.extrairDadosPdfSistema(texto, dados);
+
+        } catch (error) {
+            console.error('Erro na extração do PDF simples:', error);
+        }
     }
 
     extrairDadosPdfSistema(texto, dados) {
@@ -3168,49 +3400,112 @@ class SimuladorEmprestimos {
         }
     }
 
-    preencherFormulario(dados) {
-        // Expandir formulário automaticamente se houver dados cadastrais
-        const temDadosCadastrais = dados.nome || dados.cpf || dados.telefone || dados.rua;
-        if (temDadosCadastrais) {
-            this.expandirFormularioCompleto();
+    // Nova função aplicarDadosJson para sistema de importação inteligente
+    aplicarDadosJson(dados) {
+        try {
+            console.log('Aplicando dados extraídos pelo sistema inteligente:', dados);
+
+            // Dados principais da simulação
+            this.preencherCampo('valorEmprestimo', dados.valorEmprestimo || '');
+            this.preencherCampo('nParcelas', dados.numeroParcelas || '');
+            this.preencherCampo('taxaJuros', dados.taxaJuros || '');
+
+            // Preencher data de vencimento inicial se disponível
+            if (dados.dataVencimentoInicial) {
+                this.preencherCampo('dataVencimentoInicial', dados.dataVencimentoInicial);
+            }
+
+            // Campos de nome e CPF na tela principal
+            this.preencherCampo('nomeCompleto', dados.nome || '');
+            this.preencherCampo('cpfCompleto', dados.cpf || '');
+
+            // Verificar se há dados cadastrais completos para expandir formulário
+            const temDadosCadastrais = dados.rua || dados.telefone || dados.email || 
+                                     dados.dataNascimento || dados.profissao || 
+                                     dados.referencia1Nome || dados.referencia2Nome;
+
+            if (temDadosCadastrais) {
+                console.log('Dados cadastrais detectados, expandindo formulário...');
+                this.expandirFormularioCompleto();
+                
+                // Aguardar expansão antes de preencher
+                setTimeout(() => {
+                    // Dados pessoais completos
+                    this.preencherCampo('dataNascimento', dados.dataNascimento || '');
+                    this.preencherCampo('estadoCivil', dados.estadoCivil || '');
+                    this.preencherCampo('telefone', dados.telefone || '');
+                    this.preencherCampo('email', dados.email || '');
+                    
+                    // Endereço completo
+                    this.preencherCampo('endereco', dados.rua || '');
+                    this.preencherCampo('numeroEndereco', dados.numero || '');
+                    this.preencherCampo('complemento', dados.complemento || '');
+                    this.preencherCampo('bairro', dados.bairro || '');
+                    this.preencherCampo('cidade', dados.cidade || '');
+                    this.preencherCampo('estado', dados.estado || '');
+                    this.preencherCampo('cep', dados.cep || '');
+                    
+                    // Dados profissionais
+                    this.preencherCampo('trabalho', dados.trabalho || '');
+                    this.preencherCampo('profissao', dados.profissao || '');
+                    this.preencherCampo('renda', dados.renda || '');
+                    this.preencherCampo('tempoEmprego', dados.tempoEmprego || '');
+                    
+                    // Referências
+                    this.preencherCampo('referencia1Nome', dados.referencia1Nome || '');
+                    this.preencherCampo('referencia1Telefone', dados.referencia1Telefone || '');
+                    this.preencherCampo('referencia1Endereco', dados.referencia1Rua || '');
+                    this.preencherCampo('referencia1Bairro', dados.referencia1Bairro || '');
+                    this.preencherCampo('referencia1Cidade', dados.referencia1Cidade || '');
+                    
+                    this.preencherCampo('referencia2Nome', dados.referencia2Nome || '');
+                    this.preencherCampo('referencia2Telefone', dados.referencia2Telefone || '');
+                    this.preencherCampo('referencia2Endereco', dados.referencia2Rua || '');
+                    this.preencherCampo('referencia2Bairro', dados.referencia2Bairro || '');
+                    this.preencherCampo('referencia2Cidade', dados.referencia2Cidade || '');
+                    
+                    // Aplicar formatação automática
+                    this.aplicarFormatacaoImportados();
+                    
+                    console.log('Formulário completo preenchido com sucesso');
+                }, 300);
+            }
+
+            // Aplicar formatação nos campos da tela principal
+            this.aplicarFormatacaoImportados();
+
+            // Configurar sistema de juros se disponível no PDF completo
+            if (dados.sistemaJuros) {
+                console.log('Sistema de juros detectado:', dados.sistemaJuros);
+                // Mapear sistema de juros para configuração administrativa
+                const mapeamentoSistemas = {
+                    'Juros Simples': 'simples',
+                    'Juros Compostos Diários': 'compostos-diarios',
+                    'Juros Compostos Mensais': 'compostos-mensal',
+                    'Pro-rata Real': 'pro-rata-real'
+                };
+                
+                const sistemaConfig = mapeamentoSistemas[dados.sistemaJuros];
+                if (sistemaConfig) {
+                    // Atualizar configuração do sistema
+                    this.configuracoes = this.configuracoes || {};
+                    this.configuracoes.sistemaJuros = sistemaConfig;
+                    this.salvarApenasConfiguracoes();
+                }
+            }
+
+            console.log('Importação de dados concluída com sucesso');
+            this.updateFileStatus('Dados importados e aplicados com sucesso!', 'success');
+
+        } catch (error) {
+            console.error('Erro ao aplicar dados:', error);
+            this.updateFileStatus('Erro ao aplicar dados importados', 'error');
         }
+    }
 
-        // Preencher campos principais (sempre visíveis)
-        this.preencherCampo('nomeCompleto', dados.nome);
-        this.preencherCampo('cpfCompleto', dados.cpf);
-
-        // Preencher campos do formulário completo (se expandido)
-        this.preencherCampo('dataNascimento', dados.dataNascimento);
-        this.preencherCampo('estadoCivil', dados.estadoCivil);
-        this.preencherCampo('rua', dados.rua);
-        this.preencherCampo('numeroEndereco', dados.numero);
-        this.preencherCampo('complemento', dados.complemento);
-        this.preencherCampo('bairro', dados.bairro);
-        this.preencherCampo('cidade', dados.cidade);
-        this.preencherCampo('estado', dados.estado);
-        this.preencherCampo('cep', dados.cep);
-        this.preencherCampo('telefoneCompleto', dados.telefone);
-        this.preencherCampo('email', dados.email);
-        this.preencherCampo('trabalho', dados.trabalho);
-        this.preencherCampo('profissao', dados.profissao);
-        this.preencherCampo('renda', dados.renda);
-        this.preencherCampo('tempoEmprego', dados.tempoEmprego);
-
-        // Referências
-        this.preencherCampo('referencia1Nome', dados.referencia1Nome);
-        this.preencherCampo('referencia1Telefone', dados.referencia1Telefone);
-        this.preencherCampo('referencia1Rua', dados.referencia1Rua);
-        this.preencherCampo('referencia1Numero', dados.referencia1Numero);
-        this.preencherCampo('referencia1Bairro', dados.referencia1Bairro);
-
-        this.preencherCampo('referencia2Nome', dados.referencia2Nome);
-        this.preencherCampo('referencia2Telefone', dados.referencia2Telefone);
-        this.preencherCampo('referencia2Rua', dados.referencia2Rua);
-        this.preencherCampo('referencia2Numero', dados.referencia2Numero);
-        this.preencherCampo('referencia2Bairro', dados.referencia2Bairro);
-
-        // Aplicar formatação aos campos preenchidos
-        this.aplicarFormatacaoImportados();
+    preencherFormulario(dados) {
+        // Função mantida para compatibilidade - redireciona para aplicarDadosJson
+        this.aplicarDadosJson(dados);
     }
 
     preencherCampo(id, valor) {
