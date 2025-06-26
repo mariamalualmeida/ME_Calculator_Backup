@@ -2532,22 +2532,8 @@ class SimuladorEmprestimos {
             console.log('Aplicando dados:', dadosExtraidos);
             
             // Preencher formulário da tela principal
-            if (dadosExtraidos.nome) {
-                const nomeField = document.getElementById('nomeCompleto');
-                if (nomeField) {
-                    nomeField.value = dadosExtraidos.nome;
-                }
-            }
-            
-            if (dadosExtraidos.cpf) {
-                const cpfField = document.getElementById('cpfCompleto');
-                if (cpfField) {
-                    cpfField.value = dadosExtraidos.cpf;
-                }
-            }
-            
-            // Expandir e preencher formulário completo
-            // Usar a nova função aplicarDadosJson com logs detalhados
+            // Usar a nova função aplicarDadosJson com logs detalhados (elimina código duplicado)
+            console.log('🔥 CHAMANDO aplicarDadosJson() da função applyImportData');
             this.aplicarDadosJson(dadosExtraidos);
             
             this.updateFileStatus('Dados aplicados com sucesso!', 'success');
