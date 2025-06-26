@@ -1314,7 +1314,45 @@ class SimuladorEmprestimos {
         modal.setAttribute('data-theme', this.configuracoes.themeMode);
         modal.setAttribute('data-color-theme', this.configuracoes.colorTheme);
         
+        // Configurar botão salvar dinâmico
+        this.configurarBotaoSalvarDinamico();
+        
         console.log('Debug - Configurações abertas, painel admin oculto, login obrigatório');
+    }
+
+    configurarBotaoSalvarDinamico() {
+        const saveBtn = document.getElementById('saveConfigBtn');
+        if (!saveBtn) return;
+        
+        // Ocultar botão inicialmente
+        saveBtn.style.display = 'none';
+        
+        // Selecionar todos os campos do modal
+        const campos = document.querySelectorAll('#configModal input, #configModal select');
+        
+        // Função para mostrar o botão quando algo for alterado
+        const mostrarBotaoSalvar = () => {
+            saveBtn.style.display = 'block';
+        };
+        
+        // Remover event listeners anteriores para evitar duplicação
+        campos.forEach(campo => {
+            campo.removeEventListener('input', mostrarBotaoSalvar);
+            campo.removeEventListener('change', mostrarBotaoSalvar);
+        });
+        
+        // Adicionar event listeners para detectar mudanças
+        campos.forEach(campo => {
+            campo.addEventListener('input', mostrarBotaoSalvar);
+            campo.addEventListener('change', mostrarBotaoSalvar);
+        });
+        
+        // Event listener especial para campos de limite de juros que são criados dinamicamente
+        const limitsTable = document.getElementById('limitsTable');
+        if (limitsTable) {
+            limitsTable.addEventListener('input', mostrarBotaoSalvar);
+            limitsTable.addEventListener('change', mostrarBotaoSalvar);
+        }
     }
 
     fecharModal() {

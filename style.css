@@ -347,40 +347,16 @@ body {
     min-width: 200px !important;
 }
 
-/* Regras específicas para campos individuais em desktop */
-@media (min-width: 769px) {
-    .form-completo-container #numero,
-    .form-completo-container #complemento,
-    .form-completo-container #bairro,
-    .form-completo-container #cidade,
-    .form-completo-container #estado,
-    .form-completo-container #cep,
-    .form-completo-container #localTrabalho,
-    .form-completo-container #profissao,
-    .form-completo-container #rendaMensal,
-    .form-completo-container #tempoEmprego,
-    .form-completo-container #ref1Rua,
-    .form-completo-container #ref1Numero,
-    .form-completo-container #ref1Bairro,
-    .form-completo-container #ref1Cidade,
-    .form-completo-container #ref2Rua,
-    .form-completo-container #ref2Numero,
-    .form-completo-container #ref2Bairro,
-    .form-completo-container #ref2Cidade {
-        width: 100% !important;
-        flex: 1 !important;
-        min-width: 200px !important;
-    }
-    
-    .form-completo-container .input-row .input-group {
-        flex: 1 !important;
-        min-width: 200px !important;
-    }
-    
-    .form-completo-container .input-row .input-group.input-small {
-        flex: 1 !important;
-        min-width: 200px !important;
-    }
+/* Layout simplificado - um campo por linha, todos do mesmo tamanho */
+.form-completo-container .input-group {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.form-completo-container .input-group input,
+.form-completo-container .input-group select {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .form-completo-container input:focus,
