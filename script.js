@@ -2430,6 +2430,9 @@ class SimuladorEmprestimos {
 
         this.updateFileStatus('Processando PDF...', 'processing');
         
+        // LIMPAR TODOS OS CAMPOS ANTES DA EXTRAÇÃO
+        this.limparTodosOsCampos();
+        
         try {
             // Usar FileReader para ler o arquivo
             const arrayBuffer = await this.readFileAsArrayBuffer(file);
@@ -2551,6 +2554,9 @@ class SimuladorEmprestimos {
 
         this.updateFileStatus('Aplicando dados aos formulários...', 'processing');
 
+        // LIMPAR TODOS OS CAMPOS ANTES DA EXTRAÇÃO DE TEXTO COLADO
+        this.limparTodosOsCampos();
+
         try {
             let dadosExtraidos;
             
@@ -2586,6 +2592,45 @@ class SimuladorEmprestimos {
             this.fileStatus.textContent = message;
             this.fileStatus.className = `file-status ${type}`;
         }
+    }
+
+    limparTodosOsCampos() {
+        console.log('🧹 LIMPANDO TODOS OS CAMPOS ANTES DA EXTRAÇÃO');
+        
+        // Campos da tela principal
+        const camposPrincipais = [
+            'valorEmprestimo', 'numeroParcelas', 'taxaJuros', 'dataVencimento',
+            'nomeCompleto', 'cpfCompleto'
+        ];
+        
+        camposPrincipais.forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+                elemento.value = '';
+                console.log(`Campo ${id} limpo`);
+            }
+        });
+        
+        // Campos do formulário completo
+        const camposCompletos = [
+            'dataNascimento', 'estadoCivil', 'telefoneCompleto', 'email',
+            'endereco', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'cep',
+            'localTrabalho', 'profissao', 'rendaMensal', 'tempoEmprego',
+            'ref1Nome', 'ref1Telefone', 'ref1Rua', 'ref1Numero', 'ref1Bairro', 'ref1Cidade',
+            'ref2Nome', 'ref2Telefone', 'ref2Rua', 'ref2Numero', 'ref2Bairro', 'ref2Cidade'
+        ];
+        
+        camposCompletos.forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+                elemento.value = '';
+            }
+        });
+        
+        // Limpar área de resultado
+        this.limparResultado();
+        
+        console.log('✅ Todos os campos foram limpos com sucesso');
     }
 
     clearImportData() {
