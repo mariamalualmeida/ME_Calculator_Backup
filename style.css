@@ -1443,7 +1443,6 @@ body {
 /* Seção do botão de importação */
 .import-section {
     margin-bottom: 24px;
-    text-align: center;
 }
 
 .import-btn {
@@ -1456,13 +1455,15 @@ body {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 8px;
     min-height: 56px;
     width: 100%;
     max-width: 300px;
     justify-content: center;
+    margin: 0 auto;
+    position: relative;
 }
 
 .import-btn:hover {
@@ -1473,6 +1474,275 @@ body {
 .import-btn svg {
     width: 20px;
     height: 20px;
+}
+
+.import-arrow {
+    margin-left: auto;
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+
+.import-btn.expanded .import-arrow {
+    transform: rotate(180deg);
+}
+
+/* Área expansível */
+.import-expand-area {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+}
+
+.import-expand-area.expanded {
+    max-height: 800px;
+    opacity: 1;
+}
+
+.import-content {
+    background: var(--surface-container);
+    border: 1px solid var(--outline-variant);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 12px;
+}
+
+/* Seção de arquivo */
+.import-file-section {
+    margin-bottom: 20px;
+}
+
+.file-input-label {
+    display: block;
+    font-weight: 500;
+    color: var(--on-surface);
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.file-input {
+    width: 100%;
+    padding: 16px;
+    border: 2px dashed var(--outline);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--on-surface);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.file-input:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-container);
+}
+
+.file-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+}
+
+.file-status {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--on-surface-variant);
+    font-weight: 500;
+}
+
+.file-status.success {
+    color: var(--success-color);
+}
+
+.file-status.error {
+    color: var(--error-color);
+}
+
+.file-status.processing {
+    color: var(--warning-color);
+}
+
+/* Seção de texto */
+.import-text-section {
+    margin-bottom: 20px;
+}
+
+.text-area-label {
+    display: block;
+    font-weight: 500;
+    color: var(--on-surface);
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.import-textarea {
+    width: 100%;
+    min-height: 140px;
+    padding: 16px;
+    border: 1px solid var(--outline);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--on-surface);
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.5;
+    resize: vertical;
+    transition: all 0.2s ease;
+}
+
+.import-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+}
+
+.import-textarea::placeholder {
+    color: var(--on-surface-variant);
+    opacity: 0.7;
+}
+
+/* Botões de ação */
+.import-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.preview-btn, .apply-btn, .clear-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.preview-btn {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.preview-btn:hover:not(:disabled) {
+    background: var(--secondary-variant);
+    transform: translateY(-1px);
+}
+
+.apply-btn {
+    background: var(--success-color);
+    color: white;
+}
+
+.apply-btn:hover:not(:disabled) {
+    background: var(--success-variant);
+    transform: translateY(-1px);
+}
+
+.clear-btn {
+    background: var(--error-color);
+    color: white;
+}
+
+.clear-btn:hover {
+    background: var(--error-variant);
+    transform: translateY(-1px);
+}
+
+.preview-btn:disabled, .apply-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Preview dos dados */
+.data-preview-section {
+    background: var(--surface);
+    border: 1px solid var(--outline-variant);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.data-preview-section h4 {
+    margin: 0 0 16px 0;
+    color: var(--primary-color);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.data-preview-content {
+    display: grid;
+    gap: 8px;
+}
+
+.preview-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--outline-variant);
+}
+
+.preview-item:last-child {
+    border-bottom: none;
+}
+
+.preview-label {
+    font-weight: 500;
+    color: var(--on-surface);
+    min-width: 140px;
+    font-size: 14px;
+}
+
+.preview-value {
+    color: var(--on-surface-variant);
+    text-align: right;
+    flex: 1;
+    margin-left: 16px;
+    font-size: 14px;
+    word-break: break-word;
+}
+
+.preview-empty {
+    color: var(--error-color);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+    .import-actions {
+        flex-direction: column;
+    }
+    
+    .preview-btn, .apply-btn, .clear-btn {
+        min-width: unset;
+    }
+    
+    .import-content {
+        padding: 16px;
+    }
+    
+    .preview-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .preview-value {
+        margin-left: 0;
+        margin-top: 4px;
+        text-align: left;
+    }
 }
 
 /* Estilos das abas de importação */

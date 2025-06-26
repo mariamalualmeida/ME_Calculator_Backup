@@ -45,7 +45,57 @@
                         <path d="M10 9H9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     IMPORTAR DADOS
+                    <span class="import-arrow" id="importArrow">▼</span>
                 </button>
+                
+                <!-- Área expansível de importação -->
+                <div id="importExpandArea" class="import-expand-area" style="display: none;">
+                    <div class="import-content">
+                        <div class="import-file-section">
+                            <label for="pdfFileInput" class="file-input-label">
+                                📎 Anexar PDF do Sistema
+                            </label>
+                            <input type="file" id="pdfFileInput" accept=".pdf" class="file-input">
+                            <span class="file-status" id="fileStatus"></span>
+                        </div>
+                        
+                        <div class="import-text-section">
+                            <label for="importTextArea" class="text-area-label">
+                                📋 Ou cole o texto copiado do PDF:
+                            </label>
+                            <textarea 
+                                id="importTextArea" 
+                                class="import-textarea" 
+                                placeholder="Cole aqui o texto completo copiado do PDF...
+
+O sistema irá extrair automaticamente:
+• Dados pessoais (nome, CPF, telefone)
+• Endereço completo
+• Dados profissionais
+• Referências"
+                                rows="6"
+                            ></textarea>
+                        </div>
+                        
+                        <div class="import-actions">
+                            <button type="button" id="previewDataBtn" class="preview-btn" disabled>
+                                👁 VISUALIZAR DADOS
+                            </button>
+                            <button type="button" id="applyDataBtn" class="apply-btn" disabled>
+                                ✅ APLICAR DADOS
+                            </button>
+                            <button type="button" id="clearImportBtn" class="clear-btn">
+                                🗑 LIMPAR
+                            </button>
+                        </div>
+                        
+                        <!-- Preview dos dados extraídos -->
+                        <div id="dataPreviewSection" class="data-preview-section" style="display: none;">
+                            <h4>📋 Dados Detectados:</h4>
+                            <div id="dataPreviewContent" class="data-preview-content"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="input-section">
@@ -487,68 +537,7 @@
         </div>
     </div>
 
-    <!-- Modal de Importação de Dados -->
-    <div id="importModal" class="modal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3>Importar Dados do Cliente</h3>
-                <button id="closeImportModal" class="close-btn">
-                    <span class="close-symbol">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Abas de Importação -->
-                <div class="import-tabs">
-                    <button id="tabPdf" class="tab-btn active">PDF do Sistema</button>
-                    <button id="tabFormulario" class="tab-btn">Formulário Copiado</button>
-                </div>
 
-                <!-- Conteúdo da Aba PDF -->
-                <div id="contentPdf" class="tab-content active">
-                    <div class="import-instructions">
-                        <p><strong>Instruções para PDF:</strong></p>
-                        <p>1. Abra o PDF gerado pelo sistema</p>
-                        <p>2. Selecione e copie todo o conteúdo (Ctrl+A, Ctrl+C)</p>
-                        <p>3. Cole o texto na área abaixo</p>
-                    </div>
-                    <textarea 
-                        id="pdfTextArea" 
-                        class="import-textarea" 
-                        placeholder="Cole aqui o texto copiado do PDF..."
-                        rows="10"
-                    ></textarea>
-                </div>
-
-                <!-- Conteúdo da Aba Formulário -->
-                <div id="contentFormulario" class="tab-content">
-                    <div class="import-instructions">
-                        <p><strong>Instruções para Formulário:</strong></p>
-                        <p>1. Copie o formulário preenchido</p>
-                        <p>2. Cole o texto completo na área abaixo</p>
-                        <p>3. Mantenha a formatação original</p>
-                    </div>
-                    <textarea 
-                        id="formularioTextArea" 
-                        class="import-textarea" 
-                        placeholder="Cole aqui o formulário preenchido..."
-                        rows="10"
-                    ></textarea>
-                </div>
-
-                <!-- Botões de Ação -->
-                <div class="import-actions">
-                    <button id="previewBtn" class="preview-btn">VISUALIZAR DADOS</button>
-                    <button id="importBtn" class="import-btn-action">IMPORTAR DADOS</button>
-                </div>
-
-                <!-- Preview dos Dados -->
-                <div id="dataPreview" class="data-preview" style="display: none;">
-                    <h4>Dados Detectados:</h4>
-                    <div id="previewContent"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="script.js?v=20250626080000"></script>
