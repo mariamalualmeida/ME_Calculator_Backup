@@ -307,6 +307,7 @@ SimuladorEmprestimos/
 - June 26, 2025: MENSAGENS DE ERRO PADRONIZADAS - alteradas todas mensagens de validação para usar "SIMULAÇÃO NEGADA" no início, substituindo textos genéricos como "error" e "ERRO DE VALIDAÇÃO", implementado em versões Web/PWA (HTML + JavaScript) e Android (Kotlin), uniformização completa da comunicação de erros, cache v=20250625590000 (v20250625590000)
 - June 26, 2025: CORREÇÃO FINAL INTERFACE E CREDENCIAIS - removido ícone Material Icons problemático que exibia texto "cancel" na interface, alteradas credenciais administrativas padrão para Usuário: "Migueis" e Senha: "Laila@1004" em todas as versões (Web/PWA e Android), interface de erro limpa apenas com título "SIMULAÇÃO NEGADA", cache v=20250626000000 (v20250626000000)
 - June 26, 2025: CORREÇÕES BOTÃO SALVAR E LARGURA CAIXAS - excluídos campos de usuário/senha da regra do botão salvar dinâmico nas configurações, corrigida largura das caixas de resultado e erro para 100% com max-width 640px igual ao container principal, implementado botão salvar dinâmico na versão Android excluindo campos de login, sincronização total Web/PWA/Android, cache v=20250626010000 (v20250626010000)
+- June 26, 2025: LAYOUT CAMPOS LOGIN ADMINISTRATIVO CORRIGIDO - alterado CSS da classe .admin-login para flex-direction: column com gap de 12px, campos usuário e senha agora aparecem um abaixo do outro seguindo padrão das outras caixas, corrigida versão Android usando Column em vez de Row, layout uniforme em desktop e mobile, cache v=20250626020000 (v20250626020000)
 
 ## User Preferences
 

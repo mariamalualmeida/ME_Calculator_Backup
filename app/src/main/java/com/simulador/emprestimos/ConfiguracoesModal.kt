@@ -290,15 +290,15 @@ fun ConfiguracoesModal(
                             )
                             
                             if (!showAdminPanel) {
-                                // Login administrativo
-                                Row(
+                                // Login administrativo - um campo abaixo do outro
+                                Column(
                                     modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    verticalArrangement = Arrangement.spacedBy(12.dp)
                                 ) {
                                     OutlinedTextField(
                                         value = adminUser,
                                         onValueChange = { adminUser = it },
-                                        modifier = Modifier.weight(1f),
+                                        modifier = Modifier.fillMaxWidth(),
                                         placeholder = { Text("Usuário") },
                                         singleLine = true
                                     )
@@ -306,7 +306,7 @@ fun ConfiguracoesModal(
                                     OutlinedTextField(
                                         value = adminPassword,
                                         onValueChange = { adminPassword = it },
-                                        modifier = Modifier.weight(1f),
+                                        modifier = Modifier.fillMaxWidth(),
                                         placeholder = { Text("Senha") },
                                         visualTransformation = if (passwordVisible) androidx.compose.ui.text.input.VisualTransformation.None else PasswordVisualTransformation(),
                                         trailingIcon = {

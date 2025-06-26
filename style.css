@@ -769,12 +769,13 @@ body {
 
 .admin-login {
     display: flex;
-    gap: 8px;
+    flex-direction: column;
+    gap: 12px;
     margin-bottom: 16px;
 }
 
 .admin-login input {
-    flex: 1;
+    width: 100%;
 }
 
 .password-wrapper {
