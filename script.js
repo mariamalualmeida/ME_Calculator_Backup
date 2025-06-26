@@ -3260,8 +3260,24 @@ class SimuladorEmprestimos {
         try {
             console.log('Extraindo dados cadastrais com texto pré-processado...');
             
-            // Debug: mostrar uma amostra do texto processado
+            // Debug: mostrar uma amostra do texto processado focando em dados profissionais
             console.log('Primeiros 800 chars do texto processado:', textoProcessado.substring(0, 800));
+            
+            // Debug específico para seção DADOS PROFISSIONAIS
+            const secaoProfissional = textoProcessado.match(/DADOS PROFISSIONAIS:([\s\S]*?)(?=1ª REFERÊNCIA|$)/i);
+            if (secaoProfissional) {
+                console.log('=== SEÇÃO DADOS PROFISSIONAIS ENCONTRADA ===');
+                console.log('Conteúdo:', secaoProfissional[1].substring(0, 400));
+            } else {
+                console.log('❌ SEÇÃO DADOS PROFISSIONAIS NÃO ENCONTRADA');
+                // Tentar encontrar campos individuais
+                const profissaoTest = textoProcessado.match(/Profissão:/i);
+                const trabalhoTest = textoProcessado.match(/Local de Trabalho:/i);
+                const rendaTest = textoProcessado.match(/Renda Mensal:/i);
+                console.log('Teste Profissão encontrada:', !!profissaoTest);
+                console.log('Teste Local de Trabalho encontrado:', !!trabalhoTest);
+                console.log('Teste Renda Mensal encontrada:', !!rendaTest);
+            }
             
             // Dados principais com regex limitados por próximo campo
             dados.nome = this.extrairMatch(/Nome:\s*([^\n\r]+?)(?=\s*CPF:|$)/i, textoProcessado);
@@ -3291,17 +3307,17 @@ class SimuladorEmprestimos {
             dados.estado = this.extrairMatch(/Estado:\s*([^\n\r]+?)(?=\s*CEP:|$)/i, textoProcessado);
             dados.cep = this.extrairMatch(/CEP:\s*([\d-]+?)(?=\s*Telefone:|$)/i, textoProcessado);
 
-            // Dados profissionais
-            dados.profissao = this.extrairMatch(/Profissão:\s*([^\n\r]+?)(?=\s*Local de Trabalho:|$)/i, textoProcessado);
+            // Dados profissionais com regex mais robustos
+            dados.profissao = this.extrairMatch(/Profissão:\s*([^\n\r]+?)(?=\s*Local de Trabalho|Renda Mensal|1ª REFERÊNCIA|$)/i, textoProcessado);
             console.log('Profissão extraída:', dados.profissao);
             
-            dados.trabalho = this.extrairMatch(/Local de Trabalho:\s*([^\n\r]+?)(?=\s*Renda Mensal:|$)/i, textoProcessado);
+            dados.trabalho = this.extrairMatch(/Local de Trabalho:\s*([^\n\r]+?)(?=\s*Renda Mensal|Tempo de Emprego|Profissão|1ª REFERÊNCIA|$)/i, textoProcessado);
             console.log('Local trabalho extraído:', dados.trabalho);
             
-            dados.renda = this.extrairMatch(/Renda Mensal:\s*([\d.,]+?)(?=\s*Tempo de Emprego:|$)/i, textoProcessado);
+            dados.renda = this.extrairMatch(/Renda Mensal:\s*R?\$?\s*([\d.,]+?)(?=\s*Tempo de Emprego|1ª REFERÊNCIA|$)/i, textoProcessado);
             console.log('Renda extraída:', dados.renda);
             
-            dados.tempoEmprego = this.extrairMatch(/Tempo de Emprego:\s*([^\n\r]+?)(?=\s*1ª REFERÊNCIA:|$)/i, textoProcessado);
+            dados.tempoEmprego = this.extrairMatch(/Tempo de Emprego:\s*([^\n\r]+?)(?=\s*1ª REFERÊNCIA|$)/i, textoProcessado);
             console.log('Tempo emprego extraído:', dados.tempoEmprego);
 
             // Referências com parsing de seções usando campos separados
@@ -3659,15 +3675,15 @@ class SimuladorEmprestimos {
                 
                 // Aguardar expansão antes de preencher
                 setTimeout(() => {
-                    // Dados pessoais completos
+                    // Dados pessoais completos - IDs corretos do HTML
                     this.preencherCampo('dataNascimento', dados.dataNascimento ? dados.dataNascimento.replace(/\//g, '') : '');
                     this.preencherCampo('estadoCivil', dados.estadoCivil || '');
-                    this.preencherCampo('telefone', dados.telefone ? dados.telefone.replace(/[()\ -]/g, '') : '');
+                    this.preencherCampo('telefoneCompleto', dados.telefone ? dados.telefone.replace(/[()\ -]/g, '') : '');
                     this.preencherCampo('email', dados.email || '');
                     
-                    // Endereço completo
+                    // Endereço completo - IDs corretos do HTML
                     this.preencherCampo('endereco', dados.rua || '');
-                    this.preencherCampo('numeroEndereco', dados.numero || '');
+                    this.preencherCampo('numero', dados.numero || '');
                     this.preencherCampo('complemento', dados.complemento || '');
                     this.preencherCampo('bairro', dados.bairro || '');
                     this.preencherCampo('cidade', dados.cidade || '');
