@@ -1502,15 +1502,15 @@ body {
 .import-expand-area {
     overflow: hidden;
     max-height: 0;
-    transition: max-height 0.3s ease, opacity 0.3s ease;
+    transition: max-height 0.4s ease-out, opacity 0.4s ease-out, padding 0.4s ease-out;
     opacity: 0;
-    margin-top: 0;
+    padding: 0;
 }
 
 .import-expand-area.expanded {
-    max-height: 1000px;
+    max-height: 2000px;
     opacity: 1;
-    margin-top: 16px;
+    padding: 16px 0;
 }
 
 .import-content {
@@ -1519,6 +1519,7 @@ body {
     border-radius: 12px;
     padding: 24px;
     margin-top: 8px;
+    min-height: 200px;
 }
 
 /* Seção de arquivo */

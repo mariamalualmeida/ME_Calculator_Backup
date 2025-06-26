@@ -2382,11 +2382,15 @@ class SimuladorEmprestimos {
             console.log('Recolhendo área de importação');
             expandArea.classList.remove('expanded');
             importBtn.classList.remove('expanded');
+            // Forçar altura 0 para garantir recolhimento
+            expandArea.style.maxHeight = '0px';
             this.clearImportData();
         } else {
             console.log('Expandindo área de importação');
             expandArea.classList.add('expanded');
             importBtn.classList.add('expanded');
+            // Forçar altura máxima para garantir expansão
+            expandArea.style.maxHeight = '2000px';
         }
         
         // Atualizar referências
