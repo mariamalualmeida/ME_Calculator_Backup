@@ -163,6 +163,21 @@ class SimuladorEmprestimos {
         this.exportPdfBtn = document.getElementById('exportPdfBtn');
         this.configBtn = document.getElementById('configBtn');
         
+        // Elementos do sistema de importação
+        this.importDataBtn = document.getElementById('importDataBtn');
+        this.importModal = document.getElementById('importModal');
+        this.closeImportModal = document.getElementById('closeImportModal');
+        this.tabPdf = document.getElementById('tabPdf');
+        this.tabFormulario = document.getElementById('tabFormulario');
+        this.contentPdf = document.getElementById('contentPdf');
+        this.contentFormulario = document.getElementById('contentFormulario');
+        this.pdfTextArea = document.getElementById('pdfTextArea');
+        this.formularioTextArea = document.getElementById('formularioTextArea');
+        this.previewBtn = document.getElementById('previewBtn');
+        this.importBtn = document.getElementById('importBtn');
+        this.dataPreview = document.getElementById('dataPreview');
+        this.previewContent = document.getElementById('previewContent');
+        
         console.log('Taxa de juros field encontrado:', !!this.taxaJurosField);
         console.log('ID do campo:', this.taxaJurosField?.id);
     }
@@ -381,6 +396,9 @@ class SimuladorEmprestimos {
         // Configurar formatação dos campos do formulário completo
         this.setupFormCompletoFormatting();
         this.setupDateMaskFormatting();
+        
+        // Event listeners para sistema de importação
+        this.setupImportEventListeners();
     }
 
     // Função para toggle do formulário completo
@@ -2250,6 +2268,546 @@ class SimuladorEmprestimos {
         const dataNascimentoField = document.getElementById('dataNascimento');
         if (dataNascimentoField) {
             dataNascimentoField.addEventListener('input', (e) => this.formatarData(e.target));
+        }
+    }
+
+    // =============================================
+    // SISTEMA DE IMPORTAÇÃO DE DADOS
+    // =============================================
+
+    setupImportEventListeners() {
+        // Botão principal de importação
+        if (this.importDataBtn) {
+            this.importDataBtn.addEventListener('click', () => {
+                this.abrirModalImportacao();
+            });
+        }
+
+        // Fechar modal
+        if (this.closeImportModal) {
+            this.closeImportModal.addEventListener('click', () => {
+                this.fecharModalImportacao();
+            });
+        }
+
+        // Fechar modal clicando fora
+        if (this.importModal) {
+            this.importModal.addEventListener('click', (e) => {
+                if (e.target.id === 'importModal') {
+                    this.fecharModalImportacao();
+                }
+            });
+        }
+
+        // Navegação entre abas
+        if (this.tabPdf) {
+            this.tabPdf.addEventListener('click', () => {
+                this.trocarAbaImportacao('pdf');
+            });
+        }
+
+        if (this.tabFormulario) {
+            this.tabFormulario.addEventListener('click', () => {
+                this.trocarAbaImportacao('formulario');
+            });
+        }
+
+        // Botões de ação
+        if (this.previewBtn) {
+            this.previewBtn.addEventListener('click', () => {
+                this.visualizarDados();
+            });
+        }
+
+        if (this.importBtn) {
+            this.importBtn.addEventListener('click', () => {
+                this.importarDados();
+            });
+        }
+
+        // Limpar preview quando texto mudar
+        if (this.pdfTextArea) {
+            this.pdfTextArea.addEventListener('input', () => {
+                this.limparPreview();
+            });
+        }
+
+        if (this.formularioTextArea) {
+            this.formularioTextArea.addEventListener('input', () => {
+                this.limparPreview();
+            });
+        }
+    }
+
+    abrirModalImportacao() {
+        if (this.importModal) {
+            this.importModal.style.display = 'flex';
+            this.limparTextAreas();
+            this.limparPreview();
+            this.trocarAbaImportacao('pdf'); // Sempre começar na primeira aba
+        }
+    }
+
+    fecharModalImportacao() {
+        if (this.importModal) {
+            this.importModal.style.display = 'none';
+            this.limparTextAreas();
+            this.limparPreview();
+        }
+    }
+
+    trocarAbaImportacao(aba) {
+        // Remover classes ativas
+        this.tabPdf?.classList.remove('active');
+        this.tabFormulario?.classList.remove('active');
+        this.contentPdf?.classList.remove('active');
+        this.contentFormulario?.classList.remove('active');
+
+        // Adicionar classes ativas na aba selecionada
+        if (aba === 'pdf') {
+            this.tabPdf?.classList.add('active');
+            this.contentPdf?.classList.add('active');
+        } else {
+            this.tabFormulario?.classList.add('active');
+            this.contentFormulario?.classList.add('active');
+        }
+
+        this.limparPreview();
+    }
+
+    limparTextAreas() {
+        if (this.pdfTextArea) this.pdfTextArea.value = '';
+        if (this.formularioTextArea) this.formularioTextArea.value = '';
+    }
+
+    limparPreview() {
+        if (this.dataPreview) {
+            this.dataPreview.style.display = 'none';
+        }
+        if (this.previewContent) {
+            this.previewContent.innerHTML = '';
+        }
+        if (this.importBtn) {
+            this.importBtn.disabled = true;
+        }
+    }
+
+    visualizarDados() {
+        try {
+            const abaAtiva = this.tabPdf?.classList.contains('active') ? 'pdf' : 'formulario';
+            const texto = abaAtiva === 'pdf' ? 
+                this.pdfTextArea?.value.trim() || '' : 
+                this.formularioTextArea?.value.trim() || '';
+
+            if (!texto) {
+                alert('Por favor, cole o texto na área correspondente antes de visualizar.');
+                return;
+            }
+
+            const dadosExtraidos = this.extrairDadosTexto(texto, abaAtiva);
+            this.exibirPreview(dadosExtraidos);
+
+        } catch (error) {
+            console.error('Erro ao visualizar dados:', error);
+            alert('Erro ao processar o texto. Verifique o formato e tente novamente.');
+        }
+    }
+
+    extrairDadosTexto(texto, tipoFonte) {
+        const dados = {
+            // Dados principais
+            nome: '',
+            cpf: '',
+            dataNascimento: '',
+            estadoCivil: '',
+            telefone: '',
+            email: '',
+            
+            // Endereço
+            rua: '',
+            numero: '',
+            complemento: '',
+            bairro: '',
+            cidade: '',
+            estado: '',
+            cep: '',
+            
+            // Dados profissionais
+            trabalho: '',
+            profissao: '',
+            renda: '',
+            tempoEmprego: '',
+            
+            // Referências
+            referencia1Nome: '',
+            referencia1Telefone: '',
+            referencia1Rua: '',
+            referencia1Numero: '',
+            referencia1Bairro: '',
+            referencia2Nome: '',
+            referencia2Telefone: '',
+            referencia2Rua: '',
+            referencia2Numero: '',
+            referencia2Bairro: ''
+        };
+
+        try {
+            if (tipoFonte === 'pdf') {
+                // Extração para PDF do sistema
+                this.extrairDadosPdfSistema(texto, dados);
+            } else {
+                // Extração para formulário copiado
+                this.extrairDadosFormulario(texto, dados);
+            }
+        } catch (error) {
+            console.error('Erro na extração:', error);
+        }
+
+        return dados;
+    }
+
+    extrairDadosPdfSistema(texto, dados) {
+        // Regex para dados pessoais no PDF do sistema
+        const regexNome = /Nome:\s*([^\n\r]+)/i;
+        const regexCpf = /CPF:\s*([\d\.\-]+)/i;
+        const regexDataNasc = /Data de Nascimento:\s*(\d{2}\/\d{2}\/\d{4})/i;
+        const regexEstadoCivil = /Estado Civil:\s*([^\n\r]+)/i;
+        const regexTelefone = /Telefone:\s*(\([0-9]{2}\)\s*[0-9\-\s]+)/i;
+        const regexEmail = /E-mail:\s*([^\n\r\s]+)/i;
+
+        // Endereço (formato: Endereço: Rua da Mata, 464, Casa)
+        const regexEndereco = /Endereço:\s*([^,\n\r]+),\s*(\d+),?\s*([^\n\r]*)/i;
+        const regexBairro = /Bairro:\s*([^\n\r]+)/i;
+        const regexCidade = /Cidade:\s*([^\-\n\r]+)(?:\s*\-\s*([A-Z]{2}))?/i;
+        const regexCep = /CEP:\s*([\d\-]+)/i;
+
+        // Dados profissionais
+        const regexProfissao = /Profissão:\s*([^\n\r]+)/i;
+        const regexTrabalho = /Local de Trabalho:\s*([^\n\r]+)/i;
+        const regexRenda = /Renda Mensal:\s*([\d\.,]+)/i;
+        const regexTempo = /Tempo de Emprego:\s*([^\n\r]+)/i;
+
+        // Referências
+        const regexRef1Nome = /1ª REFERÊNCIA:\s*\n\s*Nome:\s*([^\n\r]+)/i;
+        const regexRef1Tel = /1ª REFERÊNCIA:[\s\S]*?Telefone:\s*(\([0-9]{2}\)\s*[0-9\-\s]+)/i;
+        const regexRef1End = /1ª REFERÊNCIA:[\s\S]*?Endereço:\s*([^,\n\r]+)(?:,\s*(\d+))?/i;
+        const regexRef1Bairro = /1ª REFERÊNCIA:[\s\S]*?Bairro:\s*([^\n\r]+)/i;
+
+        const regexRef2Nome = /2ª REFERÊNCIA:\s*\n\s*Nome:\s*([^\n\r]+)/i;
+        const regexRef2Tel = /2ª REFERÊNCIA:[\s\S]*?Telefone:\s*(\([0-9]{2}\)\s*[0-9\-\s]+)/i;
+        const regexRef2End = /2ª REFERÊNCIA:[\s\S]*?Endereço:\s*([^,\n\r]+)(?:,\s*(\d+))?/i;
+        const regexRef2Bairro = /2ª REFERÊNCIA:[\s\S]*?Bairro:\s*([^\n\r]+)/i;
+
+        // Aplicar extrações
+        dados.nome = this.extrairMatch(regexNome, texto);
+        dados.cpf = this.extrairMatch(regexCpf, texto);
+        dados.dataNascimento = this.extrairMatch(regexDataNasc, texto);
+        dados.estadoCivil = this.extrairMatch(regexEstadoCivil, texto);
+        dados.telefone = this.extrairMatch(regexTelefone, texto);
+        dados.email = this.extrairMatch(regexEmail, texto);
+
+        // Endereço
+        const enderecoMatch = texto.match(regexEndereco);
+        if (enderecoMatch) {
+            dados.rua = enderecoMatch[1]?.trim() || '';
+            dados.numero = enderecoMatch[2]?.trim() || '';
+            dados.complemento = enderecoMatch[3]?.trim() || '';
+        }
+
+        dados.bairro = this.extrairMatch(regexBairro, texto);
+        
+        const cidadeMatch = texto.match(regexCidade);
+        if (cidadeMatch) {
+            dados.cidade = cidadeMatch[1]?.trim() || '';
+            dados.estado = cidadeMatch[2]?.trim() || '';
+        }
+
+        dados.cep = this.extrairMatch(regexCep, texto);
+
+        // Dados profissionais
+        dados.profissao = this.extrairMatch(regexProfissao, texto);
+        dados.trabalho = this.extrairMatch(regexTrabalho, texto);
+        dados.renda = this.extrairMatch(regexRenda, texto);
+        dados.tempoEmprego = this.extrairMatch(regexTempo, texto);
+
+        // Referências
+        dados.referencia1Nome = this.extrairMatch(regexRef1Nome, texto);
+        dados.referencia1Telefone = this.extrairMatch(regexRef1Tel, texto);
+        dados.referencia1Bairro = this.extrairMatch(regexRef1Bairro, texto);
+
+        const ref1EndMatch = texto.match(regexRef1End);
+        if (ref1EndMatch) {
+            dados.referencia1Rua = ref1EndMatch[1]?.trim() || '';
+            dados.referencia1Numero = ref1EndMatch[2]?.trim() || '';
+        }
+
+        dados.referencia2Nome = this.extrairMatch(regexRef2Nome, texto);
+        dados.referencia2Telefone = this.extrairMatch(regexRef2Tel, texto);
+        dados.referencia2Bairro = this.extrairMatch(regexRef2Bairro, texto);
+
+        const ref2EndMatch = texto.match(regexRef2End);
+        if (ref2EndMatch) {
+            dados.referencia2Rua = ref2EndMatch[1]?.trim() || '';
+            dados.referencia2Numero = ref2EndMatch[2]?.trim() || '';
+        }
+    }
+
+    extrairDadosFormulario(texto, dados) {
+        // Regex para formulário copiado (formato mais livre)
+        const regexNome = /Nome:\s*([^\n\r]+)/i;
+        const regexCpf = /CPF:\s*([\d\.\-]*\d)/i;
+        const regexDataNasc = /Data nascimento:\s*(\d{2}\/\d{2}\/\d{4})/i;
+        const regexEstadoCivil = /Estado Civil:\s*([^\n\r]+)/i;
+        const regexTelefone = /Telefone:\s*(\([0-9]{2}\)[0-9\-\s]*)/i;
+        const regexEmail = /E-mail:\s*([^\n\r\s]+)/i;
+
+        // Endereço separado
+        const regexRua = /Endereço:\s*([^\n\r]+)/i;
+        const regexNumero = /Número:\s*([^\n\r]+)/i;
+        const regexComplemento = /Complemento:\s*([^\n\r]+)/i;
+        const regexBairro = /Bairro:\s*([^\n\r]+)/i;
+        const regexCidade = /Cidade:\s*([^\n\r]+)/i;
+        const regexEstado = /Estado:\s*([^\n\r]+)/i;
+        const regexCep = /CEP:\s*([\d\-]+)/i;
+
+        // Dados profissionais
+        const regexTrabalho = /Local de trabalho:\s*([^\n\r]+)/i;
+        const regexProfissao = /Profissão:\s*([^\n\r]+)/i;
+        const regexRenda = /Renda Mensal:\s*R\$\s*([\d\.,]+)/i;
+        const regexTempo = /Tempo de emprego:\s*([^\n\r]+)/i;
+
+        // Referências (1º REREFENCIA pode ter typo)
+        const regexRef1Nome = /1[ºo°]\s*REFER[EÊ]NCIA[\s\S]*?Nome:\s*([^\n\r]+)/i;
+        const regexRef1Rua = /1[ºo°]\s*REFER[EÊ]NCIA[\s\S]*?Rua:\s*([^\n\r]+)/i;
+        const regexRef1Numero = /1[ºo°]\s*REFER[EÊ]NCIA[\s\S]*?Numero:\s*([^\n\r]+)/i;
+        const regexRef1Bairro = /1[ºo°]\s*REFER[EÊ]NCIA[\s\S]*?Bairro:\s*([^\n\r]+)/i;
+        const regexRef1Tel = /1[ºo°]\s*REFER[EÊ]NCIA[\s\S]*?Telefone:\s*(\([0-9]{2}\)[0-9\-\s]*)/i;
+
+        const regexRef2Nome = /2[ºo°]\s*REFER[EÊ]NCIA[\s\S]*?Nome:\s*([^\n\r]+)/i;
+        const regexRef2Rua = /2[ºo°]\s*REFER[EÊ]NCIA[\s\S]*?Rua:\s*([^\n\r]+)/i;
+        const regexRef2Numero = /2[ºo°]\s*REFER[EÊ]NCIA[\s\S]*?Numero:\s*([^\n\r]+)/i;
+        const regexRef2Bairro = /2[ºo°]\s*REFER[EÊ]NCIA[\s\S]*?Bairro:\s*([^\n\r]+)/i;
+        const regexRef2Tel = /2[ºo°]\s*REFER[EÊ]NCIA[\s\S]*?Telefone:\s*(\([0-9]{2}\)[0-9\-\s]*)/i;
+
+        // Aplicar extrações
+        dados.nome = this.extrairMatch(regexNome, texto);
+        dados.cpf = this.extrairMatch(regexCpf, texto);
+        dados.dataNascimento = this.extrairMatch(regexDataNasc, texto);
+        dados.estadoCivil = this.extrairMatch(regexEstadoCivil, texto);
+        dados.telefone = this.extrairMatch(regexTelefone, texto);
+        dados.email = this.extrairMatch(regexEmail, texto);
+
+        // Endereço
+        dados.rua = this.extrairMatch(regexRua, texto);
+        dados.numero = this.extrairMatch(regexNumero, texto);
+        dados.complemento = this.extrairMatch(regexComplemento, texto);
+        dados.bairro = this.extrairMatch(regexBairro, texto);
+        dados.cidade = this.extrairMatch(regexCidade, texto);
+        dados.estado = this.extrairMatch(regexEstado, texto);
+        dados.cep = this.extrairMatch(regexCep, texto);
+
+        // Dados profissionais
+        dados.trabalho = this.extrairMatch(regexTrabalho, texto);
+        dados.profissao = this.extrairMatch(regexProfissao, texto);
+        dados.renda = this.extrairMatch(regexRenda, texto);
+        dados.tempoEmprego = this.extrairMatch(regexTempo, texto);
+
+        // Referências
+        dados.referencia1Nome = this.extrairMatch(regexRef1Nome, texto);
+        dados.referencia1Rua = this.extrairMatch(regexRef1Rua, texto);
+        dados.referencia1Numero = this.extrairMatch(regexRef1Numero, texto);
+        dados.referencia1Bairro = this.extrairMatch(regexRef1Bairro, texto);
+        dados.referencia1Telefone = this.extrairMatch(regexRef1Tel, texto);
+
+        dados.referencia2Nome = this.extrairMatch(regexRef2Nome, texto);
+        dados.referencia2Rua = this.extrairMatch(regexRef2Rua, texto);
+        dados.referencia2Numero = this.extrairMatch(regexRef2Numero, texto);
+        dados.referencia2Bairro = this.extrairMatch(regexRef2Bairro, texto);
+        dados.referencia2Telefone = this.extrairMatch(regexRef2Tel, texto);
+    }
+
+    extrairMatch(regex, texto) {
+        const match = texto.match(regex);
+        return match ? match[1]?.trim() || '' : '';
+    }
+
+    exibirPreview(dados) {
+        if (!this.dataPreview || !this.previewContent) return;
+
+        const campos = [
+            { label: 'Nome', value: dados.nome },
+            { label: 'CPF', value: dados.cpf },
+            { label: 'Data Nascimento', value: dados.dataNascimento },
+            { label: 'Estado Civil', value: dados.estadoCivil },
+            { label: 'Telefone', value: dados.telefone },
+            { label: 'E-mail', value: dados.email },
+            { label: 'Rua', value: dados.rua },
+            { label: 'Número', value: dados.numero },
+            { label: 'Complemento', value: dados.complemento },
+            { label: 'Bairro', value: dados.bairro },
+            { label: 'Cidade', value: dados.cidade },
+            { label: 'Estado', value: dados.estado },
+            { label: 'CEP', value: dados.cep },
+            { label: 'Local Trabalho', value: dados.trabalho },
+            { label: 'Profissão', value: dados.profissao },
+            { label: 'Renda', value: dados.renda },
+            { label: 'Tempo Emprego', value: dados.tempoEmprego },
+            { label: '1ª Ref. Nome', value: dados.referencia1Nome },
+            { label: '1ª Ref. Telefone', value: dados.referencia1Telefone },
+            { label: '1ª Ref. Rua', value: dados.referencia1Rua },
+            { label: '1ª Ref. Número', value: dados.referencia1Numero },
+            { label: '1ª Ref. Bairro', value: dados.referencia1Bairro },
+            { label: '2ª Ref. Nome', value: dados.referencia2Nome },
+            { label: '2ª Ref. Telefone', value: dados.referencia2Telefone },
+            { label: '2ª Ref. Rua', value: dados.referencia2Rua },
+            { label: '2ª Ref. Número', value: dados.referencia2Numero },
+            { label: '2ª Ref. Bairro', value: dados.referencia2Bairro }
+        ];
+
+        let html = '';
+        let camposEncontrados = 0;
+
+        campos.forEach(campo => {
+            const value = campo.value || '';
+            const isEmpty = !value;
+            
+            if (!isEmpty) camposEncontrados++;
+
+            html += `
+                <div class="preview-item">
+                    <span class="preview-label">${campo.label}:</span>
+                    <span class="preview-value ${isEmpty ? 'preview-empty' : ''}">${
+                        isEmpty ? '(não encontrado)' : value
+                    }</span>
+                </div>
+            `;
+        });
+
+        this.previewContent.innerHTML = html;
+        this.dataPreview.style.display = 'block';
+
+        // Habilitar botão de importação se houver dados
+        if (this.importBtn) {
+            this.importBtn.disabled = camposEncontrados === 0;
+        }
+
+        // Rolar para o preview
+        this.dataPreview.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    importarDados() {
+        try {
+            const abaAtiva = this.tabPdf?.classList.contains('active') ? 'pdf' : 'formulario';
+            const texto = abaAtiva === 'pdf' ? 
+                this.pdfTextArea?.value.trim() || '' : 
+                this.formularioTextArea?.value.trim() || '';
+
+            if (!texto) {
+                alert('Nenhum texto encontrado para importar.');
+                return;
+            }
+
+            const dadosExtraidos = this.extrairDadosTexto(texto, abaAtiva);
+            this.preencherFormulario(dadosExtraidos);
+            
+            alert('Dados importados com sucesso!');
+            this.fecharModalImportacao();
+
+        } catch (error) {
+            console.error('Erro ao importar dados:', error);
+            alert('Erro ao importar dados. Tente novamente.');
+        }
+    }
+
+    preencherFormulario(dados) {
+        // Expandir formulário automaticamente se houver dados cadastrais
+        const temDadosCadastrais = dados.nome || dados.cpf || dados.telefone || dados.rua;
+        if (temDadosCadastrais) {
+            this.expandirFormularioCompleto();
+        }
+
+        // Preencher campos principais (sempre visíveis)
+        this.preencherCampo('nomeCompleto', dados.nome);
+        this.preencherCampo('cpfCompleto', dados.cpf);
+
+        // Preencher campos do formulário completo (se expandido)
+        this.preencherCampo('dataNascimento', dados.dataNascimento);
+        this.preencherCampo('estadoCivil', dados.estadoCivil);
+        this.preencherCampo('rua', dados.rua);
+        this.preencherCampo('numeroEndereco', dados.numero);
+        this.preencherCampo('complemento', dados.complemento);
+        this.preencherCampo('bairro', dados.bairro);
+        this.preencherCampo('cidade', dados.cidade);
+        this.preencherCampo('estado', dados.estado);
+        this.preencherCampo('cep', dados.cep);
+        this.preencherCampo('telefoneCompleto', dados.telefone);
+        this.preencherCampo('email', dados.email);
+        this.preencherCampo('trabalho', dados.trabalho);
+        this.preencherCampo('profissao', dados.profissao);
+        this.preencherCampo('renda', dados.renda);
+        this.preencherCampo('tempoEmprego', dados.tempoEmprego);
+
+        // Referências
+        this.preencherCampo('referencia1Nome', dados.referencia1Nome);
+        this.preencherCampo('referencia1Telefone', dados.referencia1Telefone);
+        this.preencherCampo('referencia1Rua', dados.referencia1Rua);
+        this.preencherCampo('referencia1Numero', dados.referencia1Numero);
+        this.preencherCampo('referencia1Bairro', dados.referencia1Bairro);
+
+        this.preencherCampo('referencia2Nome', dados.referencia2Nome);
+        this.preencherCampo('referencia2Telefone', dados.referencia2Telefone);
+        this.preencherCampo('referencia2Rua', dados.referencia2Rua);
+        this.preencherCampo('referencia2Numero', dados.referencia2Numero);
+        this.preencherCampo('referencia2Bairro', dados.referencia2Bairro);
+
+        // Aplicar formatação aos campos preenchidos
+        this.aplicarFormatacaoImportados();
+    }
+
+    preencherCampo(id, valor) {
+        if (!valor) return;
+
+        const campo = document.getElementById(id);
+        if (campo) {
+            campo.value = valor;
+        }
+    }
+
+    expandirFormularioCompleto() {
+        const container = document.getElementById('formCompletoContainer');
+        const toggleBtn = document.getElementById('toggleFormCompleto');
+        const icon = toggleBtn?.querySelector('.toggle-icon');
+        
+        if (container && container.style.display !== 'block') {
+            container.style.display = 'block';
+            if (toggleBtn) toggleBtn.classList.add('expanded');
+            if (icon) icon.textContent = '▲';
+        }
+    }
+
+    aplicarFormatacaoImportados() {
+        // Aplicar formatação de CPF
+        const cpfField = document.getElementById('cpfCompleto');
+        if (cpfField && cpfField.value) {
+            this.formatarCpf(cpfField);
+        }
+
+        // Aplicar formatação de telefone
+        const telefoneField = document.getElementById('telefoneCompleto');
+        if (telefoneField && telefoneField.value) {
+            this.formatarTelefone(telefoneField);
+        }
+
+        // Aplicar formatação de CEP
+        const cepField = document.getElementById('cep');
+        if (cepField && cepField.value) {
+            this.formatarCep(cepField);
+        }
+
+        // Aplicar formatação de data
+        const dataField = document.getElementById('dataNascimento');
+        if (dataField && dataField.value) {
+            this.formatarData(dataField);
         }
     }
 }
