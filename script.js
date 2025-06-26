@@ -3071,7 +3071,7 @@ class SimuladorEmprestimos {
             const cpfMatch = texto.match(/CPF:\s*([0-9]+)/i);
             const nascimentoMatch = texto.match(/Data nascimento:\s*(\d{2}\/\d{2}\/\d{4})/i);
             const estadoCivilMatch = texto.match(/Estado Civil:\s*([^\n]+)/i);
-            const enderecoMatch = texto.match(/Endereço:\s*([^\n]+)/i);
+            const ruaMatch = texto.match(/Rua:\s*([^\n]+)/i);
             const numeroMatch = texto.match(/Número:\s*([^\n]+)/i);
             const complementoMatch = texto.match(/Complemento:\s*([^\n]+)/i);
             const bairroMatch = texto.match(/Bairro:\s*([^\n]+)/i);
@@ -3085,7 +3085,7 @@ class SimuladorEmprestimos {
             if (cpfMatch) dados.cpf = cpfMatch[1];
             if (nascimentoMatch) dados.dataNascimento = nascimentoMatch[1];
             if (estadoCivilMatch) dados.estadoCivil = estadoCivilMatch[1].trim();
-            if (enderecoMatch) dados.rua = enderecoMatch[1].trim();
+            if (ruaMatch) dados.rua = ruaMatch[1].trim();
             if (numeroMatch) dados.numero = numeroMatch[1].trim();
             if (complementoMatch) dados.complemento = complementoMatch[1].trim();
             if (bairroMatch) dados.bairro = bairroMatch[1].trim();
