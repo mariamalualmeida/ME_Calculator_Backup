@@ -2771,11 +2771,33 @@ class SimuladorEmprestimos {
     }
 
     preencherCampo(id, valor) {
-        if (!valor) return;
+        if (!valor) {
+            console.log(`Valor vazio para ${id}, pulando`);
+            return;
+        }
 
+        console.log(`=== PREENCHENDO CAMPO ===`);
+        console.log(`ID: ${id}`);
+        console.log(`Valor: ${valor}`);
+        
         const campo = document.getElementById(id);
+        console.log(`Elemento encontrado:`, !!campo);
+        
         if (campo) {
+            const valorAnterior = campo.value;
             campo.value = valor;
+            console.log(`Valor anterior:`, valorAnterior);
+            console.log(`Valor definido:`, campo.value);
+            
+            // Disparar evento para campos formatados
+            campo.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log(`Evento input disparado para ${id}`);
+        } else {
+            console.error(`ERRO: Elemento '${id}' não encontrado!`);
+            // Debug: mostrar alguns IDs disponíveis
+            const idsRelevantes = ['dataPreviewSection', 'dataPreviewContent', 'valorEmprestimo', 'taxaJuros', 'dataInicial', 'nomeCompleto', 'cpfCompleto', 'dataNascimento', 'nomeUsuario'];
+            const idsEncontrados = idsRelevantes.filter(idTest => document.getElementById(idTest));
+            console.log(`IDs relevantes disponíveis:`, idsEncontrados);
         }
     }
 
@@ -3634,21 +3656,23 @@ class SimuladorEmprestimos {
                     // Dados profissionais
                     this.preencherCampo('trabalho', dados.trabalho || '');
                     this.preencherCampo('profissao', dados.profissao || '');
-                    this.preencherCampo('renda', dados.renda ? dados.renda.replace(/[.,]/g, '') : '');
+                    this.preencherCampo('rendaMensal', dados.renda ? dados.renda.replace(/[.,]/g, '') : '');
                     this.preencherCampo('tempoEmprego', dados.tempoEmprego || '');
                     
-                    // Referências (limpando telefones)
-                    this.preencherCampo('referencia1Nome', dados.referencia1Nome || '');
-                    this.preencherCampo('referencia1Telefone', dados.referencia1Telefone ? dados.referencia1Telefone.replace(/[()\ -]/g, '') : '');
-                    this.preencherCampo('referencia1Endereco', dados.referencia1Rua || '');
-                    this.preencherCampo('referencia1Bairro', dados.referencia1Bairro || '');
-                    this.preencherCampo('referencia1Cidade', dados.referencia1Cidade || '');
+                    // Referências - IDs corretos do HTML
+                    this.preencherCampo('ref1Nome', dados.referencia1Nome || '');
+                    this.preencherCampo('ref1Telefone', dados.referencia1Telefone ? dados.referencia1Telefone.replace(/[()\ -]/g, '') : '');
+                    this.preencherCampo('ref1Rua', dados.referencia1Rua || '');
+                    this.preencherCampo('ref1Numero', dados.referencia1Numero || '');
+                    this.preencherCampo('ref1Bairro', dados.referencia1Bairro || '');
+                    this.preencherCampo('ref1Cidade', dados.referencia1Cidade || '');
                     
-                    this.preencherCampo('referencia2Nome', dados.referencia2Nome || '');
-                    this.preencherCampo('referencia2Telefone', dados.referencia2Telefone ? dados.referencia2Telefone.replace(/[()\ -]/g, '') : '');
-                    this.preencherCampo('referencia2Endereco', dados.referencia2Rua || '');
-                    this.preencherCampo('referencia2Bairro', dados.referencia2Bairro || '');
-                    this.preencherCampo('referencia2Cidade', dados.referencia2Cidade || '');
+                    this.preencherCampo('ref2Nome', dados.referencia2Nome || '');
+                    this.preencherCampo('ref2Telefone', dados.referencia2Telefone ? dados.referencia2Telefone.replace(/[()\ -]/g, '') : '');
+                    this.preencherCampo('ref2Rua', dados.referencia2Rua || '');
+                    this.preencherCampo('ref2Numero', dados.referencia2Numero || '');
+                    this.preencherCampo('ref2Bairro', dados.referencia2Bairro || '');
+                    this.preencherCampo('ref2Cidade', dados.referencia2Cidade || '');
                     
                     // Aplicar formatação automática
                     this.aplicarFormatacaoImportados();
