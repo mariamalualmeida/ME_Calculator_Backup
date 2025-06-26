@@ -2921,6 +2921,33 @@ class SimuladorEmprestimos {
         return dados;
     }
 
+    // Nova função para pré-processar texto do PDF e recriar quebras de linha
+    preprocessarTextoPdf(texto) {
+        console.log('Pré-processando texto PDF para recriar quebras de linha...');
+        
+        // Padrões de campos que devem ter quebra de linha antes
+        const padroesQuebra = [
+            'CPF:', 'Data de Nascimento:', 'Estado Civil:', 'Endereço:', 'Bairro:', 'Cidade:', 
+            'CEP:', 'Telefone:', 'E-mail:', 'Profissão:', 'Local de Trabalho:', 'Renda Mensal:', 
+            'Tempo de Emprego:', 'Nome:', 'Número:', 'Complemento:', 'Estado:', 'Valor do empréstimo:', 
+            'Número de parcelas:', 'Taxa de juros:', 'Sistema de juros:', '1ª REFERÊNCIA:', 
+            '2ª REFERÊNCIA:', 'DADOS PESSOAIS:', 'DADOS PROFISSIONAIS:', 'DADOS DA SIMULAÇÃO:'
+        ];
+
+        // Adicionar quebra de linha antes de cada padrão identificado
+        let textoProcessado = texto;
+        padroesQuebra.forEach(padrao => {
+            const regex = new RegExp(`(?<!^|\\n)\\s*(${padrao.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            textoProcessado = textoProcessado.replace(regex, '\n$1');
+        });
+
+        // Limpar quebras de linha múltiplas e espaços extras
+        textoProcessado = textoProcessado.replace(/\n\s*\n/g, '\n').trim();
+
+        console.log('Texto após pré-processamento (primeiros 500 chars):', textoProcessado.substring(0, 500));
+        return textoProcessado;
+    }
+
     // Calcular data inicial de vencimento a partir dos PDFs
     calcularDataInicialVencimento(texto) {
         try {
@@ -3102,11 +3129,16 @@ class SimuladorEmprestimos {
     // Extração específica para PDF completo (com taxa de juros)
     extrairDadosPdfCompleto(texto, dados) {
         try {
-            // Dados da simulação
-            const valorMatch = texto.match(/Valor do empréstimo:\s*R\$\s*([0-9,.]+)/i);
-            const parcelasMatch = texto.match(/Número de parcelas:\s*(\d+)/i);
-            const sistemaJurosMatch = texto.match(/Sistema de juros:\s*([^\n]+)/i);
-            const taxaJurosMatch = texto.match(/Taxa de juros:\s*([0-9,]+)%/i);
+            console.log('Extraindo dados de PDF completo com pré-processamento...');
+            
+            // Pré-processar texto para recriar quebras de linha
+            const textoProcessado = this.preprocessarTextoPdf(texto);
+            
+            // Dados da simulação com regex melhorados
+            const valorMatch = textoProcessado.match(/Valor do empréstimo:\s*R\$\s*([0-9,.]+?)(?=\s*Número de parcelas:|$)/i);
+            const parcelasMatch = textoProcessado.match(/Número de parcelas:\s*(\d+?)(?=\s*Sistema de juros:|Taxa de juros:|$)/i);
+            const sistemaJurosMatch = textoProcessado.match(/Sistema de juros:\s*([^\n\r]+?)(?=\s*Taxa de juros:|$)/i);
+            const taxaJurosMatch = textoProcessado.match(/Taxa de juros:\s*([0-9,]+?)%/i);
 
             if (valorMatch) dados.valorEmprestimo = valorMatch[1];
             if (parcelasMatch) dados.numeroParcelas = parcelasMatch[1];
@@ -3114,33 +3146,97 @@ class SimuladorEmprestimos {
             if (taxaJurosMatch) dados.taxaJuros = taxaJurosMatch[1];
 
             // Calcular data inicial de vencimento
-            const dataInicial = this.calcularDataInicialVencimento(texto);
+            const dataInicial = this.calcularDataInicialVencimento(textoProcessado);
             if (dataInicial) dados.dataVencimentoInicial = dataInicial;
 
-            // Extrair dados cadastrais usando método existente
-            this.extrairDadosPdfSistema(texto, dados);
+            // Extrair dados cadastrais com texto pré-processado
+            this.extrairDadosPdfSistemaComPreprocessamento(textoProcessado, dados);
 
         } catch (error) {
             console.error('Erro na extração do PDF completo:', error);
         }
     }
 
+    // Nova função para extrair dados cadastrais com texto pré-processado
+    extrairDadosPdfSistemaComPreprocessamento(textoProcessado, dados) {
+        try {
+            console.log('Extraindo dados cadastrais com texto pré-processado...');
+            
+            // Dados principais com regex limitados por próximo campo
+            dados.nome = this.extrairMatch(/Nome:\s*([^\n\r]+?)(?=\s*CPF:|$)/i, textoProcessado);
+            dados.cpf = this.extrairMatch(/CPF:\s*([\d.-]+?)(?=\s*Data de Nascimento:|$)/i, textoProcessado);
+            dados.dataNascimento = this.extrairMatch(/Data de Nascimento:\s*([\d\/]+?)(?=\s*Estado Civil:|$)/i, textoProcessado);
+            dados.estadoCivil = this.extrairMatch(/Estado Civil:\s*([^\n\r]+?)(?=\s*Endereço:|Bairro:|$)/i, textoProcessado);
+            dados.telefone = this.extrairMatch(/Telefone:\s*([\d\s\(\)-]+?)(?=\s*E-mail:|$)/i, textoProcessado);
+            dados.email = this.extrairMatch(/E-mail:\s*([^\n\r]+?)(?=\s*DADOS PROFISSIONAIS:|$)/i, textoProcessado);
+
+            // Endereço com parsing específico para PDF
+            const enderecoCompleto = this.extrairMatch(/Endereço:\s*([^\n\r]+?)(?=\s*Bairro:|$)/i, textoProcessado);
+            if (enderecoCompleto) {
+                const partesEndereco = enderecoCompleto.split(',').map(p => p.trim());
+                dados.rua = partesEndereco[0] || '';
+                dados.numero = partesEndereco[1] || '';
+                dados.complemento = partesEndereco[2] || '';
+            }
+
+            dados.bairro = this.extrairMatch(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i, textoProcessado);
+            dados.cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)(?=\s*CEP:|$)/i, textoProcessado);
+            dados.estado = this.extrairMatch(/(\b[A-Z]{2}\b)/i, textoProcessado);
+            dados.cep = this.extrairMatch(/CEP:\s*([\d-]+?)(?=\s*Telefone:|$)/i, textoProcessado);
+
+            // Dados profissionais
+            dados.profissao = this.extrairMatch(/Profissão:\s*([^\n\r]+?)(?=\s*Local de Trabalho:|$)/i, textoProcessado);
+            dados.trabalho = this.extrairMatch(/Local de Trabalho:\s*([^\n\r]+?)(?=\s*Renda Mensal:|$)/i, textoProcessado);
+            dados.renda = this.extrairMatch(/Renda Mensal:\s*([\d.,]+?)(?=\s*Tempo de Emprego:|$)/i, textoProcessado);
+            dados.tempoEmprego = this.extrairMatch(/Tempo de Emprego:\s*([^\n\r]+?)(?=\s*1ª REFERÊNCIA:|$)/i, textoProcessado);
+
+            // Referências com parsing de seções
+            const ref1Section = textoProcessado.match(/1ª REFERÊNCIA:([\s\S]*?)(?=2ª REFERÊNCIA|$)/i);
+            if (ref1Section) {
+                const ref1Texto = ref1Section[1];
+                dados.referencia1Nome = this.extrairMatch(/Nome:\s*([^\n\r]+?)(?=\s*Telefone:|$)/i, ref1Texto);
+                dados.referencia1Telefone = this.extrairMatch(/Telefone:\s*([\d\s\(\)-]+?)(?=\s*Endereço:|$)/i, ref1Texto);
+                dados.referencia1Rua = this.extrairMatch(/Endereço:\s*([^,\n\r]+?)(?=\s*Bairro:|$)/i, ref1Texto);
+                dados.referencia1Bairro = this.extrairMatch(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i, ref1Texto);
+                dados.referencia1Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)(?=\s*2ª REFERÊNCIA:|$)/i, ref1Texto);
+            }
+
+            const ref2Section = textoProcessado.match(/2ª REFERÊNCIA:([\s\S]*?)$/i);
+            if (ref2Section) {
+                const ref2Texto = ref2Section[1];
+                dados.referencia2Nome = this.extrairMatch(/Nome:\s*([^\n\r]+?)(?=\s*Telefone:|$)/i, ref2Texto);
+                dados.referencia2Telefone = this.extrairMatch(/Telefone:\s*([\d\s\(\)-]+?)(?=\s*Endereço:|$)/i, ref2Texto);
+                dados.referencia2Rua = this.extrairMatch(/Endereço:\s*([^,\n\r]+?)(?=\s*Bairro:|$)/i, ref2Texto);
+                dados.referencia2Bairro = this.extrairMatch(/Bairro:\s*([^\n\r]+?)(?=\s*Cidade:|$)/i, ref2Texto);
+                dados.referencia2Cidade = this.extrairMatch(/Cidade:\s*([^\n\r]+?)$/i, ref2Texto);
+            }
+
+        } catch (error) {
+            console.error('Erro na extração de dados cadastrais:', error);
+        }
+    }
+
     // Extração específica para PDF simples (sem taxa de juros)
     extrairDadosPdfSimples(texto, dados) {
         try {
-            // Dados da simulação
-            const valorMatch = texto.match(/Valor do empréstimo:\s*R\$\s*([0-9,.]+)/i);
-            const parcelasMatch = texto.match(/Número de parcelas:\s*(\d+)/i);
+            console.log('Extraindo dados de PDF simples com pré-processamento...');
+            
+            // Pré-processar texto para recriar quebras de linha
+            const textoProcessado = this.preprocessarTextoPdf(texto);
+            
+            // Dados da simulação com regex melhorados
+            const valorMatch = textoProcessado.match(/Valor do empréstimo:\s*R\$\s*([0-9,.]+?)(?=\s*Número de parcelas:|$)/i);
+            const parcelasMatch = textoProcessado.match(/Número de parcelas:\s*(\d+?)(?=\s*TABELA|$)/i);
 
             if (valorMatch) dados.valorEmprestimo = valorMatch[1];
             if (parcelasMatch) dados.numeroParcelas = parcelasMatch[1];
 
             // Calcular data inicial de vencimento
-            const dataInicial = this.calcularDataInicialVencimento(texto);
+            const dataInicial = this.calcularDataInicialVencimento(textoProcessado);
             if (dataInicial) dados.dataVencimentoInicial = dataInicial;
 
-            // Extrair dados cadastrais usando método existente
-            this.extrairDadosPdfSistema(texto, dados);
+            // Extrair dados cadastrais com texto pré-processado
+            this.extrairDadosPdfSistemaComPreprocessamento(textoProcessado, dados);
 
         } catch (error) {
             console.error('Erro na extração do PDF simples:', error);
