@@ -2746,7 +2746,7 @@ class SimuladorEmprestimos {
         this.preencherCampo('cep', dados.cep);
         this.preencherCampo('telefoneCompleto', dados.telefone);
         this.preencherCampo('email', dados.email);
-        this.preencherCampo('trabalho', dados.trabalho);
+        this.preencherCampo('localTrabalho', dados.trabalho);
         this.preencherCampo('profissao', dados.profissao);
         this.preencherCampo('rendaMensal', dados.renda);
         this.preencherCampo('tempoEmprego', dados.tempoEmprego);
@@ -3260,13 +3260,27 @@ class SimuladorEmprestimos {
         try {
             console.log('Extraindo dados cadastrais com texto pré-processado...');
             
+            // Debug: mostrar uma amostra do texto processado
+            console.log('Primeiros 800 chars do texto processado:', textoProcessado.substring(0, 800));
+            
             // Dados principais com regex limitados por próximo campo
             dados.nome = this.extrairMatch(/Nome:\s*([^\n\r]+?)(?=\s*CPF:|$)/i, textoProcessado);
-            dados.cpf = this.extrairMatch(/CPF:\s*([\d.-]+?)(?=\s*Data de Nascimento:|$)/i, textoProcessado);
+            console.log('Nome extraído:', dados.nome);
+            
+            dados.cpf = this.extrairMatch(/CPF:\s*([\d.-]+?)(?=\s*Data de Nascimento:|Estado Civil:|$)/i, textoProcessado);
+            console.log('CPF extraído:', dados.cpf);
+            
             dados.dataNascimento = this.extrairMatch(/Data de Nascimento:\s*([\d\/]+?)(?=\s*Estado Civil:|$)/i, textoProcessado);
+            console.log('Data nascimento extraída:', dados.dataNascimento);
+            
             dados.estadoCivil = this.extrairMatch(/Estado Civil:\s*([^\n\r]+?)(?=\s*Rua:|$)/i, textoProcessado);
+            console.log('Estado civil extraído:', dados.estadoCivil);
+            
             dados.telefone = this.extrairMatch(/Telefone:\s*([\d\s\(\)-]+?)(?=\s*E-mail:|$)/i, textoProcessado);
+            console.log('Telefone extraído:', dados.telefone);
+            
             dados.email = this.extrairMatch(/E-mail:\s*([^\n\r]+?)(?=\s*DADOS PROFISSIONAIS:|$)/i, textoProcessado);
+            console.log('Email extraído:', dados.email);
 
             // Endereço agora separado em campos individuais
             dados.rua = this.extrairMatch(/Rua:\s*([^\n\r]+?)(?=\s*Número:|$)/i, textoProcessado);
@@ -3279,9 +3293,16 @@ class SimuladorEmprestimos {
 
             // Dados profissionais
             dados.profissao = this.extrairMatch(/Profissão:\s*([^\n\r]+?)(?=\s*Local de Trabalho:|$)/i, textoProcessado);
+            console.log('Profissão extraída:', dados.profissao);
+            
             dados.trabalho = this.extrairMatch(/Local de Trabalho:\s*([^\n\r]+?)(?=\s*Renda Mensal:|$)/i, textoProcessado);
+            console.log('Local trabalho extraído:', dados.trabalho);
+            
             dados.renda = this.extrairMatch(/Renda Mensal:\s*([\d.,]+?)(?=\s*Tempo de Emprego:|$)/i, textoProcessado);
+            console.log('Renda extraída:', dados.renda);
+            
             dados.tempoEmprego = this.extrairMatch(/Tempo de Emprego:\s*([^\n\r]+?)(?=\s*1ª REFERÊNCIA:|$)/i, textoProcessado);
+            console.log('Tempo emprego extraído:', dados.tempoEmprego);
 
             // Referências com parsing de seções usando campos separados
             const ref1Section = textoProcessado.match(/1ª REFERÊNCIA:([\s\S]*?)(?=2ª REFERÊNCIA|$)/i);
@@ -3654,7 +3675,7 @@ class SimuladorEmprestimos {
                     this.preencherCampo('cep', dados.cep ? dados.cep.replace(/[.-]/g, '') : '');
                     
                     // Dados profissionais
-                    this.preencherCampo('trabalho', dados.trabalho || '');
+                    this.preencherCampo('localTrabalho', dados.trabalho || '');
                     this.preencherCampo('profissao', dados.profissao || '');
                     this.preencherCampo('rendaMensal', dados.renda ? dados.renda.replace(/[.,]/g, '') : '');
                     this.preencherCampo('tempoEmprego', dados.tempoEmprego || '');
