@@ -56,29 +56,56 @@ SimuladorEmprestimos/
 
 ## Principais Funcionalidades
 
-### 1. Cálculo de Empréstimos
-```javascript
-calcularParcela(valor, juros, nParcelas, diasExtra = 0, igpmMensal = 0) {
-    const jurosDecimal = juros / 100;
-    let valorCorrigido = valor;
-    
-    // Aplicar pró-rata se houver dias extras
-    if (diasExtra > 0) {
-        const jurosProRata = (jurosDecimal / 30) * diasExtra;
-        valorCorrigido *= (1 + jurosProRata);
-    }
-    
-    // Aplicar IGPM se configurado
-    if (igpmMensal > 0) {
-        const fatorIGPM = Math.pow(1 + (igpmMensal / 100), nParcelas);
-        valorCorrigido *= fatorIGPM;
-    }
-    
-    return (valorCorrigido * Math.pow(1 + jurosDecimal, nParcelas)) / nParcelas;
-}
-```
+### 1. Sistema de Cálculo Avançado
+**4 Métodos de Juros Configuráveis:**
+- **Juros Simples**: Cálculo linear tradicional
+- **Juros Compostos Diários**: Taxa calculada dia a dia
+- **Juros Compostos Mensais**: Método padrão com capitalização mensal
+- **Juros Compostos + Pro-rata Real**: Cálculo exponencial para múltiplas parcelas
 
-### 2. Tabela de Limites Dinâmicos
+**Cálculo Preciso de Dias:**
+- Algoritmo baseado em componentes de data (ano/mês/dia)
+- Eliminação de problemas de timezone e horários
+- Separação automática: dias extras da data, compensação, meses 31 dias
+
+### 2. Formulário Completo de Dados Cadastrais
+**Seção Expansível com:**
+- Dados pessoais completos (nome, CPF, nascimento, estado civil)
+- Endereço completo (rua, número, complemento, bairro, cidade, estado, CEP)
+- Dados profissionais (local trabalho, profissão, renda, tempo emprego)
+- 2 referências pessoais com telefones e endereços
+- Expansão automática ao preencher nome/CPF na tela principal
+
+### 3. Área Administrativa Avançada
+**Configurações Financeiras:**
+- Seleção do sistema de juros (4 opções)
+- Tabela de limites personalizada (1-15 parcelas)
+- Modo livre (desabilitar todas as regras)
+- Configurações avançadas (ajuste mês 31, dias extras fixos)
+- Índice IGPM anual configurável
+
+**Configurações de Interface:**
+- 6 paletas de cores (Padrão, Azul, Verde, Roxo, Verde-água, Rosa)
+- Controle de exibição de informações no PDF
+- Credenciais administrativas editáveis
+
+### 4. Exportação PDF Avançada
+**Relatórios Completos com:**
+- Dados da simulação (valor, parcelas, sistema de juros, taxa)
+- Informações do cliente (dados cadastrais completos quando preenchidos)
+- Tabela de parcelas detalhada
+- Análise financeira (lucro e margem no modo livre)
+- Informações de dias extras separadas (apenas dias reais da data)
+- Nomenclatura inteligente: "Nome_CPF_Simulacao_emprestimo_timestamp.pdf"
+
+### 5. Validação e UX Avançados
+**Sistema de Validação Visual:**
+- Bordas vermelhas para campos inválidos (respeitando modo livre)
+- Placeholder dinâmico no campo parcelas baseado nas regras ativas
+- Mensagens de erro padronizadas iniciando com "SIMULAÇÃO NEGADA"
+- Formatação em tempo real (moeda, percentual, CPF, telefone, CEP)
+
+### 6. Tabela de Limites Dinâmicos
 ```javascript
 const limitesJuros = {
     1: { min: 15.00, max: 100.00 },
@@ -147,9 +174,15 @@ Acesse através do botão de configurações com credenciais:
 - **Senha**: Laila@1004
 
 Funcionalidades administrativas:
-- Edição dos limites de juros para cada faixa de parcelas
-- Alteração das credenciais de acesso
-- Configuração de parâmetros globais do sistema
+- **Sistema de Juros Configurável**: 4 métodos (Simples, Compostos Diários, Compostos Mensais, Pro-rata Real)
+- **Edição dos limites de juros**: Tabela personalizada para cada faixa de parcelas (1-15)
+- **Modo Livre**: Desabilitar todas as regras de validação para simulações ilimitadas
+- **Configurações Avançadas**: Ajuste automático meses 31 dias, dias extras fixos
+- **Análise Financeira**: Cálculo de lucro e margem no modo livre
+- **Alteração das credenciais**: Modificar usuário e senha administrativos
+- **Controle de Relatórios**: Configurar exibição de informações no PDF
+- **Dados do Credor**: Configurações para contratos e promissórias
+- **Paletas de Cores**: 6 temas visuais (Padrão, Azul, Verde, Roxo, Verde-água, Rosa)
 
 ## Instalação
 

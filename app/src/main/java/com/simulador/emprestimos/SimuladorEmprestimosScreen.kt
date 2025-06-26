@@ -645,9 +645,167 @@ fun SimuladorEmprestimosScreen(
                 )
             }
             
-            // Análise financeira (modo livre)
+            // Análise financeira detalhada (modo livre)
             if (uiState.showResult && uiState.resultado != null && configuracoes.desabilitarRegras && configuracoes.exibirDetalhesModeLivre) {
                 val nParcelas = uiState.numeroParcelas.toIntOrNull() ?: 1
+                val valorEmprestimo = viewModel.parseValorMonetario(uiState.valorEmprestimo)
+                val totalPago = if (uiState.resultado!!.diasExtra > 0 && uiState.resultado!!.metodo == "primeira") {
+                    uiState.resultado!!.primeiraParcela + (uiState.resultado!!.parcelaNormal * (nParcelas - 1))
+                } else {
+                    uiState.resultado!!.parcelaNormal * nParcelas
+                }
+                val lucro = totalPago - valorEmprestimo
+                val margem = if (valorEmprestimo > 0) (lucro / valorEmprestimo) * 100 else 0.0
+                
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = colorScheme.surfaceVariant
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "ANÁLISE FINANCEIRA",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = colorScheme.primary,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                        
+                        // Grid com informações financeiras
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            // Linha 1: Capital e Total
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(
+                                        text = "Capital",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = viewModel.formatarValorMonetario(valorEmprestimo),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium,
+                                        color = colorScheme.onSurface
+                                    )
+                                }
+                                
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(
+                                        text = "Total Pago",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = viewModel.formatarValorMonetario(totalPago),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium,
+                                        color = colorScheme.onSurface
+                                    )
+                                }
+                            }
+                            
+                            // Linha 2: Lucro e Margem
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(
+                                        text = "Lucro",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = viewModel.formatarValorMonetario(lucro),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium,
+                                        color = if (lucro >= 0) Color(0xFF4CAF50) else Color(0xFFF44336)
+                                    )
+                                }
+                                
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(
+                                        text = "Margem",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = String.format("%.2f%%", margem),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium,
+                                        color = if (margem >= 0) Color(0xFF4CAF50) else Color(0xFFF44336)
+                                    )
+                                }
+                            }
+                        }
+                        
+                        // Exibir detalhes de dias extras separadamente se houver
+                        if (uiState.resultado!!.diasExtra > 0) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                            
+                            val diasExtrasData = uiState.resultado!!.diasExtrasData
+                            val diasCompensacao = uiState.resultado!!.diasCompensacao  
+                            val diasMeses31 = uiState.resultado!!.diasMeses31
+                            val totalDias = diasExtrasData + diasCompensacao + diasMeses31
+                            val jurosTotal = uiState.resultado!!.jurosDiasExtras
+                            
+                            Text(
+                                text = "Detalhamento de Dias Extras:",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Medium,
+                                color = colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                if (diasExtrasData > 0) {
+                                    val jurosExtras = if (totalDias > 0) (jurosTotal * diasExtrasData) / totalDias else 0.0
+                                    Text(
+                                        text = "Dias extras: $diasExtrasData | Juros: ${viewModel.formatarValorMonetario(jurosExtras)}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                
+                                if (diasMeses31 > 0) {
+                                    val jurosMeses31 = if (totalDias > 0) (jurosTotal * diasMeses31) / totalDias else 0.0
+                                    Text(
+                                        text = "Meses 31 dias: $diasMeses31 | Juros: ${viewModel.formatarValorMonetario(jurosMeses31)}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                
+                                if (diasCompensacao > 0) {
+                                    val jurosCompensacao = if (totalDias > 0) (jurosTotal * diasCompensacao) / totalDias else 0.0
+                                    Text(
+                                        text = "Dias compensação: $diasCompensacao | Juros: ${viewModel.formatarValorMonetario(jurosCompensacao)}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
                 val valorEmprestimo = uiState.valorEmprestimo.replace(",", ".").toDoubleOrNull() ?: 0.0
                 val valorTotal = uiState.resultado!!.parcelaNormal * nParcelas
                 val lucroTotal = valorTotal - valorEmprestimo
