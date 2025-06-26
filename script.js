@@ -3579,7 +3579,10 @@ class SimuladorEmprestimos {
 
             // Preencher data de vencimento inicial se disponível
             if (dados.dataVencimentoInicial) {
-                this.preencherCampo('dataVencimentoInicial', dados.dataVencimentoInicial);
+                console.log('Preenchendo dataInicial com:', dados.dataVencimentoInicial);
+                // Converter formato de data para apenas números (sistema auto-formata as barras)
+                const dataNumeros = dados.dataVencimentoInicial.replace(/\//g, '');
+                this.preencherCampo('dataInicial', dataNumeros);
             }
 
             // Campos de nome e CPF na tela principal
