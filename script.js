@@ -3567,17 +3567,17 @@ class SimuladorEmprestimos {
             if (dados.valorEmprestimo) {
                 console.log('Preenchendo valorEmprestimo com:', dados.valorEmprestimo);
                 // Limpar formatação: remover pontos, vírgulas e deixar apenas números
-                const valorLimpo = dados.valorEmprestimo.replace(/[.,]/g, '');
+                const valorLimpo = String(dados.valorEmprestimo).replace(/[.,]/g, '');
                 this.preencherCampo('valorEmprestimo', valorLimpo);
             }
             if (dados.numeroParcelas) {
                 console.log('Preenchendo numeroParcelas com:', dados.numeroParcelas);
-                this.preencherCampo('numeroParcelas', dados.numeroParcelas);
+                this.preencherCampo('numeroParcelas', String(dados.numeroParcelas));
             }
             if (dados.taxaJuros) {
                 console.log('Preenchendo taxaJuros com:', dados.taxaJuros);
                 // Limpar formatação: remover vírgulas e deixar apenas números
-                const taxaLimpa = dados.taxaJuros.replace(/,/g, '');
+                const taxaLimpa = String(dados.taxaJuros).replace(/,/g, '');
                 this.preencherCampo('taxaJuros', taxaLimpa);
             }
 
@@ -3589,9 +3589,9 @@ class SimuladorEmprestimos {
                 this.preencherCampo('dataInicial', dataLimpa);
             }
 
-            // Campos de nome e CPF na tela principal
+            // Campos de nome e CPF na tela principal  
             this.preencherCampo('nomeCompleto', dados.nome || '');
-            this.preencherCampo('cpfCompleto', dados.cpf || '');
+            this.preencherCampo('cpfCompleto', dados.cpf ? dados.cpf.replace(/[.-]/g, '') : '');
 
             // Verificar se há dados cadastrais completos para expandir formulário
             const temDadosCadastrais = dados.rua || dados.telefone || dados.email || 
