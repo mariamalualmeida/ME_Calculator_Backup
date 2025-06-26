@@ -1504,8 +1504,8 @@ body {
 /* Área expansível */
 .import-expand-area {
     overflow: hidden;
-    height: 0;
-    transition: height 0.4s ease-out, opacity 0.4s ease-out;
+    max-height: 0;
+    transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
     opacity: 0;
     background: var(--surface);
     border-radius: 8px;
@@ -1513,7 +1513,7 @@ body {
 }
 
 .import-expand-area.expanded {
-    height: auto;
+    max-height: 800px;
     opacity: 1;
 }
 
