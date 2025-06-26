@@ -3558,7 +3558,9 @@ class SimuladorEmprestimos {
     // Nova função aplicarDadosJson para sistema de importação inteligente
     aplicarDadosJson(dados) {
         try {
+            console.log('=== INÍCIO APLICAÇÃO DOS DADOS ===');
             console.log('Aplicando dados extraídos pelo sistema inteligente:', dados);
+            console.log('Função aplicarDadosJson() executando - versão com logs detalhados');
 
             // Dados principais da simulação (IDs corretos da interface)
             console.log('=== PREENCHENDO CAMPOS PRINCIPAIS ===');
@@ -3670,8 +3672,11 @@ class SimuladorEmprestimos {
             this.updateFileStatus('Dados importados e aplicados com sucesso!', 'success');
 
         } catch (error) {
-            console.error('Erro ao aplicar dados:', error);
-            this.updateFileStatus('Erro ao aplicar dados importados', 'error');
+            console.error('=== ERRO CRÍTICO NA APLICAÇÃO DOS DADOS ===');
+            console.error('Erro detalhado:', error);
+            console.error('Stack trace:', error.stack);
+            console.error('Dados que causaram erro:', dados);
+            this.updateFileStatus('Erro ao aplicar dados importados: ' + error.message, 'error');
         }
     }
 
@@ -3681,12 +3686,42 @@ class SimuladorEmprestimos {
     }
 
     preencherCampo(id, valor) {
-        if (!valor) return;
+        console.log(`=== PREENCHENDO CAMPO ===`);
+        console.log(`ID: ${id}`);
+        console.log(`Valor: ${valor}`);
+        
+        if (!valor) {
+            console.log(`Valor vazio para ${id}, pulando`);
+            return;
+        }
 
         const campo = document.getElementById(id);
+        console.log(`Elemento encontrado:`, campo !== null);
+        
         if (campo) {
+            console.log(`Valor anterior:`, campo.value);
             campo.value = valor;
+            console.log(`Valor definido:`, campo.value);
+            
+            // Disparar evento input para formatação automática
+            campo.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log(`Evento input disparado para ${id}`);
+            
+            // Verificar valor após formatação
+            setTimeout(() => {
+                console.log(`Valor FINAL em ${id}:`, campo.value);
+            }, 100);
+        } else {
+            console.error(`ERRO: Elemento '${id}' não encontrado!`);
+            // Listar IDs disponíveis
+            const todosIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id);
+            const idsRelevantes = todosIds.filter(id => 
+                id.includes('valor') || id.includes('parcela') || id.includes('taxa') || 
+                id.includes('data') || id.includes('nome') || id.includes('cpf')
+            );
+            console.log('IDs relevantes disponíveis:', idsRelevantes);
         }
+        console.log(`=== FIM PREENCHIMENTO ===`);
     }
 
     expandirFormularioCompleto() {
