@@ -213,8 +213,9 @@ body {
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    text-align: left;
+    justify-content: center;
+    text-align: center;
+    position: relative;
 }
 
 .form-toggle-btn:hover {
@@ -231,11 +232,12 @@ body {
 .toggle-icon {
     transition: transform 0.3s ease;
     font-size: 14px;
-    margin-left: 8px;
+    position: absolute;
+    right: 20px;
 }
 
 .form-toggle-btn.expanded .toggle-icon {
-    transform: rotate(-180deg);
+    transform: rotate(180deg);g);
 }
 
 /* Container do Formulário Completo */
@@ -1310,6 +1312,7 @@ body {
 /* Aplicar paleta de cores ao botão de formulário completo */
 .form-toggle-btn[data-color-theme] {
     background: var(--primary-color) !important;
+    color: white !important;
 }
 
 .form-toggle-btn[data-color-theme]:hover {
@@ -1502,15 +1505,16 @@ body {
 .import-expand-area {
     overflow: hidden;
     max-height: 0;
-    transition: max-height 0.4s ease-out, opacity 0.4s ease-out, padding 0.4s ease-out;
+    transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
     opacity: 0;
-    padding: 0;
+    background: var(--surface);
+    border-radius: 8px;
+    margin-top: 8px;
 }
 
 .import-expand-area.expanded {
     max-height: 2000px;
     opacity: 1;
-    padding: 16px 0;
 }
 
 .import-content {
@@ -1518,8 +1522,10 @@ body {
     border: 1px solid var(--outline-variant);
     border-radius: 12px;
     padding: 24px;
-    margin-top: 8px;
-    min-height: 200px;
+    margin-top: 0;
+    min-height: 400px;
+    display: block;
+    width: 100%;
 }
 
 /* Seção de arquivo */
