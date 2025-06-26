@@ -2737,8 +2737,8 @@ class SimuladorEmprestimos {
         // Preencher campos do formulário completo
         this.preencherCampo('dataNascimento', dados.dataNascimento);
         this.preencherCampo('estadoCivil', dados.estadoCivil);
-        this.preencherCampo('rua', dados.rua);
-        this.preencherCampo('numeroEndereco', dados.numero);
+        this.preencherCampo('endereco', dados.rua);
+        this.preencherCampo('numero', dados.numero);
         this.preencherCampo('complemento', dados.complemento);
         this.preencherCampo('bairro', dados.bairro);
         this.preencherCampo('cidade', dados.cidade);
@@ -2748,21 +2748,23 @@ class SimuladorEmprestimos {
         this.preencherCampo('email', dados.email);
         this.preencherCampo('trabalho', dados.trabalho);
         this.preencherCampo('profissao', dados.profissao);
-        this.preencherCampo('renda', dados.renda);
+        this.preencherCampo('rendaMensal', dados.renda);
         this.preencherCampo('tempoEmprego', dados.tempoEmprego);
 
-        // Referências
-        this.preencherCampo('referencia1Nome', dados.referencia1Nome);
-        this.preencherCampo('referencia1Telefone', dados.referencia1Telefone);
-        this.preencherCampo('referencia1Rua', dados.referencia1Rua);
-        this.preencherCampo('referencia1Numero', dados.referencia1Numero);
-        this.preencherCampo('referencia1Bairro', dados.referencia1Bairro);
+        // Referências - IDs corretos do HTML
+        this.preencherCampo('ref1Nome', dados.referencia1Nome);
+        this.preencherCampo('ref1Telefone', dados.referencia1Telefone);
+        this.preencherCampo('ref1Rua', dados.referencia1Rua);
+        this.preencherCampo('ref1Numero', dados.referencia1Numero);
+        this.preencherCampo('ref1Bairro', dados.referencia1Bairro);
+        this.preencherCampo('ref1Cidade', dados.referencia1Cidade);
 
-        this.preencherCampo('referencia2Nome', dados.referencia2Nome);
-        this.preencherCampo('referencia2Telefone', dados.referencia2Telefone);
-        this.preencherCampo('referencia2Rua', dados.referencia2Rua);
-        this.preencherCampo('referencia2Numero', dados.referencia2Numero);
-        this.preencherCampo('referencia2Bairro', dados.referencia2Bairro);
+        this.preencherCampo('ref2Nome', dados.referencia2Nome);
+        this.preencherCampo('ref2Telefone', dados.referencia2Telefone);
+        this.preencherCampo('ref2Rua', dados.referencia2Rua);
+        this.preencherCampo('ref2Numero', dados.referencia2Numero);
+        this.preencherCampo('ref2Bairro', dados.referencia2Bairro);
+        this.preencherCampo('ref2Cidade', dados.referencia2Cidade);
 
         // Aplicar formatação aos campos preenchidos
         this.aplicarFormatacaoImportados();
