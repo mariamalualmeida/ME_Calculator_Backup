@@ -2272,79 +2272,401 @@ class SimuladorEmprestimos {
     }
 
     // =============================================
-    // SISTEMA DE IMPORTAÇÃO DE DADOS
+    // SISTEMA DE IMPORTAÇÃO DE DADOS EXPANSÍVEL
     // =============================================
 
     setupImportEventListeners() {
-        // Botão principal de importação
+        // Botão principal de importação (expansível)
         if (this.importDataBtn) {
             this.importDataBtn.addEventListener('click', () => {
-                this.abrirModalImportacao();
+                this.toggleImportArea();
             });
         }
 
-        // Fechar modal
-        if (this.closeImportModal) {
-            this.closeImportModal.addEventListener('click', () => {
-                this.fecharModalImportacao();
+        // Upload de arquivo PDF
+        if (this.pdfFileInput) {
+            this.pdfFileInput.addEventListener('change', (e) => {
+                this.handlePdfUpload(e.target.files[0]);
             });
         }
 
-        // Fechar modal clicando fora
-        if (this.importModal) {
-            this.importModal.addEventListener('click', (e) => {
-                if (e.target.id === 'importModal') {
-                    this.fecharModalImportacao();
-                }
-            });
-        }
-
-        // Navegação entre abas
-        if (this.tabPdf) {
-            this.tabPdf.addEventListener('click', () => {
-                this.trocarAbaImportacao('pdf');
-            });
-        }
-
-        if (this.tabFormulario) {
-            this.tabFormulario.addEventListener('click', () => {
-                this.trocarAbaImportacao('formulario');
+        // Área de texto para colar
+        if (this.importTextArea) {
+            this.importTextArea.addEventListener('input', () => {
+                this.checkImportData();
             });
         }
 
         // Botões de ação
-        if (this.previewBtn) {
-            this.previewBtn.addEventListener('click', () => {
-                this.visualizarDados();
+        if (this.previewDataBtn) {
+            this.previewDataBtn.addEventListener('click', () => {
+                this.previewImportData();
             });
         }
 
-        if (this.importBtn) {
-            this.importBtn.addEventListener('click', () => {
-                this.importarDados();
+        if (this.applyDataBtn) {
+            this.applyDataBtn.addEventListener('click', () => {
+                this.applyImportData();
             });
         }
 
-        // Limpar preview quando texto mudar
-        if (this.pdfTextArea) {
-            this.pdfTextArea.addEventListener('input', () => {
-                this.limparPreview();
-            });
-        }
-
-        if (this.formularioTextArea) {
-            this.formularioTextArea.addEventListener('input', () => {
-                this.limparPreview();
+        if (this.clearImportBtn) {
+            this.clearImportBtn.addEventListener('click', () => {
+                this.clearImportData();
             });
         }
     }
 
-    abrirModalImportacao() {
-        if (this.importModal) {
-            this.importModal.style.display = 'flex';
-            this.limparTextAreas();
-            this.limparPreview();
-            this.trocarAbaImportacao('pdf'); // Sempre começar na primeira aba
+    toggleImportArea() {
+        const isExpanded = this.importExpandArea.classList.contains('expanded');
+        
+        if (isExpanded) {
+            this.importExpandArea.classList.remove('expanded');
+            this.importDataBtn.classList.remove('expanded');
+            this.clearImportData();
+        } else {
+            this.importExpandArea.classList.add('expanded');
+            this.importDataBtn.classList.add('expanded');
+        }
+    }
+
+    async handlePdfUpload(file) {
+        if (!file) return;
+
+        this.updateFileStatus('Processando PDF...', 'processing');
+        
+        try {
+            // Usar FileReader para ler o arquivo
+            const arrayBuffer = await this.readFileAsArrayBuffer(file);
+            
+            // Tentar extrair texto usando PDF.js
+            let text = '';
+            
+            // Verificar se PDF.js está disponível
+            if (typeof pdfjsLib !== 'undefined') {
+                try {
+                    const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+                    let fullText = '';
+                    
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        const pageText = textContent.items.map(item => item.str).join(' ');
+                        fullText += pageText + '\n';
+                    }
+                    
+                    text = fullText;
+                    this.updateFileStatus('PDF processado com sucesso!', 'success');
+                } catch (pdfError) {
+                    console.error('Erro ao processar PDF:', pdfError);
+                    this.updateFileStatus('Erro ao processar PDF. Cole o texto manualmente na área abaixo.', 'error');
+                    return;
+                }
+            } else {
+                // Fallback: instruir usuário a colar manualmente
+                this.updateFileStatus('Biblioteca PDF não carregada. Cole o texto manualmente na área abaixo.', 'error');
+                return;
+            }
+
+            // Preencher área de texto com conteúdo extraído
+            if (text && this.importTextArea) {
+                this.importTextArea.value = text;
+                this.checkImportData();
+                
+                // Auto-processar se o texto foi extraído
+                setTimeout(() => {
+                    this.previewImportData();
+                }, 500);
+            }
+
+        } catch (error) {
+            console.error('Erro ao processar arquivo:', error);
+            this.updateFileStatus('Erro ao ler arquivo. Tente colar o texto manualmente.', 'error');
+        }
+    }
+
+    readFileAsArrayBuffer(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
+    updateFileStatus(message, type = '') {
+        if (this.fileStatus) {
+            this.fileStatus.textContent = message;
+            this.fileStatus.className = `file-status ${type}`;
+        }
+    }
+
+    checkImportData() {
+        const hasText = this.importTextArea && this.importTextArea.value.trim().length > 0;
+        
+        if (this.previewDataBtn) {
+            this.previewDataBtn.disabled = !hasText;
+        }
+        
+        if (this.applyDataBtn) {
+            this.applyDataBtn.disabled = !hasText;
+        }
+    }
+
+    previewImportData() {
+        const text = this.importTextArea?.value.trim() || '';
+        
+        if (!text) {
+            alert('Por favor, cole ou anexe dados antes de visualizar.');
+            return;
+        }
+
+        try {
+            const dadosExtraidos = this.extrairDadosTexto(text);
+            this.exibirPreviewDados(dadosExtraidos);
+        } catch (error) {
+            console.error('Erro ao extrair dados:', error);
+            alert('Erro ao processar dados. Verifique o formato e tente novamente.');
+        }
+    }
+
+    applyImportData() {
+        const text = this.importTextArea?.value.trim() || '';
+        
+        if (!text) {
+            alert('Nenhum dado encontrado para aplicar.');
+            return;
+        }
+
+        try {
+            const dadosExtraidos = this.extrairDadosTexto(text);
+            this.preencherFormularioCompleto(dadosExtraidos);
+            
+            alert('Dados aplicados com sucesso!');
+            this.toggleImportArea(); // Fechar área de importação
+            
+        } catch (error) {
+            console.error('Erro ao aplicar dados:', error);
+            alert('Erro ao aplicar dados. Tente novamente.');
+        }
+    }
+
+    clearImportData() {
+        if (this.pdfFileInput) this.pdfFileInput.value = '';
+        if (this.importTextArea) this.importTextArea.value = '';
+        if (this.fileStatus) this.fileStatus.textContent = '';
+        if (this.dataPreviewSection) this.dataPreviewSection.style.display = 'none';
+        this.checkImportData();
+    }
+
+    extrairDadosTexto(texto) {
+        const dados = {
+            // Dados principais
+            nome: '',
+            cpf: '',
+            dataNascimento: '',
+            estadoCivil: '',
+            telefone: '',
+            email: '',
+            
+            // Endereço
+            rua: '',
+            numero: '',
+            complemento: '',
+            bairro: '',
+            cidade: '',
+            estado: '',
+            cep: '',
+            
+            // Dados profissionais
+            trabalho: '',
+            profissao: '',
+            renda: '',
+            tempoEmprego: '',
+            
+            // Referências
+            referencia1Nome: '',
+            referencia1Telefone: '',
+            referencia1Rua: '',
+            referencia1Numero: '',
+            referencia1Bairro: '',
+            referencia2Nome: '',
+            referencia2Telefone: '',
+            referencia2Rua: '',
+            referencia2Numero: '',
+            referencia2Bairro: ''
+        };
+
+        try {
+            // Detectar automaticamente se é PDF do sistema ou formulário copiado
+            const isPdfSistema = texto.includes('DADOS PESSOAIS') || texto.includes('Data de Nascimento:');
+            
+            if (isPdfSistema) {
+                this.extrairDadosPdfSistema(texto, dados);
+            } else {
+                this.extrairDadosFormulario(texto, dados);
+            }
+        } catch (error) {
+            console.error('Erro na extração:', error);
+        }
+
+        return dados;
+    }
+
+    exibirPreviewDados(dados) {
+        if (!this.dataPreviewContent) return;
+
+        const campos = [
+            { label: 'Nome', value: dados.nome },
+            { label: 'CPF', value: dados.cpf },
+            { label: 'Data Nascimento', value: dados.dataNascimento },
+            { label: 'Estado Civil', value: dados.estadoCivil },
+            { label: 'Telefone', value: dados.telefone },
+            { label: 'E-mail', value: dados.email },
+            { label: 'Rua', value: dados.rua },
+            { label: 'Número', value: dados.numero },
+            { label: 'Complemento', value: dados.complemento },
+            { label: 'Bairro', value: dados.bairro },
+            { label: 'Cidade', value: dados.cidade },
+            { label: 'Estado', value: dados.estado },
+            { label: 'CEP', value: dados.cep },
+            { label: 'Local Trabalho', value: dados.trabalho },
+            { label: 'Profissão', value: dados.profissao },
+            { label: 'Renda', value: dados.renda },
+            { label: 'Tempo Emprego', value: dados.tempoEmprego },
+            { label: '1ª Ref. Nome', value: dados.referencia1Nome },
+            { label: '1ª Ref. Telefone', value: dados.referencia1Telefone },
+            { label: '1ª Ref. Rua', value: dados.referencia1Rua },
+            { label: '1ª Ref. Número', value: dados.referencia1Numero },
+            { label: '1ª Ref. Bairro', value: dados.referencia1Bairro },
+            { label: '2ª Ref. Nome', value: dados.referencia2Nome },
+            { label: '2ª Ref. Telefone', value: dados.referencia2Telefone },
+            { label: '2ª Ref. Rua', value: dados.referencia2Rua },
+            { label: '2ª Ref. Número', value: dados.referencia2Numero },
+            { label: '2ª Ref. Bairro', value: dados.referencia2Bairro }
+        ];
+
+        let html = '';
+        let camposEncontrados = 0;
+
+        campos.forEach(campo => {
+            const value = campo.value || '';
+            const isEmpty = !value;
+            
+            if (!isEmpty) camposEncontrados++;
+
+            html += `
+                <div class="preview-item">
+                    <span class="preview-label">${campo.label}:</span>
+                    <span class="preview-value ${isEmpty ? 'preview-empty' : ''}">${
+                        isEmpty ? '(não encontrado)' : value
+                    }</span>
+                </div>
+            `;
+        });
+
+        this.dataPreviewContent.innerHTML = html;
+        
+        if (this.dataPreviewSection) {
+            this.dataPreviewSection.style.display = 'block';
+            this.dataPreviewSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Habilitar botão de aplicação se houver dados
+        if (this.applyDataBtn) {
+            this.applyDataBtn.disabled = camposEncontrados === 0;
+        }
+    }
+
+    preencherFormularioCompleto(dados) {
+        // Expandir formulário automaticamente se houver dados cadastrais
+        const temDadosCadastrais = dados.nome || dados.cpf || dados.telefone || dados.rua;
+        if (temDadosCadastrais) {
+            this.expandirFormularioCompleto();
+        }
+
+        // Preencher campos principais (sempre visíveis)
+        this.preencherCampo('nomeCompleto', dados.nome);
+        this.preencherCampo('cpfCompleto', dados.cpf);
+
+        // Preencher campos do formulário completo
+        this.preencherCampo('dataNascimento', dados.dataNascimento);
+        this.preencherCampo('estadoCivil', dados.estadoCivil);
+        this.preencherCampo('rua', dados.rua);
+        this.preencherCampo('numeroEndereco', dados.numero);
+        this.preencherCampo('complemento', dados.complemento);
+        this.preencherCampo('bairro', dados.bairro);
+        this.preencherCampo('cidade', dados.cidade);
+        this.preencherCampo('estado', dados.estado);
+        this.preencherCampo('cep', dados.cep);
+        this.preencherCampo('telefoneCompleto', dados.telefone);
+        this.preencherCampo('email', dados.email);
+        this.preencherCampo('trabalho', dados.trabalho);
+        this.preencherCampo('profissao', dados.profissao);
+        this.preencherCampo('renda', dados.renda);
+        this.preencherCampo('tempoEmprego', dados.tempoEmprego);
+
+        // Referências
+        this.preencherCampo('referencia1Nome', dados.referencia1Nome);
+        this.preencherCampo('referencia1Telefone', dados.referencia1Telefone);
+        this.preencherCampo('referencia1Rua', dados.referencia1Rua);
+        this.preencherCampo('referencia1Numero', dados.referencia1Numero);
+        this.preencherCampo('referencia1Bairro', dados.referencia1Bairro);
+
+        this.preencherCampo('referencia2Nome', dados.referencia2Nome);
+        this.preencherCampo('referencia2Telefone', dados.referencia2Telefone);
+        this.preencherCampo('referencia2Rua', dados.referencia2Rua);
+        this.preencherCampo('referencia2Numero', dados.referencia2Numero);
+        this.preencherCampo('referencia2Bairro', dados.referencia2Bairro);
+
+        // Aplicar formatação aos campos preenchidos
+        this.aplicarFormatacaoImportados();
+    }
+
+    preencherCampo(id, valor) {
+        if (!valor) return;
+
+        const campo = document.getElementById(id);
+        if (campo) {
+            campo.value = valor;
+        }
+    }
+
+    expandirFormularioCompleto() {
+        const container = document.getElementById('formCompletoContainer');
+        const toggleBtn = document.getElementById('toggleFormCompleto');
+        const icon = toggleBtn?.querySelector('.toggle-icon');
+        
+        if (container && container.style.display !== 'block') {
+            container.style.display = 'block';
+            if (toggleBtn) toggleBtn.classList.add('expanded');
+            if (icon) icon.textContent = '▲';
+        }
+    }
+
+    aplicarFormatacaoImportados() {
+        // Aplicar formatação de CPF
+        const cpfField = document.getElementById('cpfCompleto');
+        if (cpfField && cpfField.value) {
+            this.formatarCpf(cpfField);
+        }
+
+        // Aplicar formatação de telefone
+        const telefoneField = document.getElementById('telefoneCompleto');
+        if (telefoneField && telefoneField.value) {
+            this.formatarTelefone(telefoneField);
+        }
+
+        // Aplicar formatação de CEP
+        const cepField = document.getElementById('cep');
+        if (cepField && cepField.value) {
+            this.formatarCep(cepField);
+        }
+
+        // Aplicar formatação de data
+        const dataField = document.getElementById('dataNascimento');
+        if (dataField && dataField.value) {
+            this.formatarData(dataField);
         }
     }
 
