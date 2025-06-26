@@ -1327,8 +1327,14 @@ class SimuladorEmprestimos {
         // Ocultar botão inicialmente
         saveBtn.style.display = 'none';
         
-        // Selecionar todos os campos do modal
+        // Selecionar todos os campos do modal, excluindo campos de login administrativo
         const campos = document.querySelectorAll('#configModal input, #configModal select');
+        const camposExcluidos = ['newAdminUser', 'newAdminPass']; // IDs dos campos de login admin
+        
+        // Filtrar campos para excluir usuário e senha administrativos
+        const camposMonitorados = Array.from(campos).filter(campo => 
+            !camposExcluidos.includes(campo.id)
+        );
         
         // Função para mostrar o botão quando algo for alterado
         const mostrarBotaoSalvar = () => {
@@ -1336,13 +1342,13 @@ class SimuladorEmprestimos {
         };
         
         // Remover event listeners anteriores para evitar duplicação
-        campos.forEach(campo => {
+        camposMonitorados.forEach(campo => {
             campo.removeEventListener('input', mostrarBotaoSalvar);
             campo.removeEventListener('change', mostrarBotaoSalvar);
         });
         
-        // Adicionar event listeners para detectar mudanças
-        campos.forEach(campo => {
+        // Adicionar event listeners para detectar mudanças apenas nos campos monitorados
+        camposMonitorados.forEach(campo => {
             campo.addEventListener('input', mostrarBotaoSalvar);
             campo.addEventListener('change', mostrarBotaoSalvar);
         });

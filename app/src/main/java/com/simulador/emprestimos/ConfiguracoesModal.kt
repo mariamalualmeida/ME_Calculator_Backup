@@ -42,6 +42,27 @@ fun ConfiguracoesModal(
     var newAdminUser by remember { mutableStateOf("") }
     var newAdminPassword by remember { mutableStateOf("") }
     
+    // Estado para controle do botão salvar dinâmico
+    var showSaveButton by remember { mutableStateOf(false) }
+    
+    // Valores iniciais para detectar mudanças (excluindo campos de login)
+    val initialValues = remember {
+        mapOf(
+            "nomeUsuario" to configuracoes.nomeUsuario,
+            "themeMode" to configuracoes.themeMode,
+            "colorTheme" to configuracoes.colorTheme,
+            "igpmAnual" to configuracoes.igpmAnual.toString().replace('.', ',')
+        )
+    }
+    
+    // Detectar mudanças nos campos (excluindo login administrativo)
+    LaunchedEffect(nomeUsuario, themeMode, colorTheme, igpmAnual) {
+        showSaveButton = nomeUsuario != initialValues["nomeUsuario"] ||
+                themeMode != initialValues["themeMode"] ||
+                colorTheme != initialValues["colorTheme"] ||
+                igpmAnual != initialValues["igpmAnual"]
+    }
+    
     // Cores do tema baseadas na paleta selecionada
     val colorScheme = getColorSchemeForTheme(colorTheme, themeMode == "dark")
     

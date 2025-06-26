@@ -766,7 +766,7 @@ fun SimuladorEmprestimosScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Erro",
+                        text = "SIMULAÇÃO NEGADA",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFFBA1A1A),
