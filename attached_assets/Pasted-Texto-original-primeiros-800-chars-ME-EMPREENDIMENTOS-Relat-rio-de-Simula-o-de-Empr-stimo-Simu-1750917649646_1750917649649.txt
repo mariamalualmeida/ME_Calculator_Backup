@@ -1,0 +1,70 @@
+Texto original (primeiros 800 chars): ME EMPREENDIMENTOS  Relatório de Simulação de Empréstimo  Simulado por: Leonardo Data da simulação: 26/06/2025  DADOS CADASTRAIS DO CLIENTE  DADOS PESSOAIS: Nome: LEONARDO DE ALMEIDA SANTOS CPF: 052.085.986-39 Data de Nascimento: 10/04/1983 Estado Civil: MG Endereço: Rua da Mata, 464, Casa Bairro: Vila Brasil Cidade: Abadia dos Dourados - MG CEP: 35700-130 Telefone: (31) 98897-3275 E-mail: leo_almeida.s@hotmail.com DADOS PROFISSIONAIS: Profissão: Vendedor Local de Trabalho: Me empreendimentos Renda Mensal: 3.000,00 Tempo de Emprego: 2 anos 1ª REFERÊNCIA: Nome: Elenice albino Telefone: (31) 98988-9979 Endereço: Rua caiapos, 333 Bairro: Santa luzia Cidade: Sete Lagoas
+2ª REFERÊNCIA: Nome: Jessica de Souza Melo Telefone: (31) 99999-9999 Endereço: Praça Alexandre Lanza , 140 Bairro: Centro Cid
+Padrão "Valor do empréstimo:" encontrado e quebra adicionada
+Padrão "DADOS PESSOAIS:" encontrado e quebra adicionada
+=== RESULTADO PRÉ-PROCESSAMENTO ===
+Texto processado (primeiros 800 chars): ME EMPREENDIMENTOS  Relatório de Simulação de Empréstimo  Simulado por: Leonardo Data da simulação: 26/06/2025  DADOS CADASTRAIS DO CLIENTE
+DADOS PESSOAIS:
+Nome: LEONARDO DE ALMEIDA SANTOS
+CPF: 052.085.986-39
+Data de Nascimento: 10/04/1983
+Estado Civil: MG
+Endereço: Rua da Mata, 464, Casa
+Bairro: Vila Brasil
+Cidade: Abadia dos Dourados - MG
+CEP: 35700-130
+Telefone: (31) 98897-3275
+E-mail: leo_almeida.s@hotmail.com
+DADOS PROFISSIONAIS:
+Profissão: Vendedor
+Local de Trabalho: Me empreendimentos
+Renda Mensal: 3.000,00
+Tempo de Emprego: 2 anos
+1ª REFERÊNCIA:
+Nome: Elenice albino
+Telefone: (31) 98988-9979
+Endereço: Rua caiapos, 333
+Bairro: Santa luzia
+Cidade: Sete Lagoas
+2ª REFERÊNCIA:
+Nome: Jessica de Souza Melo
+Telefone: (31) 99999-9999
+Endereço: Praça Alexandre Lanza , 140
+Bairro: Centro
+Cida
+=== FIM PRÉ-PROCESSAMENTO ===
+=== TESTANDO REGEX DADOS SIMULAÇÃO ===
+Regex Valor: /Valor do empréstimo:\s*R\$\s*([0-9,.]+?)(?=\s*Número de parcelas:|$)/i
+Resultado Valor: 
+(2) ["Valor do empréstimo: R$ 5.000,00", "5.000,00"]
+Regex Parcelas: /Número de parcelas:\s*(\d+?)(?=\s*Sistema de juros:|Taxa de juros:|$)/i
+Resultado Parcelas: 
+(2) ["Número de parcelas: 5", "5"]
+Regex Sistema: /Sistema de juros:\s*([^\n\r]+?)(?=\s*Taxa de juros:|$)/i
+Resultado Sistema: 
+(2) ["Sistema de juros: Juros Compostos Mensais", "Juros Compostos Mensais"]
+Regex Taxa: /Taxa de juros:\s*([0-9,]+?)%/i
+Resultado Taxa: 
+(2) ["Taxa de juros: 15,00%", "15,00"]
+=== APLICANDO DADOS EXTRAÍDOS ===
+Valor extraído: 5.000,00
+Parcelas extraídas: 5
+Sistema extraído: Juros Compostos Mensais
+Taxa extraída: 15,00
+Data inicial extraída: 03/08/2025
+Extraindo dados cadastrais com texto pré-processado...
+=== DADOS FINAIS EXTRAÍDOS ===
+dados.valorEmprestimo: 5.000,00
+dados.numeroParcelas: 5
+dados.taxaJuros: 15,00
+dados.sistemaJuros: Juros Compostos Mensais
+=== FIM EXTRAÇÃO PDF COMPLETO ===
+Dados extraídos e normalizados: 
+Object {nome: "LEONARDO DE ALMEIDA SANTOS", cpf: "052.085.986-39", dataNascimento: "10/04/1983", estadoCivil: "MG", telefone: "(31) 98897-3275", …}
+Aplicando dados: 
+Object {nome: "LEONARDO DE ALMEIDA SANTOS", cpf: "052.085.986-39", dataNascimento: "10/04/1983", estadoCivil: "MG", telefone: "(31) 98897-3275", …}
+toggleImportArea chamada
+Elementos para toggle: 
+Object {expandArea: true, importBtn: true}
+Estado atual - isExpanded: true
+Recolhendo área de importação
