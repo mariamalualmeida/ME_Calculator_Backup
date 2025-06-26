@@ -2547,8 +2547,8 @@ class SimuladorEmprestimos {
             }
             
             // Expandir e preencher formulário completo
-            this.expandirFormularioCompleto();
-            this.preencherFormularioCompleto(dadosExtraidos);
+            // Usar a nova função aplicarDadosJson com logs detalhados
+            this.aplicarDadosJson(dadosExtraidos);
             
             this.updateFileStatus('Dados aplicados com sucesso!', 'success');
             
