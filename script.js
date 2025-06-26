@@ -3301,8 +3301,10 @@ class SimuladorEmprestimos {
         const regexTelefone = /Telefone:\s*(\([0-9]{2}\)\s*[0-9\-\s]+)/i;
         const regexEmail = /E-mail:\s*([^\n\r\s]+)/i;
 
-        // Endereço (formato: Endereço: Rua da Mata, 464, Casa)
-        const regexEndereco = /Endereço:\s*([^,\n\r]+),\s*(\d+),?\s*([^\n\r]*)/i;
+        // Endereço separado em campos individuais
+        const regexRua = /Rua:\s*([^\n\r]+)/i;
+        const regexNumero = /Número:\s*([^\n\r]+)/i;
+        const regexComplemento = /Complemento:\s*([^\n\r]+)/i;
         const regexBairro = /Bairro:\s*([^\n\r]+)/i;
         const regexCidade = /Cidade:\s*([^\-\n\r]+)(?:\s*\-\s*([A-Z]{2}))?/i;
         const regexCep = /CEP:\s*([\d\-]+)/i;
@@ -3316,12 +3318,14 @@ class SimuladorEmprestimos {
         // Referências
         const regexRef1Nome = /1ª REFERÊNCIA:\s*\n\s*Nome:\s*([^\n\r]+)/i;
         const regexRef1Tel = /1ª REFERÊNCIA:[\s\S]*?Telefone:\s*(\([0-9]{2}\)\s*[0-9\-\s]+)/i;
-        const regexRef1End = /1ª REFERÊNCIA:[\s\S]*?Endereço:\s*([^,\n\r]+)(?:,\s*(\d+))?/i;
+        const regexRef1Rua = /1ª REFERÊNCIA:[\s\S]*?Rua:\s*([^\n\r]+)/i;
+        const regexRef1Numero = /1ª REFERÊNCIA:[\s\S]*?Número:\s*([^\n\r]+)/i;
         const regexRef1Bairro = /1ª REFERÊNCIA:[\s\S]*?Bairro:\s*([^\n\r]+)/i;
 
         const regexRef2Nome = /2ª REFERÊNCIA:\s*\n\s*Nome:\s*([^\n\r]+)/i;
         const regexRef2Tel = /2ª REFERÊNCIA:[\s\S]*?Telefone:\s*(\([0-9]{2}\)\s*[0-9\-\s]+)/i;
-        const regexRef2End = /2ª REFERÊNCIA:[\s\S]*?Endereço:\s*([^,\n\r]+)(?:,\s*(\d+))?/i;
+        const regexRef2Rua = /2ª REFERÊNCIA:[\s\S]*?Rua:\s*([^\n\r]+)/i;
+        const regexRef2Numero = /2ª REFERÊNCIA:[\s\S]*?Número:\s*([^\n\r]+)/i;
         const regexRef2Bairro = /2ª REFERÊNCIA:[\s\S]*?Bairro:\s*([^\n\r]+)/i;
 
         // Aplicar extrações
@@ -3332,13 +3336,10 @@ class SimuladorEmprestimos {
         dados.telefone = this.extrairMatch(regexTelefone, texto);
         dados.email = this.extrairMatch(regexEmail, texto);
 
-        // Endereço
-        const enderecoMatch = texto.match(regexEndereco);
-        if (enderecoMatch) {
-            dados.rua = enderecoMatch[1]?.trim() || '';
-            dados.numero = enderecoMatch[2]?.trim() || '';
-            dados.complemento = enderecoMatch[3]?.trim() || '';
-        }
+        // Endereço separado
+        dados.rua = this.extrairMatch(regexRua, texto);
+        dados.numero = this.extrairMatch(regexNumero, texto);
+        dados.complemento = this.extrairMatch(regexComplemento, texto);
 
         dados.bairro = this.extrairMatch(regexBairro, texto);
         
@@ -3356,26 +3357,18 @@ class SimuladorEmprestimos {
         dados.renda = this.extrairMatch(regexRenda, texto);
         dados.tempoEmprego = this.extrairMatch(regexTempo, texto);
 
-        // Referências
+        // Referências com campos separados
         dados.referencia1Nome = this.extrairMatch(regexRef1Nome, texto);
         dados.referencia1Telefone = this.extrairMatch(regexRef1Tel, texto);
+        dados.referencia1Rua = this.extrairMatch(regexRef1Rua, texto);
+        dados.referencia1Numero = this.extrairMatch(regexRef1Numero, texto);
         dados.referencia1Bairro = this.extrairMatch(regexRef1Bairro, texto);
-
-        const ref1EndMatch = texto.match(regexRef1End);
-        if (ref1EndMatch) {
-            dados.referencia1Rua = ref1EndMatch[1]?.trim() || '';
-            dados.referencia1Numero = ref1EndMatch[2]?.trim() || '';
-        }
 
         dados.referencia2Nome = this.extrairMatch(regexRef2Nome, texto);
         dados.referencia2Telefone = this.extrairMatch(regexRef2Tel, texto);
+        dados.referencia2Rua = this.extrairMatch(regexRef2Rua, texto);
+        dados.referencia2Numero = this.extrairMatch(regexRef2Numero, texto);
         dados.referencia2Bairro = this.extrairMatch(regexRef2Bairro, texto);
-
-        const ref2EndMatch = texto.match(regexRef2End);
-        if (ref2EndMatch) {
-            dados.referencia2Rua = ref2EndMatch[1]?.trim() || '';
-            dados.referencia2Numero = ref2EndMatch[2]?.trim() || '';
-        }
     }
 
     extrairDadosFormulario(texto, dados) {
