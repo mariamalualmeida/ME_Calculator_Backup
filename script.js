@@ -3388,8 +3388,11 @@ class SimuladorEmprestimos {
                 return;
             }
 
-            const dadosExtraidos = this.extrairDadosTexto(texto, abaAtiva);
-            this.preencherFormulario(dadosExtraidos);
+            console.log('Importando dados com sistema inteligente...');
+            const dadosExtraidos = this.extrairDadosTexto(texto, 'auto');
+            
+            // Usar nova função aplicarDadosJson com sistema inteligente
+            this.aplicarDadosJson(dadosExtraidos);
             
             alert('Dados importados com sucesso!');
             this.fecharModalImportacao();
